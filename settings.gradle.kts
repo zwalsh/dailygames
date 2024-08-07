@@ -1,3 +1,3 @@
 
-rootProject.name = "button"
+rootProject.name = "dailygames"
 include("db")
