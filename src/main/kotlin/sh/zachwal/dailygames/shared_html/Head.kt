@@ -29,18 +29,19 @@ fun HEAD.mobileUI() {
 }
 
 fun HEAD.sentryScript() {
-    script(src = "https://js.sentry-cdn.com/$jsDsn.min.js") {
-        attributes["crossorigin"] = "anonymous"
-    }
-    script {
-        unsafe {
-            +"""
-                Sentry.init({
-                  environment: "$jsEnv",
-                });
-            """.trimIndent()
-        }
-    }
+    // TODO re-add once sentry project created
+//    script(src = "https://js.sentry-cdn.com/$jsDsn.min.js") {
+//        attributes["crossorigin"] = "anonymous"
+//    }
+//    script {
+//        unsafe {
+//            +"""
+//                Sentry.init({
+//                  environment: "$jsEnv",
+//                });
+//            """.trimIndent()
+//        }
+//    }
 }
 
 fun HEAD.headSetup() {
