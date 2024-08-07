@@ -80,7 +80,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass.set("sh.zachwal.button.AppKt")
+    mainClass.set("sh.zachwal.dailygames.AppKt")
 }
 
 tasks.withType(KotlinCompile::class.java).all {
