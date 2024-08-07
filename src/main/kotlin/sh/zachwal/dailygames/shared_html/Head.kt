@@ -11,12 +11,13 @@ import sh.zachwal.dailygames.sentry.jsEnv
 fun HEAD.bootstrapCss() {
     link(
         rel = "stylesheet",
-        href = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
+        href = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css",
         type = "text/css"
     )
 }
 
 fun HEAD.favicon() {
+    // TODO make favicon
     link(href = "/static/favicon.png", rel = "icon", type = "image/png")
 }
 
