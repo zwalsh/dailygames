@@ -14,41 +14,6 @@
       "include": {
         "file": "3_create_role.json"
       }
-    },
-    {
-      "include": {
-        "file": "4_create_press.json"
-      }
-    },
-    {
-      "include": {
-        "file": "5_create_contact.json"
-      }
-    },
-    {
-      "include": {
-        "file": "6_create_sent_message.json"
-      }
-    },
-    {
-      "include": {
-        "file": "7_create_notification.json"
-      }
-    },
-    {
-      "include": {
-        "file": "8_add_contact_to_press.json"
-      }
-    },
-    {
-      "include": {
-        "file": "9_create_contact_token.json"
-      }
-    },
-    {
-      "include": {
-        "file": "10_create_wrapped_link.json"
-      }
     }
   ]
 }
