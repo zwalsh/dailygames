@@ -17,14 +17,14 @@ pipeline {
         stage('test-release') {
             steps {
                 // Clear testbutton releases
-                sh "rm -rf ~testbutton/releases/*"
+                sh "rm -rf ~testdailygames/releases/*"
                 // Create the release
-                sh "mkdir ~testbutton/releases/$GIT_COMMIT"
-                sh "tar -xvf build/distributions/button.tar -C ~testbutton/releases/$GIT_COMMIT"
+                sh "mkdir ~testdailygames/releases/$GIT_COMMIT"
+                sh "tar -xvf build/distributions/button.tar -C ~testdailygames/releases/$GIT_COMMIT"
                 // Set it as current
-                sh "ln -s ~testbutton/releases/$GIT_COMMIT ~testbutton/releases/current"
+                sh "ln -s ~testdailygames/releases/$GIT_COMMIT ~testdailygames/releases/current"
                 // Restart the button service (only has sudo permissions for this command)
-                sh "sudo systemctl restart testbutton"
+                sh "sudo systemctl restart testdailygames"
             }
         }
         stage('release') {
@@ -33,13 +33,13 @@ pipeline {
             }
             steps {
                 // Create the release
-                sh "mkdir ~button/releases/$GIT_COMMIT"
-                sh "tar -xvf build/distributions/button.tar -C ~button/releases/$GIT_COMMIT"
+                sh "mkdir ~dailygames/releases/$GIT_COMMIT"
+                sh "tar -xvf build/distributions/dailygames.tar -C ~dailygames/releases/$GIT_COMMIT"
                 // Set it as current
-                sh "rm ~button/releases/current"
-                sh "ln -s ~button/releases/$GIT_COMMIT ~button/releases/current"
+                sh "rm ~dailygames/releases/current"
+                sh "ln -s ~dailygames/releases/$GIT_COMMIT ~dailygames/releases/current"
                 // Restart the button service (only has sudo permissions for this command)
-                sh "sudo systemctl restart button"
+                sh "sudo systemctl restart dailygames"
             }
         }
     }
@@ -64,11 +64,11 @@ pipeline {
 
 void setBuildStatus(state) {
     sh """
-        curl "https://api.GitHub.com/repos/zwalsh/button/statuses/$GIT_COMMIT" \
+        curl "https://api.GitHub.com/repos/zwalsh/dailygames/statuses/$GIT_COMMIT" \
                 -H "Content-Type: application/json" \
                 -H "Authorization: token $GITHUB_TOKEN" \
                 -X POST \
                 -d '{\"state\": \"$state\",\"context\": \"continuous-integration/jenkins\",
-                \"description\": \"Jenkins\", \"target_url\": \"https://jenkins.zachwal.sh/job/button/$BUILD_NUMBER/console\"}'
+                \"description\": \"Jenkins\", \"target_url\": \"https://jenkins.zachwal.sh/job/dailygames/$BUILD_NUMBER/console\"}'
     """
 }

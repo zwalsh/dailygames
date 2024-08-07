@@ -1,6 +1,6 @@
 # Deploy Instructions
 
-Runs as a systemd unit (see [button.service](../button.service)).
+Runs as a systemd unit (see [button.service](../dailygames.service)).
 
 Requires its own user. The systemd service file specifies a binary within that user's home
 directory, which is assembled by `./gradlew build` with the `application` Gradle plugin.
