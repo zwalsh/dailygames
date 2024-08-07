@@ -15,9 +15,6 @@ class ConfigModule(
     }
 
     @Provides
-    fun messagingConfig(appConfig: AppConfig) = appConfig.messagingConfig
-
-    @Provides
     @Named("host")
     fun hostString(appConfig: AppConfig) = appConfig.host
 }
