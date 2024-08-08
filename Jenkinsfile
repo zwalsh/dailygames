@@ -14,7 +14,6 @@ pipeline {
                 sh './gradlew clean build'
             }
         }
-Enable later, after setting up users
         stage('test-release') {
             steps {
                 // Clear test releases
