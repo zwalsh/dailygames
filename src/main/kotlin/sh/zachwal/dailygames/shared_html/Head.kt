@@ -3,10 +3,6 @@ package sh.zachwal.dailygames.shared_html
 import kotlinx.html.HEAD
 import kotlinx.html.link
 import kotlinx.html.meta
-import kotlinx.html.script
-import kotlinx.html.unsafe
-import sh.zachwal.dailygames.sentry.jsDsn
-import sh.zachwal.dailygames.sentry.jsEnv
 
 fun HEAD.bootstrapCss() {
     link(
