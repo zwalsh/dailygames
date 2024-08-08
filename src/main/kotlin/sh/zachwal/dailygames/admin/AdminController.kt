@@ -20,6 +20,7 @@ import kotlinx.html.title
 import kotlinx.html.tr
 import kotlinx.html.ul
 import org.slf4j.LoggerFactory
+import sh.zachwal.dailygames.admin.views.AdminPageView
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.roles.Role
@@ -74,29 +75,7 @@ class AdminController @Inject constructor(
         adminRoute("/admin") {
             get {
                 call.respondHtml {
-                    head {
-                        title {
-                            +"Admin"
-                        }
-                        headSetup()
-                    }
-                    body {
-                        div(classes = "container") {
-                            h1 {
-                                +"Admin"
-                            }
-                            h2 {
-                                +"Users"
-                            }
-                            ul {
-                                li {
-                                    a(href = "/admin/users") {
-                                        +"Users"
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    AdminPageView.renderIn(this)
                 }
             }
         }
