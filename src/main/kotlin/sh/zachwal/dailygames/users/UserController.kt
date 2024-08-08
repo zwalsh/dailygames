@@ -20,6 +20,7 @@ import io.ktor.util.getOrFail
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.roles.Role.ADMIN
+import sh.zachwal.dailygames.roles.Role.USER
 import sh.zachwal.dailygames.roles.RoleService
 import sh.zachwal.dailygames.session.SessionService
 import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
@@ -125,6 +126,7 @@ class UserController @Inject constructor(
                 )
 
                 if (user != null) {
+                    roleService.grantRole(user, USER)
                     sessionService.createUserSession(call, user.username)
                     call.respondRedirect("/profile")
                 } else {
