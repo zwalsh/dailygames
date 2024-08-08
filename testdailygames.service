@@ -1,0 +1,13 @@
+[Unit]
+Description=Test Daily Games
+After=nginx.service
+Wants=nginx.service
+
+[Service]
+ExecStart=/home/testdailygames/releases/current/dailygames/bin/dailygames
+User=testdailygames
+Group=testdailygames
+EnvironmentFile=/home/testdailygames/testdailygames.env
+
+[Install]
+WantedBy=multi-user.target
