@@ -17,28 +17,15 @@ import io.ktor.sessions.clear
 import io.ktor.sessions.get
 import io.ktor.sessions.sessions
 import io.ktor.util.getOrFail
-import kotlinx.html.FormMethod.post
-import kotlinx.html.a
-import kotlinx.html.body
-import kotlinx.html.br
-import kotlinx.html.div
-import kotlinx.html.form
-import kotlinx.html.h1
-import kotlinx.html.head
-import kotlinx.html.label
-import kotlinx.html.li
-import kotlinx.html.passwordInput
-import kotlinx.html.submitInput
-import kotlinx.html.textInput
-import kotlinx.html.title
-import kotlinx.html.ul
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.roles.Role.ADMIN
 import sh.zachwal.dailygames.roles.RoleService
 import sh.zachwal.dailygames.session.SessionService
 import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
-import sh.zachwal.dailygames.shared_html.headSetup
+import sh.zachwal.dailygames.users.views.LoginView
+import sh.zachwal.dailygames.users.views.ProfileView
+import sh.zachwal.dailygames.users.views.RegisterView
 import javax.inject.Inject
 
 @Controller
@@ -58,60 +45,9 @@ class UserController @Inject constructor(
                 }
 
                 val failed = call.request.queryParameters["failed"]?.equals("true") ?: false
-
+                val loginView = LoginView(failed)
                 call.respondHtml {
-                    head {
-                        title {
-                            +"Login"
-                        }
-                        headSetup()
-                    }
-                    body {
-                        div(classes = "container") {
-                            div(classes = "row justify-content-center") {
-                                div(classes = "card mt-4") {
-                                    div(classes = "card-body") {
-                                        form(method = post, classes = "mb-1") {
-                                            div(classes = "form-group") {
-                                                h1 {
-                                                    +"Login"
-                                                }
-                                            }
-                                            div(classes = "form-group") {
-                                                label { +"Username" }
-                                                textInput(
-                                                    name = "username",
-                                                    classes = "form-control"
-                                                ) {
-                                                    placeholder = "user"
-                                                }
-                                            }
-                                            div(classes = "form-group") {
-                                                label { +"Password" }
-                                                passwordInput(
-                                                    name = "password",
-                                                    classes = "form-control"
-                                                ) {
-                                                    placeholder = "password"
-                                                }
-                                            }
-                                            if (failed) {
-                                                div(classes = "alert alert-danger") {
-                                                    +"Login attempt failed"
-                                                }
-                                            }
-                                            submitInput(classes = "btn btn-primary") {
-                                                value = "Log in"
-                                            }
-                                        }
-                                        a(href = "/register") {
-                                            +"Register"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    loginView.renderIn(this)
                 }
             }
             authenticate("form") {
@@ -149,34 +85,14 @@ class UserController @Inject constructor(
                     }
                     val user = currentUser(call, userService)
 
+                    val profileView = ProfileView(
+                        greeting = greeting(),
+                        username = user.username,
+                        isAdmin = roleService.hasRole(user, ADMIN)
+                    )
+
                     call.respondHtml {
-                        head {
-                            title {
-                                +"${p.user}'s Profile"
-                            }
-                            headSetup()
-                        }
-                        body {
-                            div(classes = "container") {
-                                h1 {
-                                    +"${greeting()}, ${user.username}!"
-                                }
-                                ul {
-                                    if (roleService.hasRole(user, ADMIN)) {
-                                        li {
-                                            a(href = "/admin") {
-                                                +"Admin Page"
-                                            }
-                                        }
-                                    }
-                                    li {
-                                        a(href = "/logout") {
-                                            +"Log out"
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        profileView.renderIn(this)
                     }
                 }
             }
@@ -198,30 +114,7 @@ class UserController @Inject constructor(
         route("/register") {
             get {
                 call.respondHtml {
-                    head {
-                        title {
-                            +"Register"
-                        }
-                        headSetup()
-                    }
-                    body {
-                        form(method = post) {
-                            h1 {
-                                +"Register"
-                            }
-                            textInput(name = "username") {
-                                placeholder = "user"
-                            }
-                            br
-                            passwordInput(name = "password") {
-                                placeholder = "password"
-                            }
-                            br
-                            submitInput {
-                                value = "Create New User"
-                            }
-                        }
-                    }
+                    RegisterView.renderIn(this)
                 }
             }
             post {

@@ -4,22 +4,9 @@ import io.ktor.application.call
 import io.ktor.html.respondHtml
 import io.ktor.routing.Routing
 import io.ktor.routing.get
-import kotlinx.html.a
-import kotlinx.html.body
-import kotlinx.html.div
-import kotlinx.html.h1
-import kotlinx.html.h2
-import kotlinx.html.head
-import kotlinx.html.li
-import kotlinx.html.table
-import kotlinx.html.tbody
-import kotlinx.html.td
-import kotlinx.html.th
-import kotlinx.html.thead
-import kotlinx.html.title
-import kotlinx.html.tr
-import kotlinx.html.ul
-import org.slf4j.LoggerFactory
+import sh.zachwal.dailygames.admin.views.AdminPageView
+import sh.zachwal.dailygames.admin.views.UserListView
+import sh.zachwal.dailygames.admin.views.UserRowView
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.roles.Role
@@ -27,7 +14,6 @@ import sh.zachwal.dailygames.roles.Role.ADMIN
 import sh.zachwal.dailygames.roles.Role.USER
 import sh.zachwal.dailygames.roles.RoleService
 import sh.zachwal.dailygames.roles.adminRoute
-import sh.zachwal.dailygames.shared_html.headSetup
 import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
 
@@ -36,8 +22,6 @@ class AdminController @Inject constructor(
     private val userService: UserService,
     private val roleService: RoleService,
 ) {
-
-    private val logger = LoggerFactory.getLogger(AdminController::class.java)
 
     private fun sortedUsers(users: List<User>, roles: Map<User, List<Role>>): List<User> {
         return users.sortedWith(
@@ -74,29 +58,7 @@ class AdminController @Inject constructor(
         adminRoute("/admin") {
             get {
                 call.respondHtml {
-                    head {
-                        title {
-                            +"Admin"
-                        }
-                        headSetup()
-                    }
-                    body {
-                        div(classes = "container") {
-                            h1 {
-                                +"Admin"
-                            }
-                            h2 {
-                                +"Users"
-                            }
-                            ul {
-                                li {
-                                    a(href = "/admin/users") {
-                                        +"Users"
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    AdminPageView.renderIn(this)
                 }
             }
         }
@@ -108,51 +70,18 @@ class AdminController @Inject constructor(
                 val roles = roleService.allRoles()
                 val users = sortedUsers(userService.list(), roles)
 
+                val userRowViews = users.map {
+                    UserRowView(
+                        username = it.username,
+                        isAdmin = roles[it]?.contains(ADMIN) == true
+                    )
+                }
+                val userListView = UserListView(
+                    users = userRowViews
+                )
+
                 call.respondHtml {
-                    head {
-                        title { +"Users" }
-                        headSetup()
-                    }
-                    body {
-                        div(classes = "container") {
-                            h1 { +"Users" }
-                            table(classes = "table") {
-                                thead {
-                                    tr {
-                                        th {
-                                            +"Name"
-                                        }
-                                        th {
-                                            +"Admin"
-                                        }
-                                    }
-                                }
-                                tbody {
-                                    users.forEach {
-                                        tr {
-                                            td {
-                                                +it.username
-                                            }
-                                            td {
-                                                if (roles[it]?.contains(USER) == true) {
-                                                    +"✅"
-                                                } else {
-                                                    +"❌"
-                                                }
-                                            }
-                                            td {
-                                                if (roles[it]?.contains(ADMIN) == true) {
-                                                    +"✅"
-                                                } else {
-                                                    +"❌"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    userListView.renderIn(this)
                 }
             }
         }
