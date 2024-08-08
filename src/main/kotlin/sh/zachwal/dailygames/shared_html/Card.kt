@@ -12,7 +12,7 @@ fun DIV.card(
 ) {
     div(classes = "card $classes") {
         cardHeader?.let {
-            div(classes = "card-header") {
+            h1(classes = "card-header") {
                 +cardHeader
             }
         }
