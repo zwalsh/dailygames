@@ -2,10 +2,12 @@ package sh.zachwal.dailygames.shared_html
 
 import kotlinx.html.DIV
 import kotlinx.html.div
+import kotlinx.html.h1
 
 fun DIV.card(
     cardHeader: String? = null,
-    classes: String = "mt-4 h-100",
+    cardTitle: String? = null,
+    classes: String = "mx-3 mt-4 h-100",
     cardBody: DIV.() -> Unit,
 ) {
     div(classes = "card $classes") {
@@ -14,6 +16,11 @@ fun DIV.card(
                 +cardHeader
             }
         }
-        div(classes = "card-body", block = cardBody)
+        div(classes = "card-body") {
+            cardTitle?.let {
+                h1(classes = "card-title") { +cardTitle }
+            }
+            cardBody()
+        }
     }
 }
