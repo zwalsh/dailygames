@@ -1,13 +1,11 @@
 package sh.zachwal.dailygames.users.views
 
-
 import kotlinx.html.FormMethod.post
 import kotlinx.html.HTML
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.form
-import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.label
 import kotlinx.html.passwordInput

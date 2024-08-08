@@ -4,7 +4,6 @@ import kotlinx.html.HTML
 import kotlinx.html.TBODY
 import kotlinx.html.body
 import kotlinx.html.div
-import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.table
 import kotlinx.html.tbody
@@ -53,7 +52,6 @@ data class UserListView(
             }
         }
     }
-
 }
 
 data class UserRowView(

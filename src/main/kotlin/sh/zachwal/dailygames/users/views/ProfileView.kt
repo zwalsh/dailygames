@@ -21,14 +21,14 @@ data class ProfileView(
     override fun HTML.render() {
         head {
             title {
-                +"${username}'s Profile"
+                +"$username's Profile"
             }
             headSetup()
         }
         body {
             div(classes = "container") {
                 h1 {
-                    +"${greeting}, ${username}!"
+                    +"$greeting, $username!"
                 }
                 ul {
                     if (isAdmin) {
