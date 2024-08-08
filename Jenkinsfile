@@ -20,7 +20,7 @@ pipeline {
                 sh "rm -rf ~testdailygames/releases/*"
                 // Create the release
                 sh "mkdir ~testdailygames/releases/$GIT_COMMIT"
-                sh "tar -xvf build/distributions/button.tar -C ~testdailygames/releases/$GIT_COMMIT"
+                sh "tar -xvf build/distributions/dailygames.tar -C ~testdailygames/releases/$GIT_COMMIT"
                 // Set it as current
                 sh "ln -s ~testdailygames/releases/$GIT_COMMIT ~testdailygames/releases/current"
                 // Restart the service (only has sudo permissions for this command)
