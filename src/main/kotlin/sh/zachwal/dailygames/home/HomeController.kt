@@ -37,7 +37,7 @@ class HomeController @Inject constructor() {
                 body {
                     div(classes = "container") {
                         h1 {
-                            +"Hello, world!"
+                            +"Hello, world! (test)"
                         }
                     }
                 }
