@@ -13,6 +13,7 @@ import kotlinx.html.textInput
 import kotlinx.html.title
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
+import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 object RegisterView : HTMLView<HTML>() {
@@ -24,6 +25,7 @@ object RegisterView : HTMLView<HTML>() {
             headSetup()
         }
         body {
+            darkMode()
             div(classes = "container") {
                 div(classes = "row justify-content-center") {
                     div(classes = "col") {

@@ -11,6 +11,7 @@ import kotlinx.html.li
 import kotlinx.html.title
 import kotlinx.html.ul
 import sh.zachwal.dailygames.shared_html.HTMLView
+import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 object AdminPageView : HTMLView<HTML>() {
@@ -22,6 +23,7 @@ object AdminPageView : HTMLView<HTML>() {
             headSetup()
         }
         body {
+            darkMode()
             div(classes = "container") {
                 h1 {
                     +"Admin"

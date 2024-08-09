@@ -10,6 +10,7 @@ import kotlinx.html.li
 import kotlinx.html.title
 import kotlinx.html.ul
 import sh.zachwal.dailygames.shared_html.HTMLView
+import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 data class ProfileView(
@@ -26,6 +27,7 @@ data class ProfileView(
             headSetup()
         }
         body {
+            darkMode()
             div(classes = "container") {
                 h1 {
                     +"$greeting, $username!"

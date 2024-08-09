@@ -11,6 +11,7 @@ import kotlinx.html.i
 import kotlinx.html.p
 import kotlinx.html.title
 import sh.zachwal.dailygames.shared_html.HTMLView
+import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 object HeroView : HTMLView<HTML>() {
@@ -20,6 +21,7 @@ object HeroView : HTMLView<HTML>() {
             headSetup()
         }
         body {
+            darkMode()
             div(classes = "row align-items-center vh-100") {
                 div(classes = "px-4 py-5 my-5 text-center") {
                     i(classes = "bi bi-globe-europe-africa fs-1") // TODO better icon
