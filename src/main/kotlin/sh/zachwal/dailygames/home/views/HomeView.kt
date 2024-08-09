@@ -8,6 +8,7 @@ import kotlinx.html.head
 import kotlinx.html.title
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.favicon
+import sh.zachwal.dailygames.shared_html.headSetup
 import sh.zachwal.dailygames.shared_html.mobileUI
 import sh.zachwal.dailygames.shared_html.sentryScript
 
@@ -17,9 +18,7 @@ data class HomeView(
     override fun HTML.render() {
         head {
             title("Daily Games")
-            mobileUI()
-            favicon()
-            sentryScript()
+            headSetup()
         }
         body {
             div(classes = "container") {
