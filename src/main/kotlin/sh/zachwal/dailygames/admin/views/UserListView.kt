@@ -14,6 +14,7 @@ import kotlinx.html.title
 import kotlinx.html.tr
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
+import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 data class UserListView(
@@ -25,6 +26,7 @@ data class UserListView(
             headSetup()
         }
         body {
+            darkMode()
             div(classes = "container") {
                 div(classes = "row") {
                     div(classes = "col") {

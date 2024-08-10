@@ -10,11 +10,15 @@ import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
 import sh.zachwal.dailygames.users.UserService
 
 suspend fun currentUser(call: ApplicationCall, userService: UserService): User {
-    val p = call.sessions.get<UserSessionPrincipal>()
-    return p?.let { userService.getUser(p.user) } ?: run {
+    return userOrNull(call, userService) ?: run {
         call.respond(HttpStatusCode.Unauthorized)
         throw UnauthorizedException()
     }
+}
+
+fun userOrNull(call: ApplicationCall, userService: UserService): User? {
+    val p = call.sessions.get<UserSessionPrincipal>()
+    return p?.let { userService.getUser(p.user) }
 }
 
 class UnauthorizedException : Exception()

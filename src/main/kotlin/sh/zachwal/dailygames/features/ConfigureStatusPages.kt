@@ -16,6 +16,7 @@ import kotlinx.html.p
 import kotlinx.html.title
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.auth.UnauthorizedException
+import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 private val logger = LoggerFactory.getLogger("StatusPage")
@@ -110,6 +111,7 @@ private fun HTML.statusPage(title: String, block: DIV.() -> Unit) {
         headSetup()
     }
     body {
+        darkMode()
         div(classes = "container", block = block)
     }
 }
