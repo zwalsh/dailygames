@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.db
 
 import com.google.common.truth.Truth.assertThat
+import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -27,5 +28,15 @@ class TestExtension {
             tables.add(resultSet.getString(1))
         }
         assertThat(tables).containsAtLeast("user", "session", "role")
+    }
+
+    @Test
+    fun `creates Jdbi instance`(jdbi: Jdbi) {
+        val version = jdbi.withHandle<String, Exception> { handle ->
+            handle.createQuery("SELECT version();")
+                .mapTo(String::class.java)
+                .single()
+        }
+        assertThat(version).contains("12.18")
     }
 }
