@@ -5,6 +5,10 @@ import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.DirectoryResourceAccessor
 import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.core.kotlin.KotlinPlugin
+import org.jdbi.v3.postgres.PostgresPlugin
+import org.jdbi.v3.sqlobject.kotlin.KotlinSqlObjectPlugin
+import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace
 import org.junit.jupiter.api.extension.ParameterContext
@@ -18,7 +22,7 @@ private const val JDBI_KEY = "JDBI"
 const val USERNAME = "username"
 const val PASSWORD = "password"
 
-class DatabaseExtension : ParameterResolver {
+class DatabaseExtension : ParameterResolver, AfterEachCallback {
 
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
         return parameterContext.parameter.parameterizedType in listOf(
@@ -51,11 +55,11 @@ class DatabaseExtension : ParameterResolver {
             .withPassword(PASSWORD)
             .withDatabaseName("dailygames")
         container.start()
-        runMigrations(container)
+        resetDatabase(container)
         return container
     }
 
-    private fun runMigrations(container: DailyGamesPostgresContainer) {
+    private fun resetDatabase(container: DailyGamesPostgresContainer) {
         assert(container.isRunning)
 
         val database = DatabaseFactory.getInstance()
@@ -66,6 +70,7 @@ class DatabaseExtension : ParameterResolver {
             database
         )
 
+        liquibase.dropAll()
         liquibase.update()
     }
 
@@ -81,6 +86,13 @@ class DatabaseExtension : ParameterResolver {
 
     private fun createJdbiInstance(context: ExtensionContext): Jdbi {
         val container = getPostgresContainer(context)
-        return Jdbi.create(container.jdbcConnection())
+        return Jdbi.create(container.jdbcConnection()).installPlugin(KotlinPlugin())
+            .installPlugin(PostgresPlugin())
+            .installPlugin(KotlinSqlObjectPlugin())
+    }
+
+    override fun afterEach(context: ExtensionContext) {
+        val container = getPostgresContainer(context)
+        resetDatabase(container)
     }
 }
