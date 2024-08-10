@@ -23,7 +23,8 @@ data class NavView(val username: String) : HTMLView<BODY>() {
                     ul(classes = "nav justify-content-center my-md-0 text-small") {
                         navItem(href = "/", icon = "bi-house-door-fill", text = "Home")
                         navItem(href = "/leaderboard", icon = "bi-bar-chart-fill", text = "Leaderboard")
-                        navItem(href = "/profile/$username", icon = "bi-person-circle", text = "Profile")
+                        // TODO move to /profile/$username
+                        navItem(href = "/profile", icon = "bi-person-circle", text = "Profile")
                     }
                 }
             }

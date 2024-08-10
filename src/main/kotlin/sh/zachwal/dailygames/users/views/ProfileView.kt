@@ -9,6 +9,7 @@ import kotlinx.html.head
 import kotlinx.html.li
 import kotlinx.html.title
 import kotlinx.html.ul
+import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
@@ -17,8 +18,10 @@ data class ProfileView(
     private val greeting: String,
     private val username: String,
     private val isAdmin: Boolean
-) :
-    HTMLView<HTML>() {
+) : HTMLView<HTML>() {
+
+    private val navView = NavView(username = username)
+
     override fun HTML.render() {
         head {
             title {
@@ -28,6 +31,8 @@ data class ProfileView(
         }
         body {
             darkMode()
+            // TODO move profile to separate controller, allow viewing another person's profile
+            navView.renderIn(this)
             div(classes = "container") {
                 h1 {
                     +"$greeting, $username!"
