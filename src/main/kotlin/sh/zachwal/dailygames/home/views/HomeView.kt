@@ -12,16 +12,20 @@ import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 data class HomeView(
-    private val name: String
+    val username: String
 ) : HTMLView<HTML>() {
+
+    private val nav = NavView(username = username)
+
     override fun HTML.render() {
+
         head {
             title("Daily Games")
             headSetup()
         }
         body {
             darkMode()
-            NavView.renderIn(this)
+            nav.renderIn(this)
             div(classes = "container") {
                 h1 {
                     +"Hello, world! (test)"

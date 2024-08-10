@@ -11,7 +11,7 @@ import kotlinx.html.span
 import kotlinx.html.ul
 import sh.zachwal.dailygames.shared_html.HTMLView
 
-object NavView : HTMLView<BODY>() {
+data class NavView(val username: String) : HTMLView<BODY>() {
     override fun BODY.render() {
         header(classes = "px-3 py-3 mb-4 border-bottom") {
             div(classes = "container") {
@@ -22,8 +22,8 @@ object NavView : HTMLView<BODY>() {
                     }
                     ul(classes = "nav justify-content-center my-md-0 text-small") {
                         navItem(href = "/", icon = "bi-house-door-fill", text = "Home")
-                        navItem(href = "/", icon = "bi-bar-chart-fill", text = "Leaderboard")
-                        navItem(href = "/", icon = "bi-person-circle", text = "Profile")
+                        navItem(href = "/leaderboard", icon = "bi-bar-chart-fill", text = "Leaderboard")
+                        navItem(href = "/profile/$username", icon = "bi-person-circle", text = "Profile")
                     }
                 }
             }
