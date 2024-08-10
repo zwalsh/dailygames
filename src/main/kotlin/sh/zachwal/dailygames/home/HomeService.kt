@@ -5,7 +5,6 @@ import sh.zachwal.dailygames.home.views.HomeView
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class HomeService @Inject constructor() {
 
