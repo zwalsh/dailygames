@@ -1,6 +1,5 @@
 package sh.zachwal.dailygames.db
 
-import liquibase.Contexts
 import liquibase.Liquibase
 import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
@@ -9,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
-import java.io.Writer
-import java.sql.DriverManager
 import kotlin.io.path.Path
 
 private val postgresContainerNamespace = Namespace.create("postgres")
