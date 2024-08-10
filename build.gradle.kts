@@ -76,6 +76,7 @@ dependencies {
 
     testImplementation("io.mockk:mockk:1.12.3")
     testImplementation("com.google.truth:truth:1.1.3")
+    testImplementation("org.testcontainers:postgresql:1.20.0")
 }
 
 application {
