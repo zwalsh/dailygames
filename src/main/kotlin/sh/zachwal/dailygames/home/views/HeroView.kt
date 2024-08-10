@@ -39,8 +39,8 @@ object HeroView : HTMLView<HTML>() {
                             +", and more."
                         }
                         div(classes = "d-grid gap-2 d-sm-flex justify-content-sm-center px-5") {
-                            button(classes = "btn btn-primary") { +"Register" }
-                            button(classes = "btn btn-secondary") { +"Login" }
+                            a(href = "/register", classes = "btn btn-primary") { +"Register" }
+                            a(href = "/login", classes = "btn btn-secondary") { +"Login" }
                         }
                     }
                 }
