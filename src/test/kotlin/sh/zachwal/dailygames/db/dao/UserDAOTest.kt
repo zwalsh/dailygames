@@ -3,14 +3,25 @@ package sh.zachwal.dailygames.db.dao
 import com.google.common.truth.Truth.assertThat
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.onDemand
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 
 @ExtendWith(DatabaseExtension::class)
 
-class UserDAOTest(jdbi: Jdbi) {
+class UserDAOTest(
+    private val jdbi: Jdbi
+) {
     private val userDAO: UserDAO = jdbi.onDemand()
+
+    @BeforeEach
+    fun removeFixtures() {
+        // UserDAO test should have no user fixtures polluting the database
+        jdbi.useHandle<Exception> {
+            it.execute("TRUNCATE \"user\" CASCADE;")
+        }
+    }
 
     @Test
     fun `can create and retrieve a user`() {
