@@ -1,6 +1,8 @@
 package sh.zachwal.dailygames.results
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.gameinfo.TradleInfo
+import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
 import java.time.LocalDate
 import javax.inject.Singleton
 
@@ -34,6 +36,16 @@ class ShareTextParser {
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
             score = score.toIntOrNull() ?: 0,
             percentage = percentage.toInt(),
+            shareTextNoLink = shareText.substringBefore("https://").trim()
+        )
+    }
+
+    fun extractTradleInfo(shareText: String): TradleInfo {
+        val match = tradleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Tradle share")
+        val (puzzleNumber, score) = match.destructured
+        return TradleInfo(
+            puzzleNumber = puzzleNumber.toInt(),
+            score = score.toIntOrNull() ?: 0,
             shareTextNoLink = shareText.substringBefore("https://").trim()
         )
     }

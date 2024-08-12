@@ -142,4 +142,34 @@ class ShareTextParserTest {
             """.trimIndent()
         )
     }
+
+    @Test
+    fun `extracts Tradle info`() {
+        val shareText = """
+            #Tradle #890 X/6
+            🟩🟩⬜⬜⬜
+            🟩🟩🟩🟩⬜
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            https://oec.world/en/games/tradle
+        """.trimIndent()
+
+        val tradleInfo = parser.extractTradleInfo(shareText)
+
+        assertThat(tradleInfo.puzzleNumber).isEqualTo(890)
+        assertThat(tradleInfo.score).isEqualTo(0)
+        assertThat(tradleInfo.shareTextNoLink).isEqualTo(
+            """
+            #Tradle #890 X/6
+            🟩🟩⬜⬜⬜
+            🟩🟩🟩🟩⬜
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            """.trimIndent()
+        )
+    }
 }
