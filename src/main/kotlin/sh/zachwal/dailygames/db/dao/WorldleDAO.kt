@@ -2,7 +2,6 @@ package sh.zachwal.dailygames.db.dao
 
 import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
-import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import java.time.LocalDate
@@ -19,7 +18,7 @@ interface WorldleDAO {
             RETURNING *
         """
     )
-    fun insertWorldleResult(
+    fun insertResult(
         userId: Long,
         @BindBean("puzzle")
         puzzle: Puzzle,
@@ -38,7 +37,7 @@ interface WorldleDAO {
             LIMIT 1
         """
     )
-    fun worldleResultForUserOnDate(
+    fun resultForUserOnDate(
         userId: Long,
         date: LocalDate
     ): WorldleResult?
@@ -52,8 +51,17 @@ interface WorldleDAO {
             ORDER BY instant_submitted DESC
         """
     )
-    fun worldleResultsForPuzzle(
+    fun resultsForPuzzle(
         @BindBean("puzzle")
         puzzle: Puzzle
     ): Stream<WorldleResult>
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM worldle_result
+            ORDER BY puzzle_number, instant_submitted DESC
+        """
+    )
+    fun allResults(): Stream<WorldleResult>
 }

@@ -2,7 +2,6 @@ package sh.zachwal.dailygames.db.dao
 
 import com.google.common.collect.Range
 import com.google.common.truth.Truth.assertThat
-import io.ktor.html.insert
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException
 import org.jdbi.v3.sqlobject.kotlin.onDemand
@@ -47,7 +46,7 @@ class WorldleDAOTest(
             🟩🟩🟩🟩🟩🎉
             """.trimIndent()
 
-        val result = worldleDAO.insertWorldleResult(
+        val result = worldleDAO.insertResult(
             userId = fixtures.zach.id,
             puzzle = puzzleOne,
             score = 5,
@@ -68,19 +67,19 @@ class WorldleDAOTest(
     @Test
     fun `does not allow score percentages below 0 or above 100`() {
         assertThrows<UnableToExecuteStatementException> {
-            insertWorldleResult(scorePercentage = -1)
+            insertResult(scorePercentage = -1)
         }
 
         assertThrows<UnableToExecuteStatementException> {
-            insertWorldleResult(scorePercentage = 101)
+            insertResult(scorePercentage = 101)
         }
     }
 
     @Test
     fun `can retrieve worldle result for user on a date`() {
-        insertWorldleResult()
+        insertResult()
 
-        val result = worldleDAO.worldleResultForUserOnDate(fixtures.zach.id, LocalDate.of(2024, 8, 11))
+        val result = worldleDAO.resultForUserOnDate(fixtures.zach.id, LocalDate.of(2024, 8, 11))
 
         assertThat(result).isNotNull()
         assertThat(result!!.userId).isEqualTo(fixtures.zach.id)
@@ -95,15 +94,15 @@ class WorldleDAOTest(
 
     @Test
     fun `only retrieves results for given user`() {
-        insertWorldleResult()
-        insertWorldleResult(userId = fixtures.jackie.id)
+        insertResult()
+        insertResult(userId = fixtures.jackie.id)
 
-        val jackieResult = worldleDAO.worldleResultForUserOnDate(fixtures.jackie.id, puzzleOne.date!!)
+        val jackieResult = worldleDAO.resultForUserOnDate(fixtures.jackie.id, puzzleOne.date!!)
 
         assertThat(jackieResult).isNotNull()
         assertThat(jackieResult!!.userId).isEqualTo(fixtures.jackie.id)
 
-        val zachResult = worldleDAO.worldleResultForUserOnDate(fixtures.zach.id, puzzleOne.date!!)
+        val zachResult = worldleDAO.resultForUserOnDate(fixtures.zach.id, puzzleOne.date!!)
 
         assertThat(zachResult).isNotNull()
         assertThat(zachResult!!.userId).isEqualTo(fixtures.zach.id)
@@ -111,29 +110,52 @@ class WorldleDAOTest(
 
     @Test
     fun `returns null when no result for user on date`() {
-        val result = worldleDAO.worldleResultForUserOnDate(fixtures.zach.id, LocalDate.of(2024, 8, 11))
+        val result = worldleDAO.resultForUserOnDate(fixtures.zach.id, LocalDate.of(2024, 8, 11))
 
         assertThat(result).isNull()
     }
 
     @Test
     fun `can list all results for a puzzle`() {
-        insertWorldleResult()
-        insertWorldleResult(userId = fixtures.jackie.id)
-        insertWorldleResult(puzzle = puzzleTwo)
+        insertResult()
+        insertResult(userId = fixtures.jackie.id)
+        insertResult(puzzle = puzzleTwo)
 
-        val results = worldleDAO.worldleResultsForPuzzle(puzzleOne).toList()
+        val results = worldleDAO.resultsForPuzzle(puzzleOne).toList()
 
         assertThat(results).hasSize(2)
     }
 
-    private fun insertWorldleResult(
+    @Test
+    fun `can list all results for all puzzles`() {
+        insertResult()
+        insertResult(userId = fixtures.jackie.id)
+        insertResult(puzzle = puzzleTwo)
+
+        val results = worldleDAO.allResults().toList()
+
+        assertThat(results).hasSize(3)
+    }
+
+    @Test
+    fun `list all is ordered by puzzle_number descending, then submission time descending`() {
+        val resultOne = insertResult()
+        val resultTwo = insertResult(puzzle = puzzleTwo)
+        val resultThree = insertResult(puzzle = puzzleTwo)
+
+        val results = worldleDAO.allResults().toList()
+
+        assertThat(results).containsExactly(resultThree, resultTwo, resultOne)
+
+    }
+
+    private fun insertResult(
         userId: Long = fixtures.zach.id,
         puzzle: Puzzle = puzzleOne,
         score: Int = 5,
         shareText: String = "",
         scorePercentage: Int = 100
     ): WorldleResult {
-        return worldleDAO.insertWorldleResult(userId, puzzle, score, shareText, scorePercentage)
+        return worldleDAO.insertResult(userId, puzzle, score, shareText, scorePercentage)
     }
 }
