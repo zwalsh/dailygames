@@ -128,7 +128,7 @@ class UserController @Inject constructor(
                 if (user != null) {
                     roleService.grantRole(user, USER)
                     sessionService.createUserSession(call, user.username)
-                    call.respondRedirect("/profile")
+                    call.respondRedirect("/")
                 } else {
                     call.respond(HttpStatusCode.Conflict, "User already exists")
                 }
