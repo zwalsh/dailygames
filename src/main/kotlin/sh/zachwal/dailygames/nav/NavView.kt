@@ -1,11 +1,8 @@
 package sh.zachwal.dailygames.nav
 
 import kotlinx.html.BODY
-import kotlinx.html.a
 import kotlinx.html.div
 import kotlinx.html.header
-import kotlinx.html.i
-import kotlinx.html.span
 import kotlinx.html.ul
 import sh.zachwal.dailygames.shared_html.HTMLView
 

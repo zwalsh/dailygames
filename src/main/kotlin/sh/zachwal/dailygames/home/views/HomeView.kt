@@ -2,18 +2,15 @@ package sh.zachwal.dailygames.home.views
 
 import kotlinx.html.FormMethod.post
 import kotlinx.html.HTML
-import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.id
-import kotlinx.html.li
 import kotlinx.html.submitInput
 import kotlinx.html.textArea
 import kotlinx.html.title
-import kotlinx.html.ul
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
