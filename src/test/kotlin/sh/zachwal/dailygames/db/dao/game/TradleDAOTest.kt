@@ -13,7 +13,6 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import java.time.Instant
-import java.time.LocalDate
 import kotlin.streams.toList
 
 @ExtendWith(DatabaseExtension::class)
