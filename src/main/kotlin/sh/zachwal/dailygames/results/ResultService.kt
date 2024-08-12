@@ -114,7 +114,10 @@ class ResultService @Inject constructor(
             val tradleDAO = handle.attach(TradleDAO::class.java)
             val tradleResults = tradleDAO.allResultsStream().use(::readFirstTwenty)
 
-            (worldleResults + tradleResults).sortedByDescending { it.instantSubmitted }.take(20)
+            val travleDAO = handle.attach(TravleDAO::class.java)
+            val travleResults = travleDAO.allResultsStream().use(::readFirstTwenty)
+
+            (worldleResults + tradleResults + travleResults).sortedByDescending { it.instantSubmitted }.take(20)
         }
     }
 

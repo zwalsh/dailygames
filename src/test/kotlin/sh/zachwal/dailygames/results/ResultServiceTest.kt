@@ -206,13 +206,19 @@ class ResultServiceTest(
     }
 
     @Test
-    fun `result feed includes worldle and tradle results, ordered by submission time`() {
+    fun `result feed includes all types of results, ordered by submission time`() {
         val worldleResult = resultService.createResult(fixtures.zach, worldle934)
         val tradleResult = resultService.createResult(fixtures.jackie, tradle890)
+        val travleResult = resultService.createResult(fixtures.zach, TRAVLE_PLUS_0)
 
         val feed = resultService.resultFeed()
 
         assertThat(feed).containsExactly(
+            ResultFeedItemView(
+                username = fixtures.zach.username,
+                resultTitle = "Travle #607",
+                shareText = travleResult.shareText,
+            ),
             ResultFeedItemView(
                 username = fixtures.jackie.username,
                 resultTitle = "Tradle #890",
