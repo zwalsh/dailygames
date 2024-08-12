@@ -132,7 +132,6 @@ class TravleDAOTest(
         assertThat(results).containsExactly(resultThree, resultTwo, resultOne)
     }
 
-
     private fun insertResult(
         userId: Long = fixtures.zach.id,
         puzzle: Puzzle = puzzleOne
