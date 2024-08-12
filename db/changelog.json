@@ -14,6 +14,16 @@
       "include": {
         "file": "3_create_role.json"
       }
+    },
+    {
+      "include": {
+        "file": "4_create_game.json"
+      }
+    },
+    {
+      "include": {
+        "file": "5_create_puzzle.json"
+      }
     }
   ]
 }

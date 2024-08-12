@@ -1,0 +1,49 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "5",
+        "author": "zach",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "puzzle",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "bigint",
+                    "autoIncrement": true,
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "game",
+                    "type": "VARCHAR(16)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "addForeignKeyConstraint": {
+              "baseTableName": "puzzle",
+              "baseColumnNames": "game",
+              "constraintName": "puzzle_game_fk",
+              "referencedTableName": "game",
+              "referencedColumnNames": "name",
+              "onUpdate": "CASCADE"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
