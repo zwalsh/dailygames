@@ -206,4 +206,58 @@ class ShareTextParserTest {
             """.trimIndent()
         )
     }
+
+    @Test
+    fun `extracts Travle info when perfect`() {
+        val travleInfo = parser.extractTravleInfo(TRAVLE_PERFECT)
+
+        assertThat(travleInfo.puzzleNumber).isEqualTo(607)
+        assertThat(travleInfo.score).isEqualTo(0)
+        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+            """
+                #travle #607 +0 (Perfect)
+                ✅✅✅✅✅✅✅
+            """.trimIndent()
+        )
+        assertThat(travleInfo.numPerfect).isEqualTo(7)
+        assertThat(travleInfo.numIncorrect).isEqualTo(0)
+        assertThat(travleInfo.numGuesses).isEqualTo(7)
+        assertThat(travleInfo.numHints).isEqualTo(0)
+    }
+
+    @Test
+    fun `extracts Travle info when score is not perfect`() {
+        val travleInfo = parser.extractTravleInfo(TRAVLE_PLUS_0)
+
+        assertThat(travleInfo.puzzleNumber).isEqualTo(607)
+        assertThat(travleInfo.score).isEqualTo(0)
+        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+            """
+                #travle #607 +0
+                ✅✅✅🟩✅✅✅
+            """.trimIndent()
+        )
+        assertThat(travleInfo.numPerfect).isEqualTo(6)
+        assertThat(travleInfo.numIncorrect).isEqualTo(0)
+        assertThat(travleInfo.numGuesses).isEqualTo(7)
+        assertThat(travleInfo.numHints).isEqualTo(0)
+    }
+
+    @Test
+    fun `extracts Travle info when hints are used`() {
+        val travleInfo = parser.extractTravleInfo(TRAVLE_WITH_HINT)
+
+        assertThat(travleInfo.puzzleNumber).isEqualTo(606)
+        assertThat(travleInfo.score).isEqualTo(2)
+        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+            """
+                #travle #606 +2 (1 hint)
+                ✅✅🟩🟧🟧✅
+            """.trimIndent()
+        )
+        assertThat(travleInfo.numPerfect).isEqualTo(3)
+        assertThat(travleInfo.numIncorrect).isEqualTo(2)
+        assertThat(travleInfo.numGuesses).isEqualTo(6)
+        assertThat(travleInfo.numHints).isEqualTo(1)
+    }
 }

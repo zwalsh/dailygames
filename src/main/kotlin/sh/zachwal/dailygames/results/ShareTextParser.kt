@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.results
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.gameinfo.TradleInfo
+import sh.zachwal.dailygames.results.gameinfo.TravleInfo
 import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
 import java.time.LocalDate
 import javax.inject.Singleton
@@ -21,9 +22,15 @@ class ShareTextParser {
 
     val travleRegex = Regex(
         """
-            \s*#travle\s+#(?<puzzleNumber>\d+)\s+\+(?<score>\d+)\s*(\((?<hintCount>\d+ hint.*\)))?[\s\S]*
+            \s*#travle\s+#(?<puzzleNumber>\d+)\s+\+(?<score>\d+)\s*(\((?<hintCount>\d+) hint.*\))?[\s\S]*
         """.trimIndent()
     )
+
+    val guessEmojiRegex = Regex("[\uD83D\uDFE7\uD83D\uDFE9✅]")
+
+    val orangeSquareEmojiRegex = Regex("\uD83D\uDFE7")
+
+    val checkboxEmojiRegex = Regex("✅")
 
     fun identifyGame(shareText: String): Game? {
         return when {
@@ -53,6 +60,26 @@ class ShareTextParser {
             puzzleNumber = puzzleNumber.toInt(),
             score = score.toIntOrNull() ?: 0,
             shareTextNoLink = shareText.substringBefore("https://").trim()
+        )
+    }
+
+    fun extractTravleInfo(shareText: String): TravleInfo {
+        val match = travleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Travle share")
+
+        val (puzzleNumber, score, _, hintCount) = match.destructured
+
+        val numGuesses = guessEmojiRegex.findAll(shareText).count()
+        val numIncorrect = orangeSquareEmojiRegex.findAll(shareText).count()
+        val numPerfect = checkboxEmojiRegex.findAll(shareText).count()
+
+        return TravleInfo(
+            puzzleNumber = puzzleNumber.toInt(),
+            score = score.toInt(),
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            numGuesses = numGuesses,
+            numIncorrect = numIncorrect,
+            numPerfect = numPerfect,
+            numHints = hintCount.toIntOrNull() ?: 0
         )
     }
 }
