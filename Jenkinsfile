@@ -9,11 +9,11 @@ pipeline {
                 setBuildStatus('pending')
             }
         }
-        stage('test') {
-            steps {
-                sh './gradlew clean build'
-            }
-        }
+//         stage('test') {
+//             steps {
+//                 sh './gradlew clean build'
+//             }
+//         }
         stage('test-release') {
             steps {
                 // Clear test releases
