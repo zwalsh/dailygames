@@ -9,6 +9,7 @@ import org.jdbi.v3.core.kotlin.KotlinPlugin
 import org.jdbi.v3.postgres.PostgresPlugin
 import org.jdbi.v3.sqlobject.kotlin.KotlinSqlObjectPlugin
 import org.junit.jupiter.api.extension.AfterEachCallback
+import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace
 import org.junit.jupiter.api.extension.ParameterContext
@@ -23,7 +24,7 @@ private const val FIXTURES_KEY = "FIXTURES"
 const val USERNAME = "username"
 const val PASSWORD = "password"
 
-class DatabaseExtension : ParameterResolver, AfterEachCallback {
+class DatabaseExtension : ParameterResolver, BeforeEachCallback, AfterEachCallback {
 
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
         return parameterContext.parameter.parameterizedType in listOf(
@@ -106,13 +107,15 @@ class DatabaseExtension : ParameterResolver, AfterEachCallback {
 
     private fun createFixturesInstance(context: ExtensionContext): Fixtures {
         val fixtures = Fixtures(getJdbiInstance(context))
-        fixtures.runFixtures()
         return fixtures
     }
 
     override fun afterEach(context: ExtensionContext) {
         val container = getPostgresContainer(context)
         resetDatabase(container)
+    }
+
+    override fun beforeEach(context: ExtensionContext) {
         val fixtures = getFixturesInstance(context)
         fixtures.runFixtures()
     }
