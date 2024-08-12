@@ -4,6 +4,7 @@ import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
+import sh.zachwal.dailygames.db.dao.game.TravleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -25,6 +26,7 @@ class ResultService @Inject constructor(
     private val puzzleDAO: PuzzleDAO,
     private val worldleDAO: WorldleDAO,
     private val tradleDAO: TradleDAO,
+    private val travleDAO: TravleDAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
 ) {
@@ -67,7 +69,21 @@ class ResultService @Inject constructor(
                 )
             }
 
-            Game.TRAVLE -> TODO()
+            Game.TRAVLE -> {
+                val travleInfo = shareTextParser.extractTravleInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRAVLE, travleInfo.puzzleNumber, null))
+
+                return travleDAO.insertResult(
+                    userId = user.id,
+                    puzzle = puzzle,
+                    score = travleInfo.score,
+                    shareText = travleInfo.shareTextNoLink,
+                    numGuesses = travleInfo.numGuesses,
+                    numIncorrect = travleInfo.numIncorrect,
+                    numPerfect = travleInfo.numPerfect,
+                    numHints = travleInfo.numHints,
+                )
+            }
         }
     }
 

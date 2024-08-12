@@ -13,6 +13,7 @@ import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
+import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
@@ -53,6 +54,7 @@ class ResultServiceTest(
         puzzleDAO = puzzleDAO,
         worldleDAO = jdbi.onDemand(),
         tradleDAO = jdbi.onDemand(),
+        travleDAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
         userService = userService
     )
@@ -110,6 +112,30 @@ class ResultServiceTest(
             🟩🟩🟩🟩🟨
             """.trimIndent()
         )
+    }
+
+    @Test
+    fun `can create Travle result`() {
+        val result = resultService.createResult(fixtures.zach, TRAVLE_WITH_HINT)
+
+        assertThat(result).isInstanceOf(TravleResult::class.java)
+
+        val travleResult = result as TravleResult
+
+        assertThat(travleResult.userId).isEqualTo(fixtures.zach.id)
+        assertThat(travleResult.game).isEqualTo(Game.TRAVLE)
+        assertThat(travleResult.puzzleNumber).isEqualTo(606)
+        assertThat(travleResult.score).isEqualTo(2)
+        assertThat(travleResult.shareText).isEqualTo(
+            """
+            #travle #606 +2 (1 hint)
+            ✅✅🟩🟧🟧✅
+            """.trimIndent()
+        )
+        assertThat(travleResult.numGuesses).isEqualTo(6)
+        assertThat(travleResult.numIncorrect).isEqualTo(2)
+        assertThat(travleResult.numPerfect).isEqualTo(3)
+        assertThat(travleResult.numHints).isEqualTo(1)
     }
 
     @Test
