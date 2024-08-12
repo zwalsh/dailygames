@@ -8,6 +8,7 @@ import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
+import kotlinx.html.id
 import kotlinx.html.label
 import kotlinx.html.li
 import kotlinx.html.p
@@ -24,6 +25,8 @@ import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
+
+const val SHARE_TEXT_ID = "shareTextId"
 
 data class HomeView(
     val username: String
@@ -46,6 +49,8 @@ data class HomeView(
                             form(method = post, classes = "mb-3") {
                                 div(classes = "mb-3") {
                                     textArea(classes = "form-control", rows = "9") {
+                                        id = SHARE_TEXT_ID
+                                        name = SHARE_TEXT_ID
                                         placeholder = "e.g. #Worldle #123 (10.08.2024) 4/6 (100%)..."
                                     }
                                 }
