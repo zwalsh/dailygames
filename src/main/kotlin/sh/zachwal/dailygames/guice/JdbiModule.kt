@@ -8,9 +8,12 @@ import org.jdbi.v3.core.kotlin.KotlinPlugin
 import org.jdbi.v3.postgres.PostgresPlugin
 import org.jdbi.v3.sqlobject.kotlin.KotlinSqlObjectPlugin
 import org.jdbi.v3.sqlobject.kotlin.onDemand
+import sh.zachwal.dailygames.db.dao.GameDAO
+import sh.zachwal.dailygames.db.dao.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.SessionDAO
 import sh.zachwal.dailygames.db.dao.UserDAO
 import sh.zachwal.dailygames.db.dao.UserRoleDAO
+import sh.zachwal.dailygames.db.dao.WorldleDAO
 import javax.sql.DataSource
 
 class JdbiModule : AbstractModule() {
@@ -31,4 +34,13 @@ class JdbiModule : AbstractModule() {
 
     @Provides
     fun roleDao(jdbi: Jdbi): UserRoleDAO = jdbi.onDemand()
+
+    @Provides
+    fun gameDao(jdbi: Jdbi): GameDAO = jdbi.onDemand()
+
+    @Provides
+    fun puzzleDao(jdbi: Jdbi): PuzzleDAO = jdbi.onDemand()
+
+    @Provides
+    fun worldleDao(jdbi: Jdbi): WorldleDAO = jdbi.onDemand()
 }

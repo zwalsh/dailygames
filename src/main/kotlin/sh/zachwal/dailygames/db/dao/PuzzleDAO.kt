@@ -2,20 +2,20 @@ package sh.zachwal.dailygames.db.dao
 
 import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
-import org.jdbi.v3.sqlobject.statement.SqlUpdate
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import java.util.stream.Stream
 
 interface PuzzleDAO {
 
-    @SqlUpdate(
+    @SqlQuery(
         """
         INSERT INTO puzzle (game, number, date) 
         VALUES (:game, :number, :date)
+        RETURNING *
         """
     )
-    fun insertPuzzle(@BindBean puzzle: Puzzle)
+    fun insertPuzzle(@BindBean puzzle: Puzzle): Puzzle
 
     @SqlQuery(
         """

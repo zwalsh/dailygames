@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.ktorutils
+package sh.zachwal.dailygames.utils
 
 import io.ktor.features.origin
 import io.ktor.request.ApplicationRequest

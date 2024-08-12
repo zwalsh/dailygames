@@ -1,12 +1,18 @@
 package sh.zachwal.dailygames.home
 
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.User
+import sh.zachwal.dailygames.results.ResultService
 
 class HomeServiceTest {
 
-    private val homeService = HomeService()
+    private val resultService = mockk<ResultService> {
+        every { resultFeed() } returns emptyList()
+    }
+    private val homeService = HomeService(resultService)
 
     @Test
     fun `creates home view with username of user`() {

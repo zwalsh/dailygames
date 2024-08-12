@@ -6,19 +6,21 @@ import kotlinx.html.h1
 
 fun DIV.card(
     cardHeader: String? = null,
+    cardHeaderClasses: String = "",
     cardTitle: String? = null,
-    classes: String = "mx-3 mt-4 h-100",
+    cardTitleClasses: String = "",
+    classes: String = "mx-3 mt-4",
     cardBody: DIV.() -> Unit,
 ) {
     div(classes = "card $classes") {
         cardHeader?.let {
-            h1(classes = "card-header") {
+            h1(classes = "card-header $cardHeaderClasses") {
                 +cardHeader
             }
         }
         div(classes = "card-body") {
             cardTitle?.let {
-                h1(classes = "card-title") { +cardTitle }
+                h1(classes = "card-title $cardTitleClasses") { +cardTitle }
             }
             cardBody()
         }

@@ -132,7 +132,7 @@ class WorldleDAOTest(
         insertResult(userId = fixtures.jackie.id)
         insertResult(puzzle = puzzleTwo)
 
-        val results = worldleDAO.allResults().toList()
+        val results = worldleDAO.allResultsStream().toList()
 
         assertThat(results).hasSize(3)
     }
@@ -143,7 +143,7 @@ class WorldleDAOTest(
         val resultTwo = insertResult(puzzle = puzzleTwo)
         val resultThree = insertResult(puzzle = puzzleTwo)
 
-        val results = worldleDAO.allResults().toList()
+        val results = worldleDAO.allResultsStream().toList()
 
         assertThat(results).containsExactly(resultThree, resultTwo, resultOne)
     }
