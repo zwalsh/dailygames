@@ -72,7 +72,7 @@ data class HomeView constructor(
                 }
                 div(classes = "row mt-4 border-top") {
                     div(classes = "col") {
-                        h1(classes = "text-center mt-2 text-decoration-underline") {
+                        h1(classes = "text-center mt-2") {
                             +"Feed"
                         }
                     }
