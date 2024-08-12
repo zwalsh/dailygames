@@ -29,7 +29,7 @@ pipeline {
 //         }
         stage('test database migration') {
             steps {
-                dir('/home/testdailygames') {
+                dir('/home/testdailygames/dailygames') {
                     checkout scm
                 }
             }
