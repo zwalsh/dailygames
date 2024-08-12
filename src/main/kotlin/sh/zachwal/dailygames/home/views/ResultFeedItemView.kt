@@ -2,7 +2,7 @@ package sh.zachwal.dailygames.home.views
 
 import kotlinx.html.DIV
 import kotlinx.html.div
-import kotlinx.html.p
+import kotlinx.html.span
 import kotlinx.html.style
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
@@ -20,7 +20,7 @@ data class ResultFeedItemView(
                     cardHeaderClasses = "fs-5",
                     classes = "mx-3"
                 ) {
-                    p {
+                    span {
                         style = "white-space: pre-wrap;"
                         +shareText
                     }
