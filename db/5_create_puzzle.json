@@ -1,0 +1,57 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "5",
+        "author": "zach",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "puzzle",
+              "columns": [
+                {
+                  "column": {
+                    "name": "game",
+                    "type": "VARCHAR(16)",
+                    "constraints": {
+                      "primaryKey": true,
+                      "primaryKeyName": "puzzle_game_number_pk",
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "number",
+                    "type": "int",
+                    "constraints": {
+                      "primaryKey": true,
+                      "primaryKeyName": "puzzle_game_number_pk",
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "date",
+                    "type": "date"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "addForeignKeyConstraint": {
+              "baseTableName": "puzzle",
+              "baseColumnNames": "game",
+              "constraintName": "puzzle_game_fk",
+              "referencedTableName": "game",
+              "referencedColumnNames": "name",
+              "onUpdate": "CASCADE"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

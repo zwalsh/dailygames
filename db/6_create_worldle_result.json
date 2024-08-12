@@ -1,0 +1,115 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "6",
+        "author": "zach",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "worldle_result",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "bigint",
+                    "autoIncrement": true,
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "user_id",
+                    "type": "bigint",
+                    "constraints": {
+                      "nullable": false,
+                      "references": "public.user(id)",
+                      "foreignKeyName": "worldle_result_user_id_fk"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "game",
+                    "type": "VARCHAR(16)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_date",
+                    "type": "date"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted",
+                    "type": "timestamptz",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "score",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "share_text",
+                    "type": "VARCHAR(200)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "score_percentage",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "addForeignKeyConstraint": {
+              "baseTableName": "worldle_result",
+              "baseColumnNames": "game,puzzle_number",
+              "constraintName": "worldle_result_puzzle_fk",
+              "referencedTableName": "puzzle",
+              "referencedColumnNames": "game,number"
+            }
+          },
+          {
+            "sql": {
+              "sql": "ALTER TABLE worldle_result ADD CONSTRAINT worldle_result_score_check CHECK (score_percentage >= 0 AND score_percentage <= 100)"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

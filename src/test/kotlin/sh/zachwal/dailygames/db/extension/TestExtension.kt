@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.db
+package sh.zachwal.dailygames.db.extension
 
 import com.google.common.truth.Truth.assertThat
 import org.jdbi.v3.core.Jdbi
@@ -27,7 +27,14 @@ class TestExtension {
         while (resultSet.next()) {
             tables.add(resultSet.getString(1))
         }
-        assertThat(tables).containsAtLeast("user", "session", "role")
+        assertThat(tables).containsAtLeast(
+            "user",
+            "session",
+            "role",
+            "game",
+            "puzzle",
+            "worldle_result"
+        )
     }
 
     @Test
