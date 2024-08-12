@@ -21,7 +21,7 @@ object HeroView : HTMLView<HTML>() {
         }
         body {
             darkMode()
-            div(classes = "row align-items-center vh-100") {
+            div(classes = "row align-items-center vh-100 vw-100") {
                 div(classes = "px-4 py-5 my-5 text-center") {
                     i(classes = "bi bi-globe-europe-africa fs-1") // TODO better icon
                     h1(classes = "display-5 fw-bold text-body-emphasis") {
