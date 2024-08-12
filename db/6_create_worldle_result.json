@@ -45,17 +45,14 @@
                 },
                 {
                   "column": {
-                    "name": "instant_submitted",
-                    "type": "timestamptz",
-                    "constraints": {
-                      "nullable": false
-                    }
+                    "name": "puzzle_date",
+                    "type": "date"
                   }
                 },
                 {
                   "column": {
-                    "name": "puzzle_date",
-                    "type": "date",
+                    "name": "instant_submitted",
+                    "type": "timestamptz",
                     "constraints": {
                       "nullable": false
                     }
@@ -102,7 +99,7 @@
           },
           {
             "sql": {
-              "sql": "ALTER TABLE worldle_result ADD CONSTRAINT worldle_result_score_check CHECK (score_percentage >= 0 AND score_percentage <= 0)"
+              "sql": "ALTER TABLE worldle_result ADD CONSTRAINT worldle_result_score_check CHECK (score_percentage >= 0 AND score_percentage <= 100)"
             }
           }
         ]
