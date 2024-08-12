@@ -24,6 +24,11 @@
       "include": {
         "file": "5_create_puzzle.json"
       }
+    },
+    {
+      "include": {
+        "file": "6_create_worldle_result.json"
+      }
     }
   ]
 }

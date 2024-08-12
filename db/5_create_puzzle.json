@@ -11,22 +11,30 @@
               "columns": [
                 {
                   "column": {
-                    "name": "id",
-                    "type": "bigint",
-                    "autoIncrement": true,
+                    "name": "game",
+                    "type": "VARCHAR(16)",
                     "constraints": {
                       "primaryKey": true,
+                      "primaryKeyName": "puzzle_game_number_pk",
                       "nullable": false
                     }
                   }
                 },
                 {
                   "column": {
-                    "name": "game",
-                    "type": "VARCHAR(16)",
+                    "name": "number",
+                    "type": "int",
                     "constraints": {
+                      "primaryKey": true,
+                      "primaryKeyName": "puzzle_game_number_pk",
                       "nullable": false
                     }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "date",
+                    "type": "date"
                   }
                 }
               ]

@@ -9,8 +9,9 @@ data class WorldleResult constructor(
     override val id: Long,
     @ColumnName("user_id")
     override val userId: Long,
-    @ColumnName("puzzle_id")
-    override val puzzleId: Long,
+    override val game: Game,
+    @ColumnName("puzzle_number")
+    override val puzzleNumber: Int,
     @ColumnName("instant_submitted")
     override val instantSubmitted: Instant,
     @ColumnName("puzzle_date")
@@ -21,5 +22,5 @@ data class WorldleResult constructor(
 
     // Worldle columns
     @ColumnName("score_percentage")
-    val scorePercentage: Int
+    val scorePercentage: Int,
 ) : PuzzleResult()
