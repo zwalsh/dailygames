@@ -59,7 +59,7 @@ class UserController @Inject constructor(
                             "No User principal found after post"
                         )
                     sessionService.createUserSession(call, p.name)
-                    call.respondRedirect("/profile")
+                    call.respondRedirect("/")
                 }
             }
         }
