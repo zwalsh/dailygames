@@ -5,9 +5,27 @@ import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import java.time.LocalDate
 
+const val TRAVLE_PERFECT = """
+#travle #607 +0 (Perfect)
+✅✅✅✅✅✅✅
+https://travle.earth
+"""
+
+const val TRAVLE_PLUS_0 = """
+#travle #607 +0
+✅✅✅🟩✅✅✅
+"""
+
+const val TRAVLE_WITH_HINT = """
+#travle #606 +2 (1 hint)
+✅✅🟩🟧🟧✅
+"""
+
 class ShareTextParserTest {
 
     private val parser = ShareTextParser()
+
+    // Text matching
 
     @Test
     fun `can match worldle`() {
@@ -75,11 +93,20 @@ class ShareTextParserTest {
     }
 
     @Test
+    fun `matches Travle`() {
+        assertThat(parser.identifyGame(TRAVLE_PERFECT)).isEqualTo(Game.TRAVLE)
+        assertThat(parser.identifyGame(TRAVLE_PLUS_0)).isEqualTo(Game.TRAVLE)
+        assertThat(parser.identifyGame(TRAVLE_WITH_HINT)).isEqualTo(Game.TRAVLE)
+    }
+
+    @Test
     fun `matches text with carriage return`() {
         val shareText = "#Tradle #890 X/6\r\nhttps://oec.world/en/games/tradle"
 
         assertThat(parser.identifyGame(shareText)).isEqualTo(Game.TRADLE)
     }
+
+    // Extraction
 
     @Test
     fun `extracts Worldle info`() {

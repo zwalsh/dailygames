@@ -19,10 +19,17 @@ class ShareTextParser {
         """.trimIndent()
     )
 
+    val travleRegex = Regex(
+        """
+            \s*#travle\s+#(?<puzzleNumber>\d+)\s+\+(?<score>\d+)\s*(\((?<hintCount>\d+ hint.*\)))?[\s\S]*
+        """.trimIndent()
+    )
+
     fun identifyGame(shareText: String): Game? {
         return when {
             worldleRegex.matches(shareText) -> Game.WORLDLE
             tradleRegex.matches(shareText) -> Game.TRADLE
+            travleRegex.matches(shareText) -> Game.TRAVLE
             else -> null
         }
     }

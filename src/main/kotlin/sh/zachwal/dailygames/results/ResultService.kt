@@ -66,6 +66,8 @@ class ResultService @Inject constructor(
                     shareText = tradleInfo.shareTextNoLink,
                 )
             }
+
+            Game.TRAVLE -> TODO()
         }
     }
 
