@@ -27,6 +27,14 @@ pipeline {
                 sh "sudo systemctl restart testdailygames"
             }
         }
+        stage('test database migration') {
+            steps {
+                dir('~testdailygames') {
+                    checkout scm
+                }
+            }
+        }
+
         stage('release') {
             when {
                 expression { env.GIT_BRANCH == 'origin/main' }
