@@ -138,7 +138,7 @@ class WorldleDAOTest(
     }
 
     @Test
-    fun `list all is ordered by puzzle_number descending, then submission time descending`() {
+    fun `list all is ordered by submission time descending`() {
         val resultOne = insertResult()
         val resultTwo = insertResult(puzzle = puzzleTwo)
         val resultThree = insertResult(puzzle = puzzleTwo)

@@ -60,7 +60,7 @@ interface WorldleDAO {
         """
             SELECT * 
             FROM worldle_result
-            ORDER BY puzzle_number DESC, instant_submitted DESC
+            ORDER BY instant_submitted DESC
         """
     )
     fun allResultsStream(): Stream<WorldleResult>

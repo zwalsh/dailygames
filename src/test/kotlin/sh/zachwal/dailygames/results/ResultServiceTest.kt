@@ -12,6 +12,7 @@ import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
@@ -27,6 +28,17 @@ private val worldle934 = """
             https://worldle.teuteuf.fr
 """.trimIndent()
 
+private val tradle890 = """
+    #Tradle #890 X/6
+    🟩🟩⬜⬜⬜
+    🟩🟩🟩🟩⬜
+    🟩🟩🟩🟩🟨
+    🟩🟩🟩🟩🟨
+    🟩🟩🟩🟩🟨
+    🟩🟩🟩🟩🟨
+    https://oec.world/en/games/tradle
+""".trimIndent()
+
 @ExtendWith(DatabaseExtension::class)
 class ResultServiceTest(
     jdbi: Jdbi,
@@ -40,6 +52,7 @@ class ResultServiceTest(
         jdbi = jdbi,
         puzzleDAO = puzzleDAO,
         worldleDAO = jdbi.onDemand(),
+        tradleDAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
         userService = userService
     )
@@ -75,6 +88,31 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `can create Tradle result`() {
+        val result = resultService.createResult(fixtures.zach, tradle890)
+
+        assertThat(result).isInstanceOf(TradleResult::class.java)
+
+        val tradleResult = result as TradleResult
+
+        assertThat(tradleResult.userId).isEqualTo(fixtures.zach.id)
+        assertThat(tradleResult.game).isEqualTo(Game.TRADLE)
+        assertThat(tradleResult.puzzleNumber).isEqualTo(890)
+        assertThat(tradleResult.score).isEqualTo(0)
+        assertThat(tradleResult.shareText).isEqualTo(
+            """
+            #Tradle #890 X/6
+            🟩🟩⬜⬜⬜
+            🟩🟩🟩🟩⬜
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            """.trimIndent()
+        )
+    }
+
+    @Test
     fun `creating a result creates a Puzzle record if necessary`() {
         resultService.createResult(fixtures.zach, worldle934)
 
@@ -103,7 +141,7 @@ class ResultServiceTest(
     }
 
     @Test
-    fun `result feed returns results in order`() {
+    fun `result feed returns results in order by submission time`() {
         val result1 = resultService.createResult(fixtures.zach, worldle934)
         val result2 = resultService.createResult(
             fixtures.jackie,
@@ -139,5 +177,26 @@ class ResultServiceTest(
         val feed = resultService.resultFeed()
 
         assertThat(feed).hasSize(20)
+    }
+
+    @Test
+    fun `result feed includes worldle and tradle results, ordered by submission time`() {
+        val worldleResult = resultService.createResult(fixtures.zach, worldle934)
+        val tradleResult = resultService.createResult(fixtures.jackie, tradle890)
+
+        val feed = resultService.resultFeed()
+
+        assertThat(feed).containsExactly(
+            ResultFeedItemView(
+                username = fixtures.jackie.username,
+                resultTitle = "Tradle #890",
+                shareText = tradleResult.shareText,
+            ),
+            ResultFeedItemView(
+                username = fixtures.zach.username,
+                resultTitle = "Worldle #934",
+                shareText = worldleResult.shareText,
+            ),
+        )
     }
 }

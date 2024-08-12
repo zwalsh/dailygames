@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.results
 
 import org.jdbi.v3.core.Jdbi
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.dao.game.TradleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -13,6 +14,7 @@ import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.toSentenceCase
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.stream.Stream
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.streams.toList
@@ -22,6 +24,7 @@ class ResultService @Inject constructor(
     private val jdbi: Jdbi,
     private val puzzleDAO: PuzzleDAO,
     private val worldleDAO: WorldleDAO,
+    private val tradleDAO: TradleDAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
 ) {
@@ -48,7 +51,18 @@ class ResultService @Inject constructor(
                     scorePercentage = worldleInfo.percentage,
                 )
             }
-            Game.TRADLE -> TODO()
+
+            Game.TRADLE -> {
+                val tradleInfo = shareTextParser.extractTradleInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRADLE, tradleInfo.puzzleNumber, null))
+
+                return tradleDAO.insertResult(
+                    userId = user.id,
+                    puzzle = puzzle,
+                    score = tradleInfo.score,
+                    shareText = tradleInfo.shareTextNoLink,
+                )
+            }
         }
     }
 
@@ -70,16 +84,23 @@ class ResultService @Inject constructor(
         }
     }
 
-    private fun readFirstTwentyResults(): List<WorldleResult> {
+    private fun readFirstTwentyResults(): List<PuzzleResult> {
         // Must use JDBI Handle directly to use streaming API
         return jdbi.open().use { handle ->
             val worldleDAO = handle.attach(WorldleDAO::class.java)
-            worldleDAO.allResultsStream().use { results ->
-                results
-                    .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(2, ChronoUnit.DAYS)) }
-                    .limit(20)
-                    .toList()
-            }
+            val worldleResults = worldleDAO.allResultsStream().use(::readFirstTwenty)
+
+            val tradleDAO = handle.attach(TradleDAO::class.java)
+            val tradleResults = tradleDAO.allResultsStream().use(::readFirstTwenty)
+
+            (worldleResults + tradleResults).sortedBy { it.instantSubmitted }.take(20)
         }
+    }
+
+    private fun <T : PuzzleResult> readFirstTwenty(stream: Stream<T>): List<T> {
+        return stream
+            .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(2, ChronoUnit.DAYS)) }
+            .limit(20)
+            .toList()
     }
 }
