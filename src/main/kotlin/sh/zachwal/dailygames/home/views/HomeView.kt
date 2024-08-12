@@ -50,8 +50,10 @@ data class HomeView constructor(
                                         placeholder = "e.g. #Worldle #123 (10.08.2024) 4/6 (100%)..."
                                     }
                                 }
-                                submitInput(classes = "btn btn-primary") {
-                                    value = "Submit"
+                                div(classes = "d-flex justify-content-end") {
+                                    submitInput(classes = "btn btn-success") {
+                                        value = "Submit"
+                                    }
                                 }
                             }
                         }
