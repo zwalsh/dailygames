@@ -8,12 +8,20 @@ import javax.inject.Singleton
 class ShareTextParser {
 
     val worldleRegex = Regex(
-        """#Worldle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+\((?<percentage>\d+)%\)[\s\S]*"""
+        """\s*#Worldle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+\((?<percentage>\d+)%\)[\s\S]*"""
+    )
+
+    val tradleRegex = Regex(
+        """
+            \s*#Tradle\s+#(?<puzzleNumber>\d+)\s+(?<score>\S)/6
+            [\s\S]*
+        """.trimIndent()
     )
 
     fun identifyGame(shareText: String): Game? {
         return when {
             worldleRegex.matches(shareText) -> Game.WORLDLE
+            tradleRegex.matches(shareText) -> Game.TRADLE
             else -> null
         }
     }
