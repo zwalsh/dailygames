@@ -35,6 +35,7 @@ class TestExtension {
             "puzzle",
             "worldle_result",
             "tradle_result",
+            "travle_result",
         )
     }
 

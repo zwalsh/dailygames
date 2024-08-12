@@ -34,6 +34,11 @@
       "include": {
         "file": "7_create_tradle_result.json"
       }
+    },
+    {
+      "include": {
+        "file": "8_create_travle_result.json"
+      }
     }
   ]
 }
