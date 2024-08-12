@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.db.dao
+package sh.zachwal.dailygames.db.dao.game
 
 import com.google.common.collect.Range
 import com.google.common.truth.Truth.assertThat

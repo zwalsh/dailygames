@@ -1,8 +1,8 @@
 package sh.zachwal.dailygames.results
 
 import org.jdbi.v3.core.Jdbi
-import sh.zachwal.dailygames.db.dao.PuzzleDAO
-import sh.zachwal.dailygames.db.dao.WorldleDAO
+import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle

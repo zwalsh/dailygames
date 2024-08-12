@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.db.dao
+package sh.zachwal.dailygames.db.dao.game
 
 import org.jdbi.v3.sqlobject.statement.SqlQuery
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
