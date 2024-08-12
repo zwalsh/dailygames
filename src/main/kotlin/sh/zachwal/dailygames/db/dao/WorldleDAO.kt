@@ -26,4 +26,19 @@ interface WorldleDAO {
         shareText: String,
         scorePercentage: Int
     ): WorldleResult
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM worldle_result
+            WHERE user_id = :userId
+            AND puzzle_date = :date
+            ORDER BY instant_submitted DESC
+            LIMIT 1
+        """
+    )
+    fun worldleResultForUserOnDate(
+        userId: Long,
+        date: LocalDate
+    ): WorldleResult?
 }
