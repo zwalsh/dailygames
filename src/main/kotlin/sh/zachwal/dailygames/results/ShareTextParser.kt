@@ -15,8 +15,7 @@ class ShareTextParser {
 
     val tradleRegex = Regex(
         """
-            \s*#Tradle\s+#(?<puzzleNumber>\d+)\s+(?<score>\S)/6
-            [\s\S]*
+            \s*#Tradle\s+#(?<puzzleNumber>\d+)\s+(?<score>\S)/6[\s\S]*
         """.trimIndent()
     )
 

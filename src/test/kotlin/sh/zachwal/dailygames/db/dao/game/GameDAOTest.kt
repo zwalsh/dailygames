@@ -17,6 +17,6 @@ class GameDAOTest(jdbi: Jdbi) {
     fun `game table includes all games`() {
         val games = gameDAO.listGames()
 
-        assertThat(games).containsExactly(Game.values().map { it.name })
+        assertThat(games).containsExactlyElementsIn(Game.values())
     }
 }

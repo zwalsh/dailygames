@@ -75,6 +75,13 @@ class ShareTextParserTest {
     }
 
     @Test
+    fun `matches text with carriage return`() {
+        val shareText = "#Tradle #890 X/6\r\nhttps://oec.world/en/games/tradle"
+
+        assertThat(parser.identifyGame(shareText)).isEqualTo(Game.TRADLE)
+    }
+
+    @Test
     fun `extracts Worldle info`() {
         val shareText = """
             #Worldle #934 (12.08.2024) 4/6 (100%)

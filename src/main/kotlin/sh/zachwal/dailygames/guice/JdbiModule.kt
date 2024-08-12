@@ -13,6 +13,7 @@ import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.SessionDAO
 import sh.zachwal.dailygames.db.dao.UserDAO
 import sh.zachwal.dailygames.db.dao.UserRoleDAO
+import sh.zachwal.dailygames.db.dao.game.TradleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import javax.sql.DataSource
 
@@ -43,4 +44,7 @@ class JdbiModule : AbstractModule() {
 
     @Provides
     fun worldleDao(jdbi: Jdbi): WorldleDAO = jdbi.onDemand()
+
+    @Provides
+    fun tradleDao(jdbi: Jdbi): TradleDAO = jdbi.onDemand()
 }

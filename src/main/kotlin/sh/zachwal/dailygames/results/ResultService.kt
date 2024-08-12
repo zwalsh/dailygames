@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.results
 
 import org.jdbi.v3.core.Jdbi
+import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
@@ -29,12 +30,15 @@ class ResultService @Inject constructor(
     private val userService: UserService,
 ) {
 
+    private val logger = LoggerFactory.getLogger(ResultService::class.java)
+
     fun createResult(
         user: User,
         shareText: String
     ): PuzzleResult {
         // regex & parse share text
         val game = shareTextParser.identifyGame(shareText) ?: run {
+            logger.error("Could not recognize $shareText as a valid game")
             throw IllegalArgumentException("Share text could not be recognized as a valid game")
         }
 
@@ -93,7 +97,7 @@ class ResultService @Inject constructor(
             val tradleDAO = handle.attach(TradleDAO::class.java)
             val tradleResults = tradleDAO.allResultsStream().use(::readFirstTwenty)
 
-            (worldleResults + tradleResults).sortedBy { it.instantSubmitted }.take(20)
+            (worldleResults + tradleResults).sortedByDescending { it.instantSubmitted }.take(20)
         }
     }
 
