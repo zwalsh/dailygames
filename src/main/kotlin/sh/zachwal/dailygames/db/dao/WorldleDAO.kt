@@ -63,5 +63,5 @@ interface WorldleDAO {
             ORDER BY puzzle_number DESC, instant_submitted DESC
         """
     )
-    fun allResults(): Stream<WorldleResult>
+    fun allResultsStream(): Stream<WorldleResult>
 }

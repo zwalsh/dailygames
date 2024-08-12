@@ -1,7 +1,11 @@
 package sh.zachwal.dailygames.home.views
 
 import kotlinx.html.DIV
+import kotlinx.html.div
+import kotlinx.html.p
+import kotlinx.html.style
 import sh.zachwal.dailygames.shared_html.HTMLView
+import sh.zachwal.dailygames.shared_html.card
 
 data class ResultFeedItemView(
     val username: String,
@@ -9,6 +13,19 @@ data class ResultFeedItemView(
     val shareText: String,
 ) : HTMLView<DIV>() {
     override fun DIV.render() {
-        TODO("Not yet implemented")
+        div(classes = "row mt-2 mb-4") {
+            div(classes = "col") {
+                card(
+                    cardHeader = "$username's $resultTitle",
+                    cardHeaderClasses = "fs-5",
+                    classes = "mx-3"
+                ) {
+                    p {
+                        style = "white-space: pre-wrap;"
+                        +shareText
+                    }
+                }
+            }
+        }
     }
 }

@@ -80,26 +80,6 @@ data class HomeView constructor(
                         }
                     }
                 }
-                div(classes = "row") {
-                    div(classes = "col") {
-                        card(
-                            cardHeader = "zach's #Worldle #934",
-                            cardHeaderClasses = "fs-5",
-                            classes = "mx-3 mt-2 mb-4"
-                        ) {
-                            p {
-                                style = "white-space: pre-wrap;"
-                                +"""
-                                #Worldle #934 (12.08.2024) 4/6 (100%)
-                                🟩🟩🟩🟩🟨⬅️
-                                🟩🟩🟩🟩🟨⬅️
-                                🟩🟩🟩🟩🟨↗️
-                                🟩🟩🟩🟩🟩🎉
-                            """.trimIndent()
-                            }
-                        }
-                    }
-                }
                 resultFeed.forEach {
                     it.renderIn(this)
                 }

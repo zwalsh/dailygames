@@ -1,11 +1,13 @@
 package sh.zachwal.dailygames.results
 
+import org.jdbi.v3.core.Jdbi
 import sh.zachwal.dailygames.db.dao.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.WorldleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
+import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.toSentenceCase
@@ -17,6 +19,7 @@ import kotlin.streams.toList
 
 @Singleton
 class ResultService @Inject constructor(
+    private val jdbi: Jdbi,
     private val puzzleDAO: PuzzleDAO,
     private val worldleDAO: WorldleDAO,
     private val shareTextParser: ShareTextParser,
@@ -53,10 +56,7 @@ class ResultService @Inject constructor(
     }
 
     fun resultFeed(): List<ResultFeedItemView> {
-        val results = worldleDAO.allResults()
-            .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(2, ChronoUnit.DAYS)) }
-            .limit(20)
-            .toList()
+        val results = readFirstTwentyResults()
 
         val userNameCache = mutableMapOf<Long, String?>()
         return results.map { result ->
@@ -66,6 +66,19 @@ class ResultService @Inject constructor(
                 "${result.game.name.toSentenceCase()} #${result.puzzleNumber}",
                 result.shareText,
             )
+        }
+    }
+
+    private fun readFirstTwentyResults(): List<WorldleResult> {
+        // Must use JDBI Handle directly to use streaming API
+        return jdbi.open().use { handle ->
+            val worldleDAO = handle.attach(WorldleDAO::class.java)
+            worldleDAO.allResultsStream().use { results ->
+                results
+                    .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(2, ChronoUnit.DAYS)) }
+                    .limit(20)
+                    .toList()
+            }
         }
     }
 }

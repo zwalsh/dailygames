@@ -37,6 +37,7 @@ class ResultServiceTest(
     private val userService: UserService = mockk()
 
     private val resultService = ResultService(
+        jdbi = jdbi,
         puzzleDAO = puzzleDAO,
         worldleDAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
