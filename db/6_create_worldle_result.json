@@ -34,13 +34,19 @@
                 {
                   "column": {
                     "name": "game",
-                    "type": "VARCHAR(16)"
+                    "type": "VARCHAR(16)",
+                    "constraints": {
+                      "nullable": false
+                    }
                   }
                 },
                 {
                   "column": {
                     "name": "puzzle_number",
-                    "type": "int"
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
                   }
                 },
                 {
