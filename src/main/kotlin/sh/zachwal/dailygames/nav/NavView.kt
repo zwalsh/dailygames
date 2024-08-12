@@ -46,13 +46,9 @@ data class NavView constructor(
     )
 
     override fun BODY.render() {
-        header(classes = "px-3 py-3 mb-4 border-bottom") {
+        header(classes = "px-3 py-1 mb-4 border-bottom") {
             div(classes = "container") {
                 div(classes = "d-flex flex-wrap align-items-center justify-content-center") {
-                    a(href = "/", classes = "nav-link") {
-                        i(classes = "bi bi-globe-europe-africa fs-1 m-2")
-                        span(classes = "lead align-text-bottom") { +"Daily Games" }
-                    }
                     ul(classes = "nav justify-content-center my-md-0 text-small") {
                         navItems.forEach {
                             it.renderIn(this)
