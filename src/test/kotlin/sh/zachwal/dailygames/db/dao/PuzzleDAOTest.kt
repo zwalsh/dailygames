@@ -28,6 +28,14 @@ class PuzzleDAOTest(jdbi: Jdbi) {
     }
 
     @Test
+    fun `returns inserted puzzle`() {
+        val puzzle = Puzzle(Game.WORLDLE, 123, LocalDate.of(2024, 8, 11))
+        val inserted = puzzleDAO.insertPuzzle(puzzle)
+
+        assertThat(inserted).isEqualTo(puzzle)
+    }
+
+    @Test
     fun `cannot insert two puzzles of the same game and number`() {
         val puzzle = Puzzle(Game.WORLDLE, 123, LocalDate.of(2024, 8, 11))
         puzzleDAO.insertPuzzle(puzzle)

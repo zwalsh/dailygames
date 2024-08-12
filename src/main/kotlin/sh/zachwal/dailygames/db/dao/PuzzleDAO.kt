@@ -9,13 +9,14 @@ import java.util.stream.Stream
 
 interface PuzzleDAO {
 
-    @SqlUpdate(
+    @SqlQuery(
         """
         INSERT INTO puzzle (game, number, date) 
         VALUES (:game, :number, :date)
+        RETURNING *
         """
     )
-    fun insertPuzzle(@BindBean puzzle: Puzzle)
+    fun insertPuzzle(@BindBean puzzle: Puzzle): Puzzle
 
     @SqlQuery(
         """
