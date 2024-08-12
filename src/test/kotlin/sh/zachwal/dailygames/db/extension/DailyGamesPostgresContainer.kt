@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.db
+package sh.zachwal.dailygames.db.extension
 
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName

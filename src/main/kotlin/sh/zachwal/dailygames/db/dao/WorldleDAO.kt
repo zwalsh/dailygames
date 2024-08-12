@@ -6,6 +6,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import java.time.LocalDate
+import java.util.stream.Stream
 
 interface WorldleDAO {
 
@@ -41,4 +42,18 @@ interface WorldleDAO {
         userId: Long,
         date: LocalDate
     ): WorldleResult?
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM worldle_result
+            WHERE game = :puzzle.game
+            AND puzzle_number = :puzzle.number
+            ORDER BY instant_submitted DESC
+        """
+    )
+    fun worldleResultsForPuzzle(
+        @BindBean("puzzle")
+        puzzle: Puzzle
+    ): Stream<WorldleResult>
 }

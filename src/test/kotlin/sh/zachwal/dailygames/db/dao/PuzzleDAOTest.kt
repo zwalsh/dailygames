@@ -6,7 +6,7 @@ import org.jdbi.v3.sqlobject.kotlin.onDemand
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import sh.zachwal.dailygames.db.DatabaseExtension
+import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import java.time.LocalDate

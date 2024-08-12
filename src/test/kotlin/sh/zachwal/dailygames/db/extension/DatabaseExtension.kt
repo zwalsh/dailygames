@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.db
+package sh.zachwal.dailygames.db.extension
 
 import liquibase.Liquibase
 import liquibase.database.DatabaseFactory
@@ -18,6 +18,7 @@ import kotlin.io.path.Path
 private val postgresContainerNamespace = Namespace.create("postgres")
 private const val POSTGRES_CONTAINER_KEY = "POSTGRES_CONTAINER_KEY"
 private const val JDBI_KEY = "JDBI"
+private const val FIXTURES_KEY = "FIXTURES"
 
 const val USERNAME = "username"
 const val PASSWORD = "password"
@@ -27,7 +28,8 @@ class DatabaseExtension : ParameterResolver, AfterEachCallback {
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
         return parameterContext.parameter.parameterizedType in listOf(
             DailyGamesPostgresContainer::class.java,
-            Jdbi::class.java
+            Jdbi::class.java,
+            Fixtures::class.java,
         )
     }
 
@@ -35,6 +37,7 @@ class DatabaseExtension : ParameterResolver, AfterEachCallback {
         return when (parameterContext.parameter.parameterizedType) {
             DailyGamesPostgresContainer::class.java -> getPostgresContainer(extensionContext)
             Jdbi::class.java -> getJdbiInstance(extensionContext)
+            Fixtures::class.java -> getFixturesInstance(extensionContext)
             else -> throw IllegalArgumentException("Cannot resolve parameter of type ${parameterContext.parameter.parameterizedType}")
         }
     }
@@ -91,8 +94,26 @@ class DatabaseExtension : ParameterResolver, AfterEachCallback {
             .installPlugin(KotlinSqlObjectPlugin())
     }
 
+    private fun getFixturesInstance(context: ExtensionContext): Fixtures {
+        return context
+            .getStore(postgresContainerNamespace)
+            .getOrComputeIfAbsent(
+                FIXTURES_KEY,
+                { createFixturesInstance(context) },
+                Fixtures::class.java
+            )
+    }
+
+    private fun createFixturesInstance(context: ExtensionContext): Fixtures {
+        val fixtures = Fixtures(getJdbiInstance(context))
+        fixtures.runFixtures()
+        return fixtures
+    }
+
     override fun afterEach(context: ExtensionContext) {
         val container = getPostgresContainer(context)
         resetDatabase(container)
+        val fixtures = getFixturesInstance(context)
+        fixtures.runFixtures()
     }
 }

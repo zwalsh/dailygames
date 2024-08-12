@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.db
+package sh.zachwal.dailygames.db.extension
 
 import com.google.common.truth.Truth.assertThat
 import org.jdbi.v3.core.Jdbi
