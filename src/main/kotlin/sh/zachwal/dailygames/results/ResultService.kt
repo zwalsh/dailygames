@@ -6,14 +6,21 @@ import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
+import sh.zachwal.dailygames.home.views.ResultFeedItemView
+import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.utils.toSentenceCase
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.streams.toList
 
 @Singleton
 class ResultService @Inject constructor(
     private val puzzleDAO: PuzzleDAO,
     private val worldleDAO: WorldleDAO,
     private val shareTextParser: ShareTextParser,
+    private val userService: UserService,
 ) {
 
     fun createResult(
@@ -43,5 +50,22 @@ class ResultService @Inject constructor(
 
     private fun getOrCreatePuzzle(puzzle: Puzzle): Puzzle {
         return puzzleDAO.getPuzzle(puzzle.game, puzzle.number) ?: puzzleDAO.insertPuzzle(puzzle)
+    }
+
+    fun resultFeed(): List<ResultFeedItemView> {
+        val results = worldleDAO.allResults()
+            .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(2, ChronoUnit.DAYS)) }
+            .limit(20)
+            .toList()
+
+        val userNameCache = mutableMapOf<Long, String?>()
+        return results.map { result ->
+            val username = userNameCache.computeIfAbsent(result.userId) { userService.getUser(it)?.username }
+            ResultFeedItemView(
+                username ?: "Unknown",
+                "${result.game.name.toSentenceCase()} #${result.puzzleNumber}",
+                result.shareText,
+            )
+        }
     }
 }

@@ -28,8 +28,9 @@ import sh.zachwal.dailygames.shared_html.headSetup
 
 const val SHARE_TEXT_ID = "shareTextId"
 
-data class HomeView(
-    val username: String
+data class HomeView constructor(
+    val username: String,
+    val resultFeed: List<ResultFeedItemView>,
 ) : HTMLView<HTML>() {
 
     private val nav = NavView(username = username, currentActiveNavItem = NavItem.HOME)
@@ -98,6 +99,9 @@ data class HomeView(
                             }
                         }
                     }
+                }
+                resultFeed.forEach {
+                    it.renderIn(this)
                 }
             }
         }
