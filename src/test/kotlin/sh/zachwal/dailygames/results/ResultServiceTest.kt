@@ -25,7 +25,7 @@ private val worldle934 = """
             🟩🟩🟩🟩🟩🎉
 
             https://worldle.teuteuf.fr
-        """.trimIndent()
+""".trimIndent()
 
 @ExtendWith(DatabaseExtension::class)
 class ResultServiceTest(
@@ -70,7 +70,7 @@ class ResultServiceTest(
             🟩🟩🟩🟩🟨⬅️
             🟩🟩🟩🟩🟨↗️
             🟩🟩🟩🟩🟩🎉
-        """.trimIndent()
+            """.trimIndent()
         )
     }
 

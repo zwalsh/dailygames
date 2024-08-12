@@ -1,7 +1,6 @@
 package sh.zachwal.dailygames.results
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import java.time.LocalDate
@@ -81,7 +80,7 @@ class ShareTextParserTest {
             🟩🟩🟩🟩🟨⬅️
             🟩🟩🟩🟩🟨↗️
             🟩🟩🟩🟩🟩🎉
-        """.trimIndent()
+            """.trimIndent()
         )
     }
 
@@ -121,7 +120,7 @@ class ShareTextParserTest {
             🟩🟩🟩🟩🟨⬅️
             🟩🟩🟩🟩🟨↗️
             🟩🟩🟩🟩🟩🎉
-        """.trimIndent()
+            """.trimIndent()
         )
     }
 }

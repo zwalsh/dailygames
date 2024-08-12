@@ -9,14 +9,9 @@ import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.id
-import kotlinx.html.label
 import kotlinx.html.li
-import kotlinx.html.p
-import kotlinx.html.passwordInput
-import kotlinx.html.style
 import kotlinx.html.submitInput
 import kotlinx.html.textArea
-import kotlinx.html.textInput
 import kotlinx.html.title
 import kotlinx.html.ul
 import sh.zachwal.dailygames.nav.NavItem
