@@ -20,7 +20,7 @@ import kotlin.streams.toList
 
 @ExtendWith(DatabaseExtension::class)
 class WorldleDAOTest(
-    jdbi: Jdbi, 
+    jdbi: Jdbi,
     private val fixtures: Fixtures
 ) {
     private val puzzleDAO: PuzzleDAO = jdbi.onDemand()
@@ -44,7 +44,7 @@ class WorldleDAOTest(
             🟩🟩🟩🟩🟨⬅️
             🟩🟩🟩🟩🟨↗️
             🟩🟩🟩🟩🟩🎉
-            """.trimIndent()
+        """.trimIndent()
 
         val result = worldleDAO.insertResult(
             userId = fixtures.zach.id,
@@ -146,7 +146,6 @@ class WorldleDAOTest(
         val results = worldleDAO.allResults().toList()
 
         assertThat(results).containsExactly(resultThree, resultTwo, resultOne)
-
     }
 
     private fun insertResult(

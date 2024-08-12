@@ -13,7 +13,6 @@ class Fixtures(
     lateinit var zach: User
     lateinit var jackie: User
 
-
     fun runFixtures() {
         zach = userDAO.createUser("zach", "hashedPassword")!!.also {
             println("Created user: $it")
