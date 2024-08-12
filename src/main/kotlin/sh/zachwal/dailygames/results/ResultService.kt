@@ -48,6 +48,7 @@ class ResultService @Inject constructor(
                     scorePercentage = worldleInfo.percentage,
                 )
             }
+            Game.TRADLE -> TODO()
         }
     }
 

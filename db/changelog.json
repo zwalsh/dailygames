@@ -29,6 +29,11 @@
       "include": {
         "file": "6_create_worldle_result.json"
       }
+    },
+    {
+      "include": {
+        "file": "7_create_tradle_result.json"
+      }
     }
   ]
 }

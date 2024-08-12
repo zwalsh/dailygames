@@ -14,9 +14,9 @@ class GameDAOTest(jdbi: Jdbi) {
     private val gameDAO: GameDAO = jdbi.onDemand()
 
     @Test
-    fun `game table includes WORLDLE`() {
+    fun `game table includes all games`() {
         val games = gameDAO.listGames()
 
-        assertThat(games).containsExactly(Game.WORLDLE)
+        assertThat(games).containsExactly(Game.values().map { it.name })
     }
 }
