@@ -8,10 +8,12 @@ import org.jdbi.v3.sqlobject.kotlin.onDemand
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import sh.zachwal.dailygames.db.dao.PuzzleDAO
+import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
+import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
@@ -27,6 +29,17 @@ private val worldle934 = """
             https://worldle.teuteuf.fr
 """.trimIndent()
 
+private val tradle890 = """
+    #Tradle #890 X/6
+    🟩🟩⬜⬜⬜
+    🟩🟩🟩🟩⬜
+    🟩🟩🟩🟩🟨
+    🟩🟩🟩🟩🟨
+    🟩🟩🟩🟩🟨
+    🟩🟩🟩🟩🟨
+    https://oec.world/en/games/tradle
+""".trimIndent()
+
 @ExtendWith(DatabaseExtension::class)
 class ResultServiceTest(
     jdbi: Jdbi,
@@ -40,6 +53,8 @@ class ResultServiceTest(
         jdbi = jdbi,
         puzzleDAO = puzzleDAO,
         worldleDAO = jdbi.onDemand(),
+        tradleDAO = jdbi.onDemand(),
+        travleDAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
         userService = userService
     )
@@ -75,6 +90,55 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `can create Tradle result`() {
+        val result = resultService.createResult(fixtures.zach, tradle890)
+
+        assertThat(result).isInstanceOf(TradleResult::class.java)
+
+        val tradleResult = result as TradleResult
+
+        assertThat(tradleResult.userId).isEqualTo(fixtures.zach.id)
+        assertThat(tradleResult.game).isEqualTo(Game.TRADLE)
+        assertThat(tradleResult.puzzleNumber).isEqualTo(890)
+        assertThat(tradleResult.score).isEqualTo(0)
+        assertThat(tradleResult.shareText).isEqualTo(
+            """
+            #Tradle #890 X/6
+            🟩🟩⬜⬜⬜
+            🟩🟩🟩🟩⬜
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            🟩🟩🟩🟩🟨
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `can create Travle result`() {
+        val result = resultService.createResult(fixtures.zach, TRAVLE_WITH_HINT)
+
+        assertThat(result).isInstanceOf(TravleResult::class.java)
+
+        val travleResult = result as TravleResult
+
+        assertThat(travleResult.userId).isEqualTo(fixtures.zach.id)
+        assertThat(travleResult.game).isEqualTo(Game.TRAVLE)
+        assertThat(travleResult.puzzleNumber).isEqualTo(606)
+        assertThat(travleResult.score).isEqualTo(2)
+        assertThat(travleResult.shareText).isEqualTo(
+            """
+            #travle #606 +2 (1 hint)
+            ✅✅🟩🟧🟧✅
+            """.trimIndent()
+        )
+        assertThat(travleResult.numGuesses).isEqualTo(6)
+        assertThat(travleResult.numIncorrect).isEqualTo(2)
+        assertThat(travleResult.numPerfect).isEqualTo(3)
+        assertThat(travleResult.numHints).isEqualTo(1)
+    }
+
+    @Test
     fun `creating a result creates a Puzzle record if necessary`() {
         resultService.createResult(fixtures.zach, worldle934)
 
@@ -103,7 +167,7 @@ class ResultServiceTest(
     }
 
     @Test
-    fun `result feed returns results in order`() {
+    fun `result feed returns results in order by submission time`() {
         val result1 = resultService.createResult(fixtures.zach, worldle934)
         val result2 = resultService.createResult(
             fixtures.jackie,
@@ -139,5 +203,32 @@ class ResultServiceTest(
         val feed = resultService.resultFeed()
 
         assertThat(feed).hasSize(20)
+    }
+
+    @Test
+    fun `result feed includes all types of results, ordered by submission time`() {
+        val worldleResult = resultService.createResult(fixtures.zach, worldle934)
+        val tradleResult = resultService.createResult(fixtures.jackie, tradle890)
+        val travleResult = resultService.createResult(fixtures.zach, TRAVLE_PLUS_0)
+
+        val feed = resultService.resultFeed()
+
+        assertThat(feed).containsExactly(
+            ResultFeedItemView(
+                username = fixtures.zach.username,
+                resultTitle = "Travle #607",
+                shareText = travleResult.shareText,
+            ),
+            ResultFeedItemView(
+                username = fixtures.jackie.username,
+                resultTitle = "Tradle #890",
+                shareText = tradleResult.shareText,
+            ),
+            ResultFeedItemView(
+                username = fixtures.zach.username,
+                resultTitle = "Worldle #934",
+                shareText = worldleResult.shareText,
+            ),
+        )
     }
 }

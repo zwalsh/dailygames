@@ -33,7 +33,9 @@ class TestExtension {
             "role",
             "game",
             "puzzle",
-            "worldle_result"
+            "worldle_result",
+            "tradle_result",
+            "travle_result",
         )
     }
 

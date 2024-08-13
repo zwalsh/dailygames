@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.db.dao
+package sh.zachwal.dailygames.db.dao.game
 
 import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
@@ -60,7 +60,7 @@ interface WorldleDAO {
         """
             SELECT * 
             FROM worldle_result
-            ORDER BY puzzle_number DESC, instant_submitted DESC
+            ORDER BY instant_submitted DESC
         """
     )
     fun allResultsStream(): Stream<WorldleResult>

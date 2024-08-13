@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.db.dao
+package sh.zachwal.dailygames.db.dao.game
 
 import com.google.common.truth.Truth.assertThat
 import org.jdbi.v3.core.Jdbi
@@ -14,9 +14,9 @@ class GameDAOTest(jdbi: Jdbi) {
     private val gameDAO: GameDAO = jdbi.onDemand()
 
     @Test
-    fun `game table includes WORLDLE`() {
+    fun `game table includes all games`() {
         val games = gameDAO.listGames()
 
-        assertThat(games).containsExactly(Game.WORLDLE)
+        assertThat(games).containsExactlyElementsIn(Game.values())
     }
 }

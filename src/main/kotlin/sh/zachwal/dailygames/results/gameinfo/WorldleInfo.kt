@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.results
+package sh.zachwal.dailygames.results.gameinfo
 
 import java.time.LocalDate
 
