@@ -1,0 +1,141 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "9",
+        "author": "zach",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "top5_result",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "bigint",
+                    "autoIncrement": true,
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "user_id",
+                    "type": "bigint",
+                    "constraints": {
+                      "nullable": false,
+                      "references": "public.user(id)",
+                      "foreignKeyName": "worldle_result_user_id_fk"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "game",
+                    "type": "VARCHAR(16)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_date",
+                    "type": "date"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted",
+                    "type": "timestamptz",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "score",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "share_text",
+                    "type": "VARCHAR(200)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "num_guesses",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "num_correct",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "is_perfect",
+                    "type": "boolean",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "addForeignKeyConstraint": {
+              "baseTableName": "top5_result",
+              "baseColumnNames": "game,puzzle_number",
+              "constraintName": "top5_result_puzzle_fk",
+              "referencedTableName": "puzzle",
+              "referencedColumnNames": "game,number"
+            }
+          },
+          {
+            "insert": {
+              "tableName": "game",
+              "columns": [
+                {
+                  "column": {
+                    "name": "name",
+                    "value": "TOP5"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

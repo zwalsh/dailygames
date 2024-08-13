@@ -12,6 +12,7 @@ import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
@@ -55,6 +56,7 @@ class ResultServiceTest(
         worldleDAO = jdbi.onDemand(),
         tradleDAO = jdbi.onDemand(),
         travleDAO = jdbi.onDemand(),
+        top5DAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
         userService = userService
     )
@@ -139,6 +141,29 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `can create Top5 result`() {
+        val result = resultService.createResult(fixtures.zach, TOP5)
+
+        assertThat(result).isInstanceOf(Top5Result::class.java)
+
+        val top5Result = result as Top5Result
+
+        assertThat(top5Result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(top5Result.game).isEqualTo(Game.TOP5)
+        assertThat(top5Result.puzzleNumber).isEqualTo(171)
+        assertThat(top5Result.score).isEqualTo(3)
+        assertThat(top5Result.shareText).isEqualTo(
+            """
+            Top 5 #171
+            ⬜🟧🟨⬜⬜🟩⬜⬜
+            """.trimIndent()
+        )
+        assertThat(top5Result.numGuesses).isEqualTo(8)
+        assertThat(top5Result.numCorrect).isEqualTo(3)
+        assertThat(top5Result.isPerfect).isFalse()
+    }
+
+    @Test
     fun `creating a result creates a Puzzle record if necessary`() {
         resultService.createResult(fixtures.zach, worldle934)
 
@@ -210,10 +235,16 @@ class ResultServiceTest(
         val worldleResult = resultService.createResult(fixtures.zach, worldle934)
         val tradleResult = resultService.createResult(fixtures.jackie, tradle890)
         val travleResult = resultService.createResult(fixtures.zach, TRAVLE_PLUS_0)
+        val top5Result = resultService.createResult(fixtures.zach, TOP5)
 
         val feed = resultService.resultFeed()
 
         assertThat(feed).containsExactly(
+            ResultFeedItemView(
+                username = fixtures.zach.username,
+                resultTitle = "Top 5 #171",
+                shareText = top5Result.shareText,
+            ),
             ResultFeedItemView(
                 username = fixtures.zach.username,
                 resultTitle = "Travle #607",

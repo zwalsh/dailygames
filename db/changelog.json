@@ -39,6 +39,11 @@
       "include": {
         "file": "8_create_travle_result.json"
       }
+    },
+    {
+      "include": {
+        "file": "9_create_top5_result.json"
+      }
     }
   ]
 }

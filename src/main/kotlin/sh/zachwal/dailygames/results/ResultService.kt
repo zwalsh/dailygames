@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
 import sh.zachwal.dailygames.db.dao.game.TravleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
@@ -12,7 +13,6 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
-import sh.zachwal.dailygames.utils.toSentenceCase
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
@@ -27,6 +27,7 @@ class ResultService @Inject constructor(
     private val worldleDAO: WorldleDAO,
     private val tradleDAO: TradleDAO,
     private val travleDAO: TravleDAO,
+    private val top5DAO: Top5DAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
 ) {
@@ -84,6 +85,21 @@ class ResultService @Inject constructor(
                     numHints = travleInfo.numHints,
                 )
             }
+
+            Game.TOP5 -> {
+                val top5Info = shareTextParser.extractTop5Info(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.TOP5, top5Info.puzzleNumber, null))
+
+                return top5DAO.insertResult(
+                    userId = user.id,
+                    puzzle = puzzle,
+                    score = top5Info.score,
+                    shareText = top5Info.shareTextNoLink,
+                    numGuesses = top5Info.numGuesses,
+                    numCorrect = top5Info.numCorrect,
+                    isPerfect = top5Info.isPerfect,
+                )
+            }
         }
     }
 
@@ -99,7 +115,7 @@ class ResultService @Inject constructor(
             val username = userNameCache.computeIfAbsent(result.userId) { userService.getUser(it)?.username }
             ResultFeedItemView(
                 username ?: "Unknown",
-                "${result.game.name.toSentenceCase()} #${result.puzzleNumber}",
+                "${result.game.displayName()} #${result.puzzleNumber}",
                 result.shareText,
             )
         }
@@ -117,7 +133,10 @@ class ResultService @Inject constructor(
             val travleDAO = handle.attach(TravleDAO::class.java)
             val travleResults = travleDAO.allResultsStream().use(::readFirstTwenty)
 
-            (worldleResults + tradleResults + travleResults).sortedByDescending { it.instantSubmitted }.take(20)
+            val top5DAO = handle.attach(Top5DAO::class.java)
+            val top5Results = top5DAO.allResultsStream().use(::readFirstTwenty)
+
+            (worldleResults + tradleResults + travleResults + top5Results).sortedByDescending { it.instantSubmitted }.take(20)
         }
     }
 
