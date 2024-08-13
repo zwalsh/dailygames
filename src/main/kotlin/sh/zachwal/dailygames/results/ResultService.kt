@@ -116,7 +116,7 @@ class ResultService @Inject constructor(
             val username = userNameCache.computeIfAbsent(result.userId) { userService.getUser(it)?.username }
             ResultFeedItemView(
                 username ?: "Unknown",
-                "${result.game.name.toSentenceCase()} #${result.puzzleNumber}",
+                "${result.game.displayName()} #${result.puzzleNumber}",
                 result.shareText,
             )
         }
@@ -134,7 +134,10 @@ class ResultService @Inject constructor(
             val travleDAO = handle.attach(TravleDAO::class.java)
             val travleResults = travleDAO.allResultsStream().use(::readFirstTwenty)
 
-            (worldleResults + tradleResults + travleResults).sortedByDescending { it.instantSubmitted }.take(20)
+            val top5DAO = handle.attach(Top5DAO::class.java)
+            val top5Results = top5DAO.allResultsStream().use(::readFirstTwenty)
+
+            (worldleResults + tradleResults + travleResults + top5Results).sortedByDescending { it.instantSubmitted }.take(20)
         }
     }
 

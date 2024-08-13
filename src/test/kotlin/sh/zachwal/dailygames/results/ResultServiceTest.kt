@@ -235,10 +235,16 @@ class ResultServiceTest(
         val worldleResult = resultService.createResult(fixtures.zach, worldle934)
         val tradleResult = resultService.createResult(fixtures.jackie, tradle890)
         val travleResult = resultService.createResult(fixtures.zach, TRAVLE_PLUS_0)
+        val top5Result = resultService.createResult(fixtures.zach, TOP5)
 
         val feed = resultService.resultFeed()
 
         assertThat(feed).containsExactly(
+            ResultFeedItemView(
+                username = fixtures.zach.username,
+                resultTitle = "Top 5 #171",
+                shareText = top5Result.shareText,
+            ),
             ResultFeedItemView(
                 username = fixtures.zach.username,
                 resultTitle = "Travle #607",
