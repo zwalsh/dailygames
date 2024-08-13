@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.results
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.gameinfo.Top5Info
 import sh.zachwal.dailygames.results.gameinfo.TradleInfo
 import sh.zachwal.dailygames.results.gameinfo.TravleInfo
 import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
@@ -88,5 +89,9 @@ class ShareTextParser {
             numPerfect = numPerfect,
             numHints = hintCount.toIntOrNull() ?: 0
         )
+    }
+
+    fun extractTop5Info(shareText: String): Top5Info {
+        TODO()
     }
 }

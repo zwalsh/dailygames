@@ -26,6 +26,11 @@ Top 5 #171
 ⬜🟧🟨⬜⬜🟩⬜⬜
 """
 
+const val TOP5_ALL_5_WITH_MISSES = """
+Top 5 #170
+🟥⬜🟩🟨🟦⬜⬜⬜🟧
+"""
+
 const val TOP5_NO_MISSES = """
 Top 5 #169
 🟥🟩🟧🟦🟨
@@ -281,5 +286,73 @@ class ShareTextParserTest {
         assertThat(travleInfo.numIncorrect).isEqualTo(2)
         assertThat(travleInfo.numGuesses).isEqualTo(6)
         assertThat(travleInfo.numHints).isEqualTo(1)
+    }
+
+    @Test
+    fun `extracts Top5 info`() {
+        val top5Info = parser.extractTop5Info(TOP5)
+
+        assertThat(top5Info.puzzleNumber).isEqualTo(171)
+        assertThat(top5Info.shareTextNoLink).isEqualTo(
+            """
+                Top 5 #171
+                ⬜🟧🟨⬜⬜🟩⬜⬜
+            """.trimIndent()
+        )
+        assertThat(top5Info.score).isEqualTo(3)
+        assertThat(top5Info.numGuesses).isEqualTo(8)
+        assertThat(top5Info.numCorrect).isEqualTo(3)
+        assertThat(top5Info.isPerfect).isFalse()
+    }
+
+    @Test
+    fun `extracts Top5 info with all 5 correct but misses`() {
+        val top5Info = parser.extractTop5Info(TOP5_ALL_5_WITH_MISSES)
+
+        assertThat(top5Info.puzzleNumber).isEqualTo(170)
+        assertThat(top5Info.shareTextNoLink).isEqualTo(
+            """
+                Top 5 #170
+                🟥⬜🟩🟨🟦⬜⬜⬜🟧
+            """.trimIndent()
+        )
+        assertThat(top5Info.score).isEqualTo(6)
+        assertThat(top5Info.numGuesses).isEqualTo(9)
+        assertThat(top5Info.numCorrect).isEqualTo(5)
+        assertThat(top5Info.isPerfect).isFalse()
+    }
+
+    @Test
+    fun `extracts Top5 info with no misses`() {
+        val top5Info = parser.extractTop5Info(TOP5_NO_MISSES)
+
+        assertThat(top5Info.puzzleNumber).isEqualTo(169)
+        assertThat(top5Info.shareTextNoLink).isEqualTo(
+            """
+                Top 5 #169
+                🟥🟩🟧🟦🟨
+            """.trimIndent()
+        )
+        assertThat(top5Info.score).isEqualTo(10)
+        assertThat(top5Info.numGuesses).isEqualTo(5)
+        assertThat(top5Info.numCorrect).isEqualTo(5)
+        assertThat(top5Info.isPerfect).isFalse()
+    }
+
+    @Test
+    fun `extracts Top5 info with perfect score`() {
+        val top5Info = parser.extractTop5Info(TOP5_PERFECT)
+
+        assertThat(top5Info.puzzleNumber).isEqualTo(169)
+        assertThat(top5Info.shareTextNoLink).isEqualTo(
+            """
+                Top 5 #169
+                🟥🟧🟨🟩🟦
+            """.trimIndent()
+        )
+        assertThat(top5Info.score).isEqualTo(10)
+        assertThat(top5Info.numGuesses).isEqualTo(5)
+        assertThat(top5Info.numCorrect).isEqualTo(5)
+        assertThat(top5Info.isPerfect).isTrue()
     }
 }
