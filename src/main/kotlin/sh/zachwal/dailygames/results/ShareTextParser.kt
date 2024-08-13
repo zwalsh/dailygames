@@ -39,6 +39,10 @@ class ShareTextParser {
         """.trimIndent()
     )
 
+    val perfectTop5Regex = Regex("\uD83D\uDFE5\uD83D\uDFE7\uD83D\uDFE8\uD83D\uDFE9\uD83D\uDFE6")
+    val top5GuessRegex = Regex("[\uD83D\uDFE5\uD83D\uDFE7\uD83D\uDFE8\uD83D\uDFE9\uD83D\uDFE6⬜]")
+    val top5CorrectRegex = Regex("[[\uD83D\uDFE5\uD83D\uDFE7\uD83D\uDFE8\uD83D\uDFE9\uD83D\uDFE6]]")
+
     fun identifyGame(shareText: String): Game? {
         return when {
             worldleRegex.matches(shareText) -> Game.WORLDLE
@@ -92,6 +96,22 @@ class ShareTextParser {
     }
 
     fun extractTop5Info(shareText: String): Top5Info {
-        TODO()
+        val match = top5Regex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Top 5 share")
+
+        val (puzzleNumber) = match.destructured
+
+        val isPerfect = perfectTop5Regex.find(shareText) != null
+        val numGuesses = top5GuessRegex.findAll(shareText).count()
+        val numCorrect = top5CorrectRegex.findAll(shareText).count()
+        val livesAtStart = 5
+        val score = livesAtStart - (numGuesses - numCorrect) + numCorrect
+        return Top5Info(
+            puzzleNumber = puzzleNumber.toInt(),
+            score = score,
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            numGuesses = numGuesses,
+            numCorrect = numCorrect,
+            isPerfect = isPerfect
+        )
     }
 }
