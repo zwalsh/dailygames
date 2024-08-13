@@ -87,7 +87,20 @@ class ResultService @Inject constructor(
                 )
             }
 
-            Game.TOP5 -> TODO()
+            Game.TOP5 -> {
+                val top5Info = shareTextParser.extractTop5Info(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.TOP5, top5Info.puzzleNumber, null))
+
+                return top5DAO.insertResult(
+                    userId = user.id,
+                    puzzle = puzzle,
+                    score = top5Info.score,
+                    shareText = top5Info.shareTextNoLink,
+                    numGuesses = top5Info.numGuesses,
+                    numCorrect = top5Info.numCorrect,
+                    isPerfect = top5Info.isPerfect,
+                )
+            }
         }
     }
 
