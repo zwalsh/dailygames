@@ -36,6 +36,7 @@ class TestExtension {
             "worldle_result",
             "tradle_result",
             "travle_result",
+            "top5_result",
         )
     }
 
