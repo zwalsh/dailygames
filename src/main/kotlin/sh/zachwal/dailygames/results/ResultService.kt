@@ -13,7 +13,6 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
-import sh.zachwal.dailygames.utils.toSentenceCase
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
