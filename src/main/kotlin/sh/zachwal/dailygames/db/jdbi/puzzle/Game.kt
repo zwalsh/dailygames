@@ -4,4 +4,5 @@ enum class Game {
     WORLDLE,
     TRADLE,
     TRAVLE,
+    TOP5,
 }

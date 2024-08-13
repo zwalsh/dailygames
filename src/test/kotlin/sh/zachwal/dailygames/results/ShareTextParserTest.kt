@@ -21,6 +21,21 @@ const val TRAVLE_WITH_HINT = """
 ✅✅🟩🟧🟧✅
 """
 
+const val TOP5 = """
+Top 5 #171
+⬜🟧🟨⬜⬜🟩⬜⬜
+"""
+
+const val TOP5_NO_MISSES = """
+Top 5 #169
+🟥🟩🟧🟦🟨
+"""
+
+const val TOP5_PERFECT = """
+Top 5 #169
+🟥🟧🟨🟩🟦
+"""
+
 class ShareTextParserTest {
 
     private val parser = ShareTextParser()
@@ -97,6 +112,13 @@ class ShareTextParserTest {
         assertThat(parser.identifyGame(TRAVLE_PERFECT)).isEqualTo(Game.TRAVLE)
         assertThat(parser.identifyGame(TRAVLE_PLUS_0)).isEqualTo(Game.TRAVLE)
         assertThat(parser.identifyGame(TRAVLE_WITH_HINT)).isEqualTo(Game.TRAVLE)
+    }
+
+    @Test
+    fun `matches Top5`() {
+        assertThat(parser.identifyGame(TOP5)).isEqualTo(Game.TOP5)
+        assertThat(parser.identifyGame(TOP5_NO_MISSES)).isEqualTo(Game.TOP5)
+        assertThat(parser.identifyGame(TOP5_PERFECT)).isEqualTo(Game.TOP5)
     }
 
     @Test

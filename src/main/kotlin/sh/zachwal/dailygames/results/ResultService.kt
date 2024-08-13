@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
 import sh.zachwal.dailygames.db.dao.game.TravleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
@@ -27,6 +28,7 @@ class ResultService @Inject constructor(
     private val worldleDAO: WorldleDAO,
     private val tradleDAO: TradleDAO,
     private val travleDAO: TravleDAO,
+    private val top5DAO: Top5DAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
 ) {
@@ -84,6 +86,8 @@ class ResultService @Inject constructor(
                     numHints = travleInfo.numHints,
                 )
             }
+
+            Game.TOP5 -> TODO()
         }
     }
 

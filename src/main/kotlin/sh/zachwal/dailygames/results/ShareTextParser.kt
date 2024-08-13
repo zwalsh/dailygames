@@ -32,11 +32,18 @@ class ShareTextParser {
 
     val checkboxEmojiRegex = Regex("✅")
 
+    val top5Regex = Regex(
+        """
+            \s*Top 5\s+#(?<puzzleNumber>\d+)[\s\S]*
+        """.trimIndent()
+    )
+
     fun identifyGame(shareText: String): Game? {
         return when {
             worldleRegex.matches(shareText) -> Game.WORLDLE
             tradleRegex.matches(shareText) -> Game.TRADLE
             travleRegex.matches(shareText) -> Game.TRAVLE
+            top5Regex.matches(shareText) -> Game.TOP5
             else -> null
         }
     }

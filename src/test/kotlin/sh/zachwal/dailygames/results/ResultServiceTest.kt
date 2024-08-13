@@ -55,6 +55,7 @@ class ResultServiceTest(
         worldleDAO = jdbi.onDemand(),
         tradleDAO = jdbi.onDemand(),
         travleDAO = jdbi.onDemand(),
+        top5DAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
         userService = userService
     )

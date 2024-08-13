@@ -13,6 +13,7 @@ import sh.zachwal.dailygames.db.dao.UserDAO
 import sh.zachwal.dailygames.db.dao.UserRoleDAO
 import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
 import sh.zachwal.dailygames.db.dao.game.TravleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
@@ -51,4 +52,7 @@ class JdbiModule : AbstractModule() {
 
     @Provides
     fun travleDao(jdbi: Jdbi): TravleDAO = jdbi.onDemand()
+
+    @Provides
+    fun top5Dao(jdbi: Jdbi): Top5DAO = jdbi.onDemand()
 }
