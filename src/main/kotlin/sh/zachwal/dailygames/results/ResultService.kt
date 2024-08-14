@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.results
 
 import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
+import sh.zachwal.dailygames.db.dao.game.FlagleDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
@@ -20,6 +21,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.streams.toList
 
+const val FEED_SIZE = 30
+
 @Singleton
 class ResultService @Inject constructor(
     private val jdbi: Jdbi,
@@ -28,6 +31,7 @@ class ResultService @Inject constructor(
     private val tradleDAO: TradleDAO,
     private val travleDAO: TravleDAO,
     private val top5DAO: Top5DAO,
+    private val flagleDAO: FlagleDAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
 ) {
@@ -100,6 +104,18 @@ class ResultService @Inject constructor(
                     isPerfect = top5Info.isPerfect,
                 )
             }
+
+            Game.FLAGLE -> {
+                val flagleInfo = shareTextParser.extractFlagleInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.FLAGLE, flagleInfo.puzzleNumber, flagleInfo.date))
+
+                return flagleDAO.insertResult(
+                    userId = user.id,
+                    puzzle = puzzle,
+                    score = flagleInfo.score,
+                    shareText = flagleInfo.shareTextNoLink,
+                )
+            }
         }
     }
 
@@ -124,26 +140,28 @@ class ResultService @Inject constructor(
     private fun readFirstTwentyResults(): List<PuzzleResult> {
         // Must use JDBI Handle directly to use streaming API
         return jdbi.open().use { handle ->
-            val worldleDAO = handle.attach(WorldleDAO::class.java)
-            val worldleResults = worldleDAO.allResultsStream().use(::readFirstTwenty)
+            val daos = listOf(
+                WorldleDAO::class.java,
+                TradleDAO::class.java,
+                TravleDAO::class.java,
+                Top5DAO::class.java,
+                FlagleDAO::class.java,
+            ).map { handle.attach(it) }
 
-            val tradleDAO = handle.attach(TradleDAO::class.java)
-            val tradleResults = tradleDAO.allResultsStream().use(::readFirstTwenty)
+            val results = daos.flatMap { dao ->
+                dao.allResultsStream().use {
+                    readFirstTwenty(it)
+                }
+            }
 
-            val travleDAO = handle.attach(TravleDAO::class.java)
-            val travleResults = travleDAO.allResultsStream().use(::readFirstTwenty)
-
-            val top5DAO = handle.attach(Top5DAO::class.java)
-            val top5Results = top5DAO.allResultsStream().use(::readFirstTwenty)
-
-            (worldleResults + tradleResults + travleResults + top5Results).sortedByDescending { it.instantSubmitted }.take(20)
+            results.sortedByDescending { it.instantSubmitted }.take(FEED_SIZE)
         }
     }
 
     private fun <T : PuzzleResult> readFirstTwenty(stream: Stream<T>): List<T> {
         return stream
             .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(2, ChronoUnit.DAYS)) }
-            .limit(20)
+            .limit(FEED_SIZE.toLong())
             .toList()
     }
 }

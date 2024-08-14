@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
+import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
@@ -57,6 +58,7 @@ class ResultServiceTest(
         tradleDAO = jdbi.onDemand(),
         travleDAO = jdbi.onDemand(),
         top5DAO = jdbi.onDemand(),
+        flagleDAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
         userService = userService
     )
@@ -164,6 +166,27 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `can create Flagle result`() {
+        val result = resultService.createResult(fixtures.zach, FLAGLE)
+
+        assertThat(result).isInstanceOf(FlagleResult::class.java)
+
+        val flagleResult = result as FlagleResult
+
+        assertThat(flagleResult.userId).isEqualTo(fixtures.zach.id)
+        assertThat(flagleResult.game).isEqualTo(Game.FLAGLE)
+        assertThat(flagleResult.puzzleNumber).isEqualTo(905)
+        assertThat(flagleResult.score).isEqualTo(0)
+        assertThat(flagleResult.shareText).isEqualTo(
+            """
+            #Flagle #905 (14.08.2024) X/6
+            🟥🟥🟥
+            🟥🟥🟥
+            """.trimIndent()
+        )
+    }
+
+    @Test
     fun `creating a result creates a Puzzle record if necessary`() {
         resultService.createResult(fixtures.zach, worldle934)
 
@@ -220,14 +243,14 @@ class ResultServiceTest(
     }
 
     @Test
-    fun `result feed returns max 20 results`() {
-        repeat(25) {
+    fun `result feed returns capped number of results`() {
+        repeat(FEED_SIZE + 5) {
             resultService.createResult(fixtures.zach, worldle934)
         }
 
         val feed = resultService.resultFeed()
 
-        assertThat(feed).hasSize(20)
+        assertThat(feed).hasSize(FEED_SIZE)
     }
 
     @Test
@@ -236,10 +259,16 @@ class ResultServiceTest(
         val tradleResult = resultService.createResult(fixtures.jackie, tradle890)
         val travleResult = resultService.createResult(fixtures.zach, TRAVLE_PLUS_0)
         val top5Result = resultService.createResult(fixtures.zach, TOP5)
+        val flagleResult = resultService.createResult(fixtures.zach, FLAGLE)
 
         val feed = resultService.resultFeed()
 
         assertThat(feed).containsExactly(
+            ResultFeedItemView(
+                username = fixtures.zach.username,
+                resultTitle = "Flagle #905",
+                shareText = flagleResult.shareText,
+            ),
             ResultFeedItemView(
                 username = fixtures.zach.username,
                 resultTitle = "Top 5 #171",

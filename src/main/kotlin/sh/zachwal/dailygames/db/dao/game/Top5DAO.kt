@@ -6,7 +6,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import java.util.stream.Stream
 
-interface Top5DAO {
+interface Top5DAO : PuzzleResultDAO<Top5Result> {
 
     @SqlQuery(
         """
@@ -64,5 +64,5 @@ interface Top5DAO {
             ORDER BY puzzle_number DESC, instant_submitted DESC
         """
     )
-    fun allResultsStream(): Stream<Top5Result>
+    override fun allResultsStream(): Stream<Top5Result>
 }

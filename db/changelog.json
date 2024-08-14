@@ -44,6 +44,11 @@
       "include": {
         "file": "9_create_top5_result.json"
       }
+    },
+    {
+      "include": {
+        "file": "10_create_flagle_result.json"
+      }
     }
   ]
 }

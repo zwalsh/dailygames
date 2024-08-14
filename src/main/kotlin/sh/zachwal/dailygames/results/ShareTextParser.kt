@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.results
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.gameinfo.FlagleInfo
 import sh.zachwal.dailygames.results.gameinfo.Top5Info
 import sh.zachwal.dailygames.results.gameinfo.TradleInfo
 import sh.zachwal.dailygames.results.gameinfo.TravleInfo
@@ -43,12 +44,19 @@ class ShareTextParser {
     val top5GuessRegex = Regex("[\uD83D\uDFE5\uD83D\uDFE7\uD83D\uDFE8\uD83D\uDFE9\uD83D\uDFE6⬜]")
     val top5CorrectRegex = Regex("[[\uD83D\uDFE5\uD83D\uDFE7\uD83D\uDFE8\uD83D\uDFE9\uD83D\uDFE6]]")
 
+    val flagleRegex = Regex(
+        """
+            \s*#Flagle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+[\s\S]*
+        """.trimIndent()
+    )
+
     fun identifyGame(shareText: String): Game? {
         return when {
             worldleRegex.matches(shareText) -> Game.WORLDLE
             tradleRegex.matches(shareText) -> Game.TRADLE
             travleRegex.matches(shareText) -> Game.TRAVLE
             top5Regex.matches(shareText) -> Game.TOP5
+            flagleRegex.matches(shareText) -> Game.FLAGLE
             else -> null
         }
     }
@@ -112,6 +120,17 @@ class ShareTextParser {
             numGuesses = numGuesses,
             numCorrect = numCorrect,
             isPerfect = isPerfect
+        )
+    }
+
+    fun extractFlagleInfo(shareText: String): FlagleInfo {
+        val match = flagleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Flagle share")
+        val (puzzleNumber, day, month, year, score) = match.destructured
+        return FlagleInfo(
+            puzzleNumber = puzzleNumber.toInt(),
+            date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
+            score = score.toIntOrNull() ?: 0,
+            shareTextNoLink = shareText.substringBefore("https://").trim()
         )
     }
 }

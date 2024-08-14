@@ -41,6 +41,20 @@ Top 5 #169
 🟥🟧🟨🟩🟦
 """
 
+const val FLAGLE = """
+#Flagle #905 (14.08.2024) X/6
+🟥🟥🟥
+🟥🟥🟥
+https://www.flagle.io
+"""
+
+const val FLAGLE_ONE_GUESS = """
+#Flagle #905 (14.08.2024) 2/6
+🟥🟩🟩
+🟩🟩🟩
+https://www.flagle.io
+"""
+
 class ShareTextParserTest {
 
     private val parser = ShareTextParser()
@@ -124,6 +138,12 @@ class ShareTextParserTest {
         assertThat(parser.identifyGame(TOP5)).isEqualTo(Game.TOP5)
         assertThat(parser.identifyGame(TOP5_NO_MISSES)).isEqualTo(Game.TOP5)
         assertThat(parser.identifyGame(TOP5_PERFECT)).isEqualTo(Game.TOP5)
+    }
+
+    @Test
+    fun `matches Flagle`() {
+        assertThat(parser.identifyGame(FLAGLE)).isEqualTo(Game.FLAGLE)
+        assertThat(parser.identifyGame(FLAGLE_ONE_GUESS)).isEqualTo(Game.FLAGLE)
     }
 
     @Test
@@ -354,5 +374,37 @@ class ShareTextParserTest {
         assertThat(top5Info.numGuesses).isEqualTo(5)
         assertThat(top5Info.numCorrect).isEqualTo(5)
         assertThat(top5Info.isPerfect).isTrue()
+    }
+
+    @Test
+    fun `extracts Flagle info`() {
+        val flagleInfo = parser.extractFlagleInfo(FLAGLE)
+
+        assertThat(flagleInfo.puzzleNumber).isEqualTo(905)
+        assertThat(flagleInfo.date).isEqualTo(LocalDate.of(2024, 8, 14))
+        assertThat(flagleInfo.score).isEqualTo(0)
+        assertThat(flagleInfo.shareTextNoLink).isEqualTo(
+            """
+                #Flagle #905 (14.08.2024) X/6
+                🟥🟥🟥
+                🟥🟥🟥
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `extracts Flagle info with one guess`() {
+        val flagleInfo = parser.extractFlagleInfo(FLAGLE_ONE_GUESS)
+
+        assertThat(flagleInfo.puzzleNumber).isEqualTo(905)
+        assertThat(flagleInfo.date).isEqualTo(LocalDate.of(2024, 8, 14))
+        assertThat(flagleInfo.score).isEqualTo(2)
+        assertThat(flagleInfo.shareTextNoLink).isEqualTo(
+            """
+                #Flagle #905 (14.08.2024) 2/6
+                🟥🟩🟩
+                🟩🟩🟩
+            """.trimIndent()
+        )
     }
 }
