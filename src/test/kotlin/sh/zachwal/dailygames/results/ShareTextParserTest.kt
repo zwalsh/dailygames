@@ -48,6 +48,13 @@ const val FLAGLE = """
 https://www.flagle.io
 """
 
+const val FLAGLE_ONE_GUESS = """
+#Flagle #905 (14.08.2024) 2/6
+🟥🟩🟩
+🟩🟩🟩
+https://www.flagle.io
+"""
+
 class ShareTextParserTest {
 
     private val parser = ShareTextParser()
@@ -131,6 +138,12 @@ class ShareTextParserTest {
         assertThat(parser.identifyGame(TOP5)).isEqualTo(Game.TOP5)
         assertThat(parser.identifyGame(TOP5_NO_MISSES)).isEqualTo(Game.TOP5)
         assertThat(parser.identifyGame(TOP5_PERFECT)).isEqualTo(Game.TOP5)
+    }
+
+    @Test
+    fun `matches Flagle`() {
+        assertThat(parser.identifyGame(FLAGLE)).isEqualTo(Game.FLAGLE)
+        assertThat(parser.identifyGame(FLAGLE_ONE_GUESS)).isEqualTo(Game.FLAGLE)
     }
 
     @Test
