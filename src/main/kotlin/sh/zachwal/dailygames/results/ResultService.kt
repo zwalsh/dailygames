@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.results
 
 import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
+import sh.zachwal.dailygames.db.dao.game.FlagleDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
@@ -28,6 +29,7 @@ class ResultService @Inject constructor(
     private val tradleDAO: TradleDAO,
     private val travleDAO: TravleDAO,
     private val top5DAO: Top5DAO,
+    private val flagleDAO: FlagleDAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
 ) {
@@ -101,7 +103,17 @@ class ResultService @Inject constructor(
                 )
             }
 
-            Game.FLAGLE -> TODO()
+            Game.FLAGLE -> {
+                val flagleInfo = shareTextParser.extractFlagleInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.FLAGLE, flagleInfo.puzzleNumber, flagleInfo.date))
+
+                return flagleDAO.insertResult(
+                    userId = user.id,
+                    puzzle = puzzle,
+                    score = flagleInfo.score,
+                    shareText = flagleInfo.shareTextNoLink,
+                )
+            }
         }
     }
 

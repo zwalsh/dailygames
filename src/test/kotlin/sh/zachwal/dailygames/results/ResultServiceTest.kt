@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
+import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
@@ -57,6 +58,7 @@ class ResultServiceTest(
         tradleDAO = jdbi.onDemand(),
         travleDAO = jdbi.onDemand(),
         top5DAO = jdbi.onDemand(),
+        flagleDAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
         userService = userService
     )
@@ -161,6 +163,27 @@ class ResultServiceTest(
         assertThat(top5Result.numGuesses).isEqualTo(8)
         assertThat(top5Result.numCorrect).isEqualTo(3)
         assertThat(top5Result.isPerfect).isFalse()
+    }
+
+    @Test
+    fun `can create Flagle result`() {
+        val result = resultService.createResult(fixtures.zach, FLAGLE)
+
+        assertThat(result).isInstanceOf(FlagleResult::class.java)
+
+        val flagleResult = result as FlagleResult
+
+        assertThat(flagleResult.userId).isEqualTo(fixtures.zach.id)
+        assertThat(flagleResult.game).isEqualTo(Game.FLAGLE)
+        assertThat(flagleResult.puzzleNumber).isEqualTo(905)
+        assertThat(flagleResult.score).isEqualTo(0)
+        assertThat(flagleResult.shareText).isEqualTo(
+            """
+            #Flagle #905 (14.08.2024) X/6
+            🟥🟥🟥
+            🟥🟥🟥
+            """.trimIndent()
+        )
     }
 
     @Test

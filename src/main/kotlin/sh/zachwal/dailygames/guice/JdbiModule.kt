@@ -11,6 +11,7 @@ import org.jdbi.v3.sqlobject.kotlin.onDemand
 import sh.zachwal.dailygames.db.dao.SessionDAO
 import sh.zachwal.dailygames.db.dao.UserDAO
 import sh.zachwal.dailygames.db.dao.UserRoleDAO
+import sh.zachwal.dailygames.db.dao.game.FlagleDAO
 import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
@@ -55,4 +56,7 @@ class JdbiModule : AbstractModule() {
 
     @Provides
     fun top5Dao(jdbi: Jdbi): Top5DAO = jdbi.onDemand()
+
+    @Provides
+    fun flagleDao(jdbi: Jdbi): FlagleDAO = jdbi.onDemand()
 }
