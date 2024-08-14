@@ -150,7 +150,10 @@ class ResultService @Inject constructor(
             val top5DAO = handle.attach(Top5DAO::class.java)
             val top5Results = top5DAO.allResultsStream().use(::readFirstTwenty)
 
-            (worldleResults + tradleResults + travleResults + top5Results).sortedByDescending { it.instantSubmitted }.take(20)
+            val flagleDAO = handle.attach(FlagleDAO::class.java)
+            val flagleResults = flagleDAO.allResultsStream().use(::readFirstTwenty)
+
+            (worldleResults + tradleResults + travleResults + top5Results + flagleResults).sortedByDescending { it.instantSubmitted }.take(20)
         }
     }
 
