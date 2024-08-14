@@ -41,6 +41,13 @@ Top 5 #169
 🟥🟧🟨🟩🟦
 """
 
+const val FLAGLE = """
+#Flagle #905 (14.08.2024) X/6
+🟥🟥🟥
+🟥🟥🟥
+https://www.flagle.io
+"""
+
 class ShareTextParserTest {
 
     private val parser = ShareTextParser()

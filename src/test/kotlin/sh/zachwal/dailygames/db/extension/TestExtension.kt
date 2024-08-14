@@ -37,6 +37,7 @@ class TestExtension {
             "tradle_result",
             "travle_result",
             "top5_result",
+            "flagle_result",
         )
     }
 
