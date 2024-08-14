@@ -100,6 +100,8 @@ class ResultService @Inject constructor(
                     isPerfect = top5Info.isPerfect,
                 )
             }
+
+            Game.FLAGLE -> TODO()
         }
     }
 

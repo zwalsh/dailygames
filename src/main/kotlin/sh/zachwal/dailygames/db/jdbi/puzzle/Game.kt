@@ -6,7 +6,8 @@ enum class Game {
     WORLDLE,
     TRADLE,
     TRAVLE,
-    TOP5;
+    TOP5,
+    FLAGLE;
 
     fun displayName(): String {
         return when (this) {
