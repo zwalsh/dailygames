@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.results
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.gameinfo.FlagleInfo
 import sh.zachwal.dailygames.results.gameinfo.Top5Info
 import sh.zachwal.dailygames.results.gameinfo.TradleInfo
 import sh.zachwal.dailygames.results.gameinfo.TravleInfo
@@ -119,6 +120,17 @@ class ShareTextParser {
             numGuesses = numGuesses,
             numCorrect = numCorrect,
             isPerfect = isPerfect
+        )
+    }
+
+    fun extractFlagleInfo(shareText: String): FlagleInfo {
+        val match = flagleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Flagle share")
+        val (puzzleNumber, day, month, year, score) = match.destructured
+        return FlagleInfo(
+            puzzleNumber = puzzleNumber.toInt(),
+            date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
+            score = score.toIntOrNull() ?: 0,
+            shareTextNoLink = shareText.substringBefore("https://").trim()
         )
     }
 }

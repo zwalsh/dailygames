@@ -375,4 +375,36 @@ class ShareTextParserTest {
         assertThat(top5Info.numCorrect).isEqualTo(5)
         assertThat(top5Info.isPerfect).isTrue()
     }
+
+    @Test
+    fun `extracts Flagle info`() {
+        val flagleInfo = parser.extractFlagleInfo(FLAGLE)
+
+        assertThat(flagleInfo.puzzleNumber).isEqualTo(905)
+        assertThat(flagleInfo.date).isEqualTo(LocalDate.of(2024, 8, 14))
+        assertThat(flagleInfo.score).isEqualTo(0)
+        assertThat(flagleInfo.shareTextNoLink).isEqualTo(
+            """
+                #Flagle #905 (14.08.2024) X/6
+                🟥🟥🟥
+                🟥🟥🟥
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `extracts Flagle info with one guess`() {
+        val flagleInfo = parser.extractFlagleInfo(FLAGLE_ONE_GUESS)
+
+        assertThat(flagleInfo.puzzleNumber).isEqualTo(905)
+        assertThat(flagleInfo.date).isEqualTo(LocalDate.of(2024, 8, 14))
+        assertThat(flagleInfo.score).isEqualTo(2)
+        assertThat(flagleInfo.shareTextNoLink).isEqualTo(
+            """
+                #Flagle #905 (14.08.2024) 2/6
+                🟥🟩🟩
+                🟩🟩🟩
+            """.trimIndent()
+        )
+    }
 }
