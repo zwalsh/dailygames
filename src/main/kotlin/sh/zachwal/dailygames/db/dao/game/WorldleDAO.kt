@@ -7,7 +7,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import java.time.LocalDate
 import java.util.stream.Stream
 
-interface WorldleDAO {
+interface WorldleDAO : PuzzleResultDAO<WorldleResult> {
 
     @SqlQuery(
         """
@@ -63,5 +63,5 @@ interface WorldleDAO {
             ORDER BY instant_submitted DESC
         """
     )
-    fun allResultsStream(): Stream<WorldleResult>
+    override fun allResultsStream(): Stream<WorldleResult>
 }

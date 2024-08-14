@@ -243,14 +243,14 @@ class ResultServiceTest(
     }
 
     @Test
-    fun `result feed returns max 20 results`() {
-        repeat(25) {
+    fun `result feed returns capped number of results`() {
+        repeat(FEED_SIZE + 5) {
             resultService.createResult(fixtures.zach, worldle934)
         }
 
         val feed = resultService.resultFeed()
 
-        assertThat(feed).hasSize(20)
+        assertThat(feed).hasSize(FEED_SIZE)
     }
 
     @Test

@@ -6,7 +6,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import java.util.stream.Stream
 
-interface TradleDAO {
+interface TradleDAO : PuzzleResultDAO<TradleResult> {
 
     @SqlQuery(
         """
@@ -61,5 +61,5 @@ interface TradleDAO {
             ORDER BY puzzle_number DESC, instant_submitted DESC
         """
     )
-    fun allResultsStream(): Stream<TradleResult>
+    override fun allResultsStream(): Stream<TradleResult>
 }

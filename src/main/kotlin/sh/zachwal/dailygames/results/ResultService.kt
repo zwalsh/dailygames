@@ -21,6 +21,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.streams.toList
 
+const val FEED_SIZE = 30
+
 @Singleton
 class ResultService @Inject constructor(
     private val jdbi: Jdbi,
@@ -138,29 +140,28 @@ class ResultService @Inject constructor(
     private fun readFirstTwentyResults(): List<PuzzleResult> {
         // Must use JDBI Handle directly to use streaming API
         return jdbi.open().use { handle ->
-            val worldleDAO = handle.attach(WorldleDAO::class.java)
-            val worldleResults = worldleDAO.allResultsStream().use(::readFirstTwenty)
+            val daos = listOf(
+                WorldleDAO::class.java,
+                TradleDAO::class.java,
+                TravleDAO::class.java,
+                Top5DAO::class.java,
+                FlagleDAO::class.java,
+            ).map { handle.attach(it) }
 
-            val tradleDAO = handle.attach(TradleDAO::class.java)
-            val tradleResults = tradleDAO.allResultsStream().use(::readFirstTwenty)
+            val results = daos.flatMap { dao ->
+                dao.allResultsStream().use {
+                    readFirstTwenty(it)
+                }
+            }
 
-            val travleDAO = handle.attach(TravleDAO::class.java)
-            val travleResults = travleDAO.allResultsStream().use(::readFirstTwenty)
-
-            val top5DAO = handle.attach(Top5DAO::class.java)
-            val top5Results = top5DAO.allResultsStream().use(::readFirstTwenty)
-
-            val flagleDAO = handle.attach(FlagleDAO::class.java)
-            val flagleResults = flagleDAO.allResultsStream().use(::readFirstTwenty)
-
-            (worldleResults + tradleResults + travleResults + top5Results + flagleResults).sortedByDescending { it.instantSubmitted }.take(20)
+            results.sortedByDescending { it.instantSubmitted }.take(FEED_SIZE)
         }
     }
 
     private fun <T : PuzzleResult> readFirstTwenty(stream: Stream<T>): List<T> {
         return stream
             .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(2, ChronoUnit.DAYS)) }
-            .limit(20)
+            .limit(FEED_SIZE.toLong())
             .toList()
     }
 }

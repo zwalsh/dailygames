@@ -7,7 +7,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import java.time.LocalDate
 import java.util.stream.Stream
 
-interface FlagleDAO {
+interface FlagleDAO : PuzzleResultDAO<FlagleResult> {
 
     @SqlQuery(
         """
@@ -62,5 +62,5 @@ interface FlagleDAO {
             ORDER BY instant_submitted DESC
         """
     )
-    fun allResultsStream(): Stream<FlagleResult>
+    override fun allResultsStream(): Stream<FlagleResult>
 }
