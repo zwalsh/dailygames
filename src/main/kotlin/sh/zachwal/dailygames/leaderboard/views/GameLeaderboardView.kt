@@ -50,7 +50,7 @@ data class GameLeaderboardView(
                 }
                 div(classes = "row") {
                     div(classes = "col") {
-                        card("Past 30 Days") {
+                        card("Past 30 Days", cardHeaderClasses = "text-center fs-3") {
                             canvas {
                                 id = "game-leaderboard-past-30-days"
                             }
