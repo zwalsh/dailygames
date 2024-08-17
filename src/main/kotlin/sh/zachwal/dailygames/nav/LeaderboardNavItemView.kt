@@ -34,7 +34,7 @@ data class LeaderboardNavItemView(
                 Game.values().forEach { game ->
                     li {
                         a(href = "/leaderboard/${game.name.lowercase()}", classes = "dropdown-item") {
-                            +game.displayName()
+                            +"${game.emoji()} ${game.displayName()}"
                         }
                     }
                 }

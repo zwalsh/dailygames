@@ -15,4 +15,14 @@ enum class Game {
             else -> this.name.toSentenceCase()
         }
     }
+
+    fun emoji(): String {
+        return when (this) {
+            WORLDLE -> "\uD83C\uDF0D"
+            TRADLE -> "\uD83D\uDEA2"
+            TRAVLE -> "\uD83E\uDDED"
+            TOP5 -> "\uD83E\uDDE0"
+            FLAGLE -> "\uD83D\uDEA9"
+        }
+    }
 }
