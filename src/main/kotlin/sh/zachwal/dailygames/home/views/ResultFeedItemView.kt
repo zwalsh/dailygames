@@ -13,6 +13,7 @@ data class ResultFeedItemView(
     val username: String,
     val resultTitle: String,
     val shareText: String,
+    val timestampText: String,
 ) : HTMLView<DIV>() {
     override fun DIV.render() {
         div(classes = "row mt-2 mb-4") {
@@ -24,7 +25,7 @@ data class ResultFeedItemView(
                         }
                         p(classes = "text-secondary mb-0") {
                             style = "font-size: 0.9rem;"
-                            +"2024-08-12 12:34"
+                            +timestampText
                         }
                     }
                     div(classes = "card-body") {
