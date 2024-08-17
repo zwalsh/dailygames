@@ -233,11 +233,13 @@ class ResultServiceTest(
                 username = fixtures.jackie.username,
                 resultTitle = "Worldle #935",
                 shareText = result2.shareText,
+                timestampText = displayTime(result2.instantSubmitted),
             ),
             ResultFeedItemView(
                 username = fixtures.zach.username,
                 resultTitle = "Worldle #934",
                 shareText = result1.shareText,
+                timestampText = displayTime(result1.instantSubmitted),
             ),
         )
     }
@@ -268,26 +270,31 @@ class ResultServiceTest(
                 username = fixtures.zach.username,
                 resultTitle = "Flagle #905",
                 shareText = flagleResult.shareText,
+                timestampText = displayTime(flagleResult.instantSubmitted),
             ),
             ResultFeedItemView(
                 username = fixtures.zach.username,
                 resultTitle = "Top 5 #171",
                 shareText = top5Result.shareText,
+                timestampText = displayTime(flagleResult.instantSubmitted),
             ),
             ResultFeedItemView(
                 username = fixtures.zach.username,
                 resultTitle = "Travle #607",
                 shareText = travleResult.shareText,
+                timestampText = displayTime(flagleResult.instantSubmitted),
             ),
             ResultFeedItemView(
                 username = fixtures.jackie.username,
                 resultTitle = "Tradle #890",
                 shareText = tradleResult.shareText,
+                timestampText = displayTime(flagleResult.instantSubmitted),
             ),
             ResultFeedItemView(
                 username = fixtures.zach.username,
                 resultTitle = "Worldle #934",
                 shareText = worldleResult.shareText,
+                timestampText = displayTime(flagleResult.instantSubmitted),
             ),
         )
     }
