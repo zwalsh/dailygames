@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.SessionDAO
 import sh.zachwal.dailygames.db.jdbi.Session
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class DbSessionStorage @Inject constructor(private val sessionDAO: SessionDAO) : SessionStorage {
@@ -41,7 +40,7 @@ class DbSessionStorage @Inject constructor(private val sessionDAO: SessionDAO) :
             val bytes = writer {
                 provider(channel)
             }.channel
-            sessionDAO.createOrUpdateSession(Session(id, bytes.toByteArray(), Instant.now().plus(1, ChronoUnit.HOURS)))
+            sessionDAO.createOrUpdateSession(Session(id, bytes.toByteArray(), Instant.now().plus(SESSION_MAX_DURATION)))
         }
     }
 }
