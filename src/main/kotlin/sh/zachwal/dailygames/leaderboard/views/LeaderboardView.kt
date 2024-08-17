@@ -1,9 +1,15 @@
 package sh.zachwal.dailygames.leaderboard.views
 
 import kotlinx.html.HTML
+import kotlinx.html.a
 import kotlinx.html.body
+import kotlinx.html.button
+import kotlinx.html.div
 import kotlinx.html.head
+import kotlinx.html.li
 import kotlinx.html.title
+import kotlinx.html.ul
+import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView

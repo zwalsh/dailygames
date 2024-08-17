@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.shared_html
 import kotlinx.html.HEAD
 import kotlinx.html.link
 import kotlinx.html.meta
+import kotlinx.html.script
 
 fun HEAD.bootstrapCss() {
     link(
@@ -15,6 +16,15 @@ fun HEAD.bootstrapCss() {
         href = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css",
         type = "text/css"
     )
+}
+
+fun HEAD.bootstrapJs() {
+    script(
+        src = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ) {
+        integrity = "sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        attributes["crossorigin"] = "anonymous"
+    }
 }
 
 fun HEAD.favicon() {
@@ -47,6 +57,7 @@ fun HEAD.sentryScript() {
 
 fun HEAD.headSetup() {
     bootstrapCss()
+    bootstrapJs()
     favicon()
     mobileUI()
     sentryScript()

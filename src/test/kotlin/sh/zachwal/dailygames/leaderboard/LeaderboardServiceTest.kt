@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.leaderboard
 
 import com.google.common.truth.Truth.assertThat
 import sh.zachwal.dailygames.db.jdbi.User
+import sh.zachwal.dailygames.nav.LeaderboardNavItemView
 import kotlin.test.Test
 
 class LeaderboardServiceTest {
@@ -14,9 +15,11 @@ class LeaderboardServiceTest {
 
         val leaderboardView = leaderboardService.leaderboardView(currentUser)
 
-        val leaderboardNavItem = leaderboardView.nav.navItems[1]
+        val navItem = leaderboardView.nav.navItems[1]
 
-        assertThat(leaderboardNavItem.text).isEqualTo("Leaderboard")
-        assertThat(leaderboardNavItem.isActive).isTrue()
+        assertThat(navItem).isInstanceOf(LeaderboardNavItemView::class.java)
+
+        val leaderboardNavItemView = navItem as LeaderboardNavItemView
+        assertThat(leaderboardNavItemView.isActive).isTrue()
     }
 }

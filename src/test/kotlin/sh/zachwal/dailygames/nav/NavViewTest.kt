@@ -1,8 +1,6 @@
 package sh.zachwal.dailygames.nav
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertIterableEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class NavViewTest {
@@ -11,26 +9,25 @@ class NavViewTest {
     fun `NavView has three items`() {
         val view = NavView("zach", NavItem.HOME)
 
-        assertEquals(3, view.navItems.size)
+        assertThat(view.navItems).hasSize(3)
     }
 
     @Test
     fun `Items are Home, Leaderboard, and Profile in order`() {
-        val view = NavView("zach", NavItem.HOME)
-        val itemNames = view.navItems.map { it.text }
+        val items = NavView("zach", NavItem.HOME).navItems
+        assertThat(items.first()).isInstanceOf(NavItemView::class.java)
+        assertThat((items.first() as NavItemView).text).isEqualTo("Home")
 
-        assertIterableEquals(
-            listOf("Home", "Leaderboard", "Profile"),
-            itemNames
-        )
+        assertThat(items[1]).isInstanceOf(LeaderboardNavItemView::class.java)
+
+        assertThat(items[2]).isInstanceOf(NavItemView::class.java)
+        assertThat((items[2] as NavItemView).text).isEqualTo("Profile")
     }
 
     @Test
     fun `one active item matches passed currentActiveNavItem`() {
         val view = NavView("zach", NavItem.PROFILE)
-        val actives = view.navItems.associate { it.text to it.isActive }
 
-        assertTrue(actives["Profile"]!!)
-        assertEquals(1, actives.values.count { it })
+        assertThat((view.navItems[2] as NavItemView).isActive).isTrue()
     }
 }
