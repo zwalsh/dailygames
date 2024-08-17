@@ -41,7 +41,7 @@ class DbSessionStorage @Inject constructor(private val sessionDAO: SessionDAO) :
             val bytes = writer {
                 provider(channel)
             }.channel
-            sessionDAO.createOrUpdateSession(Session(id, bytes.toByteArray(), Instant.now().plus(1, ChronoUnit.HOURS)))
+            sessionDAO.createOrUpdateSession(Session(id, bytes.toByteArray(), Instant.now().plus(SESSION_MAX_DURATION)))
         }
     }
 }

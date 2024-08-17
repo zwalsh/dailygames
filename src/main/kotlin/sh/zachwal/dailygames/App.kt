@@ -31,6 +31,7 @@ import sh.zachwal.dailygames.guice.JdbiModule
 import sh.zachwal.dailygames.roles.RoleAuthorization
 import sh.zachwal.dailygames.roles.RoleService
 import sh.zachwal.dailygames.session.DbSessionStorage
+import sh.zachwal.dailygames.session.SESSION_MAX_DURATION
 import sh.zachwal.dailygames.session.SessionCleanupTask
 import sh.zachwal.dailygames.session.USER_SESSION
 import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
@@ -78,6 +79,7 @@ fun Application.module(testing: Boolean = false) {
             cookie.httpOnly = true
             cookie.secure = config.env != "DEV"
             cookie.extensions["SameSite"] = "lax"
+            cookie.maxAgeInSeconds = SESSION_MAX_DURATION.seconds
         }
     }
 
