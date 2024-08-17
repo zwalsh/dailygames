@@ -7,7 +7,6 @@ import kotlinx.html.p
 import kotlinx.html.span
 import kotlinx.html.style
 import sh.zachwal.dailygames.shared_html.HTMLView
-import sh.zachwal.dailygames.shared_html.card
 
 data class ResultFeedItemView(
     val username: String,
