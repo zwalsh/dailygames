@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.nav
 
 import kotlinx.html.BODY
+import kotlinx.html.UL
 import kotlinx.html.div
 import kotlinx.html.header
 import kotlinx.html.ul
@@ -13,7 +14,7 @@ enum class NavItem {
 }
 
 data class NavView constructor(
-    val navItems: List<NavItemView>
+    val navItems: List<HTMLView<UL>>
 ) : HTMLView<BODY>() {
 
     constructor(
@@ -27,11 +28,8 @@ data class NavView constructor(
                 isActive = currentActiveNavItem == NavItem.HOME,
                 text = "Home"
             ),
-            NavItemView(
-                href = "/leaderboard",
-                icon = "bi-bar-chart-fill",
+            LeaderboardNavItemView(
                 isActive = currentActiveNavItem == NavItem.LEADERBOARD,
-                text = "Leaderboard"
             ),
             NavItemView(
                 href = "/profile",
