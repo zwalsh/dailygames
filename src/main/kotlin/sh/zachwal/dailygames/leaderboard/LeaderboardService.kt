@@ -29,7 +29,14 @@ class LeaderboardService @Inject constructor(
     }
 
     fun gameLeaderboardView(currentUser: User, game: Game): GameLeaderboardView {
-        return GameLeaderboardView(username = currentUser.username, game = game)
+        val scoringText = when (game) {
+            Game.WORLDLE -> "Scoring: Number of guesses needed out of six. X/6 = 7."
+            Game.TRADLE -> "Scoring: Number of guesses needed out of six. X/6 = 7."
+            Game.TRAVLE -> "Scoring: Excess guesses needed to solve the puzzle. 0 is perfect."
+            Game.TOP5 -> "Scoring: One point per correct guess. One point per life left if all 5 answers guessed correctly."
+            Game.FLAGLE -> "Scoring: Number of guesses needed out of six. X/6 = 7."
+        }
+        return GameLeaderboardView(username = currentUser.username, game = game, scoringText = scoringText)
     }
 
     data class TotalScore(val games: Int, val totalScore: Int) {

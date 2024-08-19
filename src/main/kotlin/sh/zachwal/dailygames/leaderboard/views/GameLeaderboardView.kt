@@ -6,8 +6,10 @@ import kotlinx.html.canvas
 import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.head
+import kotlinx.html.i
 import kotlinx.html.id
 import kotlinx.html.script
+import kotlinx.html.span
 import kotlinx.html.title
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
@@ -19,7 +21,8 @@ import sh.zachwal.dailygames.shared_html.headSetup
 
 data class GameLeaderboardView(
     val username: String,
-    val game: Game
+    val game: Game,
+    val scoringText: String,
 ) : HTMLView<HTML>() {
 
     val nav = NavView(username = username, currentActiveNavItem = NavItem.LEADERBOARD)
@@ -41,14 +44,24 @@ data class GameLeaderboardView(
             div(classes = "container mb-4") {
                 div(classes = "row") {
                     div(classes = "col") {
-                        h1(classes = "text-center fs-2") {
+                        h1(classes = "text-center fs-2 mb-4") {
                             +"${game.emoji()} ${game.displayName()} Leaderboard ${game.emoji()}"
                         }
                     }
                 }
                 div(classes = "row") {
                     div(classes = "col") {
-                        card("All Time", cardHeaderClasses = "text-center fs-3") {
+                        div(classes = "alert alert-primary mx-4") {
+                            i(classes = "bi bi-info-circle")
+                            span(classes = "mx-2") {
+                                +scoringText
+                            }
+                        }
+                    }
+                }
+                div(classes = "row") {
+                    div(classes = "col") {
+                        card("All Time", cardHeaderClasses = "text-center fs-3", classes = "mx-3") {
                             canvas {
                                 id = "game-leaderboard-all-time"
                             }
@@ -57,7 +70,7 @@ data class GameLeaderboardView(
                 }
                 div(classes = "row") {
                     div(classes = "col") {
-                        card("Past 30 Days", cardHeaderClasses = "text-center fs-3") {
+                        card("Past 30 Days", cardHeaderClasses = "text-center fs-3", classes = "mx-3") {
                             canvas {
                                 id = "game-leaderboard-past-30-days"
                             }
