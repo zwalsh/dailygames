@@ -104,7 +104,7 @@ class ResultServiceTest(
         assertThat(tradleResult.userId).isEqualTo(fixtures.zach.id)
         assertThat(tradleResult.game).isEqualTo(Game.TRADLE)
         assertThat(tradleResult.puzzleNumber).isEqualTo(890)
-        assertThat(tradleResult.score).isEqualTo(0)
+        assertThat(tradleResult.score).isEqualTo(7)
         assertThat(tradleResult.shareText).isEqualTo(
             """
             #Tradle #890 X/6
@@ -176,7 +176,7 @@ class ResultServiceTest(
         assertThat(flagleResult.userId).isEqualTo(fixtures.zach.id)
         assertThat(flagleResult.game).isEqualTo(Game.FLAGLE)
         assertThat(flagleResult.puzzleNumber).isEqualTo(905)
-        assertThat(flagleResult.score).isEqualTo(0)
+        assertThat(flagleResult.score).isEqualTo(7)
         assertThat(flagleResult.shareText).isEqualTo(
             """
             #Flagle #905 (14.08.2024) X/6
