@@ -59,7 +59,7 @@ data class GameLeaderboardView(
                         }
                     }
                 }
-                div(classes = "row") {
+                div(classes = "row mb-4") {
                     div(classes = "col") {
                         card("All Time", cardHeaderClasses = "text-center fs-3", classes = "mx-3") {
                             canvas {
