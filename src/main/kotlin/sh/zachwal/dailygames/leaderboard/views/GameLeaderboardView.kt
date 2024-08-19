@@ -7,6 +7,7 @@ import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.id
+import kotlinx.html.script
 import kotlinx.html.title
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
@@ -27,11 +28,14 @@ data class GameLeaderboardView(
         head {
             title("Daily Games - ${game.displayName()} Leaderboard")
             headSetup()
+            script {
+                src = "https://cdn.jsdelivr.net/npm/chart.js"
+            }
         }
         body {
             darkMode()
             nav.renderIn(this)
-            div(classes = "container") {
+            div(classes = "container mb-4") {
                 div(classes = "row") {
                     div(classes = "col") {
                         h1(classes = "text-center fs-2") {
@@ -57,6 +61,9 @@ data class GameLeaderboardView(
                         }
                     }
                 }
+            }
+            script {
+                src = "/static/src/js/leaderboard.js"
             }
         }
     }
