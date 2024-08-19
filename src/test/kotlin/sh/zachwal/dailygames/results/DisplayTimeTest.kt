@@ -9,30 +9,34 @@ class DisplayTimeTest {
 
     @Test
     fun `displayTime returns just now for recent results`() {
-        val justNow = Instant.now()
+        val now = Instant.ofEpochSecond(1724074018)
+        val justNow = now.minusSeconds(1)
 
-        assertThat(displayTime(justNow)).isEqualTo("Just now")
+        assertThat(displayTime(justNow, now = now)).isEqualTo("Just now")
     }
 
     @Test
     fun `displayTime returns 1 minute ago for results 1 minute ago`() {
-        val oneMinuteAgo = Instant.now().minusSeconds(60)
+        val now = Instant.ofEpochSecond(1724074018)
+        val oneMinuteAgo = now.minusSeconds(60)
 
-        assertThat(displayTime(oneMinuteAgo)).isEqualTo("1m ago")
+        assertThat(displayTime(oneMinuteAgo, now = now)).isEqualTo("1m ago")
     }
 
     @Test
     fun `displayTime returns 30min ago for results 30min ago`() {
-        val oneHourAgo = Instant.now().minusSeconds(60 * 30)
+        val now = Instant.ofEpochSecond(1724074018)
+        val thirtyMinutesAgo = now.minusSeconds(60 * 30)
 
-        assertThat(displayTime(oneHourAgo)).isEqualTo("30m ago")
+        assertThat(displayTime(thirtyMinutesAgo, now = now)).isEqualTo("30m ago")
     }
 
     @Test
     fun `displayTime returns 1h ago for results 1h ago`() {
-        val oneHourAgo = Instant.now().minusSeconds(60 * 60)
+        val now = Instant.ofEpochSecond(1724074018)
+        val oneHourAgo = now.minusSeconds(60 * 60)
 
-        assertThat(displayTime(oneHourAgo)).isEqualTo("1h0m ago")
+        assertThat(displayTime(oneHourAgo, now = now)).isEqualTo("1h0m ago")
     }
 
     @Test
