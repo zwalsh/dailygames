@@ -1,5 +1,6 @@
 package sh.zachwal.dailygames.leaderboard
 
+import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
@@ -38,14 +39,7 @@ class LeaderboardController @Inject constructor(
         approvedUserRoute("/leaderboard/{game}") {
             get {
                 val currentUser = currentUser(call, userService)
-                val gameStr = call.parameters["game"]
-                if (gameStr == null) {
-                    call.respond(HttpStatusCode.NotFound)
-                    return@get
-                }
-                val game = try {
-                    Game.valueOf(gameStr.uppercase())
-                } catch (e: IllegalArgumentException) {
+                val game = extractGame(call) ?: run {
                     call.respond(HttpStatusCode.NotFound)
                     return@get
                 }
@@ -56,6 +50,29 @@ class LeaderboardController @Inject constructor(
                     view.renderIn(this)
                 }
             }
+        }
+    }
+
+    fun Routing.gameLeaderboardData() {
+        approvedUserRoute("/leaderboard/{game}/data") {
+            get {
+                val currentUser = currentUser(call, userService)
+                val game = extractGame(call) ?: run {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@get
+                }
+
+                call.respond(HttpStatusCode.OK, leaderboardService.gameLeaderboardData(currentUser, game))
+            }
+        }
+    }
+
+    private fun extractGame(call: ApplicationCall): Game? {
+        val gameStr = call.parameters["game"]
+        return try {
+            gameStr?.let { Game.valueOf(it.uppercase()) }
+        } catch (e: IllegalArgumentException) {
+            null
         }
     }
 }
