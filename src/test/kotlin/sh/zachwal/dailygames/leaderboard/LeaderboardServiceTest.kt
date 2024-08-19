@@ -1,7 +1,6 @@
 package sh.zachwal.dailygames.leaderboard
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.Runs
 import io.mockk.every
 import io.mockk.mockk
 import org.jdbi.v3.sqlobject.kotlin.attach
@@ -16,7 +15,6 @@ import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
-import kotlin.reflect.KClass
 import kotlin.test.Test
 
 class LeaderboardServiceTest {
