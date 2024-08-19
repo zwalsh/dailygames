@@ -64,13 +64,18 @@ class LeaderboardService @Inject constructor(
         }
 
         return LeaderboardData(
-            allTime = chartInfoFromAverageScores(allTimeAverageScoreByUserId),
-            past30Days = chartInfoFromAverageScores(past30DaysAverageScoreByUserId),
+            allTime = chartInfoFromAverageScores(game, allTimeAverageScoreByUserId),
+            past30Days = chartInfoFromAverageScores(game, past30DaysAverageScoreByUserId),
         )
     }
 
-    private fun chartInfoFromAverageScores(scores: Map<Long, TotalScore>): ChartInfo {
-        val sortedScores = scores.entries.sortedByDescending { it.value.averageScore() }.take(5)
+    private fun chartInfoFromAverageScores(game: Game, scores: Map<Long, TotalScore>): ChartInfo {
+        val sortedScores = when (game) {
+            // For Top5 Scoring, high score wins
+            Game.TOP5 -> scores.entries.sortedByDescending { it.value.averageScore() }.take(5)
+            // For all other games, low score wins
+            else -> scores.entries.sortedBy { it.value.averageScore() }.take(5)
+        }
         val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
         val dataPoints = sortedScores.map { it.value.averageScore() }
         return ChartInfo(labels, dataPoints)
