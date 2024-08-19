@@ -46,8 +46,11 @@ function buildLeaderboardChart(dataLabels, dataValues, elementId) {
 
 
 window.onload = function() {
-
     var dataLabels = ['zach', 'derknasty', 'jackiewalsh', 'ChatGPT', 'MikMap'];
     var dataValues = [5.5, 5.3, 4.3, 3.9, 3.2];
     buildLeaderboardChart(dataLabels, dataValues, 'game-leaderboard-all-time');
+
+    var thirtyDayDataLabels = ['derknasty', 'ChatGPT', 'jackiewalsh', 'zach', 'MikMap'];
+    var thirtyDayDataValues = [5.7, 5.4, 5.3, 4.8, 4.7];
+    buildLeaderboardChart(thirtyDayDataLabels, thirtyDayDataValues, 'game-leaderboard-past-30-days');
 }
