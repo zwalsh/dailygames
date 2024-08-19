@@ -67,7 +67,7 @@ class ShareTextParser {
         return WorldleInfo(
             puzzleNumber = puzzleNumber.toInt(),
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
-            score = score.toIntOrNull() ?: 0,
+            score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
             percentage = percentage.toInt(),
             shareTextNoLink = shareText.substringBefore("https://").trim()
         )
@@ -78,7 +78,7 @@ class ShareTextParser {
         val (puzzleNumber, score) = match.destructured
         return TradleInfo(
             puzzleNumber = puzzleNumber.toInt(),
-            score = score.toIntOrNull() ?: 0,
+            score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points.
             shareTextNoLink = shareText.substringBefore("https://").trim()
         )
     }
@@ -129,7 +129,7 @@ class ShareTextParser {
         return FlagleInfo(
             puzzleNumber = puzzleNumber.toInt(),
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
-            score = score.toIntOrNull() ?: 0,
+            score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
             shareTextNoLink = shareText.substringBefore("https://").trim()
         )
     }

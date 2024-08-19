@@ -185,7 +185,7 @@ class ShareTextParserTest {
     }
 
     @Test
-    fun `extracts X score as 0`() {
+    fun `extracts X score as 7`() {
         val shareText = """
             #Worldle #934 (12.08.2024) X/6 (100%)
             🟩🟩🟩🟩🟨⬅️
@@ -198,7 +198,7 @@ class ShareTextParserTest {
 
         val worldleInfo = parser.extractWorldleInfo(shareText)
 
-        assertThat(worldleInfo.score).isEqualTo(0)
+        assertThat(worldleInfo.score).isEqualTo(7)
     }
 
     @Test
@@ -240,7 +240,7 @@ class ShareTextParserTest {
         val tradleInfo = parser.extractTradleInfo(shareText)
 
         assertThat(tradleInfo.puzzleNumber).isEqualTo(890)
-        assertThat(tradleInfo.score).isEqualTo(0)
+        assertThat(tradleInfo.score).isEqualTo(7)
         assertThat(tradleInfo.shareTextNoLink).isEqualTo(
             """
             #Tradle #890 X/6
@@ -382,7 +382,7 @@ class ShareTextParserTest {
 
         assertThat(flagleInfo.puzzleNumber).isEqualTo(905)
         assertThat(flagleInfo.date).isEqualTo(LocalDate.of(2024, 8, 14))
-        assertThat(flagleInfo.score).isEqualTo(0)
+        assertThat(flagleInfo.score).isEqualTo(7)
         assertThat(flagleInfo.shareTextNoLink).isEqualTo(
             """
                 #Flagle #905 (14.08.2024) X/6
