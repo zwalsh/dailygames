@@ -21,6 +21,12 @@ const val TRAVLE_WITH_HINT = """
 ✅✅🟩🟧🟧✅
 """
 
+const val TRAVLE_THREE_AWAY = """
+#travle #614 (3 away)
+🟧🟥🟥🟥🟧🟥🟥🟥✅
+https://travle.earth
+"""
+
 const val TOP5 = """
 Top 5 #171
 ⬜🟧🟨⬜⬜🟩⬜⬜
@@ -306,6 +312,24 @@ class ShareTextParserTest {
         assertThat(travleInfo.numIncorrect).isEqualTo(2)
         assertThat(travleInfo.numGuesses).isEqualTo(6)
         assertThat(travleInfo.numHints).isEqualTo(1)
+    }
+
+    @Test
+    fun `extracts Travle info when did not finish`() {
+        val travleInfo = parser.extractTravleInfo(TRAVLE_THREE_AWAY)
+
+        assertThat(travleInfo.puzzleNumber).isEqualTo(614)
+        assertThat(travleInfo.score).isEqualTo(-3)
+        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+            """
+                #travle #614 (3 away)
+                🟧🟥🟥🟥🟧🟥🟥🟥✅
+            """.trimIndent()
+        )
+        assertThat(travleInfo.numPerfect).isEqualTo(1)
+        assertThat(travleInfo.numIncorrect).isEqualTo(8)
+        assertThat(travleInfo.numGuesses).isEqualTo(9)
+        assertThat(travleInfo.numHints).isEqualTo(0)
     }
 
     @Test

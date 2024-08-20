@@ -10,8 +10,10 @@ import sh.zachwal.dailygames.db.dao.game.TravleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.leaderboard.views.BasicScoreHintView
 import sh.zachwal.dailygames.leaderboard.views.GameLeaderboardView
 import sh.zachwal.dailygames.leaderboard.views.LeaderboardView
+import sh.zachwal.dailygames.leaderboard.views.TravleScoreHintView
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -21,7 +23,8 @@ import javax.inject.Singleton
 @Singleton
 class LeaderboardService @Inject constructor(
     private val userService: UserService,
-    private val jdbi: Jdbi
+    private val jdbi: Jdbi,
+    private val pointCalculator: PuzzleResultPointCalculator,
 ) {
 
     fun overallLeaderboardView(currentUser: User): LeaderboardView {
@@ -29,36 +32,36 @@ class LeaderboardService @Inject constructor(
     }
 
     fun gameLeaderboardView(currentUser: User, game: Game): GameLeaderboardView {
-        val scoringText = when (game) {
-            Game.WORLDLE -> "Scoring: Number of guesses needed out of six. X/6 = 7."
-            Game.TRADLE -> "Scoring: Number of guesses needed out of six. X/6 = 7."
-            Game.TRAVLE -> "Scoring: Excess guesses needed to solve the puzzle. 0 is perfect."
-            Game.TOP5 -> "Scoring: One point per correct guess. One point per life left if all 5 answers guessed correctly."
-            Game.FLAGLE -> "Scoring: Number of guesses needed out of six. X/6 = 7."
+        val scoreHintView = when (game) {
+            Game.WORLDLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
+            Game.TRADLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
+            Game.TRAVLE -> TravleScoreHintView()
+            Game.TOP5 -> BasicScoreHintView("Scoring: One point per correct guess. One point per life left if all 5 answers guessed correctly.")
+            Game.FLAGLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
         }
-        return GameLeaderboardView(username = currentUser.username, game = game, scoringText = scoringText)
+        return GameLeaderboardView(username = currentUser.username, game = game, scoreHintView = scoreHintView)
     }
 
-    data class TotalScore(val games: Int, val totalScore: Int) {
-        fun averageScore(): Double {
-            return totalScore.toDouble() / games
+    data class TotalPoints(val games: Int, val totalPoints: Int) {
+        fun averagePoints(): Double {
+            return totalPoints.toDouble() / games
         }
 
-        fun addPerformance(score: TotalScore): TotalScore {
-            return TotalScore(games + score.games, totalScore + score.totalScore)
+        fun addPerformance(points: TotalPoints): TotalPoints {
+            return TotalPoints(games + points.games, totalPoints + points.totalPoints)
         }
     }
 
     fun gameLeaderboardData(currentUser: User, game: Game): LeaderboardData {
-        val allTimeAverageScoreByUserId = mutableMapOf<Long, TotalScore>()
-        val past30DaysAverageScoreByUserId = mutableMapOf<Long, TotalScore>()
+        val allTimeAverageScoreByUserId = mutableMapOf<Long, TotalPoints>()
+        val past30DaysAverageScoreByUserId = mutableMapOf<Long, TotalPoints>()
         jdbi.open().use { handle ->
             val dao = daoForGame(game, handle)
             dao.allResultsStream().forEach { result ->
-                val totalScore = TotalScore(1, result.score)
-                allTimeAverageScoreByUserId.merge(result.userId, totalScore, TotalScore::addPerformance)
+                val totalPoints = TotalPoints(1, pointCalculator.calculatePoints(result))
+                allTimeAverageScoreByUserId.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 if (result.instantSubmitted.isAfter(Instant.now().minus(30, ChronoUnit.DAYS))) {
-                    past30DaysAverageScoreByUserId.merge(result.userId, totalScore, TotalScore::addPerformance)
+                    past30DaysAverageScoreByUserId.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 }
             }
         }
@@ -69,15 +72,10 @@ class LeaderboardService @Inject constructor(
         )
     }
 
-    private fun chartInfoFromAverageScores(game: Game, scores: Map<Long, TotalScore>): ChartInfo {
-        val sortedScores = when (game) {
-            // For Top5 Scoring, high score wins
-            Game.TOP5 -> scores.entries.sortedByDescending { it.value.averageScore() }.take(5)
-            // For all other games, low score wins
-            else -> scores.entries.sortedBy { it.value.averageScore() }.take(5)
-        }
+    private fun chartInfoFromAverageScores(game: Game, scores: Map<Long, TotalPoints>): ChartInfo {
+        val sortedScores = scores.entries.sortedByDescending { it.value.averagePoints() }.take(5)
         val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
-        val dataPoints = sortedScores.map { it.value.averageScore() }
+        val dataPoints = sortedScores.map { it.value.averagePoints() }
         return ChartInfo(labels, dataPoints)
     }
 

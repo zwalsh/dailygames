@@ -44,6 +44,7 @@ class LeaderboardServiceTest {
                 every { attach(WorldleDAO::class) } returns worldleDAO
             }
         },
+        pointCalculator = PuzzleResultPointCalculator()
     )
 
     private val result = Top5Result(
@@ -107,25 +108,27 @@ class LeaderboardServiceTest {
 
     @Test
     fun `gameLeaderboardData fetches from correct DAO`() {
+        val worldleResult = WorldleResult(
+            id = 1L,
+            userId = testUser.id,
+            game = Game.WORLDLE,
+            score = 4,
+            puzzleNumber = 30,
+            puzzleDate = null,
+            instantSubmitted = Instant.now(),
+            shareText = "",
+            scorePercentage = 100,
+        )
         every { top5DAO.allResultsStream() } returns Stream.empty()
         every { worldleDAO.allResultsStream() } returns Stream.of(
-            WorldleResult(
-                id = 1L,
-                userId = testUser.id,
-                game = Game.WORLDLE,
-                score = 10,
-                puzzleNumber = 30,
-                puzzleDate = null,
-                instantSubmitted = Instant.now(),
-                shareText = "",
-                scorePercentage = 100,
-            )
+            worldleResult
         )
 
         val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.WORLDLE)
+        val expectedPoints = PuzzleResultPointCalculator().calculatePoints(worldleResult).toDouble()
 
         assertThat(leaderboardData.allTime.labels).containsExactly(testUser.username)
-        assertThat(leaderboardData.allTime.dataPoints).containsExactly(10.0)
+        assertThat(leaderboardData.allTime.dataPoints).containsExactly(expectedPoints)
     }
 
     @Test
