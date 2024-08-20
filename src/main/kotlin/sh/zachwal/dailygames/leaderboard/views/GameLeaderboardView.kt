@@ -6,10 +6,8 @@ import kotlinx.html.canvas
 import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.head
-import kotlinx.html.i
 import kotlinx.html.id
 import kotlinx.html.script
-import kotlinx.html.span
 import kotlinx.html.title
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem

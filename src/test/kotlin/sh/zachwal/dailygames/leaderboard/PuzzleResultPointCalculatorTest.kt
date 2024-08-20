@@ -148,7 +148,7 @@ class PuzzleResultPointCalculatorTest {
             14 to 8,
             15 to 8
         )
-        
+
         allowedGuesses.entries.forEach { (shortestSolution, allowedIncorrect) ->
             // perfect result at this solution length
             val result = travleResult.copy(numGuesses = shortestSolution, score = 0)

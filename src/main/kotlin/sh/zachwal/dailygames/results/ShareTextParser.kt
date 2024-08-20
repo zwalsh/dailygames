@@ -23,7 +23,6 @@ class ShareTextParser {
         }
     }
 
-
     val worldleRegex = Regex(
         """\s*#Worldle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+\((?<percentage>\d+)%\)[\s\S]*"""
     )
@@ -69,7 +68,7 @@ class ShareTextParser {
         val puzzleNumber = puzzleNumberRegex.find(shareText)?.groupValues?.get(1)
             ?: throw IllegalArgumentException("Puzzle number not found")
         val score = scoreRegex.find(shareText)?.groupValues?.get(1)?.toInt()
-        // Use the number away times negative one as the score if the result is a Did Not Finish
+            // Use the number away times negative one as the score if the result is a Did Not Finish
             ?: numAwayRegex.find(shareText)?.groupValues?.get(1)?.toInt()?.times(-1)
             ?: throw IllegalArgumentException("Score not found")
         val numGuesses = guessEmojiRegex.findAll(shareText).count()
@@ -115,7 +114,6 @@ class ShareTextParser {
             isPerfect = isPerfect
         )
     }
-
 
     val flagleRegex = Regex(
         """
