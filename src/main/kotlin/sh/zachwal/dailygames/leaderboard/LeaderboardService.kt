@@ -21,7 +21,8 @@ import javax.inject.Singleton
 @Singleton
 class LeaderboardService @Inject constructor(
     private val userService: UserService,
-    private val jdbi: Jdbi
+    private val jdbi: Jdbi,
+    private val pointCalculator: PuzzleResultPointCalculator,
 ) {
 
     fun overallLeaderboardView(currentUser: User): LeaderboardView {
@@ -39,26 +40,26 @@ class LeaderboardService @Inject constructor(
         return GameLeaderboardView(username = currentUser.username, game = game, scoringText = scoringText)
     }
 
-    data class TotalScore(val games: Int, val totalScore: Int) {
-        fun averageScore(): Double {
-            return totalScore.toDouble() / games
+    data class TotalPoints(val games: Int, val totalPoints: Int) {
+        fun averagePoints(): Double {
+            return totalPoints.toDouble() / games
         }
 
-        fun addPerformance(score: TotalScore): TotalScore {
-            return TotalScore(games + score.games, totalScore + score.totalScore)
+        fun addPerformance(points: TotalPoints): TotalPoints {
+            return TotalPoints(games + points.games, totalPoints + points.totalPoints)
         }
     }
 
     fun gameLeaderboardData(currentUser: User, game: Game): LeaderboardData {
-        val allTimeAverageScoreByUserId = mutableMapOf<Long, TotalScore>()
-        val past30DaysAverageScoreByUserId = mutableMapOf<Long, TotalScore>()
+        val allTimeAverageScoreByUserId = mutableMapOf<Long, TotalPoints>()
+        val past30DaysAverageScoreByUserId = mutableMapOf<Long, TotalPoints>()
         jdbi.open().use { handle ->
             val dao = daoForGame(game, handle)
             dao.allResultsStream().forEach { result ->
-                val totalScore = TotalScore(1, result.score)
-                allTimeAverageScoreByUserId.merge(result.userId, totalScore, TotalScore::addPerformance)
+                val totalPoints = TotalPoints(1, pointCalculator.calculatePoints(result))
+                allTimeAverageScoreByUserId.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 if (result.instantSubmitted.isAfter(Instant.now().minus(30, ChronoUnit.DAYS))) {
-                    past30DaysAverageScoreByUserId.merge(result.userId, totalScore, TotalScore::addPerformance)
+                    past30DaysAverageScoreByUserId.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 }
             }
         }
@@ -69,15 +70,10 @@ class LeaderboardService @Inject constructor(
         )
     }
 
-    private fun chartInfoFromAverageScores(game: Game, scores: Map<Long, TotalScore>): ChartInfo {
-        val sortedScores = when (game) {
-            // For Top5 Scoring, high score wins
-            Game.TOP5 -> scores.entries.sortedByDescending { it.value.averageScore() }.take(5)
-            // For all other games, low score wins
-            else -> scores.entries.sortedBy { it.value.averageScore() }.take(5)
-        }
+    private fun chartInfoFromAverageScores(game: Game, scores: Map<Long, TotalPoints>): ChartInfo {
+        val sortedScores = scores.entries.sortedByDescending { it.value.averagePoints() }.take(5)
         val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
-        val dataPoints = sortedScores.map { it.value.averageScore() }
+        val dataPoints = sortedScores.map { it.value.averagePoints() }
         return ChartInfo(labels, dataPoints)
     }
 
