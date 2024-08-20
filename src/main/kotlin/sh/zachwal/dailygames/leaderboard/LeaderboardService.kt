@@ -10,8 +10,10 @@ import sh.zachwal.dailygames.db.dao.game.TravleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.leaderboard.views.BasicScoreHintView
 import sh.zachwal.dailygames.leaderboard.views.GameLeaderboardView
 import sh.zachwal.dailygames.leaderboard.views.LeaderboardView
+import sh.zachwal.dailygames.leaderboard.views.TravleScoreHintView
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -30,14 +32,14 @@ class LeaderboardService @Inject constructor(
     }
 
     fun gameLeaderboardView(currentUser: User, game: Game): GameLeaderboardView {
-        val scoringText = when (game) {
-            Game.WORLDLE -> "Scoring: Number of guesses needed out of six. X/6 = 7."
-            Game.TRADLE -> "Scoring: Number of guesses needed out of six. X/6 = 7."
-            Game.TRAVLE -> "Scoring: Excess guesses needed to solve the puzzle. 0 is perfect."
-            Game.TOP5 -> "Scoring: One point per correct guess. One point per life left if all 5 answers guessed correctly."
-            Game.FLAGLE -> "Scoring: Number of guesses needed out of six. X/6 = 7."
+        val scoreHintView = when (game) {
+            Game.WORLDLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
+            Game.TRADLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
+            Game.TRAVLE -> TravleScoreHintView()
+            Game.TOP5 -> BasicScoreHintView("Scoring: One point per correct guess. One point per life left if all 5 answers guessed correctly.")
+            Game.FLAGLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
         }
-        return GameLeaderboardView(username = currentUser.username, game = game, scoringText = scoringText)
+        return GameLeaderboardView(username = currentUser.username, game = game, scoreHintView = scoreHintView)
     }
 
     data class TotalPoints(val games: Int, val totalPoints: Int) {

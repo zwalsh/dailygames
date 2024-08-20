@@ -22,7 +22,7 @@ import sh.zachwal.dailygames.shared_html.headSetup
 data class GameLeaderboardView(
     val username: String,
     val game: Game,
-    val scoringText: String,
+    val scoreHintView: ScoreHintView,
 ) : HTMLView<HTML>() {
 
     val nav = NavView(username = username, currentActiveNavItem = NavItem.LEADERBOARD)
@@ -49,16 +49,7 @@ data class GameLeaderboardView(
                         }
                     }
                 }
-                div(classes = "row") {
-                    div(classes = "col") {
-                        div(classes = "alert alert-primary mx-4") {
-                            i(classes = "bi bi-info-circle")
-                            span(classes = "mx-2") {
-                                +scoringText
-                            }
-                        }
-                    }
-                }
+                scoreHintView.renderIn(this)
                 div(classes = "row mb-4") {
                     div(classes = "col") {
                         card("All Time", cardHeaderClasses = "text-center fs-3", classes = "mx-3") {
