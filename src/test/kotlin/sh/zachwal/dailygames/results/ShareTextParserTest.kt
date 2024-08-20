@@ -333,11 +333,6 @@ class ShareTextParserTest {
     }
 
     @Test
-    fun `extracts Travle info with far-off guess`() {
-        TODO()
-    }
-
-    @Test
     fun `extracts Top5 info`() {
         val top5Info = parser.extractTop5Info(TOP5)
 
