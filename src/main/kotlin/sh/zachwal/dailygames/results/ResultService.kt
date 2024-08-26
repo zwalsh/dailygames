@@ -169,6 +169,10 @@ class ResultService @Inject constructor(
             .limit(FEED_SIZE.toLong())
             .toList()
     }
+
+    fun allResultsForPuzzle(puzzle: Puzzle): List<PuzzleResult> {
+        TODO()
+    }
 }
 
 fun displayTime(time: Instant, now: Instant = Instant.now()): String {

@@ -49,10 +49,10 @@ interface TradleDAO : PuzzleResultDAO<TradleResult> {
             ORDER BY instant_submitted DESC
         """
     )
-    fun resultsForPuzzleStream(
+    override fun resultsForPuzzle(
         @BindBean("puzzle")
         puzzle: Puzzle
-    ): Stream<TradleResult>
+    ): List<TradleResult>
 
     @SqlQuery(
         """

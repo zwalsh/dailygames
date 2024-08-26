@@ -50,10 +50,10 @@ interface FlagleDAO : PuzzleResultDAO<FlagleResult> {
             ORDER BY instant_submitted DESC
         """
     )
-    fun resultsForPuzzle(
+    override fun resultsForPuzzle(
         @BindBean("puzzle")
         puzzle: Puzzle
-    ): Stream<FlagleResult>
+    ): List<FlagleResult>
 
     @SqlQuery(
         """
