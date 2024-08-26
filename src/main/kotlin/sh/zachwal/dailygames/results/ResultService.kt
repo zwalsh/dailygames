@@ -171,7 +171,13 @@ class ResultService @Inject constructor(
     }
 
     fun allResultsForPuzzle(puzzle: Puzzle): List<PuzzleResult> {
-        TODO()
+        return when (puzzle.game) {
+            Game.WORLDLE -> worldleDAO.resultsForPuzzle(puzzle)
+            Game.TRADLE -> tradleDAO.resultsForPuzzle(puzzle)
+            Game.TRAVLE -> travleDAO.resultsForPuzzle(puzzle)
+            Game.TOP5 -> top5DAO.resultsForPuzzle(puzzle)
+            Game.FLAGLE -> flagleDAO.resultsForPuzzle(puzzle)
+        }
     }
 }
 
