@@ -13,6 +13,7 @@ import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
@@ -66,7 +67,9 @@ class ResultServiceTest(
     @BeforeEach
     fun setup() {
         every { userService.getUser(fixtures.zach.id) } returns fixtures.zach
+        every { userService.getUsernameCached(fixtures.zach.id) } returns fixtures.zach.username
         every { userService.getUser(fixtures.jackie.id) } returns fixtures.jackie
+        every { userService.getUsernameCached(fixtures.jackie.id) } returns fixtures.jackie.username
     }
 
     @Test
@@ -297,5 +300,24 @@ class ResultServiceTest(
                 timestampText = displayTime(flagleResult.instantSubmitted),
             ),
         )
+    }
+
+    @Test
+    fun `can return all results for a puzzle`() {
+        val result1 = resultService.createResult(fixtures.zach, worldle934)
+        val result2 = resultService.createResult(
+            fixtures.jackie,
+            """     
+            #Worldle #934 (12.08.2024) 2/6 (100%)
+            🟩🟩🟩🟩🟨⬅️
+            🟩🟩🟩🟩🟩🎉
+            """.trimIndent()
+        )
+        val differentPuzzleResult = resultService.createResult(fixtures.zach, tradle890)
+
+        val results = resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 934, null))
+
+        assertThat(results).containsExactly(result1, result2)
+        assertThat(results).doesNotContain(differentPuzzleResult)
     }
 }

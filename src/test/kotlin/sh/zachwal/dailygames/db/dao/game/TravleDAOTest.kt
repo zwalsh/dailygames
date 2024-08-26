@@ -105,7 +105,7 @@ class TravleDAOTest(
         insertResult(userId = fixtures.jackie.id)
         insertResult(puzzle = puzzleTwo)
 
-        val results = travleDAO.resultsForPuzzleStream(puzzleOne).toList()
+        val results = travleDAO.resultsForPuzzle(puzzleOne)
 
         assertThat(results).hasSize(2)
     }

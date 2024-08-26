@@ -104,7 +104,7 @@ class TradleDAOTest(
         insertResult(userId = fixtures.jackie.id)
         insertResult(puzzle = puzzleTwo)
 
-        val results = tradleDAO.resultsForPuzzleStream(puzzleOne).toList()
+        val results = tradleDAO.resultsForPuzzle(puzzleOne)
 
         assertThat(results).hasSize(2)
     }

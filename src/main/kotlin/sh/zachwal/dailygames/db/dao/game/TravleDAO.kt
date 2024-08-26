@@ -53,10 +53,10 @@ interface TravleDAO : PuzzleResultDAO<TravleResult> {
             ORDER BY instant_submitted DESC
         """
     )
-    fun resultsForPuzzleStream(
+    override fun resultsForPuzzle(
         @BindBean("puzzle")
         puzzle: Puzzle
-    ): Stream<TravleResult>
+    ): List<TravleResult>
 
     @SqlQuery(
         """

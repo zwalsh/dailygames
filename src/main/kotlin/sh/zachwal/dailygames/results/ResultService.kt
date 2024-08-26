@@ -129,10 +129,8 @@ class ResultService @Inject constructor(
 
     fun resultFeed(): List<ResultFeedItemView> {
         val results = readFirstTwentyResults()
-
-        val userNameCache = mutableMapOf<Long, String?>()
         return results.map { result ->
-            val username = userNameCache.computeIfAbsent(result.userId) { userService.getUser(it)?.username }
+            val username = userService.getUsernameCached(result.userId)
             ResultFeedItemView(
                 username ?: "Unknown",
                 "${result.game.displayName()} #${result.puzzleNumber}",
@@ -168,6 +166,16 @@ class ResultService @Inject constructor(
             .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(2, ChronoUnit.DAYS)) }
             .limit(FEED_SIZE.toLong())
             .toList()
+    }
+
+    fun allResultsForPuzzle(puzzle: Puzzle): List<PuzzleResult> {
+        return when (puzzle.game) {
+            Game.WORLDLE -> worldleDAO.resultsForPuzzle(puzzle)
+            Game.TRADLE -> tradleDAO.resultsForPuzzle(puzzle)
+            Game.TRAVLE -> travleDAO.resultsForPuzzle(puzzle)
+            Game.TOP5 -> top5DAO.resultsForPuzzle(puzzle)
+            Game.FLAGLE -> flagleDAO.resultsForPuzzle(puzzle)
+        }
     }
 }
 

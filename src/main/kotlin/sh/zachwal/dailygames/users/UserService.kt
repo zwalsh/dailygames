@@ -50,4 +50,11 @@ class UserService @Inject constructor(private val userDAO: UserDAO) {
     }
 
     fun list(): List<User> = userDAO.listUsers()
+
+    // TODO use a real cache library, maybe
+    private val userNameCache = mutableMapOf<Long, String?>()
+
+    fun getUsernameCached(userId: Long): String? {
+        return userNameCache.computeIfAbsent(userId) { getUser(it)?.username }
+    }
 }

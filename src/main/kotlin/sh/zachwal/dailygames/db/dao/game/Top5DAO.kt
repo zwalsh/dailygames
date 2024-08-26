@@ -52,10 +52,10 @@ interface Top5DAO : PuzzleResultDAO<Top5Result> {
             ORDER BY instant_submitted DESC
         """
     )
-    fun resultsForPuzzleStream(
+    override fun resultsForPuzzle(
         @BindBean("puzzle")
         puzzle: Puzzle
-    ): Stream<Top5Result>
+    ): List<Top5Result>
 
     @SqlQuery(
         """
