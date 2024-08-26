@@ -10,7 +10,6 @@ import sh.zachwal.dailygames.shared_html.HTMLView
 
 data class ChatFeedItemView(
     val username: String,
-    val resultTitle: String,
     val shareText: String,
     val timestampText: String,
 ) : HTMLView<DIV>() {
@@ -19,7 +18,7 @@ data class ChatFeedItemView(
             div(classes = "card mx-3") {
                 div(classes = "card-header") {
                     h1(classes = "fs-5 my-1") {
-                        +"$username's $resultTitle"
+                        +username
                     }
                     p(classes = "text-secondary mb-0") {
                         style = "font-size: 0.9rem;"
@@ -32,6 +31,7 @@ data class ChatFeedItemView(
                         +shareText
                     }
                 }
+                // TODO add footer with score & reactions?
             }
         }
     }

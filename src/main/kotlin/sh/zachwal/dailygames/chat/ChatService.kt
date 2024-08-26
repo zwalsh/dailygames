@@ -25,7 +25,6 @@ class ChatService @Inject constructor(
         val chatFeedItems = results.reversed().map {
             ChatFeedItemView(
                 username = userService.getUsernameCached(it.userId) ?: "Unknown",
-                resultTitle = "${game.displayName()} #$puzzleNumber",
                 shareText = it.shareText,
                 timestampText = displayTime(it.instantSubmitted)
             )

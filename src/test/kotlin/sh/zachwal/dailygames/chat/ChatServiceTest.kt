@@ -105,7 +105,6 @@ class ChatServiceTest {
 
         assertThat(chatView.chatFeedItems).hasSize(1)
         assertThat(chatView.chatFeedItems[0].username).isEqualTo("user1")
-        assertThat(chatView.chatFeedItems[0].resultTitle).isEqualTo("Worldle #943")
         assertThat(chatView.chatFeedItems[0].shareText).isEqualTo(shareText)
         assertThat(chatView.chatFeedItems[0].timestampText).isEqualTo(displayTime(worldleResult.instantSubmitted))
     }
