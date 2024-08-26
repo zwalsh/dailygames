@@ -48,17 +48,15 @@ data class GameLeaderboardView(
                     }
                 }
                 scoreHintView.renderIn(this)
-                div(classes = "row mb-4") {
-                    div(classes = "col") {
+                div(classes = "row") {
+                    div(classes = "col-12 col-md-6 mb-4") {
                         card("All Time", cardHeaderClasses = "text-center fs-3", classes = "mx-3") {
                             canvas {
                                 id = "game-leaderboard-all-time"
                             }
                         }
                     }
-                }
-                div(classes = "row") {
-                    div(classes = "col") {
+                    div(classes = "col-12 col-md-6 mb-4") {
                         card("Past 30 Days", cardHeaderClasses = "text-center fs-3", classes = "mx-3") {
                             canvas {
                                 id = "game-leaderboard-past-30-days"
