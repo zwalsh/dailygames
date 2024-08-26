@@ -12,7 +12,7 @@ import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
-data class PuzzleChatView(
+data class ChatView(
     val username: String,
     val game: Game,
     val puzzleNumber: Int,
