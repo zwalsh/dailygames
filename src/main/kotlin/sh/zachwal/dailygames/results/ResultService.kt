@@ -129,10 +129,8 @@ class ResultService @Inject constructor(
 
     fun resultFeed(): List<ResultFeedItemView> {
         val results = readFirstTwentyResults()
-
-        val userNameCache = mutableMapOf<Long, String?>()
         return results.map { result ->
-            val username = userNameCache.computeIfAbsent(result.userId) { userService.getUser(it)?.username }
+            val username = userService.getUsernameCached(result.userId)
             ResultFeedItemView(
                 username ?: "Unknown",
                 "${result.game.displayName()} #${result.puzzleNumber}",

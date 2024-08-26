@@ -67,7 +67,9 @@ class ResultServiceTest(
     @BeforeEach
     fun setup() {
         every { userService.getUser(fixtures.zach.id) } returns fixtures.zach
+        every { userService.getUsernameCached(fixtures.zach.id) } returns fixtures.zach.username
         every { userService.getUser(fixtures.jackie.id) } returns fixtures.jackie
+        every { userService.getUsernameCached(fixtures.jackie.id) } returns fixtures.jackie.username
     }
 
     @Test

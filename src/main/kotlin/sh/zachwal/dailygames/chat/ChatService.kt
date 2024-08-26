@@ -6,13 +6,15 @@ import sh.zachwal.dailygames.chat.views.ChatView
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.ResultService
+import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ChatService @Inject constructor(
     private val jdbi: Jdbi,
-    private val resultService: ResultService
+    private val resultService: ResultService,
+    private val userService: UserService,
 ) {
 
     fun chatView(username: String, game: Game, puzzleNumber: Int): ChatView {
