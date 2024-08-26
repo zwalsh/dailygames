@@ -14,7 +14,7 @@ data class ChatFeedItemView(
     val timestampText: String,
 ) : HTMLView<DIV>() {
     override fun DIV.render() {
-        div(classes = "col-sm-12 col-md-4 mt-2 mb-4") {
+        div(classes = "col-12 col-sm-6 col-md-4 mt-2 mb-4") {
             div(classes = "card mx-3") {
                 div(classes = "card-header") {
                     h1(classes = "fs-5 my-1") {
