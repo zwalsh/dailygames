@@ -16,7 +16,6 @@ import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.util.stream.Stream
 
-
 class ChatServiceTest {
 
     private val resultService = mockk<ResultService>()

@@ -1,6 +1,5 @@
 package sh.zachwal.dailygames.leaderboard
 
-import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
@@ -9,7 +8,6 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
-import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.roles.approvedUserRoute
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.extractGameFromPathParams
