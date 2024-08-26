@@ -75,8 +75,10 @@ data class HomeView constructor(
                         }
                     }
                 }
-                resultFeed.forEach {
-                    it.renderIn(this)
+                div(classes = "row") {
+                    resultFeed.forEach {
+                        it.renderIn(this)
+                    }
                 }
             }
         }
