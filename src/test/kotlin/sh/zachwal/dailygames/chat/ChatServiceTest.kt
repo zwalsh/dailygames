@@ -11,6 +11,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.results.ResultService
+import sh.zachwal.dailygames.results.displayTime
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.util.stream.Stream
@@ -59,29 +60,53 @@ class ChatServiceTest {
         assertThat(chatView.puzzleNumber).isEqualTo(3)
     }
 
+    private val worldle943 = Puzzle(Game.WORLDLE, 943, null)
+    private val worldleResult = WorldleResult(
+        id = 1L,
+        userId = 1L,
+        game = Game.WORLDLE,
+        score = 5,
+        puzzleNumber = 943,
+        puzzleDate = null,
+        instantSubmitted = Instant.now(),
+        shareText = "",
+        scorePercentage = 100,
+    )
+
     @Test
     fun `returns chat view with list of results with earliest first`() {
-        val worldleResult = WorldleResult(
-            id = 1L,
-            userId = 1L,
-            game = Game.WORLDLE,
-            score = 5,
-            puzzleNumber = 943,
-            puzzleDate = null,
-            instantSubmitted = Instant.now(),
-            shareText = "",
-            scorePercentage = 100,
-        )
-
-        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 943, null)) } returns listOf(
+        every { resultService.allResultsForPuzzle(worldle943) } returns listOf(
             worldleResult,
             worldleResult.copy(id = 2L, userId = 2L, score = 5, instantSubmitted = Instant.now().minusSeconds(1)),
             worldleResult.copy(id = 3L, userId = 3L, score = 5, instantSubmitted = Instant.now().minusSeconds(2)),
             worldleResult.copy(id = 4L, userId = 4L, score = 5, instantSubmitted = Instant.now().minusSeconds(3)),
         )
+        every { userService.getUsernameCached(1L) } returns "user1"
+        every { userService.getUsernameCached(2L) } returns "user2"
+        every { userService.getUsernameCached(3L) } returns "user3"
+        every { userService.getUsernameCached(4L) } returns "user4"
+
         val chatView = chatService.chatViewLatest("test", Game.WORLDLE)
 
         assertThat(chatView.chatFeedItems).hasSize(4)
-        assertThat(chatView.chatFeedItems[0])
+        assertThat(chatView.chatFeedItems[0].username).isEqualTo("user4")
+        assertThat(chatView.chatFeedItems[1].username).isEqualTo("user3")
+        assertThat(chatView.chatFeedItems[2].username).isEqualTo("user2")
+        assertThat(chatView.chatFeedItems[3].username).isEqualTo("user1")
+    }
+
+    @Test
+    fun `chat view items have correct username, result title, share text and timestamp`() {
+        val shareText = "My test share text"
+        every { resultService.allResultsForPuzzle(worldle943) } returns listOf(worldleResult.copy(shareText = shareText))
+        every { userService.getUsernameCached(1L) } returns "user1"
+
+        val chatView = chatService.chatViewLatest("test", Game.WORLDLE)
+
+        assertThat(chatView.chatFeedItems).hasSize(1)
+        assertThat(chatView.chatFeedItems[0].username).isEqualTo("user1")
+        assertThat(chatView.chatFeedItems[0].resultTitle).isEqualTo("Worldle #943")
+        assertThat(chatView.chatFeedItems[0].shareText).isEqualTo(shareText)
+        assertThat(chatView.chatFeedItems[0].timestampText).isEqualTo(displayTime(worldleResult.instantSubmitted))
     }
 }
