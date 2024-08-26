@@ -38,6 +38,7 @@ class ChatServiceTest {
         val username = "test"
         val game = Game.FLAGLE
         val puzzleNumber = 1
+        every { resultService.allResultsForPuzzle(Puzzle(Game.FLAGLE, 1, null)) } returns emptyList()
 
         // When
         val chatView = chatService.chatView(username, game, puzzleNumber)
@@ -53,6 +54,7 @@ class ChatServiceTest {
             Puzzle(Game.WORLDLE, 2, null),
             Puzzle(Game.WORLDLE, 1, null)
         )
+        every { resultService.allResultsForPuzzle(any()) } returns emptyList()
 
         val chatView = chatService.chatViewLatest("test", Game.WORLDLE)
 
@@ -85,7 +87,7 @@ class ChatServiceTest {
         every { userService.getUsernameCached(3L) } returns "user3"
         every { userService.getUsernameCached(4L) } returns "user4"
 
-        val chatView = chatService.chatViewLatest("test", Game.WORLDLE)
+        val chatView = chatService.chatView("test", Game.WORLDLE, 943)
 
         assertThat(chatView.chatFeedItems).hasSize(4)
         assertThat(chatView.chatFeedItems[0].username).isEqualTo("user4")
@@ -100,7 +102,7 @@ class ChatServiceTest {
         every { resultService.allResultsForPuzzle(worldle943) } returns listOf(worldleResult.copy(shareText = shareText))
         every { userService.getUsernameCached(1L) } returns "user1"
 
-        val chatView = chatService.chatViewLatest("test", Game.WORLDLE)
+        val chatView = chatService.chatView("test", Game.WORLDLE, 943)
 
         assertThat(chatView.chatFeedItems).hasSize(1)
         assertThat(chatView.chatFeedItems[0].username).isEqualTo("user1")
