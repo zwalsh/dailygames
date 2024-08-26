@@ -16,6 +16,7 @@ data class ChatView(
     val username: String,
     val game: Game,
     val puzzleNumber: Int,
+    val chatFeedItems: List<ChatFeedItemView>
 ) : HTMLView<HTML>() {
 
     val navView = NavView(username = username, currentActiveNavItem = NavItem.HOME)
