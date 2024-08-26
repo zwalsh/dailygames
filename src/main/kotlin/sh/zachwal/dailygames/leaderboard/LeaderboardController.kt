@@ -12,6 +12,7 @@ import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.roles.approvedUserRoute
 import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.utils.extractGameFromPathParams
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -39,7 +40,7 @@ class LeaderboardController @Inject constructor(
         approvedUserRoute("/leaderboard/{game}") {
             get {
                 val currentUser = currentUser(call, userService)
-                val game = extractGame(call) ?: run {
+                val game = call.extractGameFromPathParams() ?: run {
                     call.respond(HttpStatusCode.NotFound)
                     return@get
                 }
@@ -57,22 +58,13 @@ class LeaderboardController @Inject constructor(
         approvedUserRoute("/leaderboard/{game}/data") {
             get {
                 val currentUser = currentUser(call, userService)
-                val game = extractGame(call) ?: run {
+                val game = call.extractGameFromPathParams() ?: run {
                     call.respond(HttpStatusCode.NotFound)
                     return@get
                 }
 
                 call.respond(HttpStatusCode.OK, leaderboardService.gameLeaderboardData(currentUser, game))
             }
-        }
-    }
-
-    private fun extractGame(call: ApplicationCall): Game? {
-        val gameStr = call.parameters["game"]
-        return try {
-            gameStr?.let { Game.valueOf(it.uppercase()) }
-        } catch (e: IllegalArgumentException) {
-            null
         }
     }
 }
