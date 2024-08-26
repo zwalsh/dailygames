@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.chat.views
 
 import kotlinx.html.HTML
 import kotlinx.html.body
+import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.title
@@ -31,8 +32,15 @@ data class ChatView(
         body {
             darkMode()
             navView.renderIn(this)
-            h1 {
+            h1(classes = "text-center mt-4") {
                 +"${game.displayName()} #$puzzleNumber"
+            }
+            div(classes = "container") {
+                div(classes = "row") {
+                    chatFeedItems.forEach {
+                        it.renderIn(this)
+                    }
+                }
             }
         }
     }

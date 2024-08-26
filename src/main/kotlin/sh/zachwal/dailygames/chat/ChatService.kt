@@ -2,10 +2,13 @@ package sh.zachwal.dailygames.chat
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
+import sh.zachwal.dailygames.chat.views.ChatFeedItemView
 import sh.zachwal.dailygames.chat.views.ChatView
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.results.ResultService
+import sh.zachwal.dailygames.results.displayTime
 import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,11 +21,21 @@ class ChatService @Inject constructor(
 ) {
 
     fun chatView(username: String, game: Game, puzzleNumber: Int): ChatView {
+        val results = resultService.allResultsForPuzzle(Puzzle(game, puzzleNumber, date = null))
+        val chatFeedItems = results.reversed().map {
+            ChatFeedItemView(
+                username = userService.getUsernameCached(it.userId) ?: "Unknown",
+                resultTitle = "${game.displayName()} #$puzzleNumber",
+                shareText = it.shareText,
+                timestampText = displayTime(it.instantSubmitted)
+            )
+        }
+
         return ChatView(
             username = username,
             game = game,
             puzzleNumber = puzzleNumber,
-            chatFeedItems = emptyList()
+            chatFeedItems = chatFeedItems
         )
     }
 
