@@ -19,17 +19,17 @@ class PuzzleDAOTest(jdbi: Jdbi) {
 
     @Test
     fun `can insert and retrieve a puzzle`() {
-        val puzzle = Puzzle(Game.WORLDLE, 123, LocalDate.of(2024, 8, 11))
+        val puzzle = Puzzle(Game.TRAVLE, 123, LocalDate.of(2024, 8, 11))
         puzzleDAO.insertPuzzle(puzzle)
 
-        val queried = puzzleDAO.getPuzzle(Game.WORLDLE, 123)
+        val queried = puzzleDAO.getPuzzle(Game.TRAVLE, 123)
 
         assertThat(queried).isEqualTo(puzzle)
     }
 
     @Test
     fun `returns inserted puzzle`() {
-        val puzzle = Puzzle(Game.WORLDLE, 123, LocalDate.of(2024, 8, 11))
+        val puzzle = Puzzle(Game.TRAVLE, 123, LocalDate.of(2024, 8, 11))
         val inserted = puzzleDAO.insertPuzzle(puzzle)
 
         assertThat(inserted).isEqualTo(puzzle)
@@ -37,7 +37,7 @@ class PuzzleDAOTest(jdbi: Jdbi) {
 
     @Test
     fun `cannot insert two puzzles of the same game and number`() {
-        val puzzle = Puzzle(Game.WORLDLE, 123, LocalDate.of(2024, 8, 11))
+        val puzzle = Puzzle(Game.TRAVLE, 123, LocalDate.of(2024, 8, 11))
         puzzleDAO.insertPuzzle(puzzle)
 
         assertThrows<Exception> {
@@ -48,69 +48,69 @@ class PuzzleDAOTest(jdbi: Jdbi) {
     @Test
     fun `can list puzzles by game`() {
         (1..5)
-            .map { Puzzle(Game.WORLDLE, it, LocalDate.of(2024, 8, it)) }
+            .map { Puzzle(Game.TRAVLE, it, LocalDate.of(2024, 8, it)) }
             .forEach { puzzleDAO.insertPuzzle(it) }
 
-        val puzzles = puzzleDAO.listPuzzlesForGameDescending(Game.WORLDLE).toList()
+        val puzzles = puzzleDAO.listPuzzlesForGameDescending(Game.TRAVLE).toList()
 
         assertThat(puzzles).hasSize(5)
-        assertThat(puzzles.first()).isEqualTo(Puzzle(Game.WORLDLE, 5, LocalDate.of(2024, 8, 5)))
+        assertThat(puzzles.first()).isEqualTo(Puzzle(Game.TRAVLE, 5, LocalDate.of(2024, 8, 5)))
     }
 
     @Test
     fun `can check if puzzle exists`() {
-        val puzzle = Puzzle(Game.WORLDLE, 123, LocalDate.of(2024, 8, 11))
+        val puzzle = Puzzle(Game.TRAVLE, 123, LocalDate.of(2024, 8, 11))
         puzzleDAO.insertPuzzle(puzzle)
 
-        val exists = puzzleDAO.puzzleExists(Game.WORLDLE, 123)
+        val exists = puzzleDAO.puzzleExists(Game.TRAVLE, 123)
 
         assertThat(exists).isTrue()
     }
 
     @Test
     fun `can check if puzzle does not exist`() {
-        val exists = puzzleDAO.puzzleExists(Game.WORLDLE, 123)
+        val exists = puzzleDAO.puzzleExists(Game.TRAVLE, 123)
 
         assertThat(exists).isFalse()
     }
 
     @Test
     fun `query for previous puzzle`() {
-        val puzzle = Puzzle(Game.WORLDLE, 123, null)
+        val puzzle = Puzzle(Game.TRAVLE, 123, null)
         val previous = puzzle.copy(number = 100)
 
         puzzleDAO.insertPuzzle(puzzle)
         puzzleDAO.insertPuzzle(previous)
 
-        assertThat(puzzleDAO.previousPuzzle(Game.WORLDLE, 123)).isEqualTo(previous)
+        assertThat(puzzleDAO.previousPuzzle(Game.TRAVLE, 123)).isEqualTo(previous)
     }
 
     @Test
     fun `previousPuzzle returns null when none exists`() {
-        val puzzle = Puzzle(Game.WORLDLE, 123, null)
+        val puzzle = Puzzle(Game.TRAVLE, 123, null)
 
         puzzleDAO.insertPuzzle(puzzle)
 
-        assertThat(puzzleDAO.previousPuzzle(Game.WORLDLE, 123)).isNull()
+        assertThat(puzzleDAO.previousPuzzle(Game.TRAVLE, 123)).isNull()
     }
 
     @Test
     fun `query for next puzzle`() {
-        val puzzle = Puzzle(Game.WORLDLE, 123, null)
+        val puzzle = Puzzle(Game.TRAVLE, 123, null)
         val next = puzzle.copy(number = 200)
 
         puzzleDAO.insertPuzzle(puzzle)
         puzzleDAO.insertPuzzle(next)
 
-        assertThat(puzzleDAO.nextPuzzle(Game.WORLDLE, 123)).isEqualTo(next)
+        assertThat(puzzleDAO.nextPuzzle(Game.TRAVLE, 123)).isEqualTo(next)
     }
 
     @Test
     fun `nextPuzzle returns null when none exists`() {
-        val puzzle = Puzzle(Game.WORLDLE, 123, null)
+        val puzzle = Puzzle(Game.TRAVLE, 123, null)
 
         puzzleDAO.insertPuzzle(puzzle)
 
-        assertThat(puzzleDAO.nextPuzzle(Game.WORLDLE, 123)).isNull()
+        assertThat(puzzleDAO.nextPuzzle(Game.TRAVLE, 123)).isNull()
     }
 }
