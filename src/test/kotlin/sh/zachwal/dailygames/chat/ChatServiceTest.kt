@@ -3,10 +3,15 @@ package sh.zachwal.dailygames.chat
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import org.junit.jupiter.api.Test
+import sh.zachwal.dailygames.chat.views.ChatItemView
+import sh.zachwal.dailygames.chat.views.ResultItemView
+import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.jdbi.Chat
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
@@ -26,6 +31,9 @@ class ChatServiceTest {
         every { previousPuzzle(any(), any()) } returns null
         every { nextPuzzle(any(), any()) } returns null
     }
+    private val chatDAO = mockk<ChatDAO> {
+        every { chatsForPuzzleDescending(any()) } returns emptyList()
+    }
     private val jdbi = mockk<Jdbi> {
         every { open() } returns mockk(relaxed = true) {
             every { attach<PuzzleDAO>() } returns puzzleDAO
@@ -36,6 +44,7 @@ class ChatServiceTest {
         resultService,
         userService,
         puzzleDAO,
+        chatDAO,
     )
 
     @Test
@@ -96,10 +105,11 @@ class ChatServiceTest {
         val chatView = chatService.chatView("test", Game.WORLDLE, 943)
 
         assertThat(chatView.chatFeedItems).hasSize(4)
-        assertThat(chatView.chatFeedItems[0].username).isEqualTo("user4")
-        assertThat(chatView.chatFeedItems[1].username).isEqualTo("user3")
-        assertThat(chatView.chatFeedItems[2].username).isEqualTo("user2")
-        assertThat(chatView.chatFeedItems[3].username).isEqualTo("user1")
+        val items = chatView.chatFeedItems as List<ResultItemView>
+        assertThat(items[0].username).isEqualTo("user4")
+        assertThat(items[1].username).isEqualTo("user3")
+        assertThat(items[2].username).isEqualTo("user2")
+        assertThat(items[3].username).isEqualTo("user1")
     }
 
     @Test
@@ -111,9 +121,10 @@ class ChatServiceTest {
         val chatView = chatService.chatView("test", Game.WORLDLE, 943)
 
         assertThat(chatView.chatFeedItems).hasSize(1)
-        assertThat(chatView.chatFeedItems[0].username).isEqualTo("user1")
-        assertThat(chatView.chatFeedItems[0].shareText).isEqualTo(shareText)
-        assertThat(chatView.chatFeedItems[0].timestampText).isEqualTo(displayTime(worldleResult.instantSubmitted))
+        val items = chatView.chatFeedItems as List<ResultItemView>
+        assertThat(items[0].username).isEqualTo("user1")
+        assertThat(items[0].shareText).isEqualTo(shareText)
+        assertThat(items[0].timestampText).isEqualTo(displayTime(worldleResult.instantSubmitted))
     }
 
     @Test
@@ -141,5 +152,78 @@ class ChatServiceTest {
         val chatView = chatService.chatView("test", Game.WORLDLE, 1)
 
         assertThat(chatView.prevLink).isNull()
+    }
+
+    @Test
+    fun `can insert chat`() {
+        every { chatDAO.insertChat(1L, Puzzle(Game.WORLDLE, 123, null), "My chat!") } returns Chat(
+            id = 1L,
+            userId = 1L,
+            game = Game.WORLDLE,
+            puzzleNumber = 123,
+            text = "My chat!",
+            instantSubmitted = Instant.now(),
+        )
+
+        chatService.insertChat(1L, Game.WORLDLE, 123, "My chat!")
+
+        verify { chatDAO.insertChat(1L, Puzzle(Game.WORLDLE, 123, null), "My chat!") }
+    }
+
+    @Test
+    fun `includes chat item in feed`() {
+        val chat = Chat(
+            id = 1L,
+            userId = 1L,
+            game = Game.WORLDLE,
+            puzzleNumber = 123,
+            text = "My chat!",
+            instantSubmitted = Instant.now(),
+        )
+        every { chatDAO.chatsForPuzzleDescending(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(chat)
+        every { userService.getUsernameCached(1L) } returns "user1"
+
+        val chatView = chatService.chatView("test", Game.WORLDLE, 123)
+
+        assertThat(chatView.chatFeedItems).hasSize(1)
+        val item = chatView.chatFeedItems.single()
+        assertThat(item).isInstanceOf(ChatItemView::class.java)
+        val chatItem = item as ChatItemView
+        assertThat(chatItem.username).isEqualTo("user1")
+        assertThat(chatItem.text).isEqualTo("My chat!")
+        assertThat(chatItem.timestampText).isEqualTo(displayTime(chat.instantSubmitted))
+    }
+
+    @Test
+    fun `interleaves results and chats`() {
+        val chat = Chat(
+            id = 1L,
+            userId = 1L,
+            game = Game.WORLDLE,
+            puzzleNumber = 123,
+            text = "My chat!",
+            instantSubmitted = Instant.now(),
+        )
+        val result = WorldleResult(
+            id = 1L,
+            userId = 1L,
+            game = Game.WORLDLE,
+            score = 5,
+            puzzleNumber = 123,
+            puzzleDate = null,
+            instantSubmitted = Instant.now(),
+            shareText = "",
+            scorePercentage = 100,
+        )
+        every { chatDAO.chatsForPuzzleDescending(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(chat)
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(result)
+        every { userService.getUsernameCached(1L) } returns "user1"
+
+        val chatView = chatService.chatView("test", Game.WORLDLE, 123)
+
+        assertThat(chatView.chatFeedItems).hasSize(2)
+        val items = chatView.chatFeedItems
+        assertThat(items[0]).isInstanceOf(ChatItemView::class.java)
+        assertThat(items[1]).isInstanceOf(ResultItemView::class.java)
     }
 }

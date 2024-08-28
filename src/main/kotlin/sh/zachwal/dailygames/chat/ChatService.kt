@@ -2,8 +2,10 @@ package sh.zachwal.dailygames.chat
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
-import sh.zachwal.dailygames.chat.views.ChatFeedItemView
+import sh.zachwal.dailygames.chat.views.ChatItemView
 import sh.zachwal.dailygames.chat.views.ChatView
+import sh.zachwal.dailygames.chat.views.ResultItemView
+import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
@@ -19,17 +21,30 @@ class ChatService @Inject constructor(
     private val resultService: ResultService,
     private val userService: UserService,
     private val puzzleDAO: PuzzleDAO,
+    private val chatDAO: ChatDAO,
 ) {
 
     fun chatView(username: String, game: Game, puzzleNumber: Int): ChatView {
         val results = resultService.allResultsForPuzzle(Puzzle(game, puzzleNumber, date = null))
-        val chatFeedItems = results.reversed().map {
-            ChatFeedItemView(
+        val resultItems = results.map {
+            ResultItemView(
                 username = userService.getUsernameCached(it.userId) ?: "Unknown",
                 shareText = it.shareText,
-                timestampText = displayTime(it.instantSubmitted)
+                timestampText = displayTime(it.instantSubmitted),
+                instantSubmitted = it.instantSubmitted,
             )
         }
+        val chats = chatDAO.chatsForPuzzleDescending(Puzzle(game, puzzleNumber, date = null))
+        val chatItems = chats.map {
+            ChatItemView(
+                username = userService.getUsernameCached(it.userId) ?: "Unknown",
+                text = it.text,
+                timestampText = displayTime(it.instantSubmitted),
+                instantSubmitted = it.instantSubmitted,
+            )
+        }
+
+        val chatFeedItems = (resultItems + chatItems).sortedBy { it.instantSubmitted }
 
         val previousPuzzle = puzzleDAO.previousPuzzle(game, puzzleNumber)
         val nextPuzzle = puzzleDAO.nextPuzzle(game, puzzleNumber)
@@ -57,5 +72,10 @@ class ChatService @Inject constructor(
         }
 
         return chatView(username, game, latestPuzzleNumber)
+    }
+
+    fun insertChat(userId: Long, game: Game, puzzleNumber: Int, text: String) {
+        val puzzle = Puzzle(game, puzzleNumber, date = null)
+        chatDAO.insertChat(userId, puzzle, text)
     }
 }

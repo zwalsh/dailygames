@@ -38,6 +38,7 @@ class TestExtension {
             "travle_result",
             "top5_result",
             "flagle_result",
+            "chat",
         )
     }
 
