@@ -1,10 +1,12 @@
 package sh.zachwal.dailygames.chat.views
 
 import kotlinx.html.HTML
+import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.head
+import kotlinx.html.i
 import kotlinx.html.title
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
@@ -34,10 +36,28 @@ data class ChatView(
         body {
             darkMode()
             navView.renderIn(this)
-            h1(classes = "text-center mt-4") {
-                +"${game.displayName()} #$puzzleNumber"
-            }
             div(classes = "container") {
+                div(classes = "row mx-4") {
+                    div(classes = "col-1 d-flex align-items-center") {
+                        prevLink?.let { href ->
+                            a(href = href, classes = "float-start text-white") {
+                                i(classes = "bi bi-chevron-compact-left")
+                            }
+                        }
+                    }
+                    div(classes = "col-10") {
+                        h1(classes = "text-center") {
+                            +"${game.displayName()} #$puzzleNumber"
+                        }
+                    }
+                    div(classes = "col-1 d-flex align-items-center") {
+                        nextLink?.let { href ->
+                            a(href = href, classes = "float-end text-white") {
+                                i(classes = "bi bi-chevron-compact-right")
+                            }
+                        }
+                    }
+                }
                 div(classes = "row") {
                     chatFeedItems.forEach {
                         it.renderIn(this)
