@@ -3,10 +3,13 @@ package sh.zachwal.dailygames.chat
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import org.junit.jupiter.api.Test
+import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.jdbi.Chat
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
@@ -26,6 +29,7 @@ class ChatServiceTest {
         every { previousPuzzle(any(), any()) } returns null
         every { nextPuzzle(any(), any()) } returns null
     }
+    private val chatDAO = mockk<ChatDAO>()
     private val jdbi = mockk<Jdbi> {
         every { open() } returns mockk(relaxed = true) {
             every { attach<PuzzleDAO>() } returns puzzleDAO
@@ -36,6 +40,7 @@ class ChatServiceTest {
         resultService,
         userService,
         puzzleDAO,
+        chatDAO,
     )
 
     @Test
@@ -141,5 +146,21 @@ class ChatServiceTest {
         val chatView = chatService.chatView("test", Game.WORLDLE, 1)
 
         assertThat(chatView.prevLink).isNull()
+    }
+
+    @Test
+    fun `can insert chat`() {
+        every { chatDAO.insertChat(1L, Puzzle(Game.WORLDLE, 123, null), "My chat!") } returns Chat(
+            id = 1L,
+            userId = 1L,
+            game = Game.WORLDLE,
+            puzzleNumber = 123,
+            text = "My chat!",
+            instantSubmitted = Instant.now(),
+        )
+
+        chatService.insertChat(1L, Game.WORLDLE, 123, "My chat!")
+
+        verify { chatDAO.insertChat(1L, Puzzle(Game.WORLDLE, 123, null), "My chat!") }
     }
 }

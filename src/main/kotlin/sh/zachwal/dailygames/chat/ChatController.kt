@@ -3,9 +3,14 @@ package sh.zachwal.dailygames.chat
 import io.ktor.application.call
 import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
+import io.ktor.request.receiveParameters
+import io.ktor.request.uri
 import io.ktor.response.respond
+import io.ktor.response.respondRedirect
 import io.ktor.routing.Routing
 import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.util.getOrFail
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
@@ -41,8 +46,6 @@ class ChatController @Inject constructor(
                     return@get
                 }
 
-                logger.info("User ${currentUser.username} loaded puzzle $puzzleNumber in game $game")
-
                 val chatView = chatService.chatView(
                     currentUser.username,
                     game,
@@ -65,13 +68,36 @@ class ChatController @Inject constructor(
                     return@get
                 }
 
-                logger.info("User ${currentUser.username} loaded latest puzzle in game $game")
-
                 val chatView = chatService.chatViewLatest(username = currentUser.username, game = game)
 
                 call.respondHtml {
                     chatView.renderIn(this)
                 }
+            }
+        }
+    }
+
+    fun Routing.commentSubmit() {
+        approvedUserRoute("/game/{game}/puzzle/{puzzleNumber}/comment") {
+            post {
+                val currentUser = currentUser(call, userService)
+                val game = call.extractGameFromPathParams() ?: run {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@post
+                }
+                val puzzleNumber = call.parameters["puzzleNumber"]?.toIntOrNull() ?: run {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@post
+                }
+                val parameters = call.receiveParameters()
+                val chatText = parameters.getOrFail(CHAT_TEXT_ID)
+
+                chatService.insertChat(currentUser.id, game, puzzleNumber, chatText)
+                logger.info("User ${currentUser.username} posted a comment on ${game.name} puzzle $puzzleNumber.")
+
+                val chatPage = call.request.uri.removeSuffix("/comment")
+
+                call.respondRedirect(chatPage)
             }
         }
     }

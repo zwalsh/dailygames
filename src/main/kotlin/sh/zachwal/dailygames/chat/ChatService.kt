@@ -4,6 +4,7 @@ import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.chat.views.ChatFeedItemView
 import sh.zachwal.dailygames.chat.views.ChatView
+import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
@@ -19,6 +20,7 @@ class ChatService @Inject constructor(
     private val resultService: ResultService,
     private val userService: UserService,
     private val puzzleDAO: PuzzleDAO,
+    private val chatDAO: ChatDAO,
 ) {
 
     fun chatView(username: String, game: Game, puzzleNumber: Int): ChatView {
@@ -57,5 +59,10 @@ class ChatService @Inject constructor(
         }
 
         return chatView(username, game, latestPuzzleNumber)
+    }
+
+    fun insertChat(userId: Long, game: Game, puzzleNumber: Int, text: String) {
+        val puzzle = Puzzle(game, puzzleNumber, date = null)
+        chatDAO.insertChat(userId, puzzle, text)
     }
 }

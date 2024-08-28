@@ -74,7 +74,8 @@ data class ChatView(
                 div(classes = "row") {
                     div(classes = "col mb-4") {
                         card(cardTitle = "Comment", cardTitleClasses = "text-center fs-3", classes = "mx-3") {
-                            form(method = post) {
+                            form(method = post, action = "/game/${game.name.lowercase()}/puzzle/$puzzleNumber/comment") {
+
                                 div(classes = "mb-3") {
                                     textArea(classes = "form-control", rows = "5") {
                                         id = CHAT_TEXT_ID
