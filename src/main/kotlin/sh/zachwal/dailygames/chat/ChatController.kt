@@ -92,6 +92,11 @@ class ChatController @Inject constructor(
                 val parameters = call.receiveParameters()
                 val chatText = parameters.getOrFail(CHAT_TEXT_ID)
 
+                if (chatText.length > 500) {
+                    call.respond(HttpStatusCode.BadRequest, "Comment is too long, must be 500 characters or less.")
+                    return@post
+                }
+
                 chatService.insertChat(currentUser.id, game, puzzleNumber, chatText)
                 logger.info("User ${currentUser.username} posted a comment on ${game.name} puzzle $puzzleNumber.")
 
