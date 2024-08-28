@@ -35,4 +35,15 @@ interface PuzzleDAO {
         """
     )
     fun listPuzzlesForGameDescending(game: Game): Stream<Puzzle>
+
+    @SqlQuery(
+        """
+            SELECT EXISTS(
+                SELECT 1
+                FROM puzzle
+                WHERE game = :game AND number = :number
+            )
+        """
+    )
+    fun puzzleExists(game: Game, number: Int): Boolean
 }

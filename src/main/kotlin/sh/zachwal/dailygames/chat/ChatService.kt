@@ -30,11 +30,20 @@ class ChatService @Inject constructor(
             )
         }
 
+        val prevLink = if (puzzleNumber - 1 > 0) {
+            "/game/${game.name.lowercase()}/puzzle/${puzzleNumber - 1}"
+        } else {
+            null
+        }
+        val nextLink = "/game/${game.name.lowercase()}/puzzle/${puzzleNumber + 1}"
+
         return ChatView(
             username = username,
             game = game,
             puzzleNumber = puzzleNumber,
-            chatFeedItems = chatFeedItems
+            chatFeedItems = chatFeedItems,
+            prevLink = prevLink,
+            nextLink = nextLink
         )
     }
 
