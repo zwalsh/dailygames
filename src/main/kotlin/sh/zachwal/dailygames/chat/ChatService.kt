@@ -2,7 +2,8 @@ package sh.zachwal.dailygames.chat
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
-import sh.zachwal.dailygames.chat.views.ChatFeedItemView
+import sh.zachwal.dailygames.chat.views.ChatItemView
+import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.chat.views.ChatView
 import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
@@ -25,13 +26,25 @@ class ChatService @Inject constructor(
 
     fun chatView(username: String, game: Game, puzzleNumber: Int): ChatView {
         val results = resultService.allResultsForPuzzle(Puzzle(game, puzzleNumber, date = null))
-        val chatFeedItems = results.reversed().map {
-            ChatFeedItemView(
+        val resultItems = results.map {
+            ResultItemView(
                 username = userService.getUsernameCached(it.userId) ?: "Unknown",
                 shareText = it.shareText,
-                timestampText = displayTime(it.instantSubmitted)
+                timestampText = displayTime(it.instantSubmitted),
+                instantSubmitted = it.instantSubmitted,
             )
         }
+        val chats = chatDAO.chatsForPuzzleDescending(Puzzle(game, puzzleNumber, date = null))
+        val chatItems = chats.map {
+            ChatItemView(
+                username = userService.getUsernameCached(it.userId) ?: "Unknown",
+                text = it.text,
+                timestampText = displayTime(it.instantSubmitted),
+                instantSubmitted = it.instantSubmitted,
+            )
+        }
+
+        val chatFeedItems = (resultItems + chatItems).sortedBy { it.instantSubmitted }
 
         val previousPuzzle = puzzleDAO.previousPuzzle(game, puzzleNumber)
         val nextPuzzle = puzzleDAO.nextPuzzle(game, puzzleNumber)

@@ -7,12 +7,48 @@ import kotlinx.html.p
 import kotlinx.html.span
 import kotlinx.html.style
 import sh.zachwal.dailygames.shared_html.HTMLView
+import java.time.Instant
 
-data class ChatFeedItemView(
+sealed class ChatFeedItemView : HTMLView<DIV>() {
+    abstract val instantSubmitted: Instant
+}
+
+data class ResultItemView(
     val username: String,
     val shareText: String,
     val timestampText: String,
-) : HTMLView<DIV>() {
+    override val instantSubmitted: Instant,
+) : ChatFeedItemView() {
+    override fun DIV.render() {
+        div(classes = "col-12 col-sm-6 col-md-4 mt-2 mb-4") {
+            div(classes = "card mx-3") {
+                div(classes = "card-header bg-secondary-subtle") {
+                    h1(classes = "fs-5 my-1") {
+                        +username
+                    }
+                    p(classes = "text-secondary mb-0") {
+                        style = "font-size: 0.9rem;"
+                        +timestampText
+                    }
+                }
+                div(classes = "card-body bg-dark-subtle") {
+                    span {
+                        style = "white-space: pre-wrap;"
+                        +shareText
+                    }
+                }
+                // TODO add footer with score & reactions?
+            }
+        }
+    }
+}
+
+data class ChatItemView(
+    val username: String,
+    val text: String,
+    val timestampText: String,
+    override val instantSubmitted: Instant,
+) : ChatFeedItemView() {
     override fun DIV.render() {
         div(classes = "col-12 col-sm-6 col-md-4 mt-2 mb-4") {
             div(classes = "card mx-3") {
@@ -28,10 +64,10 @@ data class ChatFeedItemView(
                 div(classes = "card-body") {
                     span {
                         style = "white-space: pre-wrap;"
-                        +shareText
+                        +text
                     }
                 }
-                // TODO add footer with score & reactions?
+                // TODO add footer with reactions?
             }
         }
     }

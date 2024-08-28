@@ -15,7 +15,6 @@ import kotlinx.html.textArea
 import kotlinx.html.title
 import sh.zachwal.dailygames.chat.CHAT_TEXT_ID
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.home.views.SHARE_TEXT_ID
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
@@ -82,6 +81,7 @@ data class ChatView(
                                         name = CHAT_TEXT_ID
                                     }
                                 }
+                                // TODO live updating character count
                                 div(classes = "d-flex justify-content-end") {
                                     submitInput(classes = "btn btn-primary") {
                                         value = "Post"
