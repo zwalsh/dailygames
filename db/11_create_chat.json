@@ -61,7 +61,7 @@
                 {
                   "column": {
                     "name": "text",
-                    "type": "text",
+                    "type": "varchar(600)",
                     "constraints": {
                       "nullable": false
                     }
