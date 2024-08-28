@@ -1,0 +1,143 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "11",
+        "author": "zach",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "chat",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "bigint",
+                    "autoIncrement": true,
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "user_id",
+                    "type": "bigint",
+                    "constraints": {
+                      "nullable": false,
+                      "references": "public.user(id)",
+                      "foreignKeyName": "chat_user_id_fk"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "game",
+                    "type": "VARCHAR(16)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted",
+                    "type": "timestamptz",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "text",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "addForeignKeyConstraint": {
+              "baseTableName": "chat",
+              "baseColumnNames": "game,puzzle_number",
+              "constraintName": "chat_puzzle_fk",
+              "referencedTableName": "puzzle",
+              "referencedColumnNames": "game,number"
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "chat_game_puzzle_number_instant_submitted_idx",
+              "tableName": "chat",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "game"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "chat_user_id_instant_submitted_idx",
+              "tableName": "chat",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "user_id"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "chat_instant_submitted_idx",
+              "tableName": "chat",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
