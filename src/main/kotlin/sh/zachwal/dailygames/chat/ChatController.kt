@@ -16,6 +16,8 @@ import sh.zachwal.dailygames.utils.extractGameFromPathParams
 import javax.inject.Inject
 import javax.inject.Singleton
 
+const val CHAT_TEXT_ID = "chatTextId"
+
 @Controller
 @Singleton
 class ChatController @Inject constructor(
