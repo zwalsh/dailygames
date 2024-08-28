@@ -18,6 +18,7 @@ class ChatService @Inject constructor(
     private val jdbi: Jdbi,
     private val resultService: ResultService,
     private val userService: UserService,
+    private val puzzleDAO: PuzzleDAO,
 ) {
 
     fun chatView(username: String, game: Game, puzzleNumber: Int): ChatView {
@@ -30,12 +31,11 @@ class ChatService @Inject constructor(
             )
         }
 
-        val prevLink = if (puzzleNumber - 1 > 0) {
-            "/game/${game.name.lowercase()}/puzzle/${puzzleNumber - 1}"
-        } else {
-            null
-        }
-        val nextLink = "/game/${game.name.lowercase()}/puzzle/${puzzleNumber + 1}"
+        val previousPuzzle = puzzleDAO.previousPuzzle(game, puzzleNumber)
+        val nextPuzzle = puzzleDAO.nextPuzzle(game, puzzleNumber)
+
+        val prevLink = previousPuzzle?.let { "/game/${game.name.lowercase()}/puzzle/${it.number}" }
+        val nextLink = nextPuzzle?.let { "/game/${game.name.lowercase()}/puzzle/${it.number}" }
 
         return ChatView(
             username = username,

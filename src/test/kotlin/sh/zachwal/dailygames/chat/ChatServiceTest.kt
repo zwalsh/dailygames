@@ -22,7 +22,10 @@ class ChatServiceTest {
         every { allResultsForPuzzle(any()) } returns emptyList()
     }
     private val userService = mockk<UserService>()
-    private val puzzleDAO = mockk<PuzzleDAO>()
+    private val puzzleDAO = mockk<PuzzleDAO> {
+        every { previousPuzzle(any(), any()) } returns null
+        every { nextPuzzle(any(), any()) } returns null
+    }
     private val jdbi = mockk<Jdbi> {
         every { open() } returns mockk(relaxed = true) {
             every { attach<PuzzleDAO>() } returns puzzleDAO
@@ -31,7 +34,8 @@ class ChatServiceTest {
     private val chatService = ChatService(
         jdbi,
         resultService,
-        userService
+        userService,
+        puzzleDAO,
     )
 
     @Test
@@ -114,20 +118,26 @@ class ChatServiceTest {
 
     @Test
     fun `chat view includes previous link`() {
-        val chatView = chatService.chatView("test", Game.WORLDLE, 2)
+        every { puzzleDAO.previousPuzzle(Game.WORLDLE, 3) } returns Puzzle(Game.WORLDLE, 1, null)
+
+        val chatView = chatService.chatView("test", Game.WORLDLE, 3)
 
         assertThat(chatView.prevLink).isEqualTo("/game/worldle/puzzle/1")
     }
 
     @Test
     fun `chat view includes next link`() {
-        val chatView = chatService.chatView("test", Game.WORLDLE, 2)
+        every { puzzleDAO.nextPuzzle(Game.WORLDLE, 3) } returns Puzzle(Game.WORLDLE, 10, null)
 
-        assertThat(chatView.nextLink).isEqualTo("/game/worldle/puzzle/3")
+        val chatView = chatService.chatView("test", Game.WORLDLE, 3)
+
+        assertThat(chatView.nextLink).isEqualTo("/game/worldle/puzzle/10")
     }
 
     @Test
-    fun `chat view omits previous link if it would be zero`() {
+    fun `chat view omits previous link if it is missing`() {
+        every { puzzleDAO.previousPuzzle(any(), any()) } returns null
+
         val chatView = chatService.chatView("test", Game.WORLDLE, 1)
 
         assertThat(chatView.prevLink).isNull()
