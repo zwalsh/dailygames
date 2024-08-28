@@ -3,8 +3,8 @@ package sh.zachwal.dailygames.chat
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.chat.views.ChatItemView
-import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.chat.views.ChatView
+import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game

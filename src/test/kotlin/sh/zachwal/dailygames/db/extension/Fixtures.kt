@@ -16,7 +16,6 @@ class Fixtures(
     lateinit var zach: User
     lateinit var jackie: User
 
-
     private val puzzleDAO: PuzzleDAO = jdbi.onDemand()
     lateinit var worldle123Puzzle: Puzzle
     lateinit var flagle123Puzzle: Puzzle
