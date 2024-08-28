@@ -56,4 +56,21 @@ class PuzzleDAOTest(jdbi: Jdbi) {
         assertThat(puzzles).hasSize(5)
         assertThat(puzzles.first()).isEqualTo(Puzzle(Game.WORLDLE, 5, LocalDate.of(2024, 8, 5)))
     }
+
+    @Test
+    fun `can check if puzzle exists`() {
+        val puzzle = Puzzle(Game.WORLDLE, 123, LocalDate.of(2024, 8, 11))
+        puzzleDAO.insertPuzzle(puzzle)
+
+        val exists = puzzleDAO.puzzleExists(Game.WORLDLE, 123)
+
+        assertThat(exists).isTrue()
+    }
+
+    @Test
+    fun `can check if puzzle does not exist`() {
+        val exists = puzzleDAO.puzzleExists(Game.WORLDLE, 123)
+
+        assertThat(exists).isFalse()
+    }
 }
