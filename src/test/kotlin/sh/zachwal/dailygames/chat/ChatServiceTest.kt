@@ -18,7 +18,9 @@ import java.util.stream.Stream
 
 class ChatServiceTest {
 
-    private val resultService = mockk<ResultService>()
+    private val resultService = mockk<ResultService> {
+        every { allResultsForPuzzle(any()) } returns emptyList()
+    }
     private val userService = mockk<UserService>()
     private val puzzleDAO = mockk<PuzzleDAO>()
     private val jdbi = mockk<Jdbi> {
@@ -108,5 +110,26 @@ class ChatServiceTest {
         assertThat(chatView.chatFeedItems[0].username).isEqualTo("user1")
         assertThat(chatView.chatFeedItems[0].shareText).isEqualTo(shareText)
         assertThat(chatView.chatFeedItems[0].timestampText).isEqualTo(displayTime(worldleResult.instantSubmitted))
+    }
+
+    @Test
+    fun `chat view includes previous link`() {
+        val chatView = chatService.chatView("test", Game.WORLDLE, 2)
+
+        assertThat(chatView.prevLink).isEqualTo("/game/worldle/puzzle/1")
+    }
+
+    @Test
+    fun `chat view includes next link`() {
+        val chatView = chatService.chatView("test", Game.WORLDLE, 2)
+
+        assertThat(chatView.nextLink).isEqualTo("/game/worldle/puzzle/3")
+    }
+
+    @Test
+    fun `chat view omits previous link if it would be zero`() {
+        val chatView = chatService.chatView("test", Game.WORLDLE, 1)
+
+        assertThat(chatView.prevLink).isNull()
     }
 }
