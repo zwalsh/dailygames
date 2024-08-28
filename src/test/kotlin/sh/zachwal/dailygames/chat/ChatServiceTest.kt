@@ -193,4 +193,37 @@ class ChatServiceTest {
         assertThat(chatItem.text).isEqualTo("My chat!")
         assertThat(chatItem.timestampText).isEqualTo(displayTime(chat.instantSubmitted))
     }
+
+    @Test
+    fun `interleaves results and chats`() {
+        val chat = Chat(
+            id = 1L,
+            userId = 1L,
+            game = Game.WORLDLE,
+            puzzleNumber = 123,
+            text = "My chat!",
+            instantSubmitted = Instant.now(),
+        )
+        val result = WorldleResult(
+            id = 1L,
+            userId = 1L,
+            game = Game.WORLDLE,
+            score = 5,
+            puzzleNumber = 123,
+            puzzleDate = null,
+            instantSubmitted = Instant.now(),
+            shareText = "",
+            scorePercentage = 100,
+        )
+        every { chatDAO.chatsForPuzzleDescending(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(chat)
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(result)
+        every { userService.getUsernameCached(1L) } returns "user1"
+
+        val chatView = chatService.chatView("test", Game.WORLDLE, 123)
+
+        assertThat(chatView.chatFeedItems).hasSize(2)
+        val items = chatView.chatFeedItems
+        assertThat(items[0]).isInstanceOf(ChatItemView::class.java)
+        assertThat(items[1]).isInstanceOf(ResultItemView::class.java)
+    }
 }
