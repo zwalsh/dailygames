@@ -73,4 +73,44 @@ class PuzzleDAOTest(jdbi: Jdbi) {
 
         assertThat(exists).isFalse()
     }
+
+    @Test
+    fun `query for previous puzzle`() {
+        val puzzle = Puzzle(Game.WORLDLE, 123, null)
+        val previous = puzzle.copy(number = 100)
+
+        puzzleDAO.insertPuzzle(puzzle)
+        puzzleDAO.insertPuzzle(previous)
+
+        assertThat(puzzleDAO.previousPuzzle(Game.WORLDLE, 123)).isEqualTo(previous)
+    }
+
+    @Test
+    fun `previousPuzzle returns null when none exists`() {
+        val puzzle = Puzzle(Game.WORLDLE, 123, null)
+
+        puzzleDAO.insertPuzzle(puzzle)
+
+        assertThat(puzzleDAO.previousPuzzle(Game.WORLDLE, 123)).isNull()
+    }
+
+    @Test
+    fun `query for next puzzle`() {
+        val puzzle = Puzzle(Game.WORLDLE, 123, null)
+        val next = puzzle.copy(number = 200)
+
+        puzzleDAO.insertPuzzle(puzzle)
+        puzzleDAO.insertPuzzle(next)
+
+        assertThat(puzzleDAO.nextPuzzle(Game.WORLDLE, 123)).isEqualTo(next)
+    }
+
+    @Test
+    fun `nextPuzzle returns null when none exists`() {
+        val puzzle = Puzzle(Game.WORLDLE, 123, null)
+
+        puzzleDAO.insertPuzzle(puzzle)
+
+        assertThat(puzzleDAO.nextPuzzle(Game.WORLDLE, 123)).isNull()
+    }
 }

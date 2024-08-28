@@ -46,4 +46,26 @@ interface PuzzleDAO {
         """
     )
     fun puzzleExists(game: Game, number: Int): Boolean
+
+    @SqlQuery(
+        """
+            SELECT game, number, date
+            FROM puzzle
+            WHERE game = :game AND number < :number
+            ORDER BY number DESC
+            LIMIT 1
+        """
+    )
+    fun previousPuzzle(game: Game, number: Int): Puzzle?
+
+    @SqlQuery(
+        """
+            SELECT game, number, date
+            FROM puzzle
+            WHERE game = :game AND number > :number
+            ORDER BY number ASC
+            LIMIT 1
+        """
+    )
+    fun nextPuzzle(game: Game, number: Int): Puzzle?
 }
