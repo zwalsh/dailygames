@@ -4,6 +4,7 @@ import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.chat.views.ChatItemView
 import sh.zachwal.dailygames.chat.views.ChatView
+import sh.zachwal.dailygames.chat.views.HiddenChatItemView
 import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
@@ -13,6 +14,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.results.displayTime
 import sh.zachwal.dailygames.users.UserService
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,14 +37,23 @@ class ChatService @Inject constructor(
                 instantSubmitted = it.instantSubmitted,
             )
         }
+        val hasUserSubmittedResult = results.any { it.userId == currentUser.id }
         val chats = chatDAO.chatsForPuzzleDescending(Puzzle(game, puzzleNumber, date = null))
         val chatItems = chats.map {
-            ChatItemView(
-                username = userService.getUsernameCached(it.userId) ?: "Unknown",
-                text = it.text,
-                timestampText = displayTime(it.instantSubmitted),
-                instantSubmitted = it.instantSubmitted,
-            )
+            if (hasUserSubmittedResult) {
+                ChatItemView(
+                    username = userService.getUsernameCached(it.userId) ?: "Unknown",
+                    text = it.text,
+                    timestampText = displayTime(it.instantSubmitted),
+                    instantSubmitted = it.instantSubmitted,
+                )
+            } else {
+                HiddenChatItemView(
+                    username = userService.getUsernameCached(it.userId) ?: "Unknown",
+                    timestampText = displayTime(it.instantSubmitted),
+                    instantSubmitted = it.instantSubmitted,
+                )
+            }
         }
 
         val chatFeedItems = (resultItems + chatItems).sortedBy { it.instantSubmitted }

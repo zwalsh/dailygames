@@ -8,6 +8,7 @@ import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.chat.views.ChatItemView
+import sh.zachwal.dailygames.chat.views.HiddenChatItemView
 import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
@@ -176,24 +177,27 @@ class ChatServiceTest {
     }
 
     @Test
-    fun `includes chat item in feed`() {
+    fun `includes chat item in feed (when user has submitted a result)`() {
         val chat = Chat(
             id = 1L,
-            userId = 1L,
+            userId = 2L,
             game = Game.WORLDLE,
             puzzleNumber = 123,
             text = "My chat!",
             instantSubmitted = Instant.now(),
         )
         every { chatDAO.chatsForPuzzleDescending(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(chat)
-        every { userService.getUsernameCached(1L) } returns "user1"
+        val currentUserResult = worldleResult.copy(userId = testUser.id)
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(currentUserResult)
+        every { userService.getUsernameCached(1L) } returns testUser.username
+        every { userService.getUsernameCached(2L) } returns "user1"
 
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
 
-        assertThat(chatView.chatFeedItems).hasSize(1)
-        val item = chatView.chatFeedItems.single()
-        assertThat(item).isInstanceOf(ChatItemView::class.java)
-        val chatItem = item as ChatItemView
+        // Result & chat are present
+        assertThat(chatView.chatFeedItems).hasSize(2)
+
+        val chatItem = chatView.chatFeedItems.single { it is ChatItemView } as ChatItemView
         assertThat(chatItem.username).isEqualTo("user1")
         assertThat(chatItem.text).isEqualTo("My chat!")
         assertThat(chatItem.timestampText).isEqualTo(displayTime(chat.instantSubmitted))
@@ -230,5 +234,29 @@ class ChatServiceTest {
         val items = chatView.chatFeedItems
         assertThat(items[0]).isInstanceOf(ChatItemView::class.java)
         assertThat(items[1]).isInstanceOf(ResultItemView::class.java)
+    }
+
+    @Test
+    fun `when the given user has not submitted a result, chats are hidden`() {
+        val chat = Chat(
+            id = 1L,
+            userId = 1L,
+            game = Game.WORLDLE,
+            puzzleNumber = 123,
+            text = "My chat!",
+            instantSubmitted = Instant.now(),
+        )
+        every { chatDAO.chatsForPuzzleDescending(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(chat)
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns emptyList()
+        every { userService.getUsernameCached(1L) } returns "user1"
+
+        val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
+
+        assertThat(chatView.chatFeedItems).hasSize(1)
+        val item = chatView.chatFeedItems.single()
+        assertThat(item).isInstanceOf(HiddenChatItemView::class.java)
+        val hiddenChatItem = item as HiddenChatItemView
+        assertThat(hiddenChatItem.username).isEqualTo("user1")
+        assertThat(hiddenChatItem.timestampText).isEqualTo(displayTime(chat.instantSubmitted))
     }
 }

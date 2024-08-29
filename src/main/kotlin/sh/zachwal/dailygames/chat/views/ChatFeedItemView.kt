@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.chat.views
 import kotlinx.html.DIV
 import kotlinx.html.div
 import kotlinx.html.h1
+import kotlinx.html.i
 import kotlinx.html.p
 import kotlinx.html.span
 import kotlinx.html.style
@@ -72,3 +73,30 @@ data class ChatItemView(
         }
     }
 }
+
+data class HiddenChatItemView(
+    val username: String,
+    val timestampText: String,
+    override val instantSubmitted: Instant,
+) : ChatFeedItemView() {
+    override fun DIV.render() {
+        div(classes = "col-12 col-sm-6 col-md-4 mt-2 mb-4") {
+            div(classes = "card mx-3") {
+                div(classes = "card-header") {
+                    h1(classes = "fs-5 my-1") {
+                        +username
+                    }
+                    p(classes = "text-secondary mb-0") {
+                        style = "font-size: 0.9rem;"
+                        +timestampText
+                    }
+                }
+                div(classes = "card-body text-center my-3") {
+                    i(classes = "bi bi-eye-slash-fill text-body-tertiary fs-1")
+                }
+                // TODO add footer with reactions?
+            }
+        }
+    }
+}
+
