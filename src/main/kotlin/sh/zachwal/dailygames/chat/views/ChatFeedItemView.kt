@@ -93,7 +93,7 @@ data class HiddenChatItemView(
                 }
                 div(classes = "card-body text-center my-3") {
                     attributes["data-bs-toggle"] = "tooltip"
-                    attributes["data-bs-title"] = "Submit a solution to comment!"
+                    attributes["data-bs-title"] = "Submit a solution to see comments!"
                     i(classes = "bi bi-eye-slash-fill text-body-tertiary fs-1")
                 }
                 // TODO add footer with reactions?
