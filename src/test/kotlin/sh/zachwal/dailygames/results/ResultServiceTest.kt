@@ -20,6 +20,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.utils.displayTime
 import java.time.LocalDate
 
 private val worldle934 = """

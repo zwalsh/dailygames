@@ -10,7 +10,9 @@ import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.i
 import kotlinx.html.id
+import kotlinx.html.p
 import kotlinx.html.script
+import kotlinx.html.style
 import kotlinx.html.submitInput
 import kotlinx.html.textArea
 import kotlinx.html.title
@@ -27,6 +29,7 @@ data class ChatView constructor(
     val username: String,
     val game: Game,
     val puzzleNumber: Int,
+    val updateTimeString: String,
     val chatFeedItems: List<ChatFeedItemView>,
     val prevLink: String? = null,
     val nextLink: String? = null,
@@ -57,6 +60,10 @@ data class ChatView constructor(
                     div(classes = "col-10") {
                         h1(classes = "text-center") {
                             +"${game.displayName()} #$puzzleNumber"
+                        }
+                        p(classes = "text-secondary mb-0 text-center fst-italic") {
+                            style = "font-size: 0.8rem;"
+                            +updateTimeString
                         }
                     }
                     div(classes = "col-1 d-flex align-items-center") {

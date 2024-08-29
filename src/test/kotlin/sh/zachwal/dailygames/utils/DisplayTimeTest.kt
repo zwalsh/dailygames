@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.results
+package sh.zachwal.dailygames.utils
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
