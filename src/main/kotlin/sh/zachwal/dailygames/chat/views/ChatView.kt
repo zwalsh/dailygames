@@ -10,6 +10,7 @@ import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.i
 import kotlinx.html.id
+import kotlinx.html.script
 import kotlinx.html.submitInput
 import kotlinx.html.textArea
 import kotlinx.html.title
@@ -78,19 +79,33 @@ data class ChatView constructor(
 
                                 div(classes = "mb-3") {
                                     textArea(classes = "form-control", rows = "5") {
+                                        if (isCommentDisabled) {
+                                            attributes["disabled"] = "true"
+                                            attributes["placeholder"] = "Submit a solution to comment!"
+                                        }
+
                                         id = CHAT_TEXT_ID
                                         name = CHAT_TEXT_ID
                                     }
                                 }
                                 // TODO live updating character count
                                 div(classes = "d-flex justify-content-end") {
-                                    submitInput(classes = "btn btn-primary ${if (isCommentDisabled) "disabled" else ""}") {
-                                        value = "Post"
+                                    div {
+                                        if (isCommentDisabled) {
+                                            attributes["data-bs-toggle"] = "tooltip"
+                                            attributes["data-bs-title"] = "Submit a solution to comment!"
+                                        }
+                                        submitInput(classes = "btn btn-primary ${if (isCommentDisabled) "disabled" else ""}") {
+                                            value = "Post"
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                }
+                script {
+                    src = "/static/src/js/chat.js"
                 }
             }
         }
