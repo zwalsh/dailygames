@@ -7,6 +7,7 @@ import sh.zachwal.dailygames.chat.views.ChatView
 import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.results.ResultService
@@ -24,7 +25,7 @@ class ChatService @Inject constructor(
     private val chatDAO: ChatDAO,
 ) {
 
-    fun chatView(username: String, game: Game, puzzleNumber: Int): ChatView {
+    fun chatView(currentUser: User, game: Game, puzzleNumber: Int): ChatView {
         val results = resultService.allResultsForPuzzle(Puzzle(game, puzzleNumber, date = null))
         val resultItems = results.map {
             ResultItemView(
@@ -53,7 +54,7 @@ class ChatService @Inject constructor(
         val nextLink = nextPuzzle?.let { "/game/${game.name.lowercase()}/puzzle/${it.number}" }
 
         return ChatView(
-            username = username,
+            username = currentUser.username,
             game = game,
             puzzleNumber = puzzleNumber,
             chatFeedItems = chatFeedItems,
@@ -62,7 +63,7 @@ class ChatService @Inject constructor(
         )
     }
 
-    fun chatViewLatest(username: String, game: Game): ChatView {
+    fun chatViewLatest(currentUser: User, game: Game): ChatView {
         val latestPuzzleNumber = jdbi.open().use { handle ->
             val puzzleDAO = handle.attach<PuzzleDAO>()
             puzzleDAO.listPuzzlesForGameDescending(game)
@@ -71,7 +72,7 @@ class ChatService @Inject constructor(
                 .orElse(1)
         }
 
-        return chatView(username, game, latestPuzzleNumber)
+        return chatView(currentUser, game, latestPuzzleNumber)
     }
 
     fun insertChat(userId: Long, game: Game, puzzleNumber: Int, text: String) {

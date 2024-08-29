@@ -47,9 +47,9 @@ class ChatController @Inject constructor(
                 }
 
                 val chatView = chatService.chatView(
-                    currentUser.username,
-                    game,
-                    puzzleNumber
+                    currentUser = currentUser,
+                    game = game,
+                    puzzleNumber = puzzleNumber
                 )
 
                 call.respondHtml {
@@ -68,7 +68,7 @@ class ChatController @Inject constructor(
                     return@get
                 }
 
-                val chatView = chatService.chatViewLatest(username = currentUser.username, game = game)
+                val chatView = chatService.chatViewLatest(currentUser = currentUser, game = game)
 
                 call.respondHtml {
                     chatView.renderIn(this)
