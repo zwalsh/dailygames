@@ -9,6 +9,7 @@ import sh.zachwal.dailygames.shared_html.HTMLView
 
 enum class NavItem {
     HOME,
+    CHAT,
     LEADERBOARD,
     PROFILE,
 }
@@ -28,6 +29,9 @@ data class NavView constructor(
                 isActive = currentActiveNavItem == NavItem.HOME,
                 text = "Home"
             ),
+            ChatNavItemView(
+                isActive = currentActiveNavItem == NavItem.CHAT,
+            ),
             LeaderboardNavItemView(
                 isActive = currentActiveNavItem == NavItem.LEADERBOARD,
             ),
@@ -41,7 +45,7 @@ data class NavView constructor(
     )
 
     override fun BODY.render() {
-        header(classes = "px-3 py-1 mb-4 border-bottom") {
+        header(classes = "py-1 mb-4 border-bottom") {
             div(classes = "container") {
                 div(classes = "d-flex flex-wrap align-items-center justify-content-center") {
                     ul(classes = "nav justify-content-center my-md-0 text-small") {

@@ -36,7 +36,7 @@ data class ChatView constructor(
     val isCommentDisabled: Boolean,
 ) : HTMLView<HTML>() {
 
-    val navView = NavView(username = username, currentActiveNavItem = NavItem.HOME)
+    val navView = NavView(username = username, currentActiveNavItem = NavItem.CHAT)
 
     override fun HTML.render() {
         head {

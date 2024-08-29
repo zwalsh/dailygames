@@ -6,22 +6,24 @@ import org.junit.jupiter.api.Test
 class NavViewTest {
 
     @Test
-    fun `NavView has three items`() {
+    fun `NavView has four items`() {
         val view = NavView("zach", NavItem.HOME)
 
-        assertThat(view.navItems).hasSize(3)
+        assertThat(view.navItems).hasSize(4)
     }
 
     @Test
-    fun `Items are Home, Leaderboard, and Profile in order`() {
+    fun `Items are Home, Chat, Leaderboard, and Profile in order`() {
         val items = NavView("zach", NavItem.HOME).navItems
         assertThat(items.first()).isInstanceOf(NavItemView::class.java)
         assertThat((items.first() as NavItemView).text).isEqualTo("Home")
 
-        assertThat(items[1]).isInstanceOf(LeaderboardNavItemView::class.java)
+        assertThat(items[1]).isInstanceOf(ChatNavItemView::class.java)
 
-        assertThat(items[2]).isInstanceOf(NavItemView::class.java)
-        assertThat((items[2] as NavItemView).text).isEqualTo("Profile")
+        assertThat(items[2]).isInstanceOf(LeaderboardNavItemView::class.java)
+
+        assertThat(items[3]).isInstanceOf(NavItemView::class.java)
+        assertThat((items[3] as NavItemView).text).isEqualTo("Profile")
     }
 
     @Test
