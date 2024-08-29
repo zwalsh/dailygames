@@ -101,4 +101,3 @@ data class HiddenChatItemView(
         }
     }
 }
-

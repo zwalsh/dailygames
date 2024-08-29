@@ -14,7 +14,6 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.results.displayTime
 import sh.zachwal.dailygames.users.UserService
-import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
