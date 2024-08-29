@@ -18,7 +18,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.results.ResultService
-import sh.zachwal.dailygames.results.displayTime
+import sh.zachwal.dailygames.utils.displayTime
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.util.stream.Stream

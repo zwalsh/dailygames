@@ -1,5 +1,6 @@
 package sh.zachwal.dailygames.results
 
+import sh.zachwal.dailygames.utils.displayTime
 import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
@@ -14,12 +15,8 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
-import java.text.SimpleDateFormat
 import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 import java.time.temporal.ChronoUnit
-import java.util.Date
 import java.util.stream.Stream
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -179,22 +176,3 @@ class ResultService @Inject constructor(
     }
 }
 
-fun displayTime(time: Instant, now: Instant = Instant.now()): String {
-    val nowDate = LocalDate.ofInstant(now, ZoneId.of("America/New_York"))
-
-    val date = LocalDate.ofInstant(time, ZoneId.of("America/New_York"))
-    val diff = now.epochSecond - time.epochSecond
-
-    if (date.equals(nowDate)) {
-        return when (diff) {
-            in 0..59 -> "Just now"
-            in 60..3599 -> "${diff / 60}m ago"
-            in 3600..86399 -> "${diff / 3600}h${(diff % 3600) / 60}m ago"
-            else -> throw IllegalArgumentException("Time difference is too large")
-        }
-    } else if (date.equals(nowDate.minusDays(1))) {
-        return SimpleDateFormat("'Yesterday at' h:mma 'ET'").format(Date.from(time))
-    } else {
-        return SimpleDateFormat("EEE MMM d 'at' h:mma 'ET'").format(Date.from(time))
-    }
-}

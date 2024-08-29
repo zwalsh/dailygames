@@ -12,7 +12,7 @@ import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.results.ResultService
-import sh.zachwal.dailygames.results.displayTime
+import sh.zachwal.dailygames.utils.displayTime
 import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
 import javax.inject.Singleton

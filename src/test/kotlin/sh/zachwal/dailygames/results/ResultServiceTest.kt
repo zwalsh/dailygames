@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.results
 
 import com.google.common.truth.Truth.assertThat
+import sh.zachwal.dailygames.utils.displayTime
 import io.mockk.every
 import io.mockk.mockk
 import org.jdbi.v3.core.Jdbi
