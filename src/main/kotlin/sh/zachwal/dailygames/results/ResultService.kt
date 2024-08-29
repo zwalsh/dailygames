@@ -1,6 +1,5 @@
 package sh.zachwal.dailygames.results
 
-import sh.zachwal.dailygames.utils.displayTime
 import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
@@ -15,6 +14,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.utils.displayTime
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
@@ -175,4 +175,3 @@ class ResultService @Inject constructor(
         }
     }
 }
-

@@ -12,8 +12,8 @@ import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.results.ResultService
-import sh.zachwal.dailygames.utils.displayTime
 import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.utils.displayTime
 import sh.zachwal.dailygames.utils.longDisplayTime
 import java.time.Clock
 import javax.inject.Inject
