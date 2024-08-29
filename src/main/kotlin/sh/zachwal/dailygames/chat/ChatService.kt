@@ -70,7 +70,8 @@ class ChatService @Inject constructor(
             puzzleNumber = puzzleNumber,
             chatFeedItems = chatFeedItems,
             prevLink = prevLink,
-            nextLink = nextLink
+            nextLink = nextLink,
+            isCommentDisabled = !hasUserSubmittedResult,
         )
     }
 

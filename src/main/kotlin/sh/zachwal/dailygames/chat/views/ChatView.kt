@@ -22,13 +22,14 @@ import sh.zachwal.dailygames.shared_html.card
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
-data class ChatView(
+data class ChatView constructor(
     val username: String,
     val game: Game,
     val puzzleNumber: Int,
     val chatFeedItems: List<ChatFeedItemView>,
     val prevLink: String? = null,
     val nextLink: String? = null,
+    val isCommentDisabled: Boolean,
 ) : HTMLView<HTML>() {
 
     val navView = NavView(username = username, currentActiveNavItem = NavItem.HOME)
@@ -83,7 +84,7 @@ data class ChatView(
                                 }
                                 // TODO live updating character count
                                 div(classes = "d-flex justify-content-end") {
-                                    submitInput(classes = "btn btn-primary") {
+                                    submitInput(classes = "btn btn-primary ${if (isCommentDisabled) "disabled" else ""}") {
                                         value = "Post"
                                     }
                                 }

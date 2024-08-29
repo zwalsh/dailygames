@@ -259,4 +259,26 @@ class ChatServiceTest {
         assertThat(hiddenChatItem.username).isEqualTo("user1")
         assertThat(hiddenChatItem.timestampText).isEqualTo(displayTime(chat.instantSubmitted))
     }
+
+    @Test
+    fun `when the given user has not submitted a result, the comment button is disabled`() {
+        every { chatDAO.chatsForPuzzleDescending(Puzzle(Game.WORLDLE, 123, null)) } returns emptyList()
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns emptyList()
+        every { userService.getUsernameCached(1L) } returns "user1"
+
+        val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
+
+        assertThat(chatView.isCommentDisabled).isTrue()
+    }
+
+    @Test
+    fun `when the given user has submitted a result, the comment button is enabled`() {
+        every { chatDAO.chatsForPuzzleDescending(Puzzle(Game.WORLDLE, 123, null)) } returns emptyList()
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(worldleResult)
+        every { userService.getUsernameCached(1L) } returns "user1"
+
+        val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
+
+        assertThat(chatView.isCommentDisabled).isFalse()
+    }
 }
