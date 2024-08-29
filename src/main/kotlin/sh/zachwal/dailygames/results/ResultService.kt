@@ -129,10 +129,11 @@ class ResultService @Inject constructor(
         return results.map { result ->
             val username = userService.getUsernameCached(result.userId)
             ResultFeedItemView(
-                username ?: "Unknown",
-                "${result.game.displayName()} #${result.puzzleNumber}",
-                result.shareText,
-                displayTime(result.instantSubmitted),
+                username = username ?: "Unknown",
+                resultTitle = "${result.game.displayName()} #${result.puzzleNumber}",
+                chatHref = "/game/${result.game.name.lowercase()}/puzzle/${result.puzzleNumber}",
+                shareText = result.shareText,
+                timestampText = displayTime(result.instantSubmitted),
             )
         }
     }
