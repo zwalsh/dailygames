@@ -14,6 +14,8 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.utils.displayTime
 import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.utils.longDisplayTime
+import java.time.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,6 +26,7 @@ class ChatService @Inject constructor(
     private val userService: UserService,
     private val puzzleDAO: PuzzleDAO,
     private val chatDAO: ChatDAO,
+    private val clock: Clock,
 ) {
 
     fun chatView(currentUser: User, game: Game, puzzleNumber: Int): ChatView {
@@ -63,10 +66,12 @@ class ChatService @Inject constructor(
         val prevLink = previousPuzzle?.let { "/game/${game.name.lowercase()}/puzzle/${it.number}" }
         val nextLink = nextPuzzle?.let { "/game/${game.name.lowercase()}/puzzle/${it.number}" }
 
+        val updateTimeString = "Updated ${longDisplayTime(clock.instant())}"
         return ChatView(
             username = currentUser.username,
             game = game,
             puzzleNumber = puzzleNumber,
+            updateTimeString = updateTimeString,
             chatFeedItems = chatFeedItems,
             prevLink = prevLink,
             nextLink = nextLink,

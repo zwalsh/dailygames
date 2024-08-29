@@ -20,7 +20,10 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.utils.displayTime
 import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.utils.longDisplayTime
+import java.time.Clock
 import java.time.Instant
+import java.time.ZoneId
 import java.util.stream.Stream
 
 class ChatServiceTest {
@@ -41,12 +44,14 @@ class ChatServiceTest {
             every { attach<PuzzleDAO>() } returns puzzleDAO
         }
     }
+    private val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     private val chatService = ChatService(
         jdbi,
         resultService,
         userService,
         puzzleDAO,
         chatDAO,
+        clock = clock,
     )
     private val testUser = User(
         id = 1L,
@@ -280,5 +285,14 @@ class ChatServiceTest {
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
 
         assertThat(chatView.isCommentDisabled).isFalse()
+    }
+
+    @Test
+    fun `chat view includes update time string of now in long form`() {
+        val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
+        val clockTimeLongForm = longDisplayTime(clock.instant())
+        val updateTimeString = "Updated $clockTimeLongForm"
+
+        assertThat(chatView.updateTimeString).isEqualTo(updateTimeString)
     }
 }
