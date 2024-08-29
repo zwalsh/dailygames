@@ -10,6 +10,7 @@ import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.i
 import kotlinx.html.id
+import kotlinx.html.script
 import kotlinx.html.submitInput
 import kotlinx.html.textArea
 import kotlinx.html.title
@@ -22,13 +23,14 @@ import sh.zachwal.dailygames.shared_html.card
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
-data class ChatView(
+data class ChatView constructor(
     val username: String,
     val game: Game,
     val puzzleNumber: Int,
     val chatFeedItems: List<ChatFeedItemView>,
     val prevLink: String? = null,
     val nextLink: String? = null,
+    val isCommentDisabled: Boolean,
 ) : HTMLView<HTML>() {
 
     val navView = NavView(username = username, currentActiveNavItem = NavItem.HOME)
@@ -77,19 +79,33 @@ data class ChatView(
 
                                 div(classes = "mb-3") {
                                     textArea(classes = "form-control", rows = "5") {
+                                        if (isCommentDisabled) {
+                                            attributes["disabled"] = "true"
+                                            attributes["placeholder"] = "Submit a solution to comment!"
+                                        }
+
                                         id = CHAT_TEXT_ID
                                         name = CHAT_TEXT_ID
                                     }
                                 }
                                 // TODO live updating character count
                                 div(classes = "d-flex justify-content-end") {
-                                    submitInput(classes = "btn btn-primary") {
-                                        value = "Post"
+                                    div {
+                                        if (isCommentDisabled) {
+                                            attributes["data-bs-toggle"] = "tooltip"
+                                            attributes["data-bs-title"] = "Submit a solution to comment!"
+                                        }
+                                        submitInput(classes = "btn btn-primary ${if (isCommentDisabled) "disabled" else ""}") {
+                                            value = "Post"
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                }
+                script {
+                    src = "/static/src/js/chat.js"
                 }
             }
         }
