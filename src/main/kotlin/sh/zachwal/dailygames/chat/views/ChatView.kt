@@ -62,10 +62,6 @@ data class ChatView constructor(
                         h1(classes = "text-center") {
                             +"${game.displayName()} #$puzzleNumber"
                         }
-                        p(classes = "text-secondary mb-0 text-center fst-italic") {
-                            style = "font-size: 0.8rem;"
-                            +updateTimeString
-                        }
                     }
                     div(classes = "col-1 d-flex align-items-center") {
                         nextLink?.let { href ->
@@ -81,7 +77,7 @@ data class ChatView constructor(
                     }
                 }
                 div(classes = "row") {
-                    div(classes = "col mb-4") {
+                    div(classes = "col mb-1") {
                         card(cardTitle = "Comment", cardTitleClasses = "text-center fs-3", classes = "mx-3") {
                             form(method = post, action = "${chatLink(game, puzzleNumber)}/comment") {
 
@@ -109,6 +105,14 @@ data class ChatView constructor(
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+                div(classes = "row mb-4") {
+                    div(classes = "col text-center") {
+                        p(classes = "text-secondary mb-0 text-center fst-italic") {
+                            style = "font-size: 0.8rem;"
+                            +updateTimeString
                         }
                     }
                 }
