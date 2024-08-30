@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.chat
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
+import sh.zachwal.dailygames.chat.api.ChatResponse
 import sh.zachwal.dailygames.chat.views.ChatItemView
 import sh.zachwal.dailygames.chat.views.ChatView
 import sh.zachwal.dailygames.chat.views.HiddenChatItemView
@@ -63,8 +64,8 @@ class ChatService @Inject constructor(
         val previousPuzzle = puzzleDAO.previousPuzzle(game, puzzleNumber)
         val nextPuzzle = puzzleDAO.nextPuzzle(game, puzzleNumber)
 
-        val prevLink = previousPuzzle?.let { "/game/${game.name.lowercase()}/puzzle/${it.number}" }
-        val nextLink = nextPuzzle?.let { "/game/${game.name.lowercase()}/puzzle/${it.number}" }
+        val prevLink = previousPuzzle?.chatLink()
+        val nextLink = nextPuzzle?.chatLink()
 
         val updateTimeString = "Updated ${longDisplayTime(clock.instant())}"
         return ChatView(
@@ -91,8 +92,21 @@ class ChatService @Inject constructor(
         return chatView(currentUser, game, latestPuzzleNumber)
     }
 
-    fun insertChat(userId: Long, game: Game, puzzleNumber: Int, text: String) {
+    fun insertChat(user: User, game: Game, puzzleNumber: Int, text: String): ChatResponse {
         val puzzle = Puzzle(game, puzzleNumber, date = null)
-        chatDAO.insertChat(userId, puzzle, text)
+        val chat = chatDAO.insertChat(user.id, puzzle, text)
+        return ChatResponse(
+            username = user.username,
+            displayTime = displayTime(chat.instantSubmitted),
+            text = chat.text,
+        )
     }
+}
+
+fun Puzzle.chatLink(): String {
+    return chatLink(game, number)
+}
+
+fun chatLink(game: Game, puzzleNumber: Int): String {
+    return "/game/${game.name.lowercase()}/puzzle/$puzzleNumber"
 }

@@ -4,9 +4,7 @@ import io.ktor.application.call
 import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveParameters
-import io.ktor.request.uri
 import io.ktor.response.respond
-import io.ktor.response.respondRedirect
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -97,12 +95,10 @@ class ChatController @Inject constructor(
                     return@post
                 }
 
-                chatService.insertChat(currentUser.id, game, puzzleNumber, chatText)
+                val chat = chatService.insertChat(currentUser, game, puzzleNumber, chatText)
                 logger.info("User ${currentUser.username} posted a comment on ${game.name} puzzle $puzzleNumber.")
 
-                val chatPage = call.request.uri.removeSuffix("/comment")
-
-                call.respondRedirect(chatPage)
+                call.respond(HttpStatusCode.OK, chat)
             }
         }
     }

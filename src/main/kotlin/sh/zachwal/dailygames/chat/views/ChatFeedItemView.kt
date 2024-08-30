@@ -4,6 +4,7 @@ import kotlinx.html.DIV
 import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.i
+import kotlinx.html.id
 import kotlinx.html.p
 import kotlinx.html.span
 import kotlinx.html.style
@@ -49,21 +50,25 @@ data class ChatItemView(
     val text: String,
     val timestampText: String,
     override val instantSubmitted: Instant,
+    val hidden: Boolean = false,
 ) : ChatFeedItemView() {
     override fun DIV.render() {
-        div(classes = "col-12 col-sm-6 col-md-4 mt-2 mb-4") {
+        div(classes = "col-12 col-sm-6 col-md-4 mt-2 mb-4 ${if (hidden) "d-none" else ""}") {
+            if (hidden) {
+                id = "chat-to-copy"
+            }
             div(classes = "card mx-3") {
                 div(classes = "card-header") {
-                    h1(classes = "fs-5 my-1") {
+                    h1(classes = "fs-5 my-1 chat-username") {
                         +username
                     }
-                    p(classes = "text-secondary mb-0") {
+                    p(classes = "text-secondary mb-0 chat-displaytime") {
                         style = "font-size: 0.9rem;"
                         +timestampText
                     }
                 }
                 div(classes = "card-body") {
-                    span {
+                    span(classes = "chat-text") {
                         style = "white-space: pre-wrap;"
                         +text
                     }

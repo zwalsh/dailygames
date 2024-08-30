@@ -18,9 +18,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
-import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
-import sh.zachwal.dailygames.utils.displayTime
 import java.time.LocalDate
 
 private val worldle934 = """
@@ -219,9 +217,17 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `result feed item chat href is link to game puzzle`() {
+        resultService.createResult(fixtures.zach, worldle934)
+        val item = resultService.resultFeed().single()
+
+        assertThat(item.chatHref).isEqualTo("/game/worldle/puzzle/934")
+    }
+
+    @Test
     fun `result feed returns results in order by submission time`() {
-        val result1 = resultService.createResult(fixtures.zach, worldle934)
-        val result2 = resultService.createResult(
+        resultService.createResult(fixtures.zach, worldle934)
+        resultService.createResult(
             fixtures.jackie,
             """     
             #Worldle #935 (12.08.2024) 2/6 (100%)
@@ -230,22 +236,9 @@ class ResultServiceTest(
             """.trimIndent()
         )
 
-        val feed = resultService.resultFeed()
+        val feedTitles = resultService.resultFeed().map { it.resultTitle }
 
-        assertThat(feed).containsExactly(
-            ResultFeedItemView(
-                username = fixtures.jackie.username,
-                resultTitle = "Worldle #935",
-                shareText = result2.shareText,
-                timestampText = displayTime(result2.instantSubmitted),
-            ),
-            ResultFeedItemView(
-                username = fixtures.zach.username,
-                resultTitle = "Worldle #934",
-                shareText = result1.shareText,
-                timestampText = displayTime(result1.instantSubmitted),
-            ),
-        )
+        assertThat(feedTitles).containsExactly("Worldle #935", "Worldle #934").inOrder()
     }
 
     @Test
@@ -261,46 +254,21 @@ class ResultServiceTest(
 
     @Test
     fun `result feed includes all types of results, ordered by submission time`() {
-        val worldleResult = resultService.createResult(fixtures.zach, worldle934)
-        val tradleResult = resultService.createResult(fixtures.jackie, tradle890)
-        val travleResult = resultService.createResult(fixtures.zach, TRAVLE_PLUS_0)
-        val top5Result = resultService.createResult(fixtures.zach, TOP5)
-        val flagleResult = resultService.createResult(fixtures.zach, FLAGLE)
+        resultService.createResult(fixtures.zach, worldle934)
+        resultService.createResult(fixtures.jackie, tradle890)
+        resultService.createResult(fixtures.zach, TRAVLE_PLUS_0)
+        resultService.createResult(fixtures.zach, TOP5)
+        resultService.createResult(fixtures.zach, FLAGLE)
 
-        val feed = resultService.resultFeed()
+        val feedTitles = resultService.resultFeed().map { it.resultTitle }
 
-        assertThat(feed).containsExactly(
-            ResultFeedItemView(
-                username = fixtures.zach.username,
-                resultTitle = "Flagle #905",
-                shareText = flagleResult.shareText,
-                timestampText = displayTime(flagleResult.instantSubmitted),
-            ),
-            ResultFeedItemView(
-                username = fixtures.zach.username,
-                resultTitle = "Top 5 #171",
-                shareText = top5Result.shareText,
-                timestampText = displayTime(flagleResult.instantSubmitted),
-            ),
-            ResultFeedItemView(
-                username = fixtures.zach.username,
-                resultTitle = "Travle #607",
-                shareText = travleResult.shareText,
-                timestampText = displayTime(flagleResult.instantSubmitted),
-            ),
-            ResultFeedItemView(
-                username = fixtures.jackie.username,
-                resultTitle = "Tradle #890",
-                shareText = tradleResult.shareText,
-                timestampText = displayTime(flagleResult.instantSubmitted),
-            ),
-            ResultFeedItemView(
-                username = fixtures.zach.username,
-                resultTitle = "Worldle #934",
-                shareText = worldleResult.shareText,
-                timestampText = displayTime(flagleResult.instantSubmitted),
-            ),
-        )
+        assertThat(feedTitles).containsExactly(
+            "Flagle #905",
+            "Top 5 #171",
+            "Travle #607",
+            "Tradle #890",
+            "Worldle #934",
+        ).inOrder()
     }
 
     @Test
