@@ -39,6 +39,8 @@ data class ShareTextModalView(
                     div(classes = "modal-footer border-top-0 justify-content-center pt-0") {
                         button(classes = "btn btn-secondary") {
                             id = "copy-share-text-button"
+                            attributes["data-bs-toggle"] = "tooltip"
+                            attributes["data-bs-title"] = "Copied!"
                             +"Copy"
                             i(classes = "bi bi-copy ms-2") {}
                         }
