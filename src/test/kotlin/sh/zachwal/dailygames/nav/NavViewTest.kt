@@ -30,6 +30,6 @@ class NavViewTest {
     fun `one active item matches passed currentActiveNavItem`() {
         val view = NavView("zach", NavItem.PROFILE)
 
-        assertThat((view.navItems[2] as NavItemView).isActive).isTrue()
+        assertThat((view.navItems[3] as NavItemView).isActive).isTrue()
     }
 }
