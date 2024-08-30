@@ -7,10 +7,5 @@ function enableTooltips() {
 
 window.onload = function() {
     enableTooltips();
-    // Scroll to bottom
-    // check if query param scrollToBottom is set to true
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('scrollToBottom')) {
-        window.scrollTo(0, document.body.scrollHeight);
-    }
+    window.scrollTo(0, document.body.scrollHeight);
 }
