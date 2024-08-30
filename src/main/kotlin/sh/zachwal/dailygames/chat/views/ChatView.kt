@@ -88,7 +88,7 @@ data class ChatView constructor(
                 }
                 div(classes = "row mb-2") {
                     div(classes = "col") {
-                        card(cardTitle = "Comment", cardTitleClasses = "text-center fs-3", classes = "mx-3") {
+                        card(classes = "mx-3") {
                             form(method = post, action = "${chatLink(game, puzzleNumber)}/comment") {
                                 div(classes = "mb-3") {
                                     textArea(classes = "form-control", rows = "3") {
@@ -116,7 +116,7 @@ data class ChatView constructor(
                                             attributes["data-bs-title"] = "Submit a solution to comment!"
                                         }
                                         submitInput(classes = "btn btn-primary ${if (isCommentDisabled) "disabled" else ""}") {
-                                            value = "Post"
+                                            value = "Comment"
                                         }
                                     }
                                 }
