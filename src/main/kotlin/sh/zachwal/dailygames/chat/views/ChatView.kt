@@ -124,7 +124,7 @@ data class ChatView constructor(
                     }
                 }
                 div(classes = "row mb-2") {
-                    a(href="#", classes = "text-center text-white") {
+                    a(href = "#", classes = "text-center text-white") {
                         +"Back to top"
                     }
                 }
