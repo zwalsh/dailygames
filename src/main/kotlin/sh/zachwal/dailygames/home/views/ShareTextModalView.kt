@@ -38,9 +38,14 @@ data class ShareTextModalView(
                     }
                     div(classes = "modal-footer border-top-0 justify-content-center pt-0") {
                         button(classes = "btn btn-secondary") {
-                            +"Share"
+                            id = "copy-share-text-button"
+                            +"Copy"
                             i(classes = "bi bi-copy ms-2") {}
                         }
+                    }
+                    div(classes = "d-none") {
+                        id = "share-text"
+                        +shareTextLines.joinToString("\n")
                     }
                 }
             }
