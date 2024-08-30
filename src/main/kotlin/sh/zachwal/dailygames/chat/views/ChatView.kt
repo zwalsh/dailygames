@@ -17,6 +17,7 @@ import kotlinx.html.submitInput
 import kotlinx.html.textArea
 import kotlinx.html.title
 import sh.zachwal.dailygames.chat.CHAT_TEXT_ID
+import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
@@ -82,7 +83,7 @@ data class ChatView constructor(
                 div(classes = "row") {
                     div(classes = "col mb-4") {
                         card(cardTitle = "Comment", cardTitleClasses = "text-center fs-3", classes = "mx-3") {
-                            form(method = post, action = "/game/${game.name.lowercase()}/puzzle/$puzzleNumber/comment") {
+                            form(method = post, action = "${chatLink(game, puzzleNumber)}/comment") {
 
                                 div(classes = "mb-3") {
                                     textArea(classes = "form-control", rows = "5") {

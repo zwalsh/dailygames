@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.results
 
 import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
+import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
@@ -131,7 +132,7 @@ class ResultService @Inject constructor(
             ResultFeedItemView(
                 username = username ?: "Unknown",
                 resultTitle = "${result.game.displayName()} #${result.puzzleNumber}",
-                chatHref = "/game/${result.game.name.lowercase()}/puzzle/${result.puzzleNumber}",
+                chatHref = chatLink(result.game, result.puzzleNumber),
                 shareText = result.shareText,
                 timestampText = displayTime(result.instantSubmitted),
             )

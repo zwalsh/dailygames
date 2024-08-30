@@ -46,13 +46,6 @@ data class ProfileView(
                                 +"Admin Page"
                             }
                         }
-                        Game.values().forEach { game ->
-                            li {
-                                a(href = "/game/${game.name.lowercase()}/puzzle") {
-                                    +"${game.displayName()} Chat"
-                                }
-                            }
-                        }
                     }
                     li {
                         a(href = "/logout") {

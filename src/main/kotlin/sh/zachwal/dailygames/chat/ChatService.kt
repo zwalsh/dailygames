@@ -63,8 +63,8 @@ class ChatService @Inject constructor(
         val previousPuzzle = puzzleDAO.previousPuzzle(game, puzzleNumber)
         val nextPuzzle = puzzleDAO.nextPuzzle(game, puzzleNumber)
 
-        val prevLink = previousPuzzle?.let { "/game/${game.name.lowercase()}/puzzle/${it.number}" }
-        val nextLink = nextPuzzle?.let { "/game/${game.name.lowercase()}/puzzle/${it.number}" }
+        val prevLink = previousPuzzle?.chatLink()
+        val nextLink = nextPuzzle?.chatLink()
 
         val updateTimeString = "Updated ${longDisplayTime(clock.instant())}"
         return ChatView(
@@ -95,4 +95,12 @@ class ChatService @Inject constructor(
         val puzzle = Puzzle(game, puzzleNumber, date = null)
         chatDAO.insertChat(userId, puzzle, text)
     }
+}
+
+fun Puzzle.chatLink(): String {
+    return chatLink(game, number)
+}
+
+fun chatLink(game: Game, puzzleNumber: Int): String {
+    return "/game/${game.name.lowercase()}/puzzle/$puzzleNumber"
 }
