@@ -182,7 +182,6 @@ class ChatServiceTest {
 
         assertThat(chatResponse.text).isEqualTo("My chat!")
         assertThat(chatResponse.username).isEqualTo(testUser.username)
-
     }
 
     @Test
