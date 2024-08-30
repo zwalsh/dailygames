@@ -30,9 +30,9 @@ data class ShareTextModalView(
                         }
                     }
                     div(classes = "modal-body d-flex justify-content-center") {
-                        div(classes="border border-dark-subtle rounded p-4") {
+                        div(classes = "border border-dark-subtle rounded p-4") {
                             shareTextLines.forEach { line ->
-                                p (classes = "fs-4 mb-0") {
+                                p(classes = "fs-4 mb-0") {
                                     +line
                                 }
                             }
