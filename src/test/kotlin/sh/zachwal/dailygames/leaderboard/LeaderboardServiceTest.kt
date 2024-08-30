@@ -65,7 +65,7 @@ class LeaderboardServiceTest {
     fun `leaderboardView returns LeaderboardView with Nav set to LEADERBOARD`() {
         val leaderboardView = leaderboardService.overallLeaderboardView(testUser)
 
-        val navItem = leaderboardView.nav.navItems[1]
+        val navItem = leaderboardView.nav.navItems[2]
 
         assertThat(navItem).isInstanceOf(LeaderboardNavItemView::class.java)
 
