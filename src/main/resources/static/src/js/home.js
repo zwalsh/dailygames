@@ -13,9 +13,12 @@ function copyShareTextToClipboard() {
         .catch((e) => console.log(e.message));;
 }
 
-
-window.onload = function () {
+function popModal() {
     enableTooltips();
     $('#share-text-modal').modal('show');
     $('#copy-share-text-button').click(copyShareTextToClipboard);
+}
+
+window.onload = function () {
+//    popModal(); // Disabled until data is populated correctly
 }
