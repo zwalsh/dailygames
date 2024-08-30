@@ -81,6 +81,8 @@ data class ChatView constructor(
                                         if (isCommentDisabled) {
                                             attributes["disabled"] = "true"
                                             attributes["placeholder"] = "Submit a solution to comment!"
+                                            attributes["data-bs-toggle"] = "tooltip"
+                                            attributes["data-bs-title"] = "Submit a solution to comment!"
                                         }
 
                                         id = CHAT_TEXT_ID
@@ -89,6 +91,11 @@ data class ChatView constructor(
                                 }
                                 // TODO live updating character count
                                 div(classes = "d-flex justify-content-end") {
+                                    if (isCommentDisabled) {
+                                        a(href = "/", classes = "mx-2") {
+                                            +"Submit a solution"
+                                        }
+                                    }
                                     div {
                                         if (isCommentDisabled) {
                                             attributes["data-bs-toggle"] = "tooltip"
