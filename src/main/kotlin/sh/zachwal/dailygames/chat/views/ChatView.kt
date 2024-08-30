@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.chat.views
 
 import kotlinx.html.FormMethod.post
+import kotlinx.html.HEADER
 import kotlinx.html.HTML
 import kotlinx.html.a
 import kotlinx.html.body
@@ -37,7 +38,37 @@ data class ChatView constructor(
     val isCommentDisabled: Boolean,
 ) : HTMLView<HTML>() {
 
-    val navView = NavView(username = username, currentActiveNavItem = NavItem.CHAT)
+    val navView = NavView(
+        username = username,
+        currentActiveNavItem = NavItem.CHAT,
+        insideNavItem = ChatNav()
+    )
+
+    inner class ChatNav : HTMLView<HEADER>() {
+        override fun HEADER.render() {
+            div(classes = "row mx-4 py-2 border-top") {
+                div(classes = "col-1 d-flex align-items-center") {
+                    prevLink?.let { href ->
+                        a(href = href, classes = "float-start text-white") {
+                            i(classes = "bi bi-chevron-compact-left")
+                        }
+                    }
+                }
+                div(classes = "col-10") {
+                    h1(classes = "text-center") {
+                        +"${game.displayName()} #$puzzleNumber"
+                    }
+                }
+                div(classes = "col-1 d-flex align-items-center") {
+                    nextLink?.let { href ->
+                        a(href = href, classes = "float-end text-white") {
+                            i(classes = "bi bi-chevron-compact-right")
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     override fun HTML.render() {
         head {
@@ -50,27 +81,6 @@ data class ChatView constructor(
             darkMode()
             navView.renderIn(this)
             div(classes = "container") {
-                div(classes = "row mx-4 mb-2") {
-                    div(classes = "col-1 d-flex align-items-center") {
-                        prevLink?.let { href ->
-                            a(href = href, classes = "float-start text-white") {
-                                i(classes = "bi bi-chevron-compact-left")
-                            }
-                        }
-                    }
-                    div(classes = "col-10") {
-                        h1(classes = "text-center") {
-                            +"${game.displayName()} #$puzzleNumber"
-                        }
-                    }
-                    div(classes = "col-1 d-flex align-items-center") {
-                        nextLink?.let { href ->
-                            a(href = href, classes = "float-end text-white") {
-                                i(classes = "bi bi-chevron-compact-right")
-                            }
-                        }
-                    }
-                }
                 div(classes = "row") {
                     div(classes = "col mb-1") {
                         card(cardTitle = "Comment", cardTitleClasses = "text-center fs-3", classes = "mx-3") {
