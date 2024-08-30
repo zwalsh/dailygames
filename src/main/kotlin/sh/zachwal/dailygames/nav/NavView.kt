@@ -45,7 +45,7 @@ data class NavView constructor(
     )
 
     override fun BODY.render() {
-        header(classes = "py-1 mb-4 border-bottom") {
+        header(classes = "py-1 mb-4 border-bottom bg-dark-subtle") {
             div(classes = "container") {
                 div(classes = "d-flex flex-wrap align-items-center justify-content-center") {
                     ul(classes = "nav justify-content-center my-md-0 text-small") {

@@ -38,18 +38,23 @@ data class HomeView constructor(
             div(classes = "container") {
                 div(classes = "row") {
                     div(classes = "col") {
-                        card(cardTitle = "Submit Game", cardTitleClasses = "text-center", classes = "mx-3") {
-                            form(method = post) {
-                                div(classes = "mb-3") {
-                                    textArea(classes = "form-control", rows = "7") {
-                                        id = SHARE_TEXT_ID
-                                        name = SHARE_TEXT_ID
-                                        placeholder = "e.g. #Worldle #123 (10.08.2024) 4/6 (100%)..."
-                                    }
+                        div(classes = "card mx-3") {
+                            div(classes = "card-body bg-secondary-subtle") {
+                                h1(classes = "card-title text-center") {
+                                    +"Submit Game"
                                 }
-                                div(classes = "d-flex justify-content-end") {
-                                    submitInput(classes = "btn btn-success") {
-                                        value = "Submit"
+                                form(method = post) {
+                                    div(classes = "mb-3") {
+                                        textArea(classes = "form-control bg-dark-subtle", rows = "7") {
+                                            id = SHARE_TEXT_ID
+                                            name = SHARE_TEXT_ID
+                                            placeholder = "e.g. #Worldle #123 (10.08.2024) 4/6 (100%)..."
+                                        }
+                                    }
+                                    div(classes = "d-flex justify-content-end") {
+                                        submitInput(classes = "btn btn-success") {
+                                            value = "Submit"
+                                        }
                                     }
                                 }
                             }

@@ -19,7 +19,7 @@ data class ResultFeedItemView(
     override fun DIV.render() {
         div(classes = "col-12 col-sm-6 col-md-4 mt-2 mb-4") {
             div(classes = "card mx-3") {
-                div(classes = "card-header") {
+                div(classes = "card-header bg-secondary-subtle") {
                     h1(classes = "fs-5 my-1") {
                         +"$username's "
                         a(href = chatHref) {
@@ -31,7 +31,7 @@ data class ResultFeedItemView(
                         +timestampText
                     }
                 }
-                div(classes = "card-body") {
+                div(classes = "card-body bg-dark-subtle") {
                     span {
                         style = "white-space: pre-wrap;"
                         +shareText
