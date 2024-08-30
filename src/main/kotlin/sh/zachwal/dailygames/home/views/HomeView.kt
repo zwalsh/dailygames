@@ -12,6 +12,7 @@ import kotlinx.html.script
 import kotlinx.html.submitInput
 import kotlinx.html.textArea
 import kotlinx.html.title
+import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
@@ -37,7 +38,12 @@ data class HomeView constructor(
         body {
             darkMode()
             nav.renderIn(this)
-            ShareTextModalView("Hello, World!").renderIn(this)
+
+            val shareTextLines = Game.values().map {
+                "${it.emoji()} ${it.displayName()} #123 4/6"
+            }
+
+            ShareTextModalView(shareTextLines).renderIn(this)
             div(classes = "container") {
                 div(classes = "row") {
                     div(classes = "col") {
