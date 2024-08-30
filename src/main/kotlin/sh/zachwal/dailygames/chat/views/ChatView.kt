@@ -82,12 +82,16 @@ data class ChatView constructor(
             navView.renderIn(this)
             div(classes = "container") {
                 div(classes = "row") {
-                    div(classes = "col mb-1") {
+                    chatFeedItems.forEach {
+                        it.renderIn(this)
+                    }
+                }
+                div(classes = "row mb-2") {
+                    div(classes = "col") {
                         card(cardTitle = "Comment", cardTitleClasses = "text-center fs-3", classes = "mx-3") {
                             form(method = post, action = "${chatLink(game, puzzleNumber)}/comment") {
-
                                 div(classes = "mb-3") {
-                                    textArea(classes = "form-control", rows = "5") {
+                                    textArea(classes = "form-control", rows = "3") {
                                         if (isCommentDisabled) {
                                             attributes["disabled"] = "true"
                                             attributes["placeholder"] = "Submit a solution to comment!"
@@ -120,7 +124,7 @@ data class ChatView constructor(
                         }
                     }
                 }
-                div(classes = "row mb-2") {
+                div(classes = "row mb-1") {
                     div(classes = "col text-center") {
                         p(classes = "text-secondary mb-0 text-center fst-italic") {
                             style = "font-size: 0.8rem;"
@@ -128,17 +132,11 @@ data class ChatView constructor(
                         }
                     }
                 }
-                div(classes = "row") {
-                    chatFeedItems.forEach {
-                        it.renderIn(this)
-                    }
-                }
                 div(classes = "row mb-2") {
                     a(href = "#", classes = "text-center text-white") {
                         +"Back to top"
                     }
                 }
-
                 script {
                     src = "/static/src/js/chat.js"
                 }
