@@ -176,9 +176,13 @@ class ChatServiceTest {
             instantSubmitted = Instant.now(),
         )
 
-        chatService.insertChat(1L, Game.WORLDLE, 123, "My chat!")
+        val chatResponse = chatService.insertChat(testUser, Game.WORLDLE, 123, "My chat!")
 
         verify { chatDAO.insertChat(1L, Puzzle(Game.WORLDLE, 123, null), "My chat!") }
+
+        assertThat(chatResponse.text).isEqualTo("My chat!")
+        assertThat(chatResponse.username).isEqualTo(testUser.username)
+
     }
 
     @Test

@@ -26,6 +26,8 @@ import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
+import sh.zachwal.dailygames.shared_html.jquery
+import java.time.Instant
 
 data class ChatView constructor(
     val username: String,
@@ -76,12 +78,23 @@ data class ChatView constructor(
                 +"Daily Games - ${game.displayName()} #$puzzleNumber"
             }
             headSetup()
+            jquery()
         }
         body {
             darkMode()
             navView.renderIn(this)
             div(classes = "container") {
                 div(classes = "row") {
+                    id = "chat-feed"
+                    // Render the "hidden" chat item for the frontend to copy
+                    ChatItemView(
+                        username = "",
+                        text = "",
+                        timestampText = "",
+                        instantSubmitted = Instant.now(),
+                        hidden = true
+                    ).renderIn(this)
+
                     chatFeedItems.forEach {
                         it.renderIn(this)
                     }
@@ -90,6 +103,7 @@ data class ChatView constructor(
                     div(classes = "col") {
                         card(classes = "mx-3") {
                             form(method = post, action = "${chatLink(game, puzzleNumber)}/comment") {
+                                id = "chat-form"
                                 div(classes = "mb-3") {
                                     textArea(classes = "form-control", rows = "3") {
                                         if (isCommentDisabled) {

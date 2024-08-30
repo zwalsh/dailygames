@@ -2,12 +2,14 @@ package sh.zachwal.dailygames.chat
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
+import sh.zachwal.dailygames.chat.api.ChatResponse
 import sh.zachwal.dailygames.chat.views.ChatItemView
 import sh.zachwal.dailygames.chat.views.ChatView
 import sh.zachwal.dailygames.chat.views.HiddenChatItemView
 import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.jdbi.Chat
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
@@ -91,9 +93,14 @@ class ChatService @Inject constructor(
         return chatView(currentUser, game, latestPuzzleNumber)
     }
 
-    fun insertChat(userId: Long, game: Game, puzzleNumber: Int, text: String) {
+    fun insertChat(user: User, game: Game, puzzleNumber: Int, text: String): ChatResponse {
         val puzzle = Puzzle(game, puzzleNumber, date = null)
-        chatDAO.insertChat(userId, puzzle, text)
+        val chat = chatDAO.insertChat(user.id, puzzle, text)
+        return ChatResponse(
+            username = user.username,
+            displayTime = displayTime(chat.instantSubmitted),
+            text = chat.text,
+        )
     }
 }
 

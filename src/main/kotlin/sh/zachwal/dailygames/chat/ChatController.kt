@@ -97,12 +97,10 @@ class ChatController @Inject constructor(
                     return@post
                 }
 
-                chatService.insertChat(currentUser.id, game, puzzleNumber, chatText)
+                val chat = chatService.insertChat(currentUser, game, puzzleNumber, chatText)
                 logger.info("User ${currentUser.username} posted a comment on ${game.name} puzzle $puzzleNumber.")
 
-                val chatPage = call.request.uri.removeSuffix("/comment")
-
-                call.respondRedirect(chatPage)
+                call.respond(HttpStatusCode.OK, chat)
             }
         }
     }

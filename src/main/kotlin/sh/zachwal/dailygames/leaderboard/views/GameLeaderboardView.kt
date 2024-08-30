@@ -16,6 +16,7 @@ import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
+import sh.zachwal.dailygames.shared_html.jquery
 
 data class GameLeaderboardView(
     val username: String,
@@ -32,9 +33,7 @@ data class GameLeaderboardView(
             script {
                 src = "https://cdn.jsdelivr.net/npm/chart.js"
             }
-            script {
-                src = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
-            }
+            jquery()
         }
         body {
             darkMode()
