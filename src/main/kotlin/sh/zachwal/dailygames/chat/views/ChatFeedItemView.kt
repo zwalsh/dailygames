@@ -35,7 +35,7 @@ data class ResultItemView(
                 }
                 div(classes = "card-body bg-dark-subtle") {
                     span {
-                        style = "white-space: pre-wrap;"
+                        style = "white-space: pre-wrap; user-select: all;"
                         +shareText
                     }
                 }
