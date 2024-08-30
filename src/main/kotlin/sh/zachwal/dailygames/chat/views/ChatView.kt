@@ -50,7 +50,7 @@ data class ChatView constructor(
             darkMode()
             navView.renderIn(this)
             div(classes = "container") {
-                div(classes = "row mx-4") {
+                div(classes = "row mx-4 mb-2") {
                     div(classes = "col-1 d-flex align-items-center") {
                         prevLink?.let { href ->
                             a(href = href, classes = "float-start text-white") {
@@ -69,11 +69,6 @@ data class ChatView constructor(
                                 i(classes = "bi bi-chevron-compact-right")
                             }
                         }
-                    }
-                }
-                div(classes = "row") {
-                    chatFeedItems.forEach {
-                        it.renderIn(this)
                     }
                 }
                 div(classes = "row") {
@@ -108,7 +103,7 @@ data class ChatView constructor(
                         }
                     }
                 }
-                div(classes = "row mb-4") {
+                div(classes = "row mb-2") {
                     div(classes = "col text-center") {
                         p(classes = "text-secondary mb-0 text-center fst-italic") {
                             style = "font-size: 0.8rem;"
@@ -116,6 +111,12 @@ data class ChatView constructor(
                         }
                     }
                 }
+                div(classes = "row") {
+                    chatFeedItems.forEach {
+                        it.renderIn(this)
+                    }
+                }
+
                 script {
                     src = "/static/src/js/chat.js"
                 }
