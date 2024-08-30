@@ -123,6 +123,11 @@ data class ChatView constructor(
                         it.renderIn(this)
                     }
                 }
+                div(classes = "row mb-2") {
+                    a(href="#", classes = "text-center text-white") {
+                        +"Back to top"
+                    }
+                }
 
                 script {
                     src = "/static/src/js/chat.js"

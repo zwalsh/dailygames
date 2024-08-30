@@ -58,7 +58,7 @@ class ChatService @Inject constructor(
             }
         }
 
-        val chatFeedItems = (resultItems + chatItems).sortedByDescending { it.instantSubmitted }
+        val chatFeedItems = (resultItems + chatItems).sortedBy { it.instantSubmitted }
 
         val previousPuzzle = puzzleDAO.previousPuzzle(game, puzzleNumber)
         val nextPuzzle = puzzleDAO.nextPuzzle(game, puzzleNumber)

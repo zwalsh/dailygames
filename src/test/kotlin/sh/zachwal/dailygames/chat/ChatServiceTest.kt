@@ -101,7 +101,7 @@ class ChatServiceTest {
     )
 
     @Test
-    fun `returns chat view with list of results with latest first`() {
+    fun `returns chat view with list of results with earliest first`() {
         every { resultService.allResultsForPuzzle(worldle943) } returns listOf(
             worldleResult,
             worldleResult.copy(id = 2L, userId = 2L, score = 5, instantSubmitted = Instant.now().minusSeconds(1)),
@@ -117,10 +117,10 @@ class ChatServiceTest {
 
         assertThat(chatView.chatFeedItems).hasSize(4)
         val items = chatView.chatFeedItems as List<ResultItemView>
-        assertThat(items[0].username).isEqualTo("user1")
-        assertThat(items[1].username).isEqualTo("user2")
-        assertThat(items[2].username).isEqualTo("user3")
-        assertThat(items[3].username).isEqualTo("user4")
+        assertThat(items[0].username).isEqualTo("user4")
+        assertThat(items[1].username).isEqualTo("user3")
+        assertThat(items[2].username).isEqualTo("user2")
+        assertThat(items[3].username).isEqualTo("user1")
     }
 
     @Test
@@ -237,8 +237,8 @@ class ChatServiceTest {
 
         assertThat(chatView.chatFeedItems).hasSize(2)
         val items = chatView.chatFeedItems
-        assertThat(items[0]).isInstanceOf(ResultItemView::class.java)
-        assertThat(items[1]).isInstanceOf(ChatItemView::class.java)
+        assertThat(items[0]).isInstanceOf(ChatItemView::class.java)
+        assertThat(items[1]).isInstanceOf(ResultItemView::class.java)
     }
 
     @Test

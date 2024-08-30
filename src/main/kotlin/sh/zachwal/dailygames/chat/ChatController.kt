@@ -102,7 +102,7 @@ class ChatController @Inject constructor(
 
                 val chatPage = call.request.uri.removeSuffix("/comment")
 
-                call.respondRedirect(chatPage)
+                call.respondRedirect("$chatPage?scrollToBottom=true")
             }
         }
     }
