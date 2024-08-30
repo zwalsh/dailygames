@@ -9,6 +9,8 @@ import kotlinx.html.id
 import kotlinx.html.p
 import sh.zachwal.dailygames.shared_html.HTMLView
 
+private const val SHARE_URL = "https://daily.zachwal.sh"
+
 data class ShareTextModalView(
     val shareTextLines: List<String>,
 ) : HTMLView<BODY>() {
@@ -47,7 +49,7 @@ data class ShareTextModalView(
                     }
                     div(classes = "d-none") {
                         id = "share-text"
-                        +shareTextLines.joinToString("\n")
+                        +(shareTextLines + SHARE_URL).joinToString("\n")
                     }
                 }
             }
