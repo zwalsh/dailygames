@@ -14,7 +14,6 @@ import kotlinx.html.title
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
-import sh.zachwal.dailygames.shared_html.card
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
