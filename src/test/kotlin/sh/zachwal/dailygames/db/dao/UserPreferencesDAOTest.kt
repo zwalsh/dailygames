@@ -35,4 +35,25 @@ class UserPreferencesDAOTest(
 
         assertThat(exception.message).contains("duplicate key value violates unique constraint")
     }
+
+    @Test
+    fun `can fetch user preferences`() {
+        userPreferencesDAO.createUserPreferencesWithDefaults(fixtures.zach.id)
+
+        val userPreferences = userPreferencesDAO.getByUserId(fixtures.zach.id)
+
+        assertThat(userPreferences?.userId).isEqualTo(fixtures.zach.id)
+        assertThat(userPreferences?.timeZone).isEqualTo("America/New_York")
+    }
+
+    @Test
+    fun `can update user preferences`() {
+        userPreferencesDAO.createUserPreferencesWithDefaults(fixtures.zach.id)
+        userPreferencesDAO.updateTimeZone(fixtures.zach.id, "America/Los_Angeles")
+
+        val userPreferences = userPreferencesDAO.getByUserId(fixtures.zach.id)
+
+        assertThat(userPreferences?.userId).isEqualTo(fixtures.zach.id)
+        assertThat(userPreferences?.timeZone).isEqualTo("America/Los_Angeles")
+    }
 }
