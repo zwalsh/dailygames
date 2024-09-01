@@ -45,6 +45,20 @@
           },
           {
             "createIndex": {
+              "indexName": "worldle_user_idx",
+              "tableName": "worldle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "user_id"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
               "indexName": "tradle_game_puzzle_instant_idx",
               "tableName": "tradle_result",
               "unique": false,
@@ -76,6 +90,20 @@
                 {
                   "column": {
                     "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "tradle_user_idx",
+              "tableName": "tradle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "user_id"
                   }
                 }
               ]
@@ -121,6 +149,20 @@
           },
           {
             "createIndex": {
+              "indexName": "travle_user_idx",
+              "tableName": "travle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "user_id"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
               "indexName": "top5_game_puzzle_instant_idx",
               "tableName": "top5_result",
               "unique": false,
@@ -159,6 +201,20 @@
           },
           {
             "createIndex": {
+              "indexName": "top5_user_idx",
+              "tableName": "top5_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "user_id"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
               "indexName": "flagle_game_puzzle_instant_idx",
               "tableName": "flagle_result",
               "unique": false,
@@ -190,6 +246,20 @@
                 {
                   "column": {
                     "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "flagle_user_idx",
+              "tableName": "flagle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "user_id"
                   }
                 }
               ]
