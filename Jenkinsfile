@@ -38,7 +38,7 @@ pipeline {
 
                 // Run migrations as testdailygames
                 dir("~testdailygames/migrations/db") {
-                    sh "sudo -u testdailygames -./migrate.sh"
+                    sh "sudo -u testdailygames ./migrate.sh"
                 }
             }
         }
