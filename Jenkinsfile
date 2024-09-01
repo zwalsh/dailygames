@@ -9,27 +9,27 @@ pipeline {
                 setBuildStatus('pending')
             }
         }
-//         stage('test') {
-//             steps {
-//                 sh './gradlew clean build'
-//             }
-//         }
-//         stage('test-release') {
-//             steps {
-//                 // Clear test releases
-//                 sh "rm -rf ~testdailygames/releases/*"
-//                 // Create the release
-//                 sh "mkdir ~testdailygames/releases/$GIT_COMMIT"
-//                 sh "tar -xvf build/distributions/dailygames.tar -C ~testdailygames/releases/$GIT_COMMIT"
-//                 // Set it as current
-//                 sh "ln -s ~testdailygames/releases/$GIT_COMMIT ~testdailygames/releases/current"
-//                 // Restart the service (only has sudo permissions for this command)
-//                 sh "sudo systemctl restart testdailygames"
-//             }
-//         }
+        stage('test') {
+            steps {
+                sh './gradlew clean build'
+            }
+        }
+        stage('test-release') {
+            steps {
+                // Clear test releases
+                sh "rm -rf ~testdailygames/releases/*"
+                // Create the release
+                sh "mkdir ~testdailygames/releases/$GIT_COMMIT"
+                sh "tar -xvf build/distributions/dailygames.tar -C ~testdailygames/releases/$GIT_COMMIT"
+                // Set it as current
+                sh "ln -s ~testdailygames/releases/$GIT_COMMIT ~testdailygames/releases/current"
+                // Restart the service (only has sudo permissions for this command)
+                sh "sudo systemctl restart testdailygames"
+            }
+        }
         stage('migrate database - testdailygames') {
             when {
-                expression { env.GIT_BRANCH == 'origin/ci-cd-database-migrations' } // TODO conditional on current branch
+                expression { env.GIT_BRANCH == 'origin/main' }
             }
             steps {
                 // Copy migrations & script into ~testdailygames
@@ -42,23 +42,36 @@ pipeline {
                 }
             }
         }
+        stage('migrate database - dailygames') {
+            when {
+                expression { env.GIT_BRANCH == 'origin/main' }
+            }
+            steps {
+                // Copy migrations & script into ~testdailygames
+                sh "rm -rf ~dailygames/migrations/*"
+                sh "cp -r db ~dailygames/migrations"
 
-
-//         stage('release') {
-//             when {
-//                 expression { env.GIT_BRANCH == 'origin/main' }
-//             }
-//             steps {
-//                 // Create the release
-//                 sh "mkdir ~dailygames/releases/$GIT_COMMIT"
-//                 sh "tar -xvf build/distributions/dailygames.tar -C ~dailygames/releases/$GIT_COMMIT"
-//                 // Set it as current
-//                 sh "rm ~dailygames/releases/current"
-//                 sh "ln -s ~dailygames/releases/$GIT_COMMIT ~dailygames/releases/current"
-//                 // Restart the service (only has sudo permissions for this command)
-//                 sh "sudo systemctl restart dailygames"
-//             }
-//         }
+                // Run migrations as testdailygames
+                dir("/home/dailygames/migrations/db") {
+                    sh "sudo -u dailygames ./migrate.sh"
+                }
+            }
+        }
+        stage('release') {
+            when {
+                expression { env.GIT_BRANCH == 'origin/main' }
+            }
+            steps {
+                // Create the release
+                sh "mkdir ~dailygames/releases/$GIT_COMMIT"
+                sh "tar -xvf build/distributions/dailygames.tar -C ~dailygames/releases/$GIT_COMMIT"
+                // Set it as current
+                sh "rm ~dailygames/releases/current"
+                sh "ln -s ~dailygames/releases/$GIT_COMMIT ~dailygames/releases/current"
+                // Restart the service (only has sudo permissions for this command)
+                sh "sudo systemctl restart dailygames"
+            }
+        }
     }
     post {
         success {
