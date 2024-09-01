@@ -1,0 +1,202 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "12",
+        "author": "zach",
+        "changes": [
+          {
+            "createIndex": {
+              "indexName": "worldle_game_puzzle_instant_idx",
+              "tableName": "worldle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "game"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "worldle_instant_idx",
+              "tableName": "worldle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "tradle_game_puzzle_instant_idx",
+              "tableName": "tradle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "game"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "tradle_instant_idx",
+              "tableName": "tradle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "travle_game_puzzle_instant_idx",
+              "tableName": "travle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "game"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "travle_instant_idx",
+              "tableName": "travle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "top5_game_puzzle_instant_idx",
+              "tableName": "top5_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "game"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "top5_instant_idx",
+              "tableName": "top5_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "flagle_game_puzzle_instant_idx",
+              "tableName": "flagle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "game"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "flagle_instant_idx",
+              "tableName": "flagle_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

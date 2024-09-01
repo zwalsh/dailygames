@@ -54,6 +54,11 @@
       "include": {
         "file": "11_create_chat.json"
       }
+    },
+    {
+      "include": {
+        "file": "12_add_indexes.json"
+      }
     }
   ]
 }
