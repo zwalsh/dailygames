@@ -10,6 +10,8 @@ import kotlinx.html.select
 import kotlinx.html.submitInput
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
+import sh.zachwal.dailygames.users.POST_TIME_ZONE_ROUTE
+import sh.zachwal.dailygames.users.TIME_ZONE_FORM_PARAM
 
 class TimeZoneFormView(
     val currentTimeZone: String,
@@ -22,10 +24,11 @@ class TimeZoneFormView(
 ) : HTMLView<DIV>() {
     override fun DIV.render() {
         card(cardHeader = "Set Time Zone", cardHeaderClasses = "text-center") {
-            form(method = post, action = "/profile/timezone") {
+            form(method = post, action = POST_TIME_ZONE_ROUTE) {
                 div(classes = "mb-3") {
                     select(classes = "form-select") {
-                        id = "timezone"
+                        id = TIME_ZONE_FORM_PARAM
+                        name = TIME_ZONE_FORM_PARAM
                         option {
                             value = currentTimeZone
                             selected = true
@@ -38,10 +41,10 @@ class TimeZoneFormView(
                             }
                         }
                     }
-                    div(classes = "d-flex justify-content-end") {
-                        submitInput(classes = "btn btn-primary") {
-                            value = "Submit"
-                        }
+                }
+                div(classes = "d-flex justify-content-end") {
+                    submitInput(classes = "btn btn-primary") {
+                        value = "Submit"
                     }
                 }
             }

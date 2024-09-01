@@ -22,18 +22,25 @@ import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.roles.Role.ADMIN
 import sh.zachwal.dailygames.roles.Role.USER
 import sh.zachwal.dailygames.roles.RoleService
+import sh.zachwal.dailygames.roles.approvedUserRoute
 import sh.zachwal.dailygames.session.SessionService
 import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
 import sh.zachwal.dailygames.users.views.LoginView
 import sh.zachwal.dailygames.users.views.ProfileView
 import sh.zachwal.dailygames.users.views.RegisterView
+import java.time.ZoneId
+import java.time.zone.ZoneRulesException
 import javax.inject.Inject
+
+const val POST_TIME_ZONE_ROUTE = "/profile/timezone"
+const val TIME_ZONE_FORM_PARAM = "timeZone"
 
 @Controller
 class UserController @Inject constructor(
     private val sessionService: SessionService,
     private val userService: UserService,
     private val roleService: RoleService,
+    private val userPreferencesService: UserPreferencesService,
 ) {
     internal fun Routing.loginRoutes() {
         route("/login") {
@@ -85,11 +92,13 @@ class UserController @Inject constructor(
                         return@get
                     }
                     val user = currentUser(call, userService)
+                    val timeZone = userPreferencesService.getTimeZone(user.id).id
 
                     val profileView = ProfileView(
                         greeting = greeting(),
                         username = user.username,
-                        isAdmin = roleService.hasRole(user, ADMIN)
+                        isAdmin = roleService.hasRole(user, ADMIN),
+                        currentTimeZone = timeZone,
                     )
 
                     call.respondHtml {
@@ -132,6 +141,24 @@ class UserController @Inject constructor(
                 } else {
                     call.respond(HttpStatusCode.Conflict, "User already exists")
                 }
+            }
+        }
+    }
+
+    internal fun Routing.postTimeZone() {
+        approvedUserRoute(POST_TIME_ZONE_ROUTE) {
+            post {
+                val user = currentUser(call, userService)
+                val params = call.receiveParameters()
+                val timeZone = params.getOrFail(TIME_ZONE_FORM_PARAM)
+                val zoneId = try {
+                    ZoneId.of(timeZone)
+                } catch (e: ZoneRulesException) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid time zone")
+                    return@post
+                }
+                userPreferencesService.setTimeZone(user.id, zoneId)
+                call.respondRedirect("/profile")
             }
         }
     }

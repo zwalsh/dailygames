@@ -18,10 +18,12 @@ import sh.zachwal.dailygames.shared_html.headSetup
 data class ProfileView(
     private val greeting: String,
     private val username: String,
-    private val isAdmin: Boolean
+    private val isAdmin: Boolean,
+    private val currentTimeZone: String,
 ) : HTMLView<HTML>() {
 
     private val navView = NavView(username = username, currentActiveNavItem = NavItem.PROFILE)
+    private val timeZoneFormView = TimeZoneFormView(currentTimeZone = currentTimeZone)
 
     override fun HTML.render() {
         head {
@@ -52,9 +54,7 @@ data class ProfileView(
                         }
                     }
                 }
-                TimeZoneFormView(
-                    currentTimeZone = "America/New_York"
-                ).renderIn(this)
+                timeZoneFormView.renderIn(this)
             }
         }
     }

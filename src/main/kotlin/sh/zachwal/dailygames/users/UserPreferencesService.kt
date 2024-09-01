@@ -2,10 +2,11 @@ package sh.zachwal.dailygames.users
 
 import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import java.time.ZoneId
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserPreferencesService constructor(
+class UserPreferencesService @Inject constructor(
     private val userPreferencesDAO: UserPreferencesDAO
 ) {
 
