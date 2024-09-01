@@ -19,7 +19,7 @@ class UserPreferencesDAOTest(
 
     @Test
     fun `can insert user preferences`() {
-        val userPreferences = userPreferencesDAO.createUserPreferencesWithDefaults(fixtures.zach.id)
+        val userPreferences = userPreferencesDAO.createDefaultPreferences(fixtures.zach.id)
 
         assertThat(userPreferences.userId).isEqualTo(fixtures.zach.id)
         assertThat(userPreferences.timeZone).isEqualTo("America/New_York")
@@ -27,10 +27,10 @@ class UserPreferencesDAOTest(
 
     @Test
     fun `cannot insert two user preferences`() {
-        userPreferencesDAO.createUserPreferencesWithDefaults(fixtures.zach.id)
+        userPreferencesDAO.createDefaultPreferences(fixtures.zach.id)
 
         val exception = assertThrows<Exception> {
-            userPreferencesDAO.createUserPreferencesWithDefaults(fixtures.zach.id)
+            userPreferencesDAO.createDefaultPreferences(fixtures.zach.id)
         }
 
         assertThat(exception.message).contains("duplicate key value violates unique constraint")
@@ -38,7 +38,7 @@ class UserPreferencesDAOTest(
 
     @Test
     fun `can fetch user preferences`() {
-        userPreferencesDAO.createUserPreferencesWithDefaults(fixtures.zach.id)
+        userPreferencesDAO.createDefaultPreferences(fixtures.zach.id)
 
         val userPreferences = userPreferencesDAO.getByUserId(fixtures.zach.id)
 
@@ -48,7 +48,7 @@ class UserPreferencesDAOTest(
 
     @Test
     fun `can update user preferences`() {
-        userPreferencesDAO.createUserPreferencesWithDefaults(fixtures.zach.id)
+        userPreferencesDAO.createDefaultPreferences(fixtures.zach.id)
         userPreferencesDAO.updateTimeZone(fixtures.zach.id, "America/Los_Angeles")
 
         val userPreferences = userPreferencesDAO.getByUserId(fixtures.zach.id)

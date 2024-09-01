@@ -12,7 +12,7 @@ interface UserPreferencesDAO {
             RETURNING *
         """
     )
-    fun createUserPreferencesWithDefaults(userId: Long): UserPreferences
+    fun createDefaultPreferences(userId: Long): UserPreferences
 
     @SqlQuery(
         """

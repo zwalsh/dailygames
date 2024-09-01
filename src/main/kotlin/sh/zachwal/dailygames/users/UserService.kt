@@ -5,10 +5,14 @@ import org.jdbi.v3.core.statement.UnableToExecuteStatementException
 import org.mindrot.jbcrypt.BCrypt
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.UserDAO
+import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import javax.inject.Inject
 
-class UserService @Inject constructor(private val userDAO: UserDAO) {
+class UserService @Inject constructor(
+    private val userDAO: UserDAO,
+    private val userPreferencesDAO: UserPreferencesDAO,
+) {
 
     private val logger = LoggerFactory.getLogger(UserService::class.java)
 
@@ -41,12 +45,18 @@ class UserService @Inject constructor(private val userDAO: UserDAO) {
 
     fun createUser(username: String, password: String): User? {
         val hash = BCrypt.hashpw(password, BCrypt.gensalt())
-        return try {
+        val user = try {
             userDAO.createUser(username, hash)
         } catch (e: UnableToExecuteStatementException) {
             logger.error(e)
             null
         }
+
+        if (user != null) {
+            userPreferencesDAO.createDefaultPreferences(user.id)
+        }
+
+        return user
     }
 
     fun list(): List<User> = userDAO.listUsers()
