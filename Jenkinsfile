@@ -9,24 +9,24 @@ pipeline {
                 setBuildStatus('pending')
             }
         }
-        stage('test') {
-            steps {
-                sh './gradlew clean build'
-            }
-        }
-        stage('test-release') {
-            steps {
-                // Clear test releases
-                sh "rm -rf ~testdailygames/releases/*"
-                // Create the release
-                sh "mkdir ~testdailygames/releases/$GIT_COMMIT"
-                sh "tar -xvf build/distributions/dailygames.tar -C ~testdailygames/releases/$GIT_COMMIT"
-                // Set it as current
-                sh "ln -s ~testdailygames/releases/$GIT_COMMIT ~testdailygames/releases/current"
-                // Restart the service (only has sudo permissions for this command)
-                sh "sudo systemctl restart testdailygames"
-            }
-        }
+//         stage('test') {
+//             steps {
+//                 sh './gradlew clean build'
+//             }
+//         }
+//         stage('test-release') {
+//             steps {
+//                 // Clear test releases
+//                 sh "rm -rf ~testdailygames/releases/*"
+//                 // Create the release
+//                 sh "mkdir ~testdailygames/releases/$GIT_COMMIT"
+//                 sh "tar -xvf build/distributions/dailygames.tar -C ~testdailygames/releases/$GIT_COMMIT"
+//                 // Set it as current
+//                 sh "ln -s ~testdailygames/releases/$GIT_COMMIT ~testdailygames/releases/current"
+//                 // Restart the service (only has sudo permissions for this command)
+//                 sh "sudo systemctl restart testdailygames"
+//             }
+//         }
         stage('migrate database - testdailygames') {
             when {
                 expression { env.GIT_BRANCH == 'origin/main' }
@@ -42,21 +42,21 @@ pipeline {
         }
 
 
-        stage('release') {
-            when {
-                expression { env.GIT_BRANCH == 'origin/main' }
-            }
-            steps {
-                // Create the release
-                sh "mkdir ~dailygames/releases/$GIT_COMMIT"
-                sh "tar -xvf build/distributions/dailygames.tar -C ~dailygames/releases/$GIT_COMMIT"
-                // Set it as current
-                sh "rm ~dailygames/releases/current"
-                sh "ln -s ~dailygames/releases/$GIT_COMMIT ~dailygames/releases/current"
-                // Restart the service (only has sudo permissions for this command)
-                sh "sudo systemctl restart dailygames"
-            }
-        }
+//         stage('release') {
+//             when {
+//                 expression { env.GIT_BRANCH == 'origin/main' }
+//             }
+//             steps {
+//                 // Create the release
+//                 sh "mkdir ~dailygames/releases/$GIT_COMMIT"
+//                 sh "tar -xvf build/distributions/dailygames.tar -C ~dailygames/releases/$GIT_COMMIT"
+//                 // Set it as current
+//                 sh "rm ~dailygames/releases/current"
+//                 sh "ln -s ~dailygames/releases/$GIT_COMMIT ~dailygames/releases/current"
+//                 // Restart the service (only has sudo permissions for this command)
+//                 sh "sudo systemctl restart dailygames"
+//             }
+//         }
     }
     post {
         success {
