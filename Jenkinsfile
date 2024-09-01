@@ -9,9 +9,24 @@ pipeline {
                 setBuildStatus('pending')
             }
         }
+        stage('clean') {
+            steps {
+                sh './gradlew clean'
+            }
+        }
+        stage('assemble') {
+            steps {
+                sh './gradlew assemble'
+            }
+        }
+        stage('lint') {
+            steps {
+                sh './gradlew ktlintCheck'
+            }
+        }
         stage('test') {
             steps {
-                sh './gradlew clean build'
+                sh './gradlew build'
             }
         }
         stage('test-release') {
