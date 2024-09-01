@@ -59,6 +59,11 @@
       "include": {
         "file": "12_add_indexes.json"
       }
+    },
+    {
+      "include": {
+        "file": "13_create_user_preferences.json"
+      }
     }
   ]
 }

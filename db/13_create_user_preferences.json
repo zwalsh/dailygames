@@ -1,0 +1,66 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "12",
+        "author": "zach",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "user_preferences",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "BIGINT",
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false,
+                      "primaryKeyName": "pk_user_preferences"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "user_id",
+                    "type": "BIGINT",
+                    "constraints": {
+                      "nullable": false,
+                      "foreignKeyName": "user_preferences_user_id_fk",
+                      "references": "user(id)"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "key",
+                    "type": "VARCHAR(255)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "value",
+                    "type": "VARCHAR(255)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "addUniqueConstraint": {
+              "constraintName": "uk_user_preferences_user_id_key",
+              "columnNames": "user_id, key",
+              "tableName": "user_preferences"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
