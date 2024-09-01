@@ -2,7 +2,7 @@
   "databaseChangeLog": [
     {
       "changeSet": {
-        "id": "12",
+        "id": "13",
         "author": "zach",
         "changes": [
           {
@@ -13,10 +13,10 @@
                   "column": {
                     "name": "id",
                     "type": "BIGINT",
+                    "autoIncrement": true,
                     "constraints": {
                       "primaryKey": true,
-                      "nullable": false,
-                      "primaryKeyName": "pk_user_preferences"
+                      "nullable": false
                     }
                   }
                 },
@@ -26,6 +26,7 @@
                     "type": "BIGINT",
                     "constraints": {
                       "nullable": false,
+                      "unique": true,
                       "foreignKeyName": "user_preferences_user_id_fk",
                       "references": "user(id)"
                     }
