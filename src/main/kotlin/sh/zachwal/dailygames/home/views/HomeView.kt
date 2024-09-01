@@ -8,14 +8,17 @@ import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.id
+import kotlinx.html.script
 import kotlinx.html.submitInput
 import kotlinx.html.textArea
 import kotlinx.html.title
+import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
+import sh.zachwal.dailygames.shared_html.jquery
 
 const val SHARE_TEXT_ID = "shareTextId"
 
@@ -30,10 +33,17 @@ data class HomeView constructor(
         head {
             title("Daily Games")
             headSetup()
+            jquery()
         }
         body {
             darkMode()
             nav.renderIn(this)
+
+            val shareTextLines = Game.values().map {
+                "${it.emoji()} ${it.displayName()} #123 4/6"
+            }
+
+            ShareTextModalView(shareTextLines).renderIn(this)
             div(classes = "container") {
                 div(classes = "row") {
                     div(classes = "col") {
@@ -84,6 +94,9 @@ data class HomeView constructor(
                         it.renderIn(this)
                     }
                 }
+            }
+            script {
+                src = "/static/src/js/home.js"
             }
         }
     }
