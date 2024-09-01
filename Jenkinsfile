@@ -9,9 +9,24 @@ pipeline {
                 setBuildStatus('pending')
             }
         }
+        stage('clean') {
+            steps {
+                sh './gradlew clean'
+            }
+        }
+        stage('assemble') {
+            steps {
+                sh './gradlew assemble'
+            }
+        }
+        stage('lint') {
+            steps {
+                sh './gradlew ktlintCheck'
+            }
+        }
         stage('test') {
             steps {
-                sh './gradlew clean build'
+                sh './gradlew build'
             }
         }
         stage('test-release') {
@@ -25,6 +40,36 @@ pipeline {
                 sh "ln -s ~testdailygames/releases/$GIT_COMMIT ~testdailygames/releases/current"
                 // Restart the service (only has sudo permissions for this command)
                 sh "sudo systemctl restart testdailygames"
+            }
+        }
+        stage('migrate database - testdailygames') {
+            when {
+                expression { env.GIT_BRANCH == 'origin/main' }
+            }
+            steps {
+                // Copy migrations & script into ~testdailygames
+                sh "rm -rf ~testdailygames/migrations/*"
+                sh "cp -r db ~testdailygames/migrations"
+
+                // Run migrations as testdailygames
+                dir("/home/testdailygames/migrations/db") {
+                    sh "sudo -u testdailygames ./migrate.sh"
+                }
+            }
+        }
+        stage('migrate database - dailygames') {
+            when {
+                expression { env.GIT_BRANCH == 'origin/main' }
+            }
+            steps {
+                // Copy migrations & script into ~testdailygames
+                sh "rm -rf ~dailygames/migrations/*"
+                sh "cp -r db ~dailygames/migrations"
+
+                // Run migrations as testdailygames
+                dir("/home/dailygames/migrations/db") {
+                    sh "sudo -u dailygames ./migrate.sh"
+                }
             }
         }
         stage('release') {
