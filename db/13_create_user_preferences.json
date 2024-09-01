@@ -33,30 +33,15 @@
                 },
                 {
                   "column": {
-                    "name": "key",
-                    "type": "VARCHAR(255)",
+                    "name": "time_zone",
+                    "type": "text",
                     "constraints": {
                       "nullable": false
-                    }
-                  }
-                },
-                {
-                  "column": {
-                    "name": "value",
-                    "type": "VARCHAR(255)",
-                    "constraints": {
-                      "nullable": false
-                    }
+                    },
+                    "defaultValue": "America/New_York"
                   }
                 }
               ]
-            }
-          },
-          {
-            "addUniqueConstraint": {
-              "constraintName": "uk_user_preferences_user_id_key",
-              "columnNames": "user_id, key",
-              "tableName": "user_preferences"
             }
           }
         ]
