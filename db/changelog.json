@@ -64,6 +64,11 @@
       "include": {
         "file": "13_create_user_preferences.json"
       }
+    },
+    {
+      "include": {
+        "file": "14_backfill_user_prefs.sql"
+      }
     }
   ]
 }
