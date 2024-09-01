@@ -27,6 +27,21 @@ pipeline {
                 sh "sudo systemctl restart testdailygames"
             }
         }
+        stage('migrate database - testdailygames') {
+            when {
+                expression { env.GIT_BRANCH == 'origin/main' }
+            }
+            steps {
+                // Copy migrations & script into ~testdailygames
+                sh "rm -rf ~testdailygames/migrations"
+                sh "cp -r db ~testdailygames/migrations"
+
+                // Run migrations as testdailygames
+                sh "sudo su - testdailygames -c 'cd ~testdailygames/migrations && ./migrate.sh'"
+            }
+        }
+
+
         stage('release') {
             when {
                 expression { env.GIT_BRANCH == 'origin/main' }
