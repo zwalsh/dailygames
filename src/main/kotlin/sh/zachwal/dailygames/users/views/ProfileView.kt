@@ -52,6 +52,9 @@ data class ProfileView(
                         }
                     }
                 }
+                TimeZoneFormView(
+                    currentTimeZone = "America/New_York"
+                ).renderIn(this)
             }
         }
     }
