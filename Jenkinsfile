@@ -37,7 +37,7 @@ pipeline {
                 sh "cp -r db/. ~testdailygames/migrations"
 
                 // Run migrations as testdailygames
-                dir("~testdailygames/migrations/db") {
+                dir("/home/testdailygames/migrations") {
                     sh "sudo -u testdailygames ./migrate.sh"
                 }
             }
