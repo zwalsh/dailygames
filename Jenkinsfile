@@ -34,7 +34,7 @@ pipeline {
             steps {
                 // Copy migrations & script into ~testdailygames
                 sh "rm -rf ~testdailygames/migrations/*"
-                sh "cp -a db/. ~testdailygames/migrations"
+                sh "cp -r db/. ~testdailygames/migrations"
 
                 // Run migrations as testdailygames
                 dir("~testdailygames/migrations/db") {
