@@ -34,10 +34,12 @@ pipeline {
             steps {
                 // Copy migrations & script into ~testdailygames
                 sh "rm -rf ~testdailygames/migrations/*"
-                sh "cp -r db ~testdailygames/migrations"
+                sh "cp -a db/. ~testdailygames/migrations"
 
                 // Run migrations as testdailygames
-                sh "sudo su - testdailygames -c 'cd ~testdailygames/migrations && ./migrate.sh'"
+                dir("~testdailygames/migrations/db") {
+                    sh "sudo -u testdailygames -./migrate.sh"
+                }
             }
         }
 
