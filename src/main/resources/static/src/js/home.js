@@ -20,5 +20,7 @@ function popModal() {
 }
 
 window.onload = function () {
-//    popModal(); // Disabled until data is populated correctly
+    if (window.location.href.indexOf("test") != -1 || window.location.href.indexOf("localhost") != -1) {
+       popModal(); // Only pop modal in test or localhost
+    }
 }
