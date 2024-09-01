@@ -28,6 +28,7 @@ import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
 import sh.zachwal.dailygames.users.views.LoginView
 import sh.zachwal.dailygames.users.views.ProfileView
 import sh.zachwal.dailygames.users.views.RegisterView
+import sh.zachwal.dailygames.users.views.TimeZoneFormView
 import java.time.ZoneId
 import java.time.zone.ZoneRulesException
 import javax.inject.Inject
@@ -92,13 +93,17 @@ class UserController @Inject constructor(
                         return@get
                     }
                     val user = currentUser(call, userService)
-                    val timeZone = userPreferencesService.getTimeZone(user.id).id
+                    val timeZone = userPreferencesService.getTimeZone(user.id)
 
+                    val timeZoneFormView = TimeZoneFormView(
+                        currentTimeZone = timeZone,
+                        timeZonesToNames = userPreferencesService.possibleTimeZones,
+                    )
                     val profileView = ProfileView(
                         greeting = greeting(),
                         username = user.username,
                         isAdmin = roleService.hasRole(user, ADMIN),
-                        currentTimeZone = timeZone,
+                        timeZoneFormView = timeZoneFormView,
                     )
 
                     call.respondHtml {

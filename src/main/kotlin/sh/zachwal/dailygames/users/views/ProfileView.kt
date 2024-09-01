@@ -19,11 +19,10 @@ data class ProfileView(
     private val greeting: String,
     private val username: String,
     private val isAdmin: Boolean,
-    private val currentTimeZone: String,
+    private val timeZoneFormView: TimeZoneFormView,
 ) : HTMLView<HTML>() {
 
     private val navView = NavView(username = username, currentActiveNavItem = NavItem.PROFILE)
-    private val timeZoneFormView = TimeZoneFormView(currentTimeZone = currentTimeZone)
 
     override fun HTML.render() {
         head {
