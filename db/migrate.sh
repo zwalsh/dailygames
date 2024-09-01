@@ -9,4 +9,4 @@ db_name=$(find ~ -name "*.env" -exec grep -m 1 "DB_NAME" {} \; | cut -d '=' -f 2
 
 liquibase updateSql --url=jdbc:postgresql://localhost:5432/"$db_name" --username="$username" --password="$password" || exit 1
 
-# liquibase migrate --url=jdbc:postgresql://localhost:5432/"$db_name" --username="$username" --password="$password" || exit 1
+liquibase migrate --url=jdbc:postgresql://localhost:5432/"$db_name" --username="$username" --password="$password" || exit 1
