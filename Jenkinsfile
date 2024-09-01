@@ -29,7 +29,7 @@ pipeline {
 //         }
         stage('migrate database - testdailygames') {
             when {
-                expression { env.GIT_BRANCH == 'origin/main' }
+                expression { env.GIT_BRANCH == 'origin/ci-cd-database-migrations' } // TODO conditional on current branch
             }
             steps {
                 // Copy migrations & script into ~testdailygames
