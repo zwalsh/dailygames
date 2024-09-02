@@ -38,7 +38,7 @@ class TimeZoneFormView(
                         // Then add a separator line
                         option {
                             disabled = true
-                            +"────────────────"
+                            +"──────"
                         }
 
                         // Then show popular ones
@@ -54,7 +54,7 @@ class TimeZoneFormView(
                         // Then add a separator line
                         option {
                             disabled = true
-                            +"────────────────"
+                            +"──────"
                         }
 
                         // Then display the rest
