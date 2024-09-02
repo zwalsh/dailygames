@@ -13,6 +13,7 @@ import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.results.ResultService
+import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.displayTime
 import sh.zachwal.dailygames.utils.longDisplayTime
@@ -25,6 +26,7 @@ class ChatService @Inject constructor(
     private val jdbi: Jdbi,
     private val resultService: ResultService,
     private val userService: UserService,
+    private val userPreferencesService: UserPreferencesService,
     private val puzzleDAO: PuzzleDAO,
     private val chatDAO: ChatDAO,
     private val clock: Clock,
@@ -32,11 +34,12 @@ class ChatService @Inject constructor(
 
     fun chatView(currentUser: User, game: Game, puzzleNumber: Int): ChatView {
         val results = resultService.allResultsForPuzzle(Puzzle(game, puzzleNumber, date = null))
+        val userTimeZone = userPreferencesService.getTimeZone(currentUser.id)
         val resultItems = results.map {
             ResultItemView(
                 username = userService.getUsernameCached(it.userId) ?: "Unknown",
                 shareText = it.shareText,
-                timestampText = displayTime(it.instantSubmitted),
+                timestampText = displayTime(it.instantSubmitted, userTimeZone = userTimeZone),
                 instantSubmitted = it.instantSubmitted,
             )
         }
@@ -47,13 +50,13 @@ class ChatService @Inject constructor(
                 ChatItemView(
                     username = userService.getUsernameCached(it.userId) ?: "Unknown",
                     text = it.text,
-                    timestampText = displayTime(it.instantSubmitted),
+                    timestampText = displayTime(it.instantSubmitted, userTimeZone = userTimeZone),
                     instantSubmitted = it.instantSubmitted,
                 )
             } else {
                 HiddenChatItemView(
                     username = userService.getUsernameCached(it.userId) ?: "Unknown",
-                    timestampText = displayTime(it.instantSubmitted),
+                    timestampText = displayTime(it.instantSubmitted, userTimeZone = userTimeZone),
                     instantSubmitted = it.instantSubmitted,
                 )
             }
@@ -67,7 +70,7 @@ class ChatService @Inject constructor(
         val prevLink = previousPuzzle?.chatLink()
         val nextLink = nextPuzzle?.chatLink()
 
-        val updateTimeString = "Updated ${longDisplayTime(clock.instant())}"
+        val updateTimeString = "Updated ${longDisplayTime(clock.instant(), userTimeZone)}"
         return ChatView(
             username = currentUser.username,
             game = game,

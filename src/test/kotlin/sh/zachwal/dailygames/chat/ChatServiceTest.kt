@@ -18,6 +18,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.results.ResultService
+import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.displayTime
 import sh.zachwal.dailygames.utils.longDisplayTime
@@ -32,6 +33,9 @@ class ChatServiceTest {
         every { allResultsForPuzzle(any()) } returns emptyList()
     }
     private val userService = mockk<UserService>()
+    private val userPreferencesService = mockk<UserPreferencesService> {
+        every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
+    }
     private val puzzleDAO = mockk<PuzzleDAO> {
         every { previousPuzzle(any(), any()) } returns null
         every { nextPuzzle(any(), any()) } returns null
@@ -46,11 +50,12 @@ class ChatServiceTest {
     }
     private val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     private val chatService = ChatService(
-        jdbi,
-        resultService,
-        userService,
-        puzzleDAO,
-        chatDAO,
+        jdbi = jdbi,
+        resultService = resultService,
+        userService = userService,
+        userPreferencesService = userPreferencesService,
+        puzzleDAO = puzzleDAO,
+        chatDAO = chatDAO,
         clock = clock,
     )
     private val testUser = User(
@@ -297,5 +302,15 @@ class ChatServiceTest {
         val updateTimeString = "Updated $clockTimeLongForm"
 
         assertThat(chatView.updateTimeString).isEqualTo(updateTimeString)
+    }
+
+    @Test
+    fun `uses user's time zone`() {
+        val pacificTime = ZoneId.of("America/Los_Angeles")
+        every { userPreferencesService.getTimeZone(testUser.id) } returns pacificTime
+
+        val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
+
+        assertThat(chatView.updateTimeString).contains("PT")
     }
 }
