@@ -15,7 +15,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.users.UserService
-import sh.zachwal.dailygames.utils.displayTime
+import sh.zachwal.dailygames.utils.DisplayTimeService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
@@ -36,6 +36,7 @@ class ResultService @Inject constructor(
     private val flagleDAO: FlagleDAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
+    private val displayTimeService: DisplayTimeService,
 ) {
 
     private val logger = LoggerFactory.getLogger(ResultService::class.java)
@@ -125,7 +126,7 @@ class ResultService @Inject constructor(
         return puzzleDAO.getPuzzle(puzzle.game, puzzle.number) ?: puzzleDAO.insertPuzzle(puzzle)
     }
 
-    fun resultFeed(): List<ResultFeedItemView> {
+    fun resultFeed(userId: Long): List<ResultFeedItemView> {
         val results = readFirstTwentyResults()
         return results.map { result ->
             val username = userService.getUsernameCached(result.userId)
@@ -134,7 +135,7 @@ class ResultService @Inject constructor(
                 resultTitle = "${result.game.displayName()} #${result.puzzleNumber}",
                 chatHref = chatLink(result.game, result.puzzleNumber),
                 shareText = result.shareText,
-                timestampText = displayTime(result.instantSubmitted),
+                timestampText = displayTimeService.displayTime(result.instantSubmitted, userId = userId),
             )
         }
     }

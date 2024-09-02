@@ -1,19 +1,27 @@
 package sh.zachwal.dailygames.utils
 
 import com.google.common.truth.Truth.assertThat
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.Test
+import sh.zachwal.dailygames.users.UserPreferencesService
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 class DisplayTimeTest {
 
+    private val userPreferencesService = mockk<UserPreferencesService> {
+        every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
+    }
+    private val service = DisplayTimeService(userPreferencesService)
+
     @Test
     fun `displayTime returns just now for recent results`() {
         val now = Instant.ofEpochSecond(1724074018)
         val justNow = now.minusSeconds(1)
 
-        assertThat(displayTime(justNow, now = now)).isEqualTo("Just now")
+        assertThat(service.displayTime(justNow, 1L, now = now)).isEqualTo("Just now")
     }
 
     @Test
@@ -21,7 +29,7 @@ class DisplayTimeTest {
         val now = Instant.ofEpochSecond(1724074018)
         val oneMinuteAgo = now.minusSeconds(60)
 
-        assertThat(displayTime(oneMinuteAgo, now = now)).isEqualTo("1m ago")
+        assertThat(service.displayTime(oneMinuteAgo, 1L, now = now)).isEqualTo("1m ago")
     }
 
     @Test
@@ -29,7 +37,7 @@ class DisplayTimeTest {
         val now = Instant.ofEpochSecond(1724074018)
         val thirtyMinutesAgo = now.minusSeconds(60 * 30)
 
-        assertThat(displayTime(thirtyMinutesAgo, now = now)).isEqualTo("30m ago")
+        assertThat(service.displayTime(thirtyMinutesAgo, 1L, now = now)).isEqualTo("30m ago")
     }
 
     @Test
@@ -37,14 +45,14 @@ class DisplayTimeTest {
         val now = Instant.ofEpochSecond(1724074018)
         val oneHourAgo = now.minusSeconds(60 * 60)
 
-        assertThat(displayTime(oneHourAgo, now = now)).isEqualTo("1h 0m ago")
+        assertThat(service.displayTime(oneHourAgo, 1L, now = now)).isEqualTo("1h 0m ago")
     }
 
     @Test
     fun `displayTime returns combination of hours and minutes`() {
         val time = Instant.now().minusSeconds(60 * 90)
 
-        assertThat(displayTime(time)).isEqualTo("1h 30m ago")
+        assertThat(service.displayTime(time, 1L)).isEqualTo("1h 30m ago")
     }
 
     @Test
@@ -52,7 +60,7 @@ class DisplayTimeTest {
         val midnightAug17 = Instant.ofEpochSecond(1723867200)
         val eleven59PMAug17 = Instant.ofEpochSecond(1723953540)
 
-        assertThat(displayTime(midnightAug17, now = eleven59PMAug17)).isEqualTo("23h 59m ago")
+        assertThat(service.displayTime(midnightAug17, 1L, now = eleven59PMAug17)).isEqualTo("23h 59m ago")
     }
 
     @Test
@@ -61,7 +69,7 @@ class DisplayTimeTest {
         val midnightAug17 = Instant.ofEpochSecond(1723867200)
         val eleven59PMAug16 = Instant.ofEpochSecond(1723867140)
 
-        assertThat(displayTime(eleven59PMAug16, now = midnightAug17)).isEqualTo("Yesterday at 11:59PM ET")
+        assertThat(service.displayTime(eleven59PMAug16, 1L, now = midnightAug17)).isEqualTo("Yesterday at 11:59PM ET")
     }
 
     @Test
@@ -69,7 +77,7 @@ class DisplayTimeTest {
         val midnightAug17 = Instant.ofEpochSecond(1723867200)
         val midnightAug16 = Instant.ofEpochSecond(1723780800)
 
-        assertThat(displayTime(midnightAug16, now = midnightAug17)).isEqualTo("Yesterday at 12:00AM ET")
+        assertThat(service.displayTime(midnightAug16, 1L, now = midnightAug17)).isEqualTo("Yesterday at 12:00AM ET")
     }
 
     @Test
@@ -77,7 +85,7 @@ class DisplayTimeTest {
         val midnightAug17 = Instant.ofEpochSecond(1723867200)
         val now = midnightAug17.plus(2, ChronoUnit.DAYS)
 
-        assertThat(displayTime(midnightAug17, now)).isEqualTo("Sat Aug 17 at 12:00AM ET")
+        assertThat(service.displayTime(midnightAug17, 1L, now)).isEqualTo("Sat Aug 17 at 12:00AM ET")
     }
 
     @Test
@@ -88,7 +96,9 @@ class DisplayTimeTest {
         val now = elevenFiftyNineEastern.plus(2, ChronoUnit.MINUTES)
 
         val pacificTime = ZoneId.of("America/Los_Angeles")
-        assertThat(displayTime(elevenFiftyNineEastern, now, userTimeZone = pacificTime)).isEqualTo("2m ago")
+        every { userPreferencesService.getTimeZone(1L) } returns pacificTime
+
+        assertThat(service.displayTime(elevenFiftyNineEastern, 1L, now)).isEqualTo("2m ago")
     }
 
     @Test
@@ -97,11 +107,12 @@ class DisplayTimeTest {
         val todayNoonPacific = yesterdayNoonPacific.plus(1, ChronoUnit.DAYS)
 
         val pacificTime = ZoneId.of("America/Los_Angeles")
+        every { userPreferencesService.getTimeZone(1L) } returns pacificTime
         assertThat(
-            displayTime(
+            service.displayTime(
                 yesterdayNoonPacific,
-                todayNoonPacific,
-                userTimeZone = pacificTime
+                1L,
+                now = todayNoonPacific,
             )
         ).isEqualTo("Yesterday at 12:00PM PT")
     }
@@ -111,13 +122,8 @@ class DisplayTimeTest {
         val augustFirst = Instant.ofEpochSecond(1722528000)
         val now = augustFirst.plus(30, ChronoUnit.DAYS)
         val pacificTime = ZoneId.of("America/Los_Angeles")
+        every { userPreferencesService.getTimeZone(1L) } returns pacificTime
 
-        assertThat(
-            displayTime(
-                augustFirst,
-                now = now,
-                userTimeZone = pacificTime
-            )
-        ).isEqualTo("Thu Aug 1 at 9:00AM PT")
+        assertThat(service.displayTime(augustFirst, 1L, now = now)).isEqualTo("Thu Aug 1 at 9:00AM PT")
     }
 }
