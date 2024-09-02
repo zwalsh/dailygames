@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.utils
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import java.time.Instant
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 class DisplayTimeTest {
@@ -36,14 +37,14 @@ class DisplayTimeTest {
         val now = Instant.ofEpochSecond(1724074018)
         val oneHourAgo = now.minusSeconds(60 * 60)
 
-        assertThat(displayTime(oneHourAgo, now = now)).isEqualTo("1h0m ago")
+        assertThat(displayTime(oneHourAgo, now = now)).isEqualTo("1h 0m ago")
     }
 
     @Test
     fun `displayTime returns combination of hours and minutes`() {
         val time = Instant.now().minusSeconds(60 * 90)
 
-        assertThat(displayTime(time)).isEqualTo("1h30m ago")
+        assertThat(displayTime(time)).isEqualTo("1h 30m ago")
     }
 
     @Test
@@ -51,7 +52,7 @@ class DisplayTimeTest {
         val midnightAug17 = Instant.ofEpochSecond(1723867200)
         val eleven59PMAug17 = Instant.ofEpochSecond(1723953540)
 
-        assertThat(displayTime(midnightAug17, now = eleven59PMAug17)).isEqualTo("23h59m ago")
+        assertThat(displayTime(midnightAug17, now = eleven59PMAug17)).isEqualTo("23h 59m ago")
     }
 
     @Test
@@ -77,5 +78,46 @@ class DisplayTimeTest {
         val now = midnightAug17.plus(2, ChronoUnit.DAYS)
 
         assertThat(displayTime(midnightAug17, now)).isEqualTo("Sat Aug 17 at 12:00AM ET")
+    }
+
+    @Test
+    fun `displayTime formats with user time zone`() {
+        // 11:59PM Eastern is 8:59 PM pacific
+        val elevenFiftyNineEastern = Instant.ofEpochSecond(1725249540)
+        // So this time is 2m ago, not yesterday
+        val now = elevenFiftyNineEastern.plus(2, ChronoUnit.MINUTES)
+
+        val pacificTime = ZoneId.of("America/Los_Angeles")
+        assertThat(displayTime(elevenFiftyNineEastern, now, userTimeZone = pacificTime)).isEqualTo("2m ago")
+    }
+
+    @Test
+    fun `displayTime formats yesterday time with user's time zone`() {
+        val yesterdayNoonPacific = Instant.ofEpochSecond(1725217200)
+        val todayNoonPacific = yesterdayNoonPacific.plus(1, ChronoUnit.DAYS)
+
+        val pacificTime = ZoneId.of("America/Los_Angeles")
+        assertThat(
+            displayTime(
+                yesterdayNoonPacific,
+                todayNoonPacific,
+                userTimeZone = pacificTime
+            )
+        ).isEqualTo("Yesterday at 12:00PM PT")
+    }
+
+    @Test
+    fun `displayTime format longDisplayTime with user's time zone`() {
+        val augustFirst = Instant.ofEpochSecond(1722528000)
+        val now = augustFirst.plus(30, ChronoUnit.DAYS)
+        val pacificTime = ZoneId.of("America/Los_Angeles")
+
+        assertThat(
+            displayTime(
+                augustFirst,
+                now = now,
+                userTimeZone = pacificTime
+            )
+        ).isEqualTo("Thu Aug 1 at 9:00AM PT")
     }
 }
