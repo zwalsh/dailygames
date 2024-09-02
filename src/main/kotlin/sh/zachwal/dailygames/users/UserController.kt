@@ -97,6 +97,7 @@ class UserController @Inject constructor(
 
                     val timeZoneFormView = TimeZoneFormView(
                         currentTimeZone = timeZone,
+                        popularTimeZones = userPreferencesService.popularTimeZones.keys.toList(),
                         timeZonesToNames = userPreferencesService.possibleTimeZones,
                     )
                     val profileView = ProfileView(

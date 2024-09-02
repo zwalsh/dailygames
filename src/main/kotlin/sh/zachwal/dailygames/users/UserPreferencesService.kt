@@ -23,8 +23,7 @@ class UserPreferencesService @Inject constructor(
         userPreferencesDAO.updateTimeZone(userId, zoneId.id)
     }
 
-
-    private val COMMON_TIME_ZONES = listOf(
+    val popularTimeZones = listOf(
         ZoneId.of("America/New_York"),
         ZoneId.of("America/Chicago"),
         ZoneId.of("America/Denver"),
@@ -37,7 +36,7 @@ class UserPreferencesService @Inject constructor(
         val offset = zonedDateTime.offset
         val city = this.id.split("/").lastOrNull()?.replace("_", " ")
         return "(GMT${offset.id}) ${this.getDisplayName(TextStyle.FULL, Locale.US)}" +
-                if (city != null) " - $city" else ""
+            if (city != null) " - $city" else ""
     }
 
     private fun ZoneId.gmtOffset(): String {
@@ -47,11 +46,11 @@ class UserPreferencesService @Inject constructor(
     }
 
     val possibleTimeZones: Map<ZoneId, String> by lazy {
-        COMMON_TIME_ZONES +
-                ZoneId.getAvailableZoneIds()
-                    .map { ZoneId.of(it) }
-                    .filter { !COMMON_TIME_ZONES.containsKey(it) }
-                    .sortedBy { it.gmtOffset() }
-                    .associateWith { it.displayString() }
+        popularTimeZones +
+            ZoneId.getAvailableZoneIds()
+                .map { ZoneId.of(it) }
+                .filter { !popularTimeZones.containsKey(it) }
+                .sortedBy { it.gmtOffset() }
+                .associateWith { it.displayString() }
     }
 }

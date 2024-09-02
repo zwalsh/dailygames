@@ -16,6 +16,7 @@ import java.time.ZoneId
 
 class TimeZoneFormView(
     val currentTimeZone: ZoneId,
+    val popularTimeZones: List<ZoneId>,
     val timeZonesToNames: Map<ZoneId, String>,
 ) : HTMLView<DIV>() {
     override fun DIV.render() {
@@ -26,13 +27,40 @@ class TimeZoneFormView(
                     select(classes = "form-select") {
                         id = TIME_ZONE_FORM_PARAM
                         name = TIME_ZONE_FORM_PARAM
+
+                        // First set current choice
                         option {
                             value = currentTimeZone.id
                             selected = true
-                            +timeZonesToNames.get(currentTimeZone)!!
+                            +timeZonesToNames[currentTimeZone]!!
                         }
+
+                        // Then add a separator line
+                        option {
+                            disabled = true
+                            +"────────────────"
+                        }
+
+                        // Then show popular ones
+                        popularTimeZones
+                            .minus(currentTimeZone)
+                            .forEach {
+                                option {
+                                    value = it.id
+                                    +timeZonesToNames[it]!!
+                                }
+                            }
+
+                        // Then add a separator line
+                        option {
+                            disabled = true
+                            +"────────────────"
+                        }
+
+                        // Then display the rest
                         timeZonesToNames
                             .filterKeys { it != currentTimeZone }
+                            .filterKeys { it !in popularTimeZones }
                             .forEach { (zoneId, name) ->
                                 option {
                                     value = zoneId.id
