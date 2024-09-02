@@ -16,7 +16,7 @@ pipeline {
         }
         stage('assemble') {
             steps {
-                sh './gradlew assemble'
+                sh './gradlew assemble testClasses'
             }
         }
         stage('lint') {
