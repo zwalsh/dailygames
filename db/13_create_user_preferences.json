@@ -1,0 +1,52 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "13",
+        "author": "zach",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "user_preferences",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "BIGINT",
+                    "autoIncrement": true,
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "user_id",
+                    "type": "BIGINT",
+                    "constraints": {
+                      "nullable": false,
+                      "unique": true,
+                      "foreignKeyName": "user_preferences_user_id_fk",
+                      "references": "user(id)"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "time_zone",
+                    "type": "text",
+                    "constraints": {
+                      "nullable": false
+                    },
+                    "defaultValue": "America/New_York"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

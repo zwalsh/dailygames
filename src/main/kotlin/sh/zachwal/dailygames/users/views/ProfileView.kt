@@ -18,7 +18,8 @@ import sh.zachwal.dailygames.shared_html.headSetup
 data class ProfileView(
     private val greeting: String,
     private val username: String,
-    private val isAdmin: Boolean
+    private val isAdmin: Boolean,
+    private val timeZoneFormView: TimeZoneFormView,
 ) : HTMLView<HTML>() {
 
     private val navView = NavView(username = username, currentActiveNavItem = NavItem.PROFILE)
@@ -52,6 +53,7 @@ data class ProfileView(
                         }
                     }
                 }
+                timeZoneFormView.renderIn(this)
             }
         }
     }

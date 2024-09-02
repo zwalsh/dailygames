@@ -39,6 +39,7 @@ class TestExtension {
             "top5_result",
             "flagle_result",
             "chat",
+            "user_preferences",
         )
     }
 

@@ -11,6 +11,7 @@ import org.jdbi.v3.sqlobject.kotlin.onDemand
 import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.SessionDAO
 import sh.zachwal.dailygames.db.dao.UserDAO
+import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import sh.zachwal.dailygames.db.dao.UserRoleDAO
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
 import sh.zachwal.dailygames.db.dao.game.GameDAO
@@ -63,4 +64,7 @@ class JdbiModule : AbstractModule() {
 
     @Provides
     fun chatDao(jdbi: Jdbi): ChatDAO = jdbi.onDemand()
+
+    @Provides
+    fun userPreferencesDao(jdbi: Jdbi): UserPreferencesDAO = jdbi.onDemand()
 }
