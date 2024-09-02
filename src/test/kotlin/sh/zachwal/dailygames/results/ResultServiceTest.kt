@@ -53,7 +53,7 @@ class ResultServiceTest(
     private val userService: UserService = mockk()
     private val displayTimeService = mockk<DisplayTimeService> {
         every { displayTime(any(), any(), any()) } returns "Just now"
-        every { longDisplayTime(any(), any(), any()) } returns "Long time ago"
+        every { longDisplayTime(any(), any()) } returns "Long time ago"
     }
 
     private val resultService = ResultService(

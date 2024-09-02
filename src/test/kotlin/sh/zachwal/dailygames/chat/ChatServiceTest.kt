@@ -33,7 +33,7 @@ class ChatServiceTest {
     private val userService = mockk<UserService>()
     private val displayTimeService = mockk<DisplayTimeService> {
         every { displayTime(any(), any(), any()) } returns "Just now"
-        every { longDisplayTime(any(), any(), any()) } returns "Long time ago"
+        every { longDisplayTime(any(), any()) } returns "Long time ago"
     }
     private val puzzleDAO = mockk<PuzzleDAO> {
         every { previousPuzzle(any(), any()) } returns null
