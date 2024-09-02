@@ -19,6 +19,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.utils.DisplayTimeService
 import java.time.LocalDate
 
 private val worldle934 = """
@@ -50,6 +51,10 @@ class ResultServiceTest(
 
     private val puzzleDAO = jdbi.onDemand<PuzzleDAO>()
     private val userService: UserService = mockk()
+    private val displayTimeService = mockk<DisplayTimeService> {
+        every { displayTime(any(), any(), any()) } returns "Just now"
+        every { longDisplayTime(any(), any()) } returns "Long time ago"
+    }
 
     private val resultService = ResultService(
         jdbi = jdbi,
@@ -60,7 +65,8 @@ class ResultServiceTest(
         top5DAO = jdbi.onDemand(),
         flagleDAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
-        userService = userService
+        userService = userService,
+        displayTimeService = displayTimeService,
     )
 
     @BeforeEach
@@ -203,7 +209,7 @@ class ResultServiceTest(
     @Test
     fun `result feed result title is Game name in camel case, followed by puzzle number`() {
         resultService.createResult(fixtures.zach, worldle934)
-        val item = resultService.resultFeed().single()
+        val item = resultService.resultFeed(1L).single()
 
         assertThat(item.resultTitle).isEqualTo("Worldle #934")
     }
@@ -211,7 +217,7 @@ class ResultServiceTest(
     @Test
     fun `result feed username matches user's name`() {
         resultService.createResult(fixtures.zach, worldle934)
-        val item = resultService.resultFeed().single()
+        val item = resultService.resultFeed(1L).single()
 
         assertThat(item.username).isEqualTo(fixtures.zach.username)
     }
@@ -219,7 +225,7 @@ class ResultServiceTest(
     @Test
     fun `result feed item chat href is link to game puzzle`() {
         resultService.createResult(fixtures.zach, worldle934)
-        val item = resultService.resultFeed().single()
+        val item = resultService.resultFeed(1L).single()
 
         assertThat(item.chatHref).isEqualTo("/game/worldle/puzzle/934")
     }
@@ -236,7 +242,7 @@ class ResultServiceTest(
             """.trimIndent()
         )
 
-        val feedTitles = resultService.resultFeed().map { it.resultTitle }
+        val feedTitles = resultService.resultFeed(1L).map { it.resultTitle }
 
         assertThat(feedTitles).containsExactly("Worldle #935", "Worldle #934").inOrder()
     }
@@ -247,7 +253,7 @@ class ResultServiceTest(
             resultService.createResult(fixtures.zach, worldle934)
         }
 
-        val feed = resultService.resultFeed()
+        val feed = resultService.resultFeed(1L)
 
         assertThat(feed).hasSize(FEED_SIZE)
     }
@@ -260,7 +266,7 @@ class ResultServiceTest(
         resultService.createResult(fixtures.zach, TOP5)
         resultService.createResult(fixtures.zach, FLAGLE)
 
-        val feedTitles = resultService.resultFeed().map { it.resultTitle }
+        val feedTitles = resultService.resultFeed(1L).map { it.resultTitle }
 
         assertThat(feedTitles).containsExactly(
             "Flagle #905",

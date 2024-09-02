@@ -12,6 +12,6 @@ class HomeService @Inject constructor(
 ) {
 
     fun homeView(user: User): HomeView {
-        return HomeView(username = user.username, resultFeed = resultService.resultFeed())
+        return HomeView(username = user.username, resultFeed = resultService.resultFeed(user.id))
     }
 }

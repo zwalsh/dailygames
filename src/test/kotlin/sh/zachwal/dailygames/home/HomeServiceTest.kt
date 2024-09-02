@@ -10,7 +10,7 @@ import sh.zachwal.dailygames.results.ResultService
 class HomeServiceTest {
 
     private val resultService = mockk<ResultService> {
-        every { resultFeed() } returns emptyList()
+        every { resultFeed(any()) } returns emptyList()
     }
     private val homeService = HomeService(resultService)
 

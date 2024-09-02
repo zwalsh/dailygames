@@ -19,8 +19,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.users.UserService
-import sh.zachwal.dailygames.utils.displayTime
-import sh.zachwal.dailygames.utils.longDisplayTime
+import sh.zachwal.dailygames.utils.DisplayTimeService
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
@@ -32,6 +31,10 @@ class ChatServiceTest {
         every { allResultsForPuzzle(any()) } returns emptyList()
     }
     private val userService = mockk<UserService>()
+    private val displayTimeService = mockk<DisplayTimeService> {
+        every { displayTime(any(), any(), any()) } returns "Just now"
+        every { longDisplayTime(any(), any()) } returns "Long time ago"
+    }
     private val puzzleDAO = mockk<PuzzleDAO> {
         every { previousPuzzle(any(), any()) } returns null
         every { nextPuzzle(any(), any()) } returns null
@@ -46,11 +49,12 @@ class ChatServiceTest {
     }
     private val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
     private val chatService = ChatService(
-        jdbi,
-        resultService,
-        userService,
-        puzzleDAO,
-        chatDAO,
+        jdbi = jdbi,
+        resultService = resultService,
+        userService = userService,
+        displayTimeService = displayTimeService,
+        puzzleDAO = puzzleDAO,
+        chatDAO = chatDAO,
         clock = clock,
     )
     private val testUser = User(
@@ -135,7 +139,6 @@ class ChatServiceTest {
         val items = chatView.chatFeedItems as List<ResultItemView>
         assertThat(items[0].username).isEqualTo("user1")
         assertThat(items[0].shareText).isEqualTo(shareText)
-        assertThat(items[0].timestampText).isEqualTo(displayTime(worldleResult.instantSubmitted))
     }
 
     @Test
@@ -208,7 +211,6 @@ class ChatServiceTest {
         val chatItem = chatView.chatFeedItems.single { it is ChatItemView } as ChatItemView
         assertThat(chatItem.username).isEqualTo("user1")
         assertThat(chatItem.text).isEqualTo("My chat!")
-        assertThat(chatItem.timestampText).isEqualTo(displayTime(chat.instantSubmitted))
     }
 
     @Test
@@ -265,7 +267,6 @@ class ChatServiceTest {
         assertThat(item).isInstanceOf(HiddenChatItemView::class.java)
         val hiddenChatItem = item as HiddenChatItemView
         assertThat(hiddenChatItem.username).isEqualTo("user1")
-        assertThat(hiddenChatItem.timestampText).isEqualTo(displayTime(chat.instantSubmitted))
     }
 
     @Test
@@ -293,9 +294,16 @@ class ChatServiceTest {
     @Test
     fun `chat view includes update time string of now in long form`() {
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
-        val clockTimeLongForm = longDisplayTime(clock.instant())
+        val clockTimeLongForm = displayTimeService.longDisplayTime(clock.instant(), testUser.id)
         val updateTimeString = "Updated $clockTimeLongForm"
 
         assertThat(chatView.updateTimeString).isEqualTo(updateTimeString)
+    }
+
+    @Test
+    fun `uses user's time zone`() {
+        chatService.chatView(testUser, Game.WORLDLE, 123)
+
+        verify { displayTimeService.longDisplayTime(clock.instant(), testUser.id) }
     }
 }
