@@ -2,11 +2,8 @@ package sh.zachwal.dailygames.db.dao.game
 
 import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
-import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
-import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
-import java.time.LocalDate
 import java.util.stream.Stream
 
 interface PinpointDAO : PuzzleResultDAO<PinpointResult> {
@@ -27,7 +24,6 @@ interface PinpointDAO : PuzzleResultDAO<PinpointResult> {
         score: Int,
         shareText: String
     ): PinpointResult
-
 
     @SqlQuery(
         """
