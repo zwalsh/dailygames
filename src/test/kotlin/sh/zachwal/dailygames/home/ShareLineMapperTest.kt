@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
@@ -161,5 +162,53 @@ class ShareLineMapperTest {
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
         assertThat(shareLine).isEqualTo("${Game.TRAVLE.emoji()} Travle #123 (1 away) (1 hint)")
+    }
+
+    private val top5Result = Top5Result(
+        id = 1,
+        userId = 1,
+        game = Game.TOP5,
+        puzzleNumber = 123,
+        puzzleDate = null,
+        instantSubmitted = Instant.now(),
+        score = 5,
+        shareText = "share text",
+        numGuesses = 5,
+        numCorrect = 5,
+        isPerfect = true,
+    )
+
+    @Test
+    fun `maps top5 perfect`() {
+        val shareLine = ShareLineMapper().mapToShareLine(top5Result)
+
+        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top5 #123 5/5 \uD83C\uDF08")
+    }
+
+    @Test
+    fun `maps top5 five correct, no misses, but not perfect`() {
+        val result = top5Result.copy(isPerfect = false)
+
+        val shareLine = ShareLineMapper().mapToShareLine(result)
+
+        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top5 #123 5/5")
+    }
+
+    @Test
+    fun `maps top5 with five correct but some misses`() {
+        val result = top5Result.copy(numCorrect = 5, numGuesses = 6, isPerfect = false)
+
+        val shareLine = ShareLineMapper().mapToShareLine(result)
+
+        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top5 #123 5/5 (1 wrong)")
+    }
+
+    @Test
+    fun `maps top5 with misses`() {
+        val result = top5Result.copy(numCorrect = 4, numGuesses = 10, isPerfect = false)
+
+        val shareLine = ShareLineMapper().mapToShareLine(result)
+
+        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top5 #123 4/5")
     }
 }

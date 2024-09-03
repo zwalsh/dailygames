@@ -14,10 +14,23 @@ class ShareLineMapper {
     fun mapToShareLine(puzzleResult: PuzzleResult): String {
         return when (puzzleResult) {
             is FlagleResult -> puzzleResult.toShareLine()
-            is Top5Result -> TODO()
+            is Top5Result -> puzzleResult.toShareLine()
             is TradleResult -> puzzleResult.toShareLine()
             is TravleResult -> puzzleResult.toShareLine()
             is WorldleResult -> puzzleResult.toShareLine()
+        }
+    }
+
+    private fun Top5Result.toShareLine(): String {
+        val numIncorrect = numGuesses - numCorrect
+        val start = "${game.emoji()} Top5 #$puzzleNumber $numCorrect/5"
+
+        return if (isPerfect) {
+            "$start \uD83C\uDF08"
+        } else if (numIncorrect > 0 && numCorrect == 5) {
+            "$start ($numIncorrect wrong)"
+        } else {
+            start
         }
     }
 
