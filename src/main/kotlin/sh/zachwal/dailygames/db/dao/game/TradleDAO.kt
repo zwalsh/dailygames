@@ -2,8 +2,10 @@ package sh.zachwal.dailygames.db.dao.game
 
 import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
+import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
+import java.time.Instant
 import java.util.stream.Stream
 
 interface TradleDAO : PuzzleResultDAO<TradleResult> {
@@ -62,4 +64,15 @@ interface TradleDAO : PuzzleResultDAO<TradleResult> {
         """
     )
     override fun allResultsStream(): Stream<TradleResult>
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM tradle_result
+            WHERE user_id = :userId
+            AND instant_submitted >= :start
+            AND instant_submitted <= :end
+        """
+    )
+    override fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<TradleResult>
 }

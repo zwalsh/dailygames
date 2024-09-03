@@ -132,6 +132,27 @@ class TravleDAOTest(
         assertThat(results).containsExactly(resultThree, resultTwo, resultOne)
     }
 
+
+    @Test
+    fun `can query by time range for a single user`() {
+        val resultOne = insertResult()
+        val resultOtherUser = insertResult(userId = fixtures.jackie.id)
+        val resultTwo = insertResult(puzzle = puzzleTwo)
+        Thread.sleep(1)
+        val resultThree = insertResult(puzzle = puzzleTwo)
+
+        val results = travleDAO.resultsForUserInTimeRange(
+            userId = fixtures.zach.id,
+            start = resultOne.instantSubmitted,
+            end = resultTwo.instantSubmitted,
+        )
+
+        assertThat(results).containsExactly(resultOne, resultTwo)
+        assertThat(results).doesNotContain(resultThree)
+        assertThat(results).doesNotContain(resultOtherUser)
+    }
+
+
     private fun insertResult(
         userId: Long = fixtures.zach.id,
         puzzle: Puzzle = puzzleOne
