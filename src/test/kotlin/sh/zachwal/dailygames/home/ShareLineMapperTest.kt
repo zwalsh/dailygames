@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
@@ -210,5 +211,32 @@ class ShareLineMapperTest {
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
         assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top5 #123 4/5")
+    }
+
+    private val pinpointResult = PinpointResult(
+        id = 1,
+        userId = 1,
+        game = Game.PINPOINT,
+        puzzleNumber = 123,
+        puzzleDate = null,
+        instantSubmitted = Instant.now(),
+        score = 1,
+        shareText = "share text",
+    )
+
+    @Test
+    fun `maps pinpoint line`() {
+        val shareLine = ShareLineMapper().mapToShareLine(pinpointResult)
+
+        assertThat(shareLine).isEqualTo("${Game.PINPOINT.emoji()} Pinpoint #123 1/5")
+    }
+
+    @Test
+    fun `maps pinpoint fail`() {
+        val failResult = pinpointResult.copy(score = 6)
+
+        val shareLine = ShareLineMapper().mapToShareLine(failResult)
+
+        assertThat(shareLine).isEqualTo("${Game.PINPOINT.emoji()} Pinpoint #123 X/5")
     }
 }

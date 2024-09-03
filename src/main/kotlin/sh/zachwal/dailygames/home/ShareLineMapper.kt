@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.home
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
+import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
@@ -18,6 +19,7 @@ class ShareLineMapper {
             is TradleResult -> puzzleResult.toShareLine()
             is TravleResult -> puzzleResult.toShareLine()
             is WorldleResult -> puzzleResult.toShareLine()
+            is PinpointResult -> puzzleResult.toShareLine()
         }
     }
 
@@ -77,5 +79,13 @@ class ShareLineMapper {
         }
 
         return withPerfect
+    }
+
+    private fun PinpointResult.toShareLine(): String {
+        val gameAndPuzzle = "${game.emoji()} Pinpoint #$puzzleNumber"
+        if (score == 6) {
+            return "$gameAndPuzzle X/5"
+        }
+        return "$gameAndPuzzle $score/5"
     }
 }
