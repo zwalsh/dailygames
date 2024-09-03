@@ -40,6 +40,7 @@ class TestExtension {
             "flagle_result",
             "chat",
             "user_preferences",
+            "pinpoint_result",
         )
     }
 
