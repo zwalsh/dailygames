@@ -13,12 +13,19 @@ class ShareLineMapper {
 
     fun mapToShareLine(puzzleResult: PuzzleResult): String {
         return when (puzzleResult) {
-            is FlagleResult -> TODO()
+            is FlagleResult -> puzzleResult.toShareLine()
             is Top5Result -> TODO()
             is TradleResult -> puzzleResult.toShareLine()
             is TravleResult -> puzzleResult.toShareLine()
             is WorldleResult -> puzzleResult.toShareLine()
         }
+    }
+
+    private fun FlagleResult.toShareLine(): String {
+        if (score == 7) {
+            return "${game.emoji()} Flagle #$puzzleNumber X/6"
+        }
+        return "${game.emoji()} Flagle #$puzzleNumber $score/6"
     }
 
     private fun WorldleResult.toShareLine(): String {

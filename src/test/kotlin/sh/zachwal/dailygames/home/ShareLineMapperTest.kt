@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.home
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
+import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
@@ -82,6 +83,33 @@ class ShareLineMapperTest {
         numPerfect = 6,
         numHints = 0,
     )
+
+    private val flagleResult = FlagleResult(
+        id = 1,
+        userId = 1,
+        game = Game.FLAGLE,
+        puzzleNumber = 123,
+        puzzleDate = null,
+        instantSubmitted = Instant.now(),
+        score = 1,
+        shareText = "share text",
+    )
+
+    @Test
+    fun `maps flagle line`() {
+        val shareLine = ShareLineMapper().mapToShareLine(flagleResult)
+
+        assertThat(shareLine).isEqualTo("${Game.FLAGLE.emoji()} Flagle #123 1/6")
+    }
+
+    @Test
+    fun `maps flagle fail`() {
+        val failResult = flagleResult.copy(score = 7)
+
+        val shareLine = ShareLineMapper().mapToShareLine(failResult)
+
+        assertThat(shareLine).isEqualTo("${Game.FLAGLE.emoji()} Flagle #123 X/6")
+    }
 
     @Test
     fun `maps travle perfect`() {
