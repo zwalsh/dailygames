@@ -4,6 +4,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import java.time.Instant
 import java.time.LocalDate
 import java.util.stream.Stream
 
@@ -63,4 +64,15 @@ interface FlagleDAO : PuzzleResultDAO<FlagleResult> {
         """
     )
     override fun allResultsStream(): Stream<FlagleResult>
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM flagle_result
+            WHERE user_id = :userId
+            AND instant_submitted >= :start
+            AND instant_submitted <= :end
+        """
+    )
+    override fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<FlagleResult>
 }

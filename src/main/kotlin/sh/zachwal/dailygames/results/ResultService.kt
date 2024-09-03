@@ -193,4 +193,8 @@ class ResultService @Inject constructor(
             Game.PINPOINT -> pinpointDAO.resultsForPuzzle(puzzle)
         }
     }
+
+    fun resultsForUserToday(user: User): List<PuzzleResult> {
+        TODO()
+    }
 }
