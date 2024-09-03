@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.leaderboard
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
+import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
@@ -38,7 +39,7 @@ class LeaderboardService @Inject constructor(
             Game.TRAVLE -> TravleScoreHintView()
             Game.TOP5 -> BasicScoreHintView("Scoring: One point per correct guess. One point per life left if all 5 answers guessed correctly.")
             Game.FLAGLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
-            else -> TODO()
+            Game.PINPOINT -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/5 = 4 points.")
         }
         return GameLeaderboardView(username = currentUser.username, game = game, scoreHintView = scoreHintView)
     }
@@ -87,7 +88,7 @@ class LeaderboardService @Inject constructor(
             Game.TRAVLE -> handle.attach(TravleDAO::class.java)
             Game.TOP5 -> handle.attach(Top5DAO::class.java)
             Game.FLAGLE -> handle.attach(FlagleDAO::class.java)
-            else -> TODO()
+            Game.PINPOINT -> handle.attach(PinpointDAO::class.java)
         }
     }
 }
