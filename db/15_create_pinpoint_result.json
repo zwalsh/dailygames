@@ -1,0 +1,166 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "15",
+        "author": "zach",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "pinpoint_result",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "bigint",
+                    "autoIncrement": true,
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "user_id",
+                    "type": "bigint",
+                    "constraints": {
+                      "nullable": false,
+                      "references": "public.user(id)",
+                      "foreignKeyName": "pinpoint_result_user_id_fk"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "game",
+                    "type": "VARCHAR(16)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_date",
+                    "type": "date"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted",
+                    "type": "timestamptz",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "score",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "share_text",
+                    "type": "VARCHAR(200)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "addForeignKeyConstraint": {
+              "baseTableName": "pinpoint_result",
+              "baseColumnNames": "game,puzzle_number",
+              "constraintName": "pinpoint_result_puzzle_fk",
+              "referencedTableName": "puzzle",
+              "referencedColumnNames": "game,number"
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "pinpoint_game_puzzle_instant_idx",
+              "tableName": "pinpoint_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "game"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "puzzle_number"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "pinpoint_instant_idx",
+              "tableName": "pinpoint_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "pinpoint_user_idx",
+              "tableName": "pinpoint_result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "user_id"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "insert": {
+              "tableName": "game",
+              "columns": [
+                {
+                  "column": {
+                    "name": "name",
+                    "value": "PINPOINT"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

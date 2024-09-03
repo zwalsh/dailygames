@@ -69,6 +69,11 @@
       "include": {
         "file": "14_backfill_user_prefs.sql"
       }
+    },
+    {
+      "include": {
+        "file": "15_create_pinpoint_result.json"
+      }
     }
   ]
 }

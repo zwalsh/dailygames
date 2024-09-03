@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.leaderboard
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
+import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
@@ -21,6 +22,7 @@ class PuzzleResultPointCalculator {
             is TradleResult -> result.calculatePoints()
             is TravleResult -> result.calculatePoints()
             is Top5Result -> result.calculatePoints()
+            is PinpointResult -> result.calculatePoints()
             else -> throw IllegalArgumentException("Unknown puzzle result type: $result")
         }
     }
@@ -35,6 +37,10 @@ class PuzzleResultPointCalculator {
 
     private fun TradleResult.calculatePoints(): Int {
         return 7 - score
+    }
+
+    private fun PinpointResult.calculatePoints(): Int {
+        return 6 - score
     }
 
     /**

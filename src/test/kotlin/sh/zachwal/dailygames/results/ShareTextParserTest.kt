@@ -61,6 +61,23 @@ const val FLAGLE_ONE_GUESS = """
 https://www.flagle.io
 """
 
+const val PINPOINT_THREE = """
+Pinpoint #126
+🤔 🤔 📌 ⬜ ⬜ (3/5)
+lnkd.in/pinpoint
+"""
+
+const val PINPOINT_FAIL = """
+Pinpoint #123
+🤔 🤔 🤔 🤔 🤔 (X/5)
+lnkd.in/pinpoint.
+"""
+
+const val PINPOINT_NO_LINK = """
+Pinpoint #126
+🤔 🤔 📌 ⬜ ⬜ (3/5)
+"""
+
 class ShareTextParserTest {
 
     private val parser = ShareTextParser()
@@ -150,6 +167,13 @@ class ShareTextParserTest {
     fun `matches Flagle`() {
         assertThat(parser.identifyGame(FLAGLE)).isEqualTo(Game.FLAGLE)
         assertThat(parser.identifyGame(FLAGLE_ONE_GUESS)).isEqualTo(Game.FLAGLE)
+    }
+
+    @Test
+    fun `matches Pinpoint`() {
+        assertThat(parser.identifyGame(PINPOINT_THREE)).isEqualTo(Game.PINPOINT)
+        assertThat(parser.identifyGame(PINPOINT_FAIL)).isEqualTo(Game.PINPOINT)
+        assertThat(parser.identifyGame(PINPOINT_NO_LINK)).isEqualTo(Game.PINPOINT)
     }
 
     @Test
@@ -428,6 +452,49 @@ class ShareTextParserTest {
                 #Flagle #905 (14.08.2024) 2/6
                 🟥🟩🟩
                 🟩🟩🟩
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `extracts Pinpoint info`() {
+        val pinpointInfo = parser.extractPinpointInfo(PINPOINT_THREE)
+
+        assertThat(pinpointInfo.puzzleNumber).isEqualTo(126)
+        assertThat(pinpointInfo.score).isEqualTo(3)
+        assertThat(pinpointInfo.shareTextNoLink).isEqualTo(
+            """
+                Pinpoint #126
+                🤔 🤔 📌 ⬜ ⬜ (3/5)
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `extracts Pinpoint info with X score`() {
+        val pinpointInfo = parser.extractPinpointInfo(PINPOINT_FAIL)
+
+        assertThat(pinpointInfo.puzzleNumber).isEqualTo(123)
+        // X score is 6
+        assertThat(pinpointInfo.score).isEqualTo(6)
+        assertThat(pinpointInfo.shareTextNoLink).isEqualTo(
+            """
+                Pinpoint #123
+                🤔 🤔 🤔 🤔 🤔 (X/5)
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `extracts Pinpoint info with no link`() {
+        val pinpointInfo = parser.extractPinpointInfo(PINPOINT_NO_LINK)
+
+        assertThat(pinpointInfo.puzzleNumber).isEqualTo(126)
+        assertThat(pinpointInfo.score).isEqualTo(3)
+        assertThat(pinpointInfo.shareTextNoLink).isEqualTo(
+            """
+                Pinpoint #126
+                🤔 🤔 📌 ⬜ ⬜ (3/5)
             """.trimIndent()
         )
     }

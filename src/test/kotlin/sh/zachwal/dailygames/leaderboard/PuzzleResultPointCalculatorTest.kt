@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
@@ -154,5 +155,20 @@ class PuzzleResultPointCalculatorTest {
             val result = travleResult.copy(numGuesses = shortestSolution, score = 0)
             assertThat(calculator.calculatePoints(result)).isEqualTo(allowedIncorrect + 1)
         }
+    }
+
+    @Test
+    fun `returns 6 minus score for pinpoint`() {
+        val result = PinpointResult(
+            id = 1L,
+            userId = 1L,
+            game = Game.PINPOINT,
+            score = 2,
+            puzzleNumber = 30,
+            puzzleDate = null,
+            instantSubmitted = Instant.now(),
+            shareText = "",
+        )
+        assertThat(calculator.calculatePoints(result)).isEqualTo(4)
     }
 }
