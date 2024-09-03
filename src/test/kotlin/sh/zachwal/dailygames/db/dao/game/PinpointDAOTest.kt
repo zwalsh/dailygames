@@ -40,7 +40,7 @@ class PinpointDAOTest(
         val result = pinpointDAO.insertResult(
             userId = fixtures.zach.id,
             puzzle = puzzleOne,
-            score = 5,
+            score = 3,
             shareText = PINPOINT_THREE,
         )
 
