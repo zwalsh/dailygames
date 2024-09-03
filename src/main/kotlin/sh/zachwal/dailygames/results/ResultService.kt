@@ -119,6 +119,8 @@ class ResultService @Inject constructor(
                     shareText = flagleInfo.shareTextNoLink,
                 )
             }
+
+            Game.PINPOINT -> TODO()
         }
     }
 
@@ -175,6 +177,7 @@ class ResultService @Inject constructor(
             Game.TRAVLE -> travleDAO.resultsForPuzzle(puzzle)
             Game.TOP5 -> top5DAO.resultsForPuzzle(puzzle)
             Game.FLAGLE -> flagleDAO.resultsForPuzzle(puzzle)
+            Game.PINPOINT -> TODO()
         }
     }
 }

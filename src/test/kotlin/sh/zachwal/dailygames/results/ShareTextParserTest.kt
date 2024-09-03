@@ -61,6 +61,23 @@ const val FLAGLE_ONE_GUESS = """
 https://www.flagle.io
 """
 
+const val PINPOINT_THREE = """
+Pinpoint #126
+🤔 🤔 📌 ⬜ ⬜ (3/5)
+lnkd.in/pinpoint
+"""
+
+const val PINPOINT_FAIL = """
+Pinpoint #123
+🤔 🤔 🤔 🤔 🤔 (X/5)
+lnkd.in/pinpoint.
+"""
+
+const val PINPOINT_NO_LINK = """
+Pinpoint #126
+🤔 🤔 📌 ⬜ ⬜ (3/5)
+"""
+
 class ShareTextParserTest {
 
     private val parser = ShareTextParser()
@@ -150,6 +167,13 @@ class ShareTextParserTest {
     fun `matches Flagle`() {
         assertThat(parser.identifyGame(FLAGLE)).isEqualTo(Game.FLAGLE)
         assertThat(parser.identifyGame(FLAGLE_ONE_GUESS)).isEqualTo(Game.FLAGLE)
+    }
+
+    @Test
+    fun `matches Pinpoint`() {
+        assertThat(parser.identifyGame(PINPOINT_THREE)).isEqualTo(Game.PINPOINT)
+        assertThat(parser.identifyGame(PINPOINT_FAIL)).isEqualTo(Game.PINPOINT)
+        assertThat(parser.identifyGame(PINPOINT_NO_LINK)).isEqualTo(Game.PINPOINT)
     }
 
     @Test

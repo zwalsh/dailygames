@@ -19,6 +19,7 @@ class ShareTextParser {
             shareText.contains("#travle") -> Game.TRAVLE
             top5Regex.matches(shareText) -> Game.TOP5
             flagleRegex.matches(shareText) -> Game.FLAGLE
+            pinpointRegex.matches(shareText) -> Game.PINPOINT
             else -> null
         }
     }
@@ -130,4 +131,10 @@ class ShareTextParser {
             shareTextNoLink = shareText.substringBefore("https://").trim()
         )
     }
+
+    val pinpointRegex = Regex(
+        """
+            \s*Pinpoint #(?<puzzleNumber>\d+)[\s\S]*\((?<score>\S)/5\)\s+[\s\S]*
+        """.trimIndent()
+    )
 }

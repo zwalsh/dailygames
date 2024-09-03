@@ -7,7 +7,8 @@ enum class Game {
     TRADLE,
     TRAVLE,
     TOP5,
-    FLAGLE;
+    FLAGLE,
+    PINPOINT;
 
     fun displayName(): String {
         return when (this) {
@@ -23,6 +24,7 @@ enum class Game {
             TRAVLE -> "\uD83E\uDDED"
             TOP5 -> "\uD83E\uDDE0"
             FLAGLE -> "\uD83D\uDEA9"
+            PINPOINT -> "\uD83D\uDCCC"
         }
     }
 }
