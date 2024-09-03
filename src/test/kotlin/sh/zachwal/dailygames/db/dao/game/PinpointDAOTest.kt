@@ -12,8 +12,6 @@ import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
-import sh.zachwal.dailygames.results.FLAGLE
-import sh.zachwal.dailygames.results.PINPOINT_THREE
 import java.time.Instant
 import kotlin.streams.toList
 
@@ -41,7 +39,7 @@ class PinpointDAOTest(
             userId = fixtures.zach.id,
             puzzle = puzzleOne,
             score = 3,
-            shareText = PINPOINT_THREE,
+            shareText = "",
         )
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
@@ -49,7 +47,7 @@ class PinpointDAOTest(
         assertThat(result.puzzleNumber).isEqualTo(123)
         assertThat(result.instantSubmitted).isIn(Range.closed(Instant.now().minusSeconds(10), Instant.now()))
         assertThat(result.score).isEqualTo(3)
-        assertThat(result.shareText).isEqualTo(PINPOINT_THREE.substringBefore("lnkd").trim())
+        assertThat(result.shareText).isEqualTo("")
     }
 
     @Test
