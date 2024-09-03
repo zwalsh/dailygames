@@ -4,6 +4,7 @@ import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
+import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
@@ -34,6 +35,7 @@ class ResultService @Inject constructor(
     private val travleDAO: TravleDAO,
     private val top5DAO: Top5DAO,
     private val flagleDAO: FlagleDAO,
+    private val pinpointDAO: PinpointDAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
     private val displayTimeService: DisplayTimeService,
@@ -120,7 +122,17 @@ class ResultService @Inject constructor(
                 )
             }
 
-            Game.PINPOINT -> TODO()
+            Game.PINPOINT -> {
+                val pinpointInfo = shareTextParser.extractPinpointInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.PINPOINT, pinpointInfo.puzzleNumber, null))
+
+                return pinpointDAO.insertResult(
+                    userId = user.id,
+                    puzzle = puzzle,
+                    score = pinpointInfo.score,
+                    shareText = pinpointInfo.shareTextNoLink,
+                )
+            }
         }
     }
 
@@ -151,6 +163,7 @@ class ResultService @Inject constructor(
                 TravleDAO::class.java,
                 Top5DAO::class.java,
                 FlagleDAO::class.java,
+                PinpointDAO::class.java,
             ).map { handle.attach(it) }
 
             val results = daos.flatMap { dao ->
@@ -177,7 +190,7 @@ class ResultService @Inject constructor(
             Game.TRAVLE -> travleDAO.resultsForPuzzle(puzzle)
             Game.TOP5 -> top5DAO.resultsForPuzzle(puzzle)
             Game.FLAGLE -> flagleDAO.resultsForPuzzle(puzzle)
-            Game.PINPOINT -> TODO()
+            Game.PINPOINT -> pinpointDAO.resultsForPuzzle(puzzle)
         }
     }
 }

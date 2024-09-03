@@ -13,6 +13,7 @@ import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
@@ -64,6 +65,7 @@ class ResultServiceTest(
         travleDAO = jdbi.onDemand(),
         top5DAO = jdbi.onDemand(),
         flagleDAO = jdbi.onDemand(),
+        pinpointDAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
         userService = userService,
         displayTimeService = displayTimeService,
@@ -195,6 +197,26 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `can create Pinpoint result`() {
+        val result = resultService.createResult(fixtures.zach, PINPOINT_THREE)
+
+        assertThat(result).isInstanceOf(PinpointResult::class.java)
+
+        val pinpointResult = result as PinpointResult
+
+        assertThat(pinpointResult.userId).isEqualTo(fixtures.zach.id)
+        assertThat(pinpointResult.game).isEqualTo(Game.PINPOINT)
+        assertThat(pinpointResult.puzzleNumber).isEqualTo(126)
+        assertThat(pinpointResult.score).isEqualTo(3)
+        assertThat(pinpointResult.shareText).isEqualTo(
+            """
+            Pinpoint #126
+            🤔 🤔 📌 ⬜ ⬜ (3/5)
+            """.trimIndent()
+        )
+    }
+
+    @Test
     fun `creating a result creates a Puzzle record if necessary`() {
         resultService.createResult(fixtures.zach, worldle934)
 
@@ -265,10 +287,12 @@ class ResultServiceTest(
         resultService.createResult(fixtures.zach, TRAVLE_PLUS_0)
         resultService.createResult(fixtures.zach, TOP5)
         resultService.createResult(fixtures.zach, FLAGLE)
+        resultService.createResult(fixtures.zach, PINPOINT_THREE)
 
         val feedTitles = resultService.resultFeed(1L).map { it.resultTitle }
 
         assertThat(feedTitles).containsExactly(
+            "Pinpoint #126",
             "Flagle #905",
             "Top 5 #171",
             "Travle #607",
