@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.results
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.gameinfo.FlagleInfo
+import sh.zachwal.dailygames.results.gameinfo.PinpointInfo
 import sh.zachwal.dailygames.results.gameinfo.Top5Info
 import sh.zachwal.dailygames.results.gameinfo.TradleInfo
 import sh.zachwal.dailygames.results.gameinfo.TravleInfo
@@ -137,4 +138,13 @@ class ShareTextParser {
             \s*Pinpoint #(?<puzzleNumber>\d+)[\s\S]*\((?<score>\S)/5\)\s+[\s\S]*
         """.trimIndent()
     )
+    fun extractPinpointInfo(shareText: String): PinpointInfo {
+        val match = pinpointRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Pinpoint share")
+        val (puzzleNumber, score) = match.destructured
+        return PinpointInfo(
+            puzzleNumber = puzzleNumber.toInt(),
+            score = score.toIntOrNull() ?: 6, // X / 5 scored as 6 points
+            shareTextNoLink = shareText.substringBefore("lnkd").trim(),
+        )
+    }
 }

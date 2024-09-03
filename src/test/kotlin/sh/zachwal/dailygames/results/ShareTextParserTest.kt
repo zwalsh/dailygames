@@ -455,4 +455,47 @@ class ShareTextParserTest {
             """.trimIndent()
         )
     }
+
+    @Test
+    fun `extracts Pinpoint info`() {
+        val pinpointInfo = parser.extractPinpointInfo(PINPOINT_THREE)
+
+        assertThat(pinpointInfo.puzzleNumber).isEqualTo(126)
+        assertThat(pinpointInfo.score).isEqualTo(3)
+        assertThat(pinpointInfo.shareTextNoLink).isEqualTo(
+            """
+                Pinpoint #126
+                🤔 🤔 📌 ⬜ ⬜ (3/5)
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `extracts Pinpoint info with X score`() {
+        val pinpointInfo = parser.extractPinpointInfo(PINPOINT_FAIL)
+
+        assertThat(pinpointInfo.puzzleNumber).isEqualTo(123)
+        // X score is 6
+        assertThat(pinpointInfo.score).isEqualTo(6)
+        assertThat(pinpointInfo.shareTextNoLink).isEqualTo(
+            """
+                Pinpoint #123
+                🤔 🤔 🤔 🤔 🤔 (X/5)
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `extracts Pinpoint info with no link`() {
+        val pinpointInfo = parser.extractPinpointInfo(PINPOINT_NO_LINK)
+
+        assertThat(pinpointInfo.puzzleNumber).isEqualTo(126)
+        assertThat(pinpointInfo.score).isEqualTo(3)
+        assertThat(pinpointInfo.shareTextNoLink).isEqualTo(
+            """
+                Pinpoint #126
+                🤔 🤔 📌 ⬜ ⬜ (3/5)
+            """.trimIndent()
+        )
+    }
 }
