@@ -15,7 +15,7 @@ class ShareLineMapper {
         return when (puzzleResult) {
             is FlagleResult -> TODO()
             is Top5Result -> TODO()
-            is TradleResult -> TODO()
+            is TradleResult -> puzzleResult.toShareLine()
             is TravleResult -> puzzleResult.toShareLine()
             is WorldleResult -> puzzleResult.toShareLine()
         }
@@ -26,6 +26,13 @@ class ShareLineMapper {
             return "${game.emoji()} Worldle #$puzzleNumber X/6 ($scorePercentage%)"
         }
         return "${game.emoji()} Worldle #$puzzleNumber $score/6"
+    }
+
+    private fun TradleResult.toShareLine(): String {
+        if (score == 7) {
+            return "${game.emoji()} Tradle #$puzzleNumber X/6"
+        }
+        return "${game.emoji()} Tradle #$puzzleNumber $score/6"
     }
 
     private fun TravleResult.toShareLine(): String {

@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.home
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import java.time.Instant
@@ -38,6 +39,33 @@ class ShareLineMapperTest {
 
         // Then
         assertThat(shareLine).isEqualTo("${Game.WORLDLE.emoji()} Worldle #123 X/6 (50%)")
+    }
+
+    private val tradleResult = TradleResult(
+        id = 1,
+        userId = 1,
+        game = Game.TRADLE,
+        puzzleNumber = 123,
+        puzzleDate = null,
+        instantSubmitted = Instant.now(),
+        score = 1,
+        shareText = "share text",
+    )
+
+    @Test
+    fun `maps tradle line`() {
+        val shareLine = ShareLineMapper().mapToShareLine(tradleResult)
+
+        assertThat(shareLine).isEqualTo("${Game.TRADLE.emoji()} Tradle #123 1/6")
+    }
+
+    @Test
+    fun `maps tradle fail`() {
+        val failResult = tradleResult.copy(score = 7)
+
+        val shareLine = ShareLineMapper().mapToShareLine(failResult)
+
+        assertThat(shareLine).isEqualTo("${Game.TRADLE.emoji()} Tradle #123 X/6")
     }
 
     private val travleResult = TravleResult(
