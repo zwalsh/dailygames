@@ -52,7 +52,7 @@ class HomeController @Inject constructor(
 
                 resultService.createResult(user, shareText)
 
-                call.respondRedirect("/")
+                call.respondRedirect("/?showModal=true")
             }
         }
     }

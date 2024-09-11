@@ -20,7 +20,7 @@ function popModal() {
 }
 
 window.onload = function () {
-    if (window.location.href.indexOf("test") != -1 || window.location.href.indexOf("localhost") != -1) {
-       popModal(); // Only pop modal in test or localhost
+    if (window.location.href.indexOf("showModal") != -1) {
+       popModal();
     }
 }
