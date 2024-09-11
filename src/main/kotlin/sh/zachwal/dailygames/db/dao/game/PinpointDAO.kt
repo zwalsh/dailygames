@@ -4,6 +4,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
 import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import java.time.Instant
 import java.util.stream.Stream
 
 interface PinpointDAO : PuzzleResultDAO<PinpointResult> {
@@ -63,4 +64,15 @@ interface PinpointDAO : PuzzleResultDAO<PinpointResult> {
         """
     )
     override fun allResultsStream(): Stream<PinpointResult>
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM pinpoint_result
+            WHERE user_id = :userId
+            AND instant_submitted >= :start
+            AND instant_submitted <= :end
+        """
+    )
+    override fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<PinpointResult>
 }

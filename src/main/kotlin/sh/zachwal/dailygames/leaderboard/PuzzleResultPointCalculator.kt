@@ -23,7 +23,6 @@ class PuzzleResultPointCalculator {
             is TravleResult -> result.calculatePoints()
             is Top5Result -> result.calculatePoints()
             is PinpointResult -> result.calculatePoints()
-            else -> throw IllegalArgumentException("Unknown puzzle result type: $result")
         }
     }
 

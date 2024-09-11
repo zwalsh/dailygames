@@ -12,7 +12,6 @@ import kotlinx.html.script
 import kotlinx.html.submitInput
 import kotlinx.html.textArea
 import kotlinx.html.title
-import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
@@ -25,6 +24,7 @@ const val SHARE_TEXT_ID = "shareTextId"
 data class HomeView constructor(
     val username: String,
     val resultFeed: List<ResultFeedItemView>,
+    val shareTextModalView: ShareTextModalView,
 ) : HTMLView<HTML>() {
 
     private val nav = NavView(username = username, currentActiveNavItem = NavItem.HOME)
@@ -38,12 +38,7 @@ data class HomeView constructor(
         body {
             darkMode()
             nav.renderIn(this)
-
-            val shareTextLines = Game.values().map {
-                "${it.emoji()} ${it.displayName()} #123 4/6"
-            }
-
-            ShareTextModalView(shareTextLines).renderIn(this)
+            shareTextModalView.renderIn(this)
             div(classes = "container") {
                 div(classes = "row") {
                     div(classes = "col") {

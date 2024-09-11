@@ -1,11 +1,13 @@
 package sh.zachwal.dailygames.results
 
+import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
 import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
 import sh.zachwal.dailygames.db.dao.game.TravleDAO
@@ -15,8 +17,10 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
+import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
+import java.time.Clock
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
@@ -39,6 +43,8 @@ class ResultService @Inject constructor(
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
     private val displayTimeService: DisplayTimeService,
+    private val userPreferencesService: UserPreferencesService,
+    private val clock: Clock,
 ) {
 
     private val logger = LoggerFactory.getLogger(ResultService::class.java)
@@ -157,16 +163,7 @@ class ResultService @Inject constructor(
     private fun readFirstTwentyResults(): List<PuzzleResult> {
         // Must use JDBI Handle directly to use streaming API
         return jdbi.open().use { handle ->
-            val daos = listOf(
-                WorldleDAO::class.java,
-                TradleDAO::class.java,
-                TravleDAO::class.java,
-                Top5DAO::class.java,
-                FlagleDAO::class.java,
-                PinpointDAO::class.java,
-            ).map { handle.attach(it) }
-
-            val results = daos.flatMap { dao ->
+            val results = puzzleResultDAOs(handle).flatMap { dao ->
                 dao.allResultsStream().use {
                     readFirstTwenty(it)
                 }
@@ -192,5 +189,37 @@ class ResultService @Inject constructor(
             Game.FLAGLE -> flagleDAO.resultsForPuzzle(puzzle)
             Game.PINPOINT -> pinpointDAO.resultsForPuzzle(puzzle)
         }
+    }
+
+    fun resultsForUserToday(user: User): List<PuzzleResult> {
+        val userTimeZone = userPreferencesService.getTimeZone(user.id)
+        val startOfToday = clock.instant().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
+        val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)
+
+        return daos.flatMap { dao ->
+            dao.resultsForUserInTimeRange(user.id, startOfToday, endOfToday)
+        }
+    }
+
+    private val daoClasses = listOf(
+        WorldleDAO::class.java,
+        TradleDAO::class.java,
+        TravleDAO::class.java,
+        Top5DAO::class.java,
+        FlagleDAO::class.java,
+        PinpointDAO::class.java,
+    )
+
+    private val daos = listOf(
+        worldleDAO,
+        tradleDAO,
+        travleDAO,
+        top5DAO,
+        flagleDAO,
+        pinpointDAO,
+    )
+
+    private fun puzzleResultDAOs(handle: Handle): List<PuzzleResultDAO<*>> {
+        return daoClasses.map { handle.attach(it) }
     }
 }

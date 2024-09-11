@@ -3,7 +3,7 @@ package sh.zachwal.dailygames.db.jdbi.puzzle
 import java.time.Instant
 import java.time.LocalDate
 
-abstract class PuzzleResult {
+sealed class PuzzleResult {
     abstract val id: Long
     abstract val userId: Long
     abstract val game: Game

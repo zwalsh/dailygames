@@ -4,6 +4,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
+import java.time.Instant
 import java.util.stream.Stream
 
 interface Top5DAO : PuzzleResultDAO<Top5Result> {
@@ -65,4 +66,15 @@ interface Top5DAO : PuzzleResultDAO<Top5Result> {
         """
     )
     override fun allResultsStream(): Stream<Top5Result>
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM top5_result
+            WHERE user_id = :userId
+            AND instant_submitted >= :start
+            AND instant_submitted <= :end
+        """
+    )
+    override fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<Top5Result>
 }
