@@ -11,6 +11,16 @@ import sh.zachwal.dailygames.shared_html.HTMLView
 
 private const val SHARE_URL = "https://daily.zachwal.sh"
 
+private val headings = listOf(
+    "Nice!",
+    "Wow!",
+    "Great job!",
+    "Well done!",
+    "Awesome!",
+    "Amazing!",
+    "Incredible!",
+)
+
 data class ShareTextModalView(
     val shareTextLines: List<String>,
 ) : HTMLView<BODY>() {
@@ -22,7 +32,7 @@ data class ShareTextModalView(
                     div(classes = "modal-header border-bottom-0 pb-0") {
                         div(classes = "modal-title w-100 text-center") {
                             h2(classes = "fs-1 mb-0") {
-                                +"Nice!"
+                                +headings.random()
                             }
                         }
                         button(classes = "btn-close") {
