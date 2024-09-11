@@ -193,16 +193,31 @@ class ResultService @Inject constructor(
 
     fun resultsForUserToday(user: User): List<PuzzleResult> {
         val userTimeZone = userPreferencesService.getTimeZone(user.id)
-        val startOfToday = Instant.now().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
+        val startOfToday = clock.instant().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
+        val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)
 
-        return jdbi.open().use { handle ->
-            puzzleResultDAOs(handle).flatMap { dao ->
-                dao.resultsForUserInTimeRange(user.id, Instant.now(), Instant.now())
-            }
+        return daos.flatMap { dao ->
+            dao.resultsForUserInTimeRange(user.id, startOfToday, endOfToday)
         }
     }
 
-    private val daoClasses = PuzzleResultDAO::class.sealedSubclasses.map { it.java }
+    private val daoClasses = listOf(
+        WorldleDAO::class.java,
+        TradleDAO::class.java,
+        TravleDAO::class.java,
+        Top5DAO::class.java,
+        FlagleDAO::class.java,
+        PinpointDAO::class.java,
+    )
+
+    private val daos = listOf(
+        worldleDAO,
+        tradleDAO,
+        travleDAO,
+        top5DAO,
+        flagleDAO,
+        pinpointDAO,
+    )
 
     private fun puzzleResultDAOs(handle: Handle): List<PuzzleResultDAO<*>> {
         return daoClasses.map { handle.attach(it) }

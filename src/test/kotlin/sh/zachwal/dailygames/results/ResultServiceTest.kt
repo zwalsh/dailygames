@@ -342,8 +342,8 @@ class ResultServiceTest(
 
         resultService.resultsForUserToday(fixtures.zach)
 
-        // 12am PT / 3am ET
-        val expectedStart = Instant.ofEpochSecond(1726038000)
+        // 12am PT / 3am ET on 9/10
+        val expectedStart = Instant.ofEpochSecond(1725951600)
         // 12am PT + 1 day
         val expectedEnd = expectedStart.plus(1, ChronoUnit.DAYS)
 
