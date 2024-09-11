@@ -34,8 +34,7 @@ fun HEAD.jquery() {
 }
 
 fun HEAD.favicon() {
-    // TODO make favicon
-    link(href = "/static/favicon.png", rel = "icon", type = "image/png")
+    link(rel = "icon", href = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>\uD83C\uDF0D</text></svg>")
 }
 
 fun HEAD.mobileUI() {
