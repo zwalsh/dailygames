@@ -25,6 +25,7 @@ const val SHARE_TEXT_ID = "shareTextId"
 data class HomeView constructor(
     val username: String,
     val resultFeed: List<ResultFeedItemView>,
+    val shareTextModalView: ShareTextModalView,
 ) : HTMLView<HTML>() {
 
     private val nav = NavView(username = username, currentActiveNavItem = NavItem.HOME)
@@ -38,12 +39,7 @@ data class HomeView constructor(
         body {
             darkMode()
             nav.renderIn(this)
-
-            val shareTextLines = Game.values().map {
-                "${it.emoji()} ${it.displayName()} #123 4/6"
-            }
-
-            ShareTextModalView(shareTextLines).renderIn(this)
+            shareTextModalView.renderIn(this)
             div(classes = "container") {
                 div(classes = "row") {
                     div(classes = "col") {
