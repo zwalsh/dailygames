@@ -25,7 +25,7 @@ class ShareLineMapper {
 
     private fun Top5Result.toShareLine(): String {
         val numIncorrect = numGuesses - numCorrect
-        val start = "${game.emoji()} Top5 #$puzzleNumber $numCorrect/5"
+        val start = "${game.emoji()} ${game.displayName()} #$puzzleNumber $numCorrect/5"
 
         return if (isPerfect) {
             "$start \uD83C\uDF08"
@@ -38,27 +38,27 @@ class ShareLineMapper {
 
     private fun FlagleResult.toShareLine(): String {
         if (score == 7) {
-            return "${game.emoji()} Flagle #$puzzleNumber X/6"
+            return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6"
         }
-        return "${game.emoji()} Flagle #$puzzleNumber $score/6"
+        return "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
     }
 
     private fun WorldleResult.toShareLine(): String {
         if (score == 7) {
-            return "${game.emoji()} Worldle #$puzzleNumber X/6 ($scorePercentage%)"
+            return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6 ($scorePercentage%)"
         }
-        return "${game.emoji()} Worldle #$puzzleNumber $score/6"
+        return "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
     }
 
     private fun TradleResult.toShareLine(): String {
         if (score == 7) {
-            return "${game.emoji()} Tradle #$puzzleNumber X/6"
+            return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6"
         }
-        return "${game.emoji()} Tradle #$puzzleNumber $score/6"
+        return "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
     }
 
     private fun TravleResult.toShareLine(): String {
-        val gameAndPuzzle = "${game.emoji()} Travle #$puzzleNumber"
+        val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
         val withScore = if (score < 0) {
             "$gameAndPuzzle (${-score} away)"
         } else {
@@ -82,7 +82,7 @@ class ShareLineMapper {
     }
 
     private fun PinpointResult.toShareLine(): String {
-        val gameAndPuzzle = "${game.emoji()} Pinpoint #$puzzleNumber"
+        val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
         if (score == 6) {
             return "$gameAndPuzzle X/5"
         }

@@ -183,7 +183,7 @@ class ShareLineMapperTest {
     fun `maps top5 perfect`() {
         val shareLine = ShareLineMapper().mapToShareLine(top5Result)
 
-        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top5 #123 5/5 \uD83C\uDF08")
+        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top 5 #123 5/5 \uD83C\uDF08")
     }
 
     @Test
@@ -192,7 +192,7 @@ class ShareLineMapperTest {
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
-        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top5 #123 5/5")
+        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top 5 #123 5/5")
     }
 
     @Test
@@ -201,7 +201,7 @@ class ShareLineMapperTest {
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
-        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top5 #123 5/5 (1 wrong)")
+        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top 5 #123 5/5 (1 wrong)")
     }
 
     @Test
@@ -210,7 +210,7 @@ class ShareLineMapperTest {
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
-        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top5 #123 4/5")
+        assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top 5 #123 4/5")
     }
 
     private val pinpointResult = PinpointResult(
