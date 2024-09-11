@@ -132,7 +132,6 @@ class TravleDAOTest(
         assertThat(results).containsExactly(resultThree, resultTwo, resultOne)
     }
 
-
     @Test
     fun `can query by time range for a single user`() {
         val resultOne = insertResult()
@@ -151,7 +150,6 @@ class TravleDAOTest(
         assertThat(results).doesNotContain(resultThree)
         assertThat(results).doesNotContain(resultOtherUser)
     }
-
 
     private fun insertResult(
         userId: Long = fixtures.zach.id,

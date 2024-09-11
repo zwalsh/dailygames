@@ -167,7 +167,6 @@ class WorldleDAOTest(
         assertThat(results).doesNotContain(resultOtherUser)
     }
 
-
     private fun insertResult(
         userId: Long = fixtures.zach.id,
         puzzle: Puzzle = puzzleOne,

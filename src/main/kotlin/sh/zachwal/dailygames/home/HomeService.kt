@@ -1,7 +1,6 @@
 package sh.zachwal.dailygames.home
 
 import sh.zachwal.dailygames.db.jdbi.User
-import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.home.views.HomeView
 import sh.zachwal.dailygames.home.views.ShareTextModalView
 import sh.zachwal.dailygames.results.ResultService
