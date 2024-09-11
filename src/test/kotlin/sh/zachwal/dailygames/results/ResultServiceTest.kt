@@ -3,12 +3,15 @@ package sh.zachwal.dailygames.results
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
+import io.mockk.verify
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.onDemand
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
@@ -19,9 +22,14 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
+import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 private val worldle934 = """
             #Worldle #934 (12.08.2024) 4/6 (100%)
@@ -51,16 +59,22 @@ class ResultServiceTest(
 ) {
 
     private val puzzleDAO = jdbi.onDemand<PuzzleDAO>()
+    private val worldleDAO = spyk(jdbi.onDemand<WorldleDAO>())
     private val userService: UserService = mockk()
     private val displayTimeService = mockk<DisplayTimeService> {
         every { displayTime(any(), any(), any()) } returns "Just now"
         every { longDisplayTime(any(), any()) } returns "Long time ago"
     }
 
+    private val userPreferencesService = mockk<UserPreferencesService> {
+        every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
+    }
+    private val instant = Instant.ofEpochSecond(1726030800) // 1am 9/11 ET, 10pm 9/10 PT
+    private val clock = Clock.fixed(instant, ZoneId.of("America/New_York"))
     private val resultService = ResultService(
         jdbi = jdbi,
         puzzleDAO = puzzleDAO,
-        worldleDAO = jdbi.onDemand(),
+        worldleDAO = worldleDAO,
         tradleDAO = jdbi.onDemand(),
         travleDAO = jdbi.onDemand(),
         top5DAO = jdbi.onDemand(),
@@ -69,6 +83,8 @@ class ResultServiceTest(
         shareTextParser = ShareTextParser(),
         userService = userService,
         displayTimeService = displayTimeService,
+        userPreferencesService = userPreferencesService,
+        clock = clock,
     )
 
     @BeforeEach
@@ -318,5 +334,19 @@ class ResultServiceTest(
 
         assertThat(results).containsExactly(result1, result2)
         assertThat(results).doesNotContain(differentPuzzleResult)
+    }
+
+    @Test
+    fun `resultsForUserToday uses user's time zone`() {
+        every { userPreferencesService.getTimeZone(fixtures.zach.id) } returns ZoneId.of("America/Los_Angeles")
+
+        resultService.resultsForUserToday(fixtures.zach)
+
+        // 12am PT / 3am ET
+        val expectedStart = Instant.ofEpochSecond(1726038000)
+        // 12am PT + 1 day
+        val expectedEnd = expectedStart.plus(1, ChronoUnit.DAYS)
+
+        verify { worldleDAO.resultsForUserInTimeRange(fixtures.zach.id, expectedStart, expectedEnd) }
     }
 }
