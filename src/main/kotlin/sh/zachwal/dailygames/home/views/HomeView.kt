@@ -49,7 +49,7 @@ data class HomeView constructor(
                                 }
                                 form(method = post) {
                                     div(classes = "mb-3") {
-                                        textArea(classes = "form-control bg-dark-subtle", rows = "7") {
+                                        textArea(classes = "form-control bg-dark-subtle", rows = "5") {
                                             id = SHARE_TEXT_ID
                                             name = SHARE_TEXT_ID
                                             placeholder = "e.g. #Worldle #123 (10.08.2024) 4/6 (100%)..."
@@ -66,19 +66,10 @@ data class HomeView constructor(
                     }
                 }
                 // TODO add button to re-pop modal
-// Remove for now, add later with expander maybe?
-//                div(classes = "row") {
-//                    div(classes = "col") {
-//                        card(cardTitle = "Games") {
-//                            ul {
-//                                li {
-//                                    a(href = "https://worldle.teuteuf.fr/") { +"Worldle" }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-                div(classes = "row mt-4 border-top") {
+
+                GameLinkView.renderIn(this)
+
+                div(classes = "row border-top") {
                     div(classes = "col") {
                         h1(classes = "text-center mt-2") {
                             +"Feed"
