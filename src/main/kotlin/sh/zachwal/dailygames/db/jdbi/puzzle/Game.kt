@@ -27,4 +27,15 @@ enum class Game {
             PINPOINT -> "\uD83D\uDCCC"
         }
     }
+
+    fun href(): String {
+        return when (this) {
+            WORLDLE -> "https://worldle.teuteuf.fr/"
+            TRADLE -> "https://games.oec.world/en/tradle/"
+            TRAVLE -> "https://travle.earth/"
+            TOP5 -> "https://top5-game.com/"
+            FLAGLE -> "https://www.flagle.io/"
+            PINPOINT -> "https://www.linkedin.com/games/pinpoint/"
+        }
+    }
 }
