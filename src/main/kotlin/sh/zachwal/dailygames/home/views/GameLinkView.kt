@@ -2,7 +2,6 @@ package sh.zachwal.dailygames.home.views
 
 import kotlinx.html.DIV
 import kotlinx.html.a
-import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.i
 import kotlinx.html.role
