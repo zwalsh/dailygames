@@ -332,13 +332,13 @@ class ResultServiceTest(
         val feedTitles = resultService.resultFeed(1L).map { it.resultTitle }
 
         assertThat(feedTitles).containsExactly(
+            "Geocircles #55",
             "Pinpoint #126",
             "Flagle #905",
             "Top 5 #171",
             "Travle #607",
             "Tradle #890",
             "Worldle #934",
-            "Geocircles #55",
         ).inOrder()
     }
 
