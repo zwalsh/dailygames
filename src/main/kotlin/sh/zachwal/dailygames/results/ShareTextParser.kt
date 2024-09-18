@@ -21,6 +21,7 @@ class ShareTextParser {
             top5Regex.matches(shareText) -> Game.TOP5
             flagleRegex.matches(shareText) -> Game.FLAGLE
             pinpointRegex.matches(shareText) -> Game.PINPOINT
+            geocirclesRegex.matches(shareText) -> Game.GEOCIRCLES
             else -> null
         }
     }
@@ -147,4 +148,10 @@ class ShareTextParser {
             shareTextNoLink = shareText.substringBefore("lnkd").trim(),
         )
     }
+
+    val geocirclesRegex = Regex(
+        """
+            \s*Geocircles #(?<puzzleNumber>\d+)[\s\S]*
+        """.trimIndent()
+    )
 }
