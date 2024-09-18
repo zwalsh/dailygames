@@ -24,7 +24,7 @@ class PuzzleResultPointCalculator {
             is TravleResult -> result.calculatePoints()
             is Top5Result -> result.calculatePoints()
             is PinpointResult -> result.calculatePoints()
-            is GeocirclesResult -> TODO()
+            is GeocirclesResult -> result.score
         }
     }
 

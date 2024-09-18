@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
@@ -170,5 +171,20 @@ class PuzzleResultPointCalculatorTest {
             shareText = "",
         )
         assertThat(calculator.calculatePoints(result)).isEqualTo(4)
+    }
+
+    @Test
+    fun `returns score directly for geocircles`() {
+        val result = GeocirclesResult(
+            id = 1L,
+            userId = 1L,
+            game = Game.GEOCIRCLES,
+            score = 5,
+            puzzleNumber = 30,
+            puzzleDate = null,
+            instantSubmitted = Instant.now(),
+            shareText = "",
+        )
+        assertThat(calculator.calculatePoints(result)).isEqualTo(5)
     }
 }
