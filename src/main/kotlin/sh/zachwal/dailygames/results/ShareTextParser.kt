@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.results
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.gameinfo.FlagleInfo
+import sh.zachwal.dailygames.results.gameinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.gameinfo.PinpointInfo
 import sh.zachwal.dailygames.results.gameinfo.Top5Info
 import sh.zachwal.dailygames.results.gameinfo.TradleInfo
@@ -21,6 +22,7 @@ class ShareTextParser {
             top5Regex.matches(shareText) -> Game.TOP5
             flagleRegex.matches(shareText) -> Game.FLAGLE
             pinpointRegex.matches(shareText) -> Game.PINPOINT
+            geocirclesRegex.matches(shareText) -> Game.GEOCIRCLES
             else -> null
         }
     }
@@ -145,6 +147,23 @@ class ShareTextParser {
             puzzleNumber = puzzleNumber.toInt(),
             score = score.toIntOrNull() ?: 6, // X / 5 scored as 6 points
             shareTextNoLink = shareText.substringBefore("lnkd").trim(),
+        )
+    }
+
+    val geocirclesRegex = Regex(
+        """
+            \s*Geocircles #(?<puzzleNumber>\d+)[\s\S]*
+        """.trimIndent()
+    )
+    val greenCircleOrHeartRegex = Regex("(\uD83D\uDFE2|❤\uFE0F)")
+    fun extractGeocirclesInfo(shareText: String): GeocirclesInfo {
+        val match = geocirclesRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Geocircles share")
+        val (puzzleNumber) = match.destructured
+        val score = greenCircleOrHeartRegex.findAll(shareText).count()
+        return GeocirclesInfo(
+            puzzleNumber = puzzleNumber.toInt(),
+            score = score,
+            shareTextNoLink = shareText.substringBefore("https://").trim()
         )
     }
 }

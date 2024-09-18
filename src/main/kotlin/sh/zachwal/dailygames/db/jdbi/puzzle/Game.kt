@@ -8,7 +8,8 @@ enum class Game {
     TRAVLE,
     TOP5,
     FLAGLE,
-    PINPOINT;
+    PINPOINT,
+    GEOCIRCLES;
 
     fun displayName(): String {
         return when (this) {
@@ -25,6 +26,7 @@ enum class Game {
             TOP5 -> "\uD83E\uDDE0"
             FLAGLE -> "\uD83D\uDEA9"
             PINPOINT -> "\uD83D\uDCCC"
+            GEOCIRCLES -> "\uD83D\uDFE2"
         }
     }
 
@@ -36,6 +38,7 @@ enum class Game {
             TOP5 -> "https://top5-game.com/"
             FLAGLE -> "https://www.flagle.io/"
             PINPOINT -> "https://www.linkedin.com/games/pinpoint/"
+            GEOCIRCLES -> "https://geocircles.io/"
         }
     }
 }

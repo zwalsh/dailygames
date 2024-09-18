@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.home
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
+import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
@@ -20,6 +21,18 @@ class ShareLineMapper {
             is TravleResult -> puzzleResult.toShareLine()
             is WorldleResult -> puzzleResult.toShareLine()
             is PinpointResult -> puzzleResult.toShareLine()
+            is GeocirclesResult -> puzzleResult.toShareLine()
+        }
+    }
+
+    private fun GeocirclesResult.toShareLine(): String {
+        val perfectEmoji = "\uD83C\uDFAF" // target emoji
+        val start = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
+
+        return when (score) {
+            10 -> "$start 5/5 $perfectEmoji"
+            in (5..9) -> "$start 5/5 (${10 - score} wrong)"
+            else -> "$start $score/5"
         }
     }
 

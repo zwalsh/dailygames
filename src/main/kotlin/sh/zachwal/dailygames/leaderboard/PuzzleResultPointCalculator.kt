@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.leaderboard
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
+import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
@@ -23,6 +24,7 @@ class PuzzleResultPointCalculator {
             is TravleResult -> result.calculatePoints()
             is Top5Result -> result.calculatePoints()
             is PinpointResult -> result.calculatePoints()
+            is GeocirclesResult -> result.score
         }
     }
 

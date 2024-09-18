@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
@@ -238,5 +239,50 @@ class ShareLineMapperTest {
         val shareLine = ShareLineMapper().mapToShareLine(failResult)
 
         assertThat(shareLine).isEqualTo("${Game.PINPOINT.emoji()} Pinpoint #123 X/5")
+    }
+
+    private val geocirclesResult = GeocirclesResult(
+        id = 1,
+        userId = 1,
+        game = Game.GEOCIRCLES,
+        puzzleNumber = 123,
+        puzzleDate = null,
+        instantSubmitted = Instant.now(),
+        score = 10,
+        shareText = "share text",
+    )
+
+    @Test
+    fun `maps geocircles line perfect`() {
+        val shareLine = ShareLineMapper().mapToShareLine(geocirclesResult)
+
+        assertThat(shareLine).isEqualTo("${Game.GEOCIRCLES.emoji()} Geocircles #123 5/5 \uD83C\uDFAF")
+    }
+
+    @Test
+    fun `maps geocircles line lives left`() {
+        val result = geocirclesResult.copy(score = 8)
+
+        val shareLine = ShareLineMapper().mapToShareLine(result)
+
+        assertThat(shareLine).isEqualTo("${Game.GEOCIRCLES.emoji()} Geocircles #123 5/5 (2 wrong)")
+    }
+
+    @Test
+    fun `maps geocircles line some right`() {
+        val result = geocirclesResult.copy(score = 4)
+
+        val shareLine = ShareLineMapper().mapToShareLine(result)
+
+        assertThat(shareLine).isEqualTo("${Game.GEOCIRCLES.emoji()} Geocircles #123 4/5")
+    }
+
+    @Test
+    fun `maps geocircles line none right`() {
+        val result = geocirclesResult.copy(score = 0)
+
+        val shareLine = ShareLineMapper().mapToShareLine(result)
+
+        assertThat(shareLine).isEqualTo("${Game.GEOCIRCLES.emoji()} Geocircles #123 0/5")
     }
 }
