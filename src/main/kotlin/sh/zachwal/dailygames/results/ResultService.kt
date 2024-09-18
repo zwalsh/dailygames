@@ -202,7 +202,7 @@ class ResultService @Inject constructor(
             Game.TOP5 -> top5DAO.resultsForPuzzle(puzzle)
             Game.FLAGLE -> flagleDAO.resultsForPuzzle(puzzle)
             Game.PINPOINT -> pinpointDAO.resultsForPuzzle(puzzle)
-            Game.GEOCIRCLES -> TODO()
+            Game.GEOCIRCLES -> geocirclesDAO.resultsForPuzzle(puzzle)
         }
     }
 
@@ -223,6 +223,7 @@ class ResultService @Inject constructor(
         Top5DAO::class.java,
         FlagleDAO::class.java,
         PinpointDAO::class.java,
+        GeocirclesDAO::class.java,
     )
 
     private val daos = listOf(
@@ -232,6 +233,7 @@ class ResultService @Inject constructor(
         top5DAO,
         flagleDAO,
         pinpointDAO,
+        geocirclesDAO,
     )
 
     private fun puzzleResultDAOs(handle: Handle): List<PuzzleResultDAO<*>> {

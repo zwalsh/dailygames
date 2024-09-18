@@ -327,6 +327,7 @@ class ResultServiceTest(
         resultService.createResult(fixtures.zach, TOP5)
         resultService.createResult(fixtures.zach, FLAGLE)
         resultService.createResult(fixtures.zach, PINPOINT_THREE)
+        resultService.createResult(fixtures.zach, GEOCIRCLES_PERFECT)
 
         val feedTitles = resultService.resultFeed(1L).map { it.resultTitle }
 
@@ -337,6 +338,7 @@ class ResultServiceTest(
             "Travle #607",
             "Tradle #890",
             "Worldle #934",
+            "Geocircles #55",
         ).inOrder()
     }
 
