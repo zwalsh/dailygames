@@ -26,7 +26,7 @@ enum class Game {
             TOP5 -> "\uD83E\uDDE0"
             FLAGLE -> "\uD83D\uDEA9"
             PINPOINT -> "\uD83D\uDCCC"
-            GEOCIRCLES -> TODO()
+            GEOCIRCLES -> "\uD83D\uDFE2"
         }
     }
 
@@ -38,7 +38,7 @@ enum class Game {
             TOP5 -> "https://top5-game.com/"
             FLAGLE -> "https://www.flagle.io/"
             PINPOINT -> "https://www.linkedin.com/games/pinpoint/"
-            GEOCIRCLES -> TODO()
+            GEOCIRCLES -> "https://geocircles.io/"
         }
     }
 }
