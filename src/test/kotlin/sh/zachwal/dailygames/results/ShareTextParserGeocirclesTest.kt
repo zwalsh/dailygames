@@ -45,21 +45,27 @@ class ShareTextParserGeocirclesTest {
 
     @Test
     fun `extracts geocircles`() {
-
+        val info = parser.extractGeocirclesInfo(GEOCIRCLES_PERFECT)
+        assertThat(info.puzzleNumber).isEqualTo(55)
+        assertThat(info.score).isEqualTo(10)
+        assertThat(info.shareTextNoLink).isEqualTo("Geocircles #55\n🟢🟢🟢🟢🟢\n❤️❤️❤️❤️❤️")
     }
 
     @Test
     fun `extracts geocircles 0 points`() {
-
+        val info = parser.extractGeocirclesInfo(GEOCIRCLES_0_POINTS)
+        assertThat(info.score).isEqualTo(0)
     }
 
     @Test
     fun `extracts geocircles did not finish`() {
-
+        val info = parser.extractGeocirclesInfo(GEOCIRCLES_DNF)
+        assertThat(info.score).isEqualTo(4)
     }
 
     @Test
     fun `extracts geocircles with lives left`() {
-
+        val info = parser.extractGeocirclesInfo(GEOCIRCLES_LIVES_LEFT)
+        assertThat(info.score).isEqualTo(7)
     }
 }
