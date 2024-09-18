@@ -40,6 +40,7 @@ class LeaderboardService @Inject constructor(
             Game.TOP5 -> BasicScoreHintView("Scoring: One point per correct guess. One point per life left if all 5 answers guessed correctly.")
             Game.FLAGLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
             Game.PINPOINT -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/5 = 4 points.")
+            Game.GEOCIRCLES -> TODO()
         }
         return GameLeaderboardView(username = currentUser.username, game = game, scoreHintView = scoreHintView)
     }
@@ -89,6 +90,7 @@ class LeaderboardService @Inject constructor(
             Game.TOP5 -> handle.attach(Top5DAO::class.java)
             Game.FLAGLE -> handle.attach(FlagleDAO::class.java)
             Game.PINPOINT -> handle.attach(PinpointDAO::class.java)
+            Game.GEOCIRCLES -> TODO()
         }
     }
 }

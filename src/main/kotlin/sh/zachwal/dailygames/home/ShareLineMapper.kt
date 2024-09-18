@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.home
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
+import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
@@ -20,6 +21,7 @@ class ShareLineMapper {
             is TravleResult -> puzzleResult.toShareLine()
             is WorldleResult -> puzzleResult.toShareLine()
             is PinpointResult -> puzzleResult.toShareLine()
+            is GeocirclesResult -> TODO()
         }
     }
 

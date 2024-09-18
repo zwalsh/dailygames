@@ -139,6 +139,10 @@ class ResultService @Inject constructor(
                     shareText = pinpointInfo.shareTextNoLink,
                 )
             }
+
+            Game.GEOCIRCLES -> {
+                TODO()
+            }
         }
     }
 
@@ -188,6 +192,7 @@ class ResultService @Inject constructor(
             Game.TOP5 -> top5DAO.resultsForPuzzle(puzzle)
             Game.FLAGLE -> flagleDAO.resultsForPuzzle(puzzle)
             Game.PINPOINT -> pinpointDAO.resultsForPuzzle(puzzle)
+            Game.GEOCIRCLES -> TODO()
         }
     }
 
