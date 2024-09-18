@@ -15,6 +15,7 @@ import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import sh.zachwal.dailygames.db.dao.UserRoleDAO
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
 import sh.zachwal.dailygames.db.dao.game.GameDAO
+import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
 import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
@@ -71,4 +72,7 @@ class JdbiModule : AbstractModule() {
 
     @Provides
     fun pinpointDao(jdbi: Jdbi): PinpointDAO = jdbi.onDemand()
+
+    @Provides
+    fun geocirclesDao(jdbi: Jdbi): GeocirclesDAO = jdbi.onDemand()
 }

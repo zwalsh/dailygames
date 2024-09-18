@@ -16,6 +16,7 @@ import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
@@ -80,6 +81,7 @@ class ResultServiceTest(
         top5DAO = jdbi.onDemand(),
         flagleDAO = jdbi.onDemand(),
         pinpointDAO = jdbi.onDemand(),
+        geocirclesDAO = jdbi.onDemand(),
         shareTextParser = ShareTextParser(),
         userService = userService,
         displayTimeService = displayTimeService,
@@ -228,6 +230,27 @@ class ResultServiceTest(
             """
             Pinpoint #126
             🤔 🤔 📌 ⬜ ⬜ (3/5)
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `can create Geocircles result`() {
+        val result = resultService.createResult(fixtures.zach, GEOCIRCLES_PERFECT)
+
+        assertThat(result).isInstanceOf(GeocirclesResult::class.java)
+
+        val geocirclesResult = result as GeocirclesResult
+
+        assertThat(geocirclesResult.userId).isEqualTo(fixtures.zach.id)
+        assertThat(geocirclesResult.game).isEqualTo(Game.GEOCIRCLES)
+        assertThat(geocirclesResult.puzzleNumber).isEqualTo(55)
+        assertThat(geocirclesResult.score).isEqualTo(10)
+        assertThat(geocirclesResult.shareText).isEqualTo(
+            """
+            Geocircles #55
+            🟢🟢🟢🟢🟢
+            ❤️❤️❤️❤️❤️
             """.trimIndent()
         )
     }

@@ -5,6 +5,7 @@ import org.jdbi.v3.core.Jdbi
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
+import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
 import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
@@ -40,6 +41,7 @@ class ResultService @Inject constructor(
     private val top5DAO: Top5DAO,
     private val flagleDAO: FlagleDAO,
     private val pinpointDAO: PinpointDAO,
+    private val geocirclesDAO: GeocirclesDAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
     private val displayTimeService: DisplayTimeService,
@@ -141,7 +143,15 @@ class ResultService @Inject constructor(
             }
 
             Game.GEOCIRCLES -> {
-                TODO()
+                val geocirclesInfo = shareTextParser.extractGeocirclesInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.GEOCIRCLES, geocirclesInfo.puzzleNumber, null))
+
+                return geocirclesDAO.insertResult(
+                    userId = user.id,
+                    puzzle = puzzle,
+                    score = geocirclesInfo.score,
+                    shareText = geocirclesInfo.shareTextNoLink,
+                )
             }
         }
     }
