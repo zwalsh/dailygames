@@ -21,7 +21,8 @@ import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 class ResetUserPasswordView(
-    private val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val successMessage: String? = null,
 ) : HTMLView<HTML>() {
     override fun HTML.render() {
         head {
@@ -38,6 +39,11 @@ class ResetUserPasswordView(
                     div(classes = "col") {
                         errorMessage?.let { message ->
                             div(classes = "alert alert-danger mt-3") {
+                                +message
+                            }
+                        }
+                        successMessage?.let { message ->
+                            div(classes = "alert alert-success mt-3") {
                                 +message
                             }
                         }

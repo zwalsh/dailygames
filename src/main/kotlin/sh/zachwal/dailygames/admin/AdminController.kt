@@ -29,6 +29,7 @@ const val NEW_PASSWORD_FORM_PARAM = "newPassword"
 class AdminController @Inject constructor(
     private val userService: UserService,
     private val roleService: RoleService,
+    private val adminService: AdminService,
 ) {
 
     private fun sortedUsers(users: List<User>, roles: Map<User, List<Role>>): List<User> {
@@ -108,25 +109,10 @@ class AdminController @Inject constructor(
                 val username = params.getOrFail(USERNAME_FORM_PARAM)
                 val newPassword = params.getOrFail(NEW_PASSWORD_FORM_PARAM)
 
-                val user = userService.getUser(username)
-                if (user == null) {
-                    val view = ResetUserPasswordView("User not found")
-                    call.respondHtml {
-                        view.renderIn(this)
-                    }
-                    return@post
+                val view = adminService.resetUserPassword(username, newPassword)
+                call.respondHtml {
+                    view.renderIn(this)
                 }
-
-                if (roleService.hasRole(user, ADMIN)) {
-                    val view = ResetUserPasswordView("Cannot reset password for admin")
-                    call.respondHtml {
-                        view.renderIn(this)
-                    }
-                    return@post
-                }
-
-                userService.setPassword(user, newPassword)
-                call.respondRedirect("/admin/users")
             }
         }
     }
