@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.UserDAO
 import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import sh.zachwal.dailygames.db.jdbi.User
-import sh.zachwal.dailygames.users.views.ChangePasswordView
 import javax.inject.Inject
 
 class UserService @Inject constructor(

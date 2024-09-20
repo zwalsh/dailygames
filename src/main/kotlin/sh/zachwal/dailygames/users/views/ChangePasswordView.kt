@@ -9,7 +9,6 @@ import kotlinx.html.head
 import kotlinx.html.label
 import kotlinx.html.passwordInput
 import kotlinx.html.submitInput
-import kotlinx.html.textInput
 import kotlinx.html.title
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
