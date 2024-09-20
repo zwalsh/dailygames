@@ -70,8 +70,8 @@ class UserService @Inject constructor(
     }
 
     fun setPassword(user: User, newPassword: String) {
-//        val newHash = BCrypt.hashpw(newPassword, BCrypt.gensalt())
-//        userDAO.updatePassword(user.id, newHash)
+        val newHash = BCrypt.hashpw(newPassword, BCrypt.gensalt())
+        userDAO.updatePassword(user.id, newHash)
     }
 
     fun userChangePassword(user: User, currentPassword: String, newPassword: String, repeatNewPassword: String): ChangePasswordResult {
