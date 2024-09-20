@@ -2,9 +2,13 @@ package sh.zachwal.dailygames.admin
 
 import io.ktor.application.call
 import io.ktor.html.respondHtml
+import io.ktor.request.receiveParameters
 import io.ktor.routing.Routing
 import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.util.getOrFail
 import sh.zachwal.dailygames.admin.views.AdminPageView
+import sh.zachwal.dailygames.admin.views.ResetUserPasswordView
 import sh.zachwal.dailygames.admin.views.UserListView
 import sh.zachwal.dailygames.admin.views.UserRowView
 import sh.zachwal.dailygames.controller.Controller
@@ -17,10 +21,14 @@ import sh.zachwal.dailygames.roles.adminRoute
 import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
 
+const val USERNAME_FORM_PARAM = "username"
+const val NEW_PASSWORD_FORM_PARAM = "newPassword"
+
 @Controller
 class AdminController @Inject constructor(
     private val userService: UserService,
     private val roleService: RoleService,
+    private val adminService: AdminService,
 ) {
 
     private fun sortedUsers(users: List<User>, roles: Map<User, List<Role>>): List<User> {
@@ -82,6 +90,27 @@ class AdminController @Inject constructor(
 
                 call.respondHtml {
                     userListView.renderIn(this)
+                }
+            }
+        }
+    }
+
+    internal fun Routing.resetPassword() {
+        adminRoute("/admin/reset-password") {
+            get {
+                val view = ResetUserPasswordView()
+                call.respondHtml {
+                    view.renderIn(this)
+                }
+            }
+            post {
+                val params = call.receiveParameters()
+                val username = params.getOrFail(USERNAME_FORM_PARAM)
+                val newPassword = params.getOrFail(NEW_PASSWORD_FORM_PARAM)
+
+                val view = adminService.resetUserPassword(username, newPassword)
+                call.respondHtml {
+                    view.renderIn(this)
                 }
             }
         }
