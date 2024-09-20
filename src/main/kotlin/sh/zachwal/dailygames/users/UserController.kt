@@ -25,6 +25,7 @@ import sh.zachwal.dailygames.roles.RoleService
 import sh.zachwal.dailygames.roles.approvedUserRoute
 import sh.zachwal.dailygames.session.SessionService
 import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
+import sh.zachwal.dailygames.users.views.ChangePasswordView
 import sh.zachwal.dailygames.users.views.LoginView
 import sh.zachwal.dailygames.users.views.ProfileView
 import sh.zachwal.dailygames.users.views.RegisterView
@@ -35,6 +36,10 @@ import javax.inject.Inject
 
 const val POST_TIME_ZONE_ROUTE = "/profile/timezone"
 const val TIME_ZONE_FORM_PARAM = "timeZone"
+
+const val CURRENT_PASSWORD_FORM_PARAM = "currentPassword"
+const val NEW_PASSWORD_FORM_PARAM = "newPassword"
+const val REPEAT_NEW_PASSWORD_FORM_PARAM = "repeatNewPassword"
 
 @Controller
 class UserController @Inject constructor(
@@ -146,6 +151,39 @@ class UserController @Inject constructor(
                     call.respondRedirect("/")
                 } else {
                     call.respond(HttpStatusCode.Conflict, "User already exists")
+                }
+            }
+        }
+    }
+
+    internal fun Routing.changePassword() {
+        approvedUserRoute("/profile/password") {
+            get {
+                val view = ChangePasswordView()
+                call.respondHtml {
+                    view.renderIn(this)
+                }
+            }
+
+            post {
+                val user = currentUser(call, userService)
+                val params = call.receiveParameters()
+                val currentPassword = params.getOrFail(CURRENT_PASSWORD_FORM_PARAM)
+                val newPassword = params.getOrFail(NEW_PASSWORD_FORM_PARAM)
+                val repeatNewPassword = params.getOrFail(REPEAT_NEW_PASSWORD_FORM_PARAM)
+
+                val changePasswordResult = userService.userChangePassword(user, currentPassword, newPassword, repeatNewPassword)
+
+                when (changePasswordResult) {
+                    is ChangePasswordFailure -> {
+                        val view = ChangePasswordView(changePasswordResult.errorMessage)
+                        call.respondHtml {
+                            view.renderIn(this)
+                        }
+                    }
+                    ChangePasswordSuccess -> {
+                        call.respondRedirect("/profile")
+                    }
                 }
             }
         }

@@ -48,6 +48,12 @@ data class ProfileView(
                         }
                     }
                     li {
+                        a(href = "/profile/password") {
+                            +"Change Password"
+                        }
+                    }
+
+                    li {
                         a(href = "/logout") {
                             +"Log out"
                         }

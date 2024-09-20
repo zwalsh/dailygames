@@ -47,4 +47,12 @@ class UserDAOTest(
 
         assertThat(twoUsers).hasSize(2)
     }
+
+    @Test
+    fun `updatePassword sets new hash`() {
+        val user = userDAO.createUser("testy", "someHash")!!
+        userDAO.updatePassword(user.id, "newHash")
+
+        assertThat(userDAO.getById(user.id)!!.hashedPassword).isEqualTo("newHash")
+    }
 }

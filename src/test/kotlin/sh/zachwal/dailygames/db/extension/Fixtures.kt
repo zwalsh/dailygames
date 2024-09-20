@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.db.extension
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.onDemand
+import org.mindrot.jbcrypt.BCrypt
 import sh.zachwal.dailygames.db.dao.UserDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.User
@@ -14,6 +15,8 @@ class Fixtures(
     private val userDAO: UserDAO = jdbi.onDemand()
 
     lateinit var zach: User
+    val zachPassword = "p4ssw0rd"
+    val zachHashedPassword = BCrypt.hashpw(zachPassword, BCrypt.gensalt())
     lateinit var jackie: User
 
     private val puzzleDAO: PuzzleDAO = jdbi.onDemand()
@@ -21,7 +24,7 @@ class Fixtures(
     lateinit var flagle123Puzzle: Puzzle
 
     fun runFixtures() {
-        zach = userDAO.createUser("zach", "hashedPassword")!!.also {
+        zach = userDAO.createUser("zach", zachHashedPassword)!!.also {
             println("Created user: $it")
         }
         jackie = userDAO.createUser("jackie", "hashedPassword")!!

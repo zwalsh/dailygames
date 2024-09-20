@@ -28,4 +28,54 @@ class UserServiceTest(
         val userPreferences = userPreferencesDAO.getByUserId(user.id)
         assertThat(userPreferences).isNotNull()
     }
+
+    @Test
+    fun `userChangePassword checks if new passwords match`() {
+        val result = userService.userChangePassword(
+            user = fixtures.zach,
+            currentPassword = "hashedPassword",
+            newPassword = "newPassword",
+            repeatNewPassword = "differentNewPassword"
+        )
+
+        assertThat(result).isInstanceOf(ChangePasswordFailure::class.java)
+        val failure = result as ChangePasswordFailure
+        assertThat(failure.errorMessage).isEqualTo("Passwords do not match")
+    }
+
+    @Test
+    fun `userChangePassword checks if current password matches hash`() {
+        val result = userService.userChangePassword(
+            user = fixtures.zach,
+            currentPassword = "wrongPassword",
+            newPassword = "newPassword",
+            repeatNewPassword = "newPassword"
+        )
+
+        assertThat(result).isInstanceOf(ChangePasswordFailure::class.java)
+        val failure = result as ChangePasswordFailure
+        assertThat(failure.errorMessage).isEqualTo("Current password is incorrect")
+    }
+
+    @Test
+    fun `userChangePassword changes password if all checks pass`() {
+        val result = userService.userChangePassword(
+            user = fixtures.zach,
+            currentPassword = fixtures.zachPassword,
+            newPassword = "newPassword",
+            repeatNewPassword = "newPassword"
+        )
+
+        assertThat(result).isEqualTo(ChangePasswordSuccess)
+        val user = userService.checkUser("zach", "newPassword")
+        assertThat(user).isNotNull()
+    }
+
+    @Test
+    fun `setPassword unconditionally resets user's password`() {
+        val user = fixtures.zach
+        userService.setPassword(user, "newPassword")
+        val updatedUser = userService.checkUser("zach", "newPassword")
+        assertThat(updatedUser).isNotNull()
+    }
 }
