@@ -34,6 +34,12 @@ class ChangePasswordView(
             div(classes = "container") {
                 div(classes = "row justify-content-center") {
                     div(classes = "col") {
+                        errorMessage?.let { message ->
+                            div(classes = "alert alert-danger mt-3") {
+                                +message
+                            }
+                        }
+
                         card(cardTitle = "Change Password") {
                             form(method = post, classes = "mb-3") {
                                 div(classes = "mb-3") {
