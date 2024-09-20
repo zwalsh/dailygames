@@ -2,9 +2,7 @@ package sh.zachwal.dailygames.admin
 
 import io.ktor.application.call
 import io.ktor.html.respondHtml
-import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveParameters
-import io.ktor.response.respond
 import io.ktor.response.respondRedirect
 import io.ktor.routing.Routing
 import io.ktor.routing.get
