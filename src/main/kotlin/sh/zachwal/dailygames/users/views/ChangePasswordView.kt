@@ -19,7 +19,9 @@ import sh.zachwal.dailygames.users.CURRENT_PASSWORD_FORM_PARAM
 import sh.zachwal.dailygames.users.NEW_PASSWORD_FORM_PARAM
 import sh.zachwal.dailygames.users.REPEAT_NEW_PASSWORD_FORM_PARAM
 
-object ChangePasswordView : HTMLView<HTML>() {
+class ChangePasswordView(
+    val errorMessage: String? = null
+) : HTMLView<HTML>() {
     override fun HTML.render() {
         head {
             title {

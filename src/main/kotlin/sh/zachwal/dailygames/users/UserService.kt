@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.UserDAO
 import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import sh.zachwal.dailygames.db.jdbi.User
+import sh.zachwal.dailygames.users.views.ChangePasswordView
 import javax.inject.Inject
 
 class UserService @Inject constructor(
@@ -66,5 +67,21 @@ class UserService @Inject constructor(
 
     fun getUsernameCached(userId: Long): String? {
         return userNameCache.computeIfAbsent(userId) { getUser(it)?.username }
+    }
+
+    fun setPassword(user: User, newPassword: String) {
+//        val newHash = BCrypt.hashpw(newPassword, BCrypt.gensalt())
+//        userDAO.updatePassword(user.id, newHash)
+    }
+
+    fun userChangePassword(user: User, currentPassword: String, newPassword: String, repeatNewPassword: String): ChangePasswordResult {
+        if (newPassword != repeatNewPassword) {
+            return ChangePasswordFailure("Passwords do not match")
+        }
+        if (!BCrypt.checkpw(currentPassword, user.hashedPassword)) {
+            return ChangePasswordFailure("Current password is incorrect")
+        }
+        setPassword(user, newPassword)
+        return ChangePasswordSuccess
     }
 }

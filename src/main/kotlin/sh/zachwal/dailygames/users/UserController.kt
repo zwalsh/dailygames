@@ -159,17 +159,32 @@ class UserController @Inject constructor(
     internal fun Routing.changePassword() {
         approvedUserRoute("/profile/password") {
             get {
+                val view = ChangePasswordView()
                 call.respondHtml {
-                    ChangePasswordView.renderIn(this)
+                    view.renderIn(this)
                 }
             }
 
             post {
                 val user = currentUser(call, userService)
-//                val params = call.receiveParameters()
-//                val password = params.getOrFail(PASSWORD_FORM_PARAM)
-//                userService.changePassword(user.id, password)
-                call.respondRedirect("/profile")
+                val params = call.receiveParameters()
+                val currentPassword = params.getOrFail(CURRENT_PASSWORD_FORM_PARAM)
+                val newPassword = params.getOrFail(NEW_PASSWORD_FORM_PARAM)
+                val repeatNewPassword = params.getOrFail(REPEAT_NEW_PASSWORD_FORM_PARAM)
+
+                val changePasswordResult = userService.userChangePassword(user, currentPassword, newPassword, repeatNewPassword)
+
+                when (changePasswordResult) {
+                    is ChangePasswordFailure -> {
+                        val view = ChangePasswordView(changePasswordResult.errorMessage)
+                        call.respondHtml {
+                            view.renderIn(this)
+                        }
+                    }
+                    ChangePasswordSuccess -> {
+                        call.respondRedirect("/profile")
+                    }
+                }
             }
         }
     }
