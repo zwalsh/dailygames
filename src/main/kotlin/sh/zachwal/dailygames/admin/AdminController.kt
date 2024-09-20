@@ -109,15 +109,24 @@ class AdminController @Inject constructor(
                 val newPassword = params.getOrFail(NEW_PASSWORD_FORM_PARAM)
 
                 val user = userService.getUser(username)
-                if (user != null) {
-                    userService.setPassword(user, newPassword)
-                    call.respondRedirect("/admin/users")
-                } else {
+                if (user == null) {
                     val view = ResetUserPasswordView("User not found")
                     call.respondHtml {
                         view.renderIn(this)
                     }
+                    return@post
                 }
+
+                if (roleService.hasRole(user, ADMIN)) {
+                    val view = ResetUserPasswordView("Cannot reset password for admin")
+                    call.respondHtml {
+                        view.renderIn(this)
+                    }
+                    return@post
+                }
+
+                userService.setPassword(user, newPassword)
+                call.respondRedirect("/admin/users")
             }
         }
     }
