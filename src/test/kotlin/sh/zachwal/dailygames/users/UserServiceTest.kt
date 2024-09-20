@@ -70,4 +70,12 @@ class UserServiceTest(
         val user = userService.checkUser("zach", "newPassword")
         assertThat(user).isNotNull()
     }
+
+    @Test
+    fun `setPassword unconditionally resets user's password`() {
+        val user = fixtures.zach
+        userService.setPassword(user, "newPassword")
+        val updatedUser = userService.checkUser("zach", "newPassword")
+        assertThat(updatedUser).isNotNull()
+    }
 }
