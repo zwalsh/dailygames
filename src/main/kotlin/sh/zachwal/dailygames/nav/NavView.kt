@@ -34,6 +34,7 @@ data class NavView constructor(
             ),
             ChatNavItemView(
                 isActive = currentActiveNavItem == NavItem.CHAT,
+                chatNavBadgeView = null
             ),
             LeaderboardNavItemView(
                 isActive = currentActiveNavItem == NavItem.LEADERBOARD,

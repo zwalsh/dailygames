@@ -10,7 +10,8 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.shared_html.HTMLView
 
 data class ChatNavItemView(
-    val isActive: Boolean
+    val isActive: Boolean,
+    val chatNavBadgeView: ChatNavBadgeView?
 ) : HTMLView<UL>() {
 
     private val textStyling = if (isActive) {
@@ -23,7 +24,9 @@ data class ChatNavItemView(
         li {
             div(classes = "nav-link $textStyling text-small") {
                 attributes["data-bs-toggle"] = "dropdown"
-                i(classes = "bi bi-chat-left-dots-fill d-block text-center fs-3")
+                i(classes = "bi bi-chat-left-dots-fill d-block text-center fs-3 position-relative") {
+                    chatNavBadgeView?.renderIn(this)
+                }
                 +"Chat"
             }
             ul(classes = "dropdown-menu") {
