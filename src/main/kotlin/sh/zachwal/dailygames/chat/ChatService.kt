@@ -101,6 +101,15 @@ class ChatService @Inject constructor(
             text = chat.text,
         )
     }
+
+    fun currentChatCounts(): Map<Game, Int> {
+        // Query for latest puzzles
+
+        // Query for chat counts for each puzzle
+
+
+        return emptyMap()
+    }
 }
 
 fun Puzzle.chatLink(): String {
