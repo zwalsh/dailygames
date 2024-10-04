@@ -22,6 +22,7 @@ import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
@@ -29,7 +30,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.streams.toList
 
-const val FEED_SIZE = 30
+const val FEED_SIZE = 100
+val lookBackWindow: Duration = Duration.ofDays(3)
 
 @Singleton
 class ResultService @Inject constructor(
@@ -161,7 +163,7 @@ class ResultService @Inject constructor(
     }
 
     fun resultFeed(userId: Long): List<ResultFeedItemView> {
-        val results = readFirstTwentyResults()
+        val results = readRecentResults()
         return results.map { result ->
             val username = userService.getUsernameCached(result.userId)
             ResultFeedItemView(
@@ -174,12 +176,12 @@ class ResultService @Inject constructor(
         }
     }
 
-    private fun readFirstTwentyResults(): List<PuzzleResult> {
+    private fun readRecentResults(): List<PuzzleResult> {
         // Must use JDBI Handle directly to use streaming API
         return jdbi.open().use { handle ->
             val results = puzzleResultDAOs(handle).flatMap { dao ->
                 dao.allResultsStream().use {
-                    readFirstTwenty(it)
+                    readRecentResults(it)
                 }
             }
 
@@ -187,9 +189,9 @@ class ResultService @Inject constructor(
         }
     }
 
-    private fun <T : PuzzleResult> readFirstTwenty(stream: Stream<T>): List<T> {
+    private fun <T : PuzzleResult> readRecentResults(stream: Stream<T>): List<T> {
         return stream
-            .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(2, ChronoUnit.DAYS)) }
+            .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(lookBackWindow)) }
             .limit(FEED_SIZE.toLong())
             .toList()
     }
