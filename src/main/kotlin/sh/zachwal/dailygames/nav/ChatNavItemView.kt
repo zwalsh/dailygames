@@ -5,8 +5,6 @@ import kotlinx.html.a
 import kotlinx.html.div
 import kotlinx.html.i
 import kotlinx.html.li
-import kotlinx.html.span
-import kotlinx.html.style
 import kotlinx.html.ul
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.shared_html.HTMLView
