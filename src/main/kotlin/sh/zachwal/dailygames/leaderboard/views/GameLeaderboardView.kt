@@ -19,12 +19,10 @@ import sh.zachwal.dailygames.shared_html.headSetup
 import sh.zachwal.dailygames.shared_html.jquery
 
 data class GameLeaderboardView(
-    val username: String,
     val game: Game,
     val scoreHintView: ScoreHintView,
+    val nav: NavView,
 ) : HTMLView<HTML>() {
-
-    val nav = NavView(currentActiveNavItem = NavItem.LEADERBOARD)
 
     override fun HTML.render() {
         head {

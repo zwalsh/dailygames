@@ -14,10 +14,8 @@ import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 data class LeaderboardView(
-    val username: String,
+    val nav: NavView,
 ) : HTMLView<HTML>() {
-
-    val nav = NavView(currentActiveNavItem = NavItem.LEADERBOARD)
 
     override fun HTML.render() {
         head {
