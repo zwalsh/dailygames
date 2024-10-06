@@ -10,13 +10,14 @@ import kotlinx.html.head
 import kotlinx.html.li
 import kotlinx.html.title
 import kotlinx.html.ul
-import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
-object AdminPageView : HTMLView<HTML>() {
+data class AdminPageView constructor(
+    private val navView: NavView
+) : HTMLView<HTML>() {
     override fun HTML.render() {
         head {
             title {
@@ -26,7 +27,7 @@ object AdminPageView : HTMLView<HTML>() {
         }
         body {
             darkMode()
-            NavView("", NavItem.PROFILE).renderIn(this)
+            navView.renderIn(this)
             div(classes = "container") {
                 h1 {
                     +"Admin"

@@ -113,4 +113,31 @@ class PuzzleDAOTest(jdbi: Jdbi) {
 
         assertThat(puzzleDAO.nextPuzzle(Game.TRAVLE, 123)).isNull()
     }
+
+    @Test
+    fun `latestPuzzlePerGame returns the latest puzzle by number for each game`() {
+        // Fixtures mess with this, inserting later puzzles
+        val puzzles = listOf(
+            Puzzle(Game.TRAVLE, 1, LocalDate.of(2024, 8, 1)),
+            Puzzle(Game.TRAVLE, 2, LocalDate.of(2024, 8, 2)),
+            Puzzle(Game.TRAVLE, 3, LocalDate.of(2024, 8, 3)),
+            Puzzle(Game.WORLDLE, 198, null),
+            Puzzle(Game.WORLDLE, 199, null),
+            Puzzle(Game.TOP5, 3, null),
+            Puzzle(Game.TRADLE, 124, null),
+            Puzzle(Game.TRADLE, 123, null),
+            Puzzle(Game.FLAGLE, 201, null),
+        )
+        puzzles.forEach { puzzleDAO.insertPuzzle(it) }
+
+        val latestPuzzles = puzzleDAO.latestPuzzlePerGame()
+
+        assertThat(latestPuzzles).containsExactly(
+            Puzzle(Game.TRAVLE, 3, LocalDate.of(2024, 8, 3)),
+            Puzzle(Game.WORLDLE, 199, null),
+            Puzzle(Game.TOP5, 3, null),
+            Puzzle(Game.TRADLE, 124, null),
+            Puzzle(Game.FLAGLE, 201, null),
+        )
+    }
 }

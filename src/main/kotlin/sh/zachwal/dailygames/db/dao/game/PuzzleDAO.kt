@@ -68,4 +68,13 @@ interface PuzzleDAO {
         """
     )
     fun nextPuzzle(game: Game, number: Int): Puzzle?
+
+    @SqlQuery(
+        """
+            SELECT game, max(number) AS number, max(date) AS date
+            FROM puzzle
+            GROUP BY game
+        """
+    )
+    fun latestPuzzlePerGame(): List<Puzzle>
 }

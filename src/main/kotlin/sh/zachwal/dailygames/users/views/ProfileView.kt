@@ -9,7 +9,6 @@ import kotlinx.html.head
 import kotlinx.html.li
 import kotlinx.html.title
 import kotlinx.html.ul
-import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.darkMode
@@ -20,9 +19,8 @@ data class ProfileView(
     private val username: String,
     private val isAdmin: Boolean,
     private val timeZoneFormView: TimeZoneFormView,
+    private val navView: NavView,
 ) : HTMLView<HTML>() {
-
-    private val navView = NavView(username = username, currentActiveNavItem = NavItem.PROFILE)
 
     override fun HTML.render() {
         head {

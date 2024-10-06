@@ -12,7 +12,6 @@ import io.ktor.util.getOrFail
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
-import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.roles.approvedUserRoute
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.extractGameFromPathParams
@@ -24,9 +23,9 @@ const val CHAT_TEXT_ID = "chatTextId"
 @Controller
 @Singleton
 class ChatController @Inject constructor(
-    private val resultService: ResultService,
     private val userService: UserService,
     private val chatService: ChatService,
+    private val chatViewService: ChatViewService,
 ) {
 
     private val logger = LoggerFactory.getLogger(ChatController::class.java)
@@ -44,7 +43,7 @@ class ChatController @Inject constructor(
                     return@get
                 }
 
-                val chatView = chatService.chatView(
+                val chatView = chatViewService.chatView(
                     currentUser = currentUser,
                     game = game,
                     puzzleNumber = puzzleNumber
@@ -66,7 +65,7 @@ class ChatController @Inject constructor(
                     return@get
                 }
 
-                val chatView = chatService.chatViewLatest(currentUser = currentUser, game = game)
+                val chatView = chatViewService.chatViewLatest(currentUser = currentUser, game = game)
 
                 call.respondHtml {
                     chatView.renderIn(this)

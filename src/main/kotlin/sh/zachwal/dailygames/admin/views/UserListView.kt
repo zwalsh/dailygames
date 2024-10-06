@@ -12,13 +12,15 @@ import kotlinx.html.th
 import kotlinx.html.thead
 import kotlinx.html.title
 import kotlinx.html.tr
+import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 data class UserListView(
-    private val users: List<UserRowView>
+    private val users: List<UserRowView>,
+    private val navView: NavView,
 ) : HTMLView<HTML>() {
     override fun HTML.render() {
         head {
@@ -27,6 +29,7 @@ data class UserListView(
         }
         body {
             darkMode()
+            navView.renderIn(this)
             div(classes = "container") {
                 div(classes = "row") {
                     div(classes = "col") {

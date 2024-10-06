@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.leaderboard
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
@@ -10,7 +11,8 @@ import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
-import sh.zachwal.dailygames.nav.LeaderboardNavItemView
+import sh.zachwal.dailygames.nav.NavItem
+import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -36,6 +38,7 @@ class LeaderboardServiceTest {
         every { getUser(5) } returns mikMapUser
         every { getUser(6) } returns zachUser
     }
+    private val navViewFactory = mockk<NavViewFactory>(relaxed = true)
     private val leaderboardService = LeaderboardService(
         userService = userService,
         jdbi = mockk {
@@ -44,7 +47,8 @@ class LeaderboardServiceTest {
                 every { attach(WorldleDAO::class) } returns worldleDAO
             }
         },
-        pointCalculator = PuzzleResultPointCalculator()
+        pointCalculator = PuzzleResultPointCalculator(),
+        navViewFactory = navViewFactory,
     )
 
     private val result = Top5Result(
@@ -62,15 +66,15 @@ class LeaderboardServiceTest {
     )
 
     @Test
-    fun `leaderboardView returns LeaderboardView with Nav set to LEADERBOARD`() {
-        val leaderboardView = leaderboardService.overallLeaderboardView(testUser)
+    fun `leaderboardView creates NavView with LEADERBOARD as active item`() {
+        leaderboardService.overallLeaderboardView(testUser)
 
-        val navItem = leaderboardView.nav.navItems[2]
-
-        assertThat(navItem).isInstanceOf(LeaderboardNavItemView::class.java)
-
-        val leaderboardNavItemView = navItem as LeaderboardNavItemView
-        assertThat(leaderboardNavItemView.isActive).isTrue()
+        verify {
+            navViewFactory.navView(
+                username = testUser.username,
+                currentActiveNavItem = NavItem.LEADERBOARD
+            )
+        }
     }
 
     @Test

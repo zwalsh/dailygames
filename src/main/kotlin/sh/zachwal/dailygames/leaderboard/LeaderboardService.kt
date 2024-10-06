@@ -16,6 +16,8 @@ import sh.zachwal.dailygames.leaderboard.views.BasicScoreHintView
 import sh.zachwal.dailygames.leaderboard.views.GameLeaderboardView
 import sh.zachwal.dailygames.leaderboard.views.LeaderboardView
 import sh.zachwal.dailygames.leaderboard.views.TravleScoreHintView
+import sh.zachwal.dailygames.nav.NavItem
+import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -27,10 +29,15 @@ class LeaderboardService @Inject constructor(
     private val userService: UserService,
     private val jdbi: Jdbi,
     private val pointCalculator: PuzzleResultPointCalculator,
+    private val navViewFactory: NavViewFactory,
 ) {
 
     fun overallLeaderboardView(currentUser: User): LeaderboardView {
-        return LeaderboardView(currentUser.username)
+        val nav = navViewFactory.navView(
+            username = currentUser.username,
+            currentActiveNavItem = NavItem.LEADERBOARD,
+        )
+        return LeaderboardView(nav = nav)
     }
 
     fun gameLeaderboardView(currentUser: User, game: Game): GameLeaderboardView {
@@ -43,7 +50,15 @@ class LeaderboardService @Inject constructor(
             Game.PINPOINT -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/5 = 4 points.")
             Game.GEOCIRCLES -> BasicScoreHintView("Scoring: 1 point for each green circle, 1 point for each life left.")
         }
-        return GameLeaderboardView(username = currentUser.username, game = game, scoreHintView = scoreHintView)
+        val navView = navViewFactory.navView(
+            username = currentUser.username,
+            currentActiveNavItem = NavItem.LEADERBOARD,
+        )
+        return GameLeaderboardView(
+            game = game,
+            scoreHintView = scoreHintView,
+            nav = navView,
+        )
     }
 
     data class TotalPoints(val games: Int, val totalPoints: Int) {

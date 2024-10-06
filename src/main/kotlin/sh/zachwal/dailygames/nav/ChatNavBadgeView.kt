@@ -12,7 +12,7 @@ data class ChatNavBadgeView(
     val isAbsolute: Boolean,
 ) : HTMLView<HtmlBlockInlineTag>() {
     override fun HtmlBlockInlineTag.render() {
-        val classes = "badge rounded-pill bg-danger fw-bold " + if (isAbsolute) ABSOLUTE_POSITION_CLASSES else ""
+        val classes = "badge rounded-pill bg-danger fw-bold fst-normal " + if (isAbsolute) ABSOLUTE_POSITION_CLASSES else ""
         span(classes = classes) {
             style = "font-size: 0.6rem;"
             +count.toString()
