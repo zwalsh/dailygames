@@ -103,11 +103,10 @@ class ChatService @Inject constructor(
     }
 
     fun currentChatCounts(): Map<Game, Int> {
-        // Query for latest puzzles
-
-        // Query for chat counts for each puzzle
-
-        return emptyMap()
+        val latestPuzzles = puzzleDAO.latestPuzzlePerGame()
+        return latestPuzzles.associate { puzzle ->
+            puzzle.game to chatDAO.chatCountForPuzzle(puzzle)
+        }
     }
 }
 

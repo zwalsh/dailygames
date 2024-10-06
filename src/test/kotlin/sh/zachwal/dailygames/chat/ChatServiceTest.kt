@@ -337,12 +337,14 @@ class ChatServiceTest {
 
         val chatCounts = chatService.currentChatCounts()
 
-        assertThat(chatCounts).containsExactly(
-            Game.WORLDLE to 0,
-            Game.FLAGLE to 5,
-            Game.TRADLE to 2,
-            Game.TOP5 to 7,
-            Game.TRAVLE to 9,
+        assertThat(chatCounts).containsExactlyEntriesIn(
+            mapOf(
+                Game.WORLDLE to 0,
+                Game.FLAGLE to 5,
+                Game.TRADLE to 2,
+                Game.TOP5 to 7,
+                Game.TRAVLE to 9,
+            )
         )
     }
 }
