@@ -11,8 +11,11 @@ import sh.zachwal.dailygames.admin.views.AdminPageView
 import sh.zachwal.dailygames.admin.views.ResetUserPasswordView
 import sh.zachwal.dailygames.admin.views.UserListView
 import sh.zachwal.dailygames.admin.views.UserRowView
+import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.db.jdbi.User
+import sh.zachwal.dailygames.nav.NavItem
+import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.roles.Role
 import sh.zachwal.dailygames.roles.Role.ADMIN
 import sh.zachwal.dailygames.roles.Role.USER
@@ -29,6 +32,7 @@ class AdminController @Inject constructor(
     private val userService: UserService,
     private val roleService: RoleService,
     private val adminService: AdminService,
+    private val navViewFactory: NavViewFactory,
 ) {
 
     private fun sortedUsers(users: List<User>, roles: Map<User, List<Role>>): List<User> {
@@ -65,8 +69,11 @@ class AdminController @Inject constructor(
     internal fun Routing.admin() {
         adminRoute("/admin") {
             get {
+                val currentUser = currentUser(call, userService)
+                val navView = navViewFactory.navView(currentUser.username, NavItem.PROFILE)
+                val adminPageView = AdminPageView(navView)
                 call.respondHtml {
-                    AdminPageView.renderIn(this)
+                    adminPageView.renderIn(this)
                 }
             }
         }
@@ -84,8 +91,11 @@ class AdminController @Inject constructor(
                         isAdmin = roles[it]?.contains(ADMIN) == true
                     )
                 }
+                val currentUser = currentUser(call, userService)
+                val navView = navViewFactory.navView(currentUser.username, NavItem.PROFILE)
                 val userListView = UserListView(
-                    users = userRowViews
+                    users = userRowViews,
+                    navView = navView,
                 )
 
                 call.respondHtml {
