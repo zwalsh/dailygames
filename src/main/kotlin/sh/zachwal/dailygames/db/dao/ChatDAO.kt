@@ -46,4 +46,17 @@ interface ChatDAO {
         """
     )
     fun allChatsSinceInstantAscending(instant: Instant): List<Chat>
+
+    @SqlQuery(
+        """
+            SELECT COUNT(*)
+            FROM chat
+            WHERE game = :puzzle.game
+            AND puzzle_number = :puzzle.number
+        """
+    )
+    fun chatCountForPuzzle(
+        @BindBean("puzzle")
+        puzzle: Puzzle
+    ): Int
 }

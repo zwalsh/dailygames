@@ -91,4 +91,47 @@ class ChatDAOTest(
 
         assertThat(chats).containsExactly(chat2, chat3).inOrder()
     }
+
+    @Test
+    fun `chatCountForPuzzle counts chats`() {
+        chatDAO.insertChat(
+            userId = fixtures.zach.id,
+            puzzle = fixtures.worldle123Puzzle,
+            text = "Hello, world!",
+        )
+        chatDAO.insertChat(
+            userId = fixtures.zach.id,
+            puzzle = fixtures.worldle123Puzzle,
+            text = "Hello, world!",
+        )
+
+        val count = chatDAO.chatCountForPuzzle(fixtures.worldle123Puzzle)
+
+        assertThat(count).isEqualTo(2)
+    }
+
+    @Test
+    fun `chatCountForPuzzle returns 0 when no chats`() {
+        val count = chatDAO.chatCountForPuzzle(fixtures.worldle123Puzzle)
+
+        assertThat(count).isEqualTo(0)
+    }
+
+    @Test
+    fun `chatCountForPuzzle does not count chats for other puzzles`() {
+        chatDAO.insertChat(
+            userId = fixtures.zach.id,
+            puzzle = fixtures.worldle123Puzzle,
+            text = "Hello, world!",
+        )
+        chatDAO.insertChat(
+            userId = fixtures.zach.id,
+            puzzle = fixtures.flagle123Puzzle,
+            text = "Hello, world!",
+        )
+
+        val count = chatDAO.chatCountForPuzzle(fixtures.worldle123Puzzle)
+
+        assertThat(count).isEqualTo(1)
+    }
 }
