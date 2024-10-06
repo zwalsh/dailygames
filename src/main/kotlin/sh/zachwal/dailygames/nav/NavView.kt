@@ -6,6 +6,7 @@ import kotlinx.html.UL
 import kotlinx.html.div
 import kotlinx.html.header
 import kotlinx.html.ul
+import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.shared_html.HTMLView
 
 enum class NavItem {
@@ -24,6 +25,7 @@ data class NavView constructor(
         username: String,
         currentActiveNavItem: NavItem,
         insideNavItem: HTMLView<HEADER>? = null,
+        chatCounts: Map<Game, Int> = emptyMap(),
     ) : this(
         listOf(
             NavItemView(
@@ -34,7 +36,7 @@ data class NavView constructor(
             ),
             ChatNavItemView(
                 isActive = currentActiveNavItem == NavItem.CHAT,
-                chatCounts = emptyMap(),
+                chatCounts = chatCounts,
             ),
             LeaderboardNavItemView(
                 isActive = currentActiveNavItem == NavItem.LEADERBOARD,

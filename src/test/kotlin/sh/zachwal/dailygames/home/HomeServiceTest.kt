@@ -9,6 +9,7 @@ import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
+import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import java.time.Instant
 
@@ -19,15 +20,11 @@ class HomeServiceTest {
         every { resultsForUserToday(any()) } returns emptyList()
     }
     private val shareLineMapper = ShareLineMapper()
-    private val homeService = HomeService(resultService, shareLineMapper)
-
-    @Test
-    fun `creates home view with username of user`() {
-        val user = User(id = 1L, username = "zach", hashedPassword = "123abc==")
-        val view = homeService.homeView(user)
-
-        assertEquals(user.username, view.username)
+    private val navViewFactory = mockk<NavViewFactory> {
+        every { navView(any(), any()) } returns mockk()
     }
+
+    private val homeService = HomeService(resultService, shareLineMapper, navViewFactory)
 
     private val worldleResult = WorldleResult(
         id = 1L,
