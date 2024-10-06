@@ -10,7 +10,6 @@ import kotlinx.html.head
 import kotlinx.html.li
 import kotlinx.html.title
 import kotlinx.html.ul
-import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.darkMode

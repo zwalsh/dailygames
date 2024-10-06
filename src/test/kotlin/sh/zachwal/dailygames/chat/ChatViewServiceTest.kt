@@ -67,7 +67,6 @@ class ChatViewServiceTest {
         hashedPassword = "hashedPassword",
     )
 
-
     @Test
     fun `includes ChatView with correct game`() {
         // Given
@@ -108,7 +107,6 @@ class ChatViewServiceTest {
         shareText = "",
         scorePercentage = 100,
     )
-
 
     @Test
     fun `returns chat view with list of results with earliest first`() {

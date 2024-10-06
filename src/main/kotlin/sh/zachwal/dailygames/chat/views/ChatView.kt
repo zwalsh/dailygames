@@ -21,7 +21,6 @@ import sh.zachwal.dailygames.chat.CHAT_TEXT_ID
 import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
-import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
