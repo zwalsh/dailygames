@@ -22,6 +22,7 @@ import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
+import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.card
 import sh.zachwal.dailygames.shared_html.darkMode
@@ -38,11 +39,13 @@ data class ChatView constructor(
     val prevLink: String? = null,
     val nextLink: String? = null,
     val isCommentDisabled: Boolean,
+    val navViewFactory: NavViewFactory,
 ) : HTMLView<HTML>() {
 
-    val navView = NavView(
+    val navView = navViewFactory.navView(
+        username = username,
         currentActiveNavItem = NavItem.CHAT,
-        insideNavItem = ChatNav()
+        insideNavItem = ChatNav(),
     )
 
     inner class ChatNav : HTMLView<HEADER>() {
