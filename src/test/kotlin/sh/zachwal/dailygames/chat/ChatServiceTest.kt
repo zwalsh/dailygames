@@ -38,6 +38,7 @@ class ChatServiceTest {
     private val puzzleDAO = mockk<PuzzleDAO> {
         every { previousPuzzle(any(), any()) } returns null
         every { nextPuzzle(any(), any()) } returns null
+        every { latestPuzzlePerGame() } returns emptyList()
     }
     private val chatDAO = mockk<ChatDAO> {
         every { chatsForPuzzleDescending(any()) } returns emptyList()
@@ -305,5 +306,43 @@ class ChatServiceTest {
         chatService.chatView(testUser, Game.WORLDLE, 123)
 
         verify { displayTimeService.longDisplayTime(clock.instant(), testUser.id) }
+    }
+
+    @Test
+    fun `currentChatCounts checks for the latest puzzles`() {
+        chatService.currentChatCounts()
+
+        verify { puzzleDAO.latestPuzzlePerGame() }
+    }
+
+    @Test
+    fun `currentChatCounts returns the count for every game`() {
+        val worldlePuzzle = Puzzle(Game.WORLDLE, 3, null)
+        val flaglePuzzle = Puzzle(Game.FLAGLE, 4, null)
+        val tradlePuzzle = Puzzle(Game.TRADLE, 5, null)
+        val top5Puzzle = Puzzle(Game.TOP5, 6, null)
+        val travlePuzzle = Puzzle(Game.TRAVLE, 7, null)
+        every { puzzleDAO.latestPuzzlePerGame() } returns listOf(
+            worldlePuzzle,
+            flaglePuzzle,
+            tradlePuzzle,
+            top5Puzzle,
+            travlePuzzle,
+        )
+        every { chatDAO.chatCountForPuzzle(worldlePuzzle) } returns 0
+        every { chatDAO.chatCountForPuzzle(flaglePuzzle) } returns 5
+        every { chatDAO.chatCountForPuzzle(tradlePuzzle) } returns 2
+        every { chatDAO.chatCountForPuzzle(top5Puzzle) } returns 7
+        every { chatDAO.chatCountForPuzzle(travlePuzzle) } returns 9
+
+        val chatCounts = chatService.currentChatCounts()
+
+        assertThat(chatCounts).containsExactly(
+            Game.WORLDLE to 0,
+            Game.FLAGLE to 5,
+            Game.TRADLE to 2,
+            Game.TOP5 to 7,
+            Game.TRAVLE to 9,
+        )
     }
 }

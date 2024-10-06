@@ -107,7 +107,6 @@ class ChatService @Inject constructor(
 
         // Query for chat counts for each puzzle
 
-
         return emptyMap()
     }
 }
