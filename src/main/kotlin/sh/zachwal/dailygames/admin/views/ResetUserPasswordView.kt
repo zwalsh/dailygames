@@ -33,7 +33,7 @@ class ResetUserPasswordView(
         }
         body {
             darkMode()
-            NavView("", NavItem.PROFILE).renderIn(this)
+            NavView(NavItem.PROFILE).renderIn(this)
             div(classes = "container") {
                 div(classes = "row justify-content-center") {
                     div(classes = "col") {

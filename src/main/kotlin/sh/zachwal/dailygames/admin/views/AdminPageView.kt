@@ -26,7 +26,7 @@ object AdminPageView : HTMLView<HTML>() {
         }
         body {
             darkMode()
-            NavView("", NavItem.PROFILE).renderIn(this)
+            NavView(NavItem.PROFILE).renderIn(this)
             div(classes = "container") {
                 h1 {
                     +"Admin"

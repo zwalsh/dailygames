@@ -22,7 +22,6 @@ data class NavView constructor(
 ) : HTMLView<BODY>() {
 
     constructor(
-        username: String,
         currentActiveNavItem: NavItem,
         insideNavItem: HTMLView<HEADER>? = null,
         chatCounts: Map<Game, Int> = emptyMap(),

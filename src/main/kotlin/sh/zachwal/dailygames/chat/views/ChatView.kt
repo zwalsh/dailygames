@@ -41,7 +41,6 @@ data class ChatView constructor(
 ) : HTMLView<HTML>() {
 
     val navView = NavView(
-        username = username,
         currentActiveNavItem = NavItem.CHAT,
         insideNavItem = ChatNav()
     )

@@ -19,6 +19,8 @@ import io.ktor.sessions.sessions
 import io.ktor.util.getOrFail
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
+import sh.zachwal.dailygames.nav.NavItem
+import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.roles.Role.ADMIN
 import sh.zachwal.dailygames.roles.Role.USER
 import sh.zachwal.dailygames.roles.RoleService
@@ -47,6 +49,7 @@ class UserController @Inject constructor(
     private val userService: UserService,
     private val roleService: RoleService,
     private val userPreferencesService: UserPreferencesService,
+    private val navViewFactory: NavViewFactory,
 ) {
     internal fun Routing.loginRoutes() {
         route("/login") {
@@ -110,6 +113,10 @@ class UserController @Inject constructor(
                         username = user.username,
                         isAdmin = roleService.hasRole(user, ADMIN),
                         timeZoneFormView = timeZoneFormView,
+                        navView = navViewFactory.navView(
+                            user.username,
+                            currentActiveNavItem = NavItem.PROFILE
+                        ),
                     )
 
                     call.respondHtml {

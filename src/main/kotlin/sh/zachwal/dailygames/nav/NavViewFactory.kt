@@ -19,7 +19,6 @@ class NavViewFactory @Inject constructor(
         val currentChatCounts = chatService.currentChatCounts()
 
         return NavView(
-            username = username,
             currentActiveNavItem = currentActiveNavItem,
             insideNavItem = insideNavItem,
             chatCounts = currentChatCounts,

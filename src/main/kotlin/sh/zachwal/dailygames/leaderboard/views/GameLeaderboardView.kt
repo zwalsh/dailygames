@@ -24,7 +24,7 @@ data class GameLeaderboardView(
     val scoreHintView: ScoreHintView,
 ) : HTMLView<HTML>() {
 
-    val nav = NavView(username = username, currentActiveNavItem = NavItem.LEADERBOARD)
+    val nav = NavView(currentActiveNavItem = NavItem.LEADERBOARD)
 
     override fun HTML.render() {
         head {
