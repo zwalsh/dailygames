@@ -18,6 +18,14 @@ fun HEAD.bootstrapCss() {
     )
 }
 
+fun HEAD.commonCss() {
+    link(
+        rel = "stylesheet",
+        href = "/static/src/css/common.css",
+        type = "text/css"
+    )
+}
+
 fun HEAD.bootstrapJs() {
     script(
         src = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -62,6 +70,7 @@ fun HEAD.sentryScript() {
 
 fun HEAD.headSetup() {
     bootstrapCss()
+    commonCss()
     bootstrapJs()
     favicon()
     mobileUI()
