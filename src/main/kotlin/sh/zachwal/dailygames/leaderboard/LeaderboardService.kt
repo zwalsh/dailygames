@@ -62,46 +62,46 @@ class LeaderboardService @Inject constructor(
     }
 
     fun overallLeaderboardData(): LeaderboardData {
-        val overallPointsByUser = Game.values().map { game ->
-            totalPointsByUserOnGame(game)
-        }.fold(PointsByUser(emptyMap(), emptyMap())) { acc, pointsByUser ->
-            acc.merge(pointsByUser)
+        val overallPointsPerUser = Game.values().map { game ->
+            totalPointsPerUserOnGame(game)
+        }.fold(PointsPerUser(emptyMap(), emptyMap())) { acc, pointsPerUser ->
+            acc.merge(pointsPerUser)
         }
 
-        return leaderboardData(overallPointsByUser)
+        return leaderboardData(overallPointsPerUser)
     }
 
     fun gameLeaderboardData(game: Game): LeaderboardData {
-        val pointsByUser = totalPointsByUserOnGame(game)
+        val pointsPerUser = totalPointsPerUserOnGame(game)
 
-        return leaderboardData(pointsByUser)
+        return leaderboardData(pointsPerUser)
     }
 
     private fun leaderboardData(
-        pointsByUser: PointsByUser
+        pointsPerUser: PointsPerUser
     ) = LeaderboardData(
-        allTimePoints = chartInfo(pointsByUser.allTime) { it.totalPoints.toDouble() },
-        allTimeGames = chartInfo(pointsByUser.allTime) { it.games.toDouble() },
-        allTimeAverage = chartInfo(pointsByUser.allTime) { it.averagePoints() },
-        thirtyDaysPoints = chartInfo(pointsByUser.thirtyDays) { it.totalPoints.toDouble() },
-        thirtyDaysGames = chartInfo(pointsByUser.thirtyDays) { it.games.toDouble() },
-        thirtyDaysAverage = chartInfo(pointsByUser.thirtyDays) { it.averagePoints() },
+        allTimePoints = chartInfo(pointsPerUser.allTime) { it.totalPoints.toDouble() },
+        allTimeGames = chartInfo(pointsPerUser.allTime) { it.games.toDouble() },
+        allTimeAverage = chartInfo(pointsPerUser.allTime) { it.averagePoints() },
+        thirtyDaysPoints = chartInfo(pointsPerUser.thirtyDays) { it.totalPoints.toDouble() },
+        thirtyDaysGames = chartInfo(pointsPerUser.thirtyDays) { it.games.toDouble() },
+        thirtyDaysAverage = chartInfo(pointsPerUser.thirtyDays) { it.averagePoints() },
     )
 
-    private fun totalPointsByUserOnGame(game: Game): PointsByUser {
-        val allTimeTotalsByUser = mutableMapOf<Long, TotalPoints>()
-        val thirtyDaysTotalsByUser = mutableMapOf<Long, TotalPoints>()
+    private fun totalPointsPerUserOnGame(game: Game): PointsPerUser {
+        val allTimeTotalsPerUser = mutableMapOf<Long, TotalPoints>()
+        val thirtyDaysTotalsPerUser = mutableMapOf<Long, TotalPoints>()
         jdbi.open().use { handle ->
             val dao = daoForGame(game, handle)
             dao.allResultsStream().forEach { result ->
                 val totalPoints = TotalPoints(1, pointCalculator.calculatePoints(result))
-                allTimeTotalsByUser.merge(result.userId, totalPoints, TotalPoints::addPerformance)
+                allTimeTotalsPerUser.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 if (result.instantSubmitted.isAfter(Instant.now().minus(30, ChronoUnit.DAYS))) {
-                    thirtyDaysTotalsByUser.merge(result.userId, totalPoints, TotalPoints::addPerformance)
+                    thirtyDaysTotalsPerUser.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 }
             }
         }
-        return PointsByUser(allTimeTotalsByUser, thirtyDaysTotalsByUser)
+        return PointsPerUser(allTimeTotalsPerUser, thirtyDaysTotalsPerUser)
     }
 
     private fun chartInfo(scores: Map<Long, TotalPoints>, selector: (TotalPoints) -> Double): ChartInfo {
@@ -134,11 +134,11 @@ data class TotalPoints(val games: Int, val totalPoints: Int) {
     }
 }
 
-data class PointsByUser(
+data class PointsPerUser(
     val allTime: Map<Long, TotalPoints>,
     val thirtyDays: Map<Long, TotalPoints>,
 ) {
-    fun merge(other: PointsByUser): PointsByUser {
+    fun merge(other: PointsPerUser): PointsPerUser {
         val newAllTime = (allTime.keys + other.allTime.keys).associateWith { userId ->
             allTime
                 .getOrDefault(userId, TotalPoints(0, 0))
@@ -152,7 +152,7 @@ data class PointsByUser(
                 .addPerformance(other.thirtyDays.getOrDefault(userId, TotalPoints(0, 0)))
         }
 
-        return PointsByUser(
+        return PointsPerUser(
             allTime = newAllTime,
             thirtyDays = newThirtyDays,
         )
