@@ -1,18 +1,17 @@
 package sh.zachwal.dailygames.leaderboard.views
 
+import kotlinx.html.DIV
 import kotlinx.html.HTML
 import kotlinx.html.body
-import kotlinx.html.canvas
 import kotlinx.html.div
 import kotlinx.html.h1
+import kotlinx.html.h2
 import kotlinx.html.head
-import kotlinx.html.id
 import kotlinx.html.script
 import kotlinx.html.title
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
-import sh.zachwal.dailygames.shared_html.card
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 import sh.zachwal.dailygames.shared_html.jquery
@@ -44,25 +43,36 @@ data class GameLeaderboardView(
                     }
                 }
                 scoreHintView.renderIn(this)
+                SectionHeaderView("All Time").renderIn(this)
                 div(classes = "row") {
-                    div(classes = "col-12 col-md-6 mb-4") {
-                        card("All Time", cardHeaderClasses = "text-center fs-3", classes = "mx-3") {
-                            canvas {
-                                id = "game-leaderboard-all-time"
-                            }
-                        }
-                    }
-                    div(classes = "col-12 col-md-6 mb-4") {
-                        card("Past 30 Days", cardHeaderClasses = "text-center fs-3", classes = "mx-3") {
-                            canvas {
-                                id = "game-leaderboard-past-30-days"
-                            }
-                        }
-                    }
+                    ChartView("all-time-points", "Total Points").renderIn(this)
+                    ChartView("all-time-games", "Games Played").renderIn(this)
+                    ChartView("all-time-average", "Average Points").renderIn(this)
+                }
+                SectionHeaderView("Past 30 Days").renderIn(this)
+                div(classes = "row") {
+                    ChartView("thirty-days-points", "Total Points").renderIn(this)
+                    ChartView("thirty-days-games", "Games Played").renderIn(this)
+                    ChartView("thirty-days-average", "Average Points").renderIn(this)
                 }
             }
             script {
                 src = "/static/src/js/leaderboard.js"
+            }
+        }
+    }
+}
+
+data class SectionHeaderView(
+    val text: String,
+) : HTMLView<DIV>() {
+
+    override fun DIV.render() {
+        div(classes = "row") {
+            div(classes = "col") {
+                h2(classes = "text-center fs-3 mb-2") {
+                    +text
+                }
             }
         }
     }

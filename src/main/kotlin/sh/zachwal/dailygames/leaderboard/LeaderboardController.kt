@@ -61,7 +61,15 @@ class LeaderboardController @Inject constructor(
                     return@get
                 }
 
-                call.respond(HttpStatusCode.OK, leaderboardService.gameLeaderboardData(currentUser, game))
+                call.respond(HttpStatusCode.OK, leaderboardService.gameLeaderboardData(game))
+            }
+        }
+    }
+
+    fun Routing.overallLeaderboardData() {
+        approvedUserRoute("/leaderboard/data") {
+            get {
+                call.respond(HttpStatusCode.OK, leaderboardService.overallLeaderboardData())
             }
         }
     }

@@ -5,7 +5,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.jdbi.v3.sqlobject.kotlin.attach
+import sh.zachwal.dailygames.db.dao.game.FlagleDAO
+import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
+import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
+import sh.zachwal.dailygames.db.dao.game.TradleDAO
+import sh.zachwal.dailygames.db.dao.game.TravleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -45,6 +50,11 @@ class LeaderboardServiceTest {
             every { open() } returns mockk(relaxed = true) {
                 every { attach(Top5DAO::class) } returns top5DAO
                 every { attach(WorldleDAO::class) } returns worldleDAO
+                every { attach(TravleDAO::class) } returns mockk(relaxed = true)
+                every { attach(TradleDAO::class) } returns mockk(relaxed = true)
+                every { attach(FlagleDAO::class) } returns mockk(relaxed = true)
+                every { attach(PinpointDAO::class) } returns mockk(relaxed = true)
+                every { attach(GeocirclesDAO::class) } returns mockk(relaxed = true)
             }
         },
         pointCalculator = PuzzleResultPointCalculator(),
@@ -91,10 +101,36 @@ class LeaderboardServiceTest {
             result.copy(score = 4)
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.TOP5)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
 
-        assertThat(leaderboardData.allTime.labels).containsExactly(testUser.username)
-        assertThat(leaderboardData.allTime.dataPoints).containsExactly(4.5)
+        assertThat(leaderboardData.allTimeAverage.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.allTimeAverage.dataPoints).containsExactly(4.5)
+    }
+
+    @Test
+    fun `gameLeaderboardData returns user's total points`() {
+        every { top5DAO.allResultsStream() } returns Stream.of(
+            result.copy(score = 5),
+            result.copy(score = 4)
+        )
+
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
+
+        assertThat(leaderboardData.allTimePoints.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.allTimePoints.dataPoints).containsExactly(9.0)
+    }
+
+    @Test
+    fun `gameLeaderboardData returns user's total games played`() {
+        every { top5DAO.allResultsStream() } returns Stream.of(
+            result.copy(score = 5),
+            result.copy(score = 4)
+        )
+
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
+
+        assertThat(leaderboardData.allTimeGames.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.allTimeGames.dataPoints).containsExactly(2.0)
     }
 
     @Test
@@ -104,10 +140,38 @@ class LeaderboardServiceTest {
             result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS))
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.TOP5)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
 
-        assertThat(leaderboardData.past30Days.labels).containsExactly(testUser.username)
-        assertThat(leaderboardData.past30Days.dataPoints).containsExactly(5.0)
+        assertThat(leaderboardData.thirtyDaysAverage.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.thirtyDaysAverage.dataPoints).containsExactly(5.0)
+    }
+
+    @Test
+    fun `gameLeaderboardData returns total in last thirty days`() {
+        every { top5DAO.allResultsStream() } returns Stream.of(
+            result.copy(score = 5, instantSubmitted = Instant.now()),
+            result.copy(score = 6, instantSubmitted = Instant.now()),
+            result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS))
+        )
+
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
+
+        assertThat(leaderboardData.thirtyDaysPoints.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.thirtyDaysPoints.dataPoints).containsExactly(11.0)
+    }
+
+    @Test
+    fun `gameLeaderboardData returns total games in last thirty days`() {
+        every { top5DAO.allResultsStream() } returns Stream.of(
+            result.copy(score = 5, instantSubmitted = Instant.now()),
+            result.copy(score = 6, instantSubmitted = Instant.now()),
+            result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS))
+        )
+
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
+
+        assertThat(leaderboardData.thirtyDaysGames.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.thirtyDaysGames.dataPoints).containsExactly(2.0)
     }
 
     @Test
@@ -128,11 +192,11 @@ class LeaderboardServiceTest {
             worldleResult
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.WORLDLE)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.WORLDLE)
         val expectedPoints = PuzzleResultPointCalculator().calculatePoints(worldleResult).toDouble()
 
-        assertThat(leaderboardData.allTime.labels).containsExactly(testUser.username)
-        assertThat(leaderboardData.allTime.dataPoints).containsExactly(expectedPoints)
+        assertThat(leaderboardData.allTimeAverage.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.allTimeAverage.dataPoints).containsExactly(expectedPoints)
     }
 
     @Test
@@ -147,15 +211,129 @@ class LeaderboardServiceTest {
             result.copy(userId = mikMapUser.id, score = 6)
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.TOP5)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
 
-        assertThat(leaderboardData.allTime.labels).containsExactly(
+        assertThat(leaderboardData.allTimeAverage.labels).containsExactly(
             testUser.username,
             derekUser.username,
             jackieUser.username,
             chatGPTUser.username,
             mikMapUser.username
         )
-        assertThat(leaderboardData.allTime.labels).doesNotContain(zachUser.username)
+        assertThat(leaderboardData.allTimeAverage.labels).doesNotContain(zachUser.username)
+    }
+
+    private val worldleResult = WorldleResult(
+        id = 1L,
+        userId = 1L,
+        game = Game.WORLDLE,
+        score = 4,
+        puzzleNumber = 30,
+        puzzleDate = null,
+        instantSubmitted = Instant.now(),
+        shareText = "",
+        scorePercentage = 100,
+    )
+
+    @Test
+    fun `overall leaderboardData averages user's points across all games`() {
+        every { top5DAO.allResultsStream() } returns Stream.of(
+            result.copy(score = 5),
+            result.copy(score = 4)
+        )
+        every { worldleDAO.allResultsStream() } returns Stream.of(
+            worldleResult.copy(score = 2), // 5 points
+            worldleResult.copy(score = 1) // 6 points
+        )
+
+        val leaderboardData = leaderboardService.overallLeaderboardData()
+
+        assertThat(leaderboardData.allTimeAverage.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.allTimeAverage.dataPoints).containsExactly(5.0)
+    }
+
+    @Test
+    fun `overall leaderboardData sums user's points across all games`() {
+        every { top5DAO.allResultsStream() } returns Stream.of(
+            result.copy(score = 5),
+            result.copy(score = 4)
+        )
+        every { worldleDAO.allResultsStream() } returns Stream.of(
+            worldleResult.copy(score = 2), // 5 points
+            worldleResult.copy(score = 1) // 6 points
+        )
+
+        val leaderboardData = leaderboardService.overallLeaderboardData()
+
+        assertThat(leaderboardData.allTimePoints.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.allTimePoints.dataPoints).containsExactly(20.0)
+    }
+
+    @Test
+    fun `overall leaderboardData sums user's games played`() {
+        every { top5DAO.allResultsStream() } returns Stream.of(
+            result.copy(score = 5),
+            result.copy(score = 4)
+        )
+        every { worldleDAO.allResultsStream() } returns Stream.of(
+            worldleResult.copy(score = 2), // 5 points
+            worldleResult.copy(score = 1) // 6 points
+        )
+
+        val leaderboardData = leaderboardService.overallLeaderboardData()
+
+        assertThat(leaderboardData.allTimeGames.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.allTimeGames.dataPoints).containsExactly(4.0)
+    }
+
+    @Test
+    fun `overall leaderboardData includes multiple users`() {
+        every { top5DAO.allResultsStream() } returns Stream.of(
+            result.copy(userId = derekUser.id, score = 5),
+            result.copy(userId = jackieUser.id, score = 4)
+        )
+        every { worldleDAO.allResultsStream() } returns Stream.of(
+            worldleResult.copy(userId = derekUser.id, score = 2), // 5 points
+            worldleResult.copy(userId = jackieUser.id, score = 3) // 4 points
+        )
+
+        val leaderboardData = leaderboardService.overallLeaderboardData()
+
+        assertThat(leaderboardData.allTimeAverage.labels).containsExactly(
+            derekUser.username,
+            jackieUser.username
+        )
+        assertThat(leaderboardData.allTimeAverage.dataPoints).containsExactly(5.0, 4.0)
+    }
+
+    @Test
+    fun `overall leaderboardData filters by thirty days across games`() {
+        every { top5DAO.allResultsStream() } returns Stream.of(
+            result.copy(score = 5, instantSubmitted = Instant.now()),
+            result.copy(
+                score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS)
+            )
+        )
+        every { worldleDAO.allResultsStream() } returns Stream.of(
+            worldleResult.copy(
+                score = 2, // 5 points
+                instantSubmitted = Instant.now()
+            ),
+            worldleResult.copy(
+                score = 3, // 4 points
+                instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS)
+            )
+        )
+
+        val leaderboardData = leaderboardService.overallLeaderboardData()
+
+        assertThat(leaderboardData.thirtyDaysAverage.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.thirtyDaysAverage.dataPoints).containsExactly(5.0)
+
+        assertThat(leaderboardData.thirtyDaysPoints.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.thirtyDaysPoints.dataPoints).containsExactly(10.0)
+
+        assertThat(leaderboardData.thirtyDaysGames.labels).containsExactly(testUser.username)
+        assertThat(leaderboardData.thirtyDaysGames.dataPoints).containsExactly(2.0)
     }
 }
