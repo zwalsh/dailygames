@@ -5,7 +5,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.jdbi.v3.sqlobject.kotlin.attach
+import sh.zachwal.dailygames.db.dao.game.FlagleDAO
+import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
+import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
+import sh.zachwal.dailygames.db.dao.game.TradleDAO
+import sh.zachwal.dailygames.db.dao.game.TravleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -45,6 +50,11 @@ class LeaderboardServiceTest {
             every { open() } returns mockk(relaxed = true) {
                 every { attach(Top5DAO::class) } returns top5DAO
                 every { attach(WorldleDAO::class) } returns worldleDAO
+                every { attach(TravleDAO::class) } returns mockk(relaxed = true)
+                every { attach(TradleDAO::class) } returns mockk(relaxed = true)
+                every { attach(FlagleDAO::class) } returns mockk(relaxed = true)
+                every { attach(PinpointDAO::class) } returns mockk(relaxed = true)
+                every { attach(GeocirclesDAO::class) } returns mockk(relaxed = true)
             }
         },
         pointCalculator = PuzzleResultPointCalculator(),
@@ -232,8 +242,8 @@ class LeaderboardServiceTest {
             result.copy(score = 4)
         )
         every { worldleDAO.allResultsStream() } returns Stream.of(
-            worldleResult.copy(score = 5),
-            worldleResult.copy(score = 6)
+            worldleResult.copy(score = 2), // 5 points
+            worldleResult.copy(score = 1) // 6 points
         )
 
         val leaderboardData = leaderboardService.overallLeaderboardData()
@@ -249,8 +259,8 @@ class LeaderboardServiceTest {
             result.copy(score = 4)
         )
         every { worldleDAO.allResultsStream() } returns Stream.of(
-            worldleResult.copy(score = 5),
-            worldleResult.copy(score = 6)
+            worldleResult.copy(score = 2), // 5 points
+            worldleResult.copy(score = 1) // 6 points
         )
 
         val leaderboardData = leaderboardService.overallLeaderboardData()
@@ -266,8 +276,8 @@ class LeaderboardServiceTest {
             result.copy(score = 4)
         )
         every { worldleDAO.allResultsStream() } returns Stream.of(
-            worldleResult.copy(score = 5),
-            worldleResult.copy(score = 6)
+            worldleResult.copy(score = 2), // 5 points
+            worldleResult.copy(score = 1) // 6 points
         )
 
         val leaderboardData = leaderboardService.overallLeaderboardData()
@@ -283,8 +293,8 @@ class LeaderboardServiceTest {
             result.copy(userId = jackieUser.id, score = 4)
         )
         every { worldleDAO.allResultsStream() } returns Stream.of(
-            worldleResult.copy(userId = derekUser.id, score = 5),
-            worldleResult.copy(userId = jackieUser.id, score = 4)
+            worldleResult.copy(userId = derekUser.id, score = 2), // 5 points
+            worldleResult.copy(userId = jackieUser.id, score = 3) // 4 points
         )
 
         val leaderboardData = leaderboardService.overallLeaderboardData()
@@ -305,9 +315,13 @@ class LeaderboardServiceTest {
             )
         )
         every { worldleDAO.allResultsStream() } returns Stream.of(
-            worldleResult.copy(score = 5, instantSubmitted = Instant.now()),
             worldleResult.copy(
-                score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS)
+                score = 2, // 5 points
+                instantSubmitted = Instant.now()
+            ),
+            worldleResult.copy(
+                score = 3, // 4 points
+                instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS)
             )
         )
 
