@@ -33,21 +33,17 @@ data class LeaderboardView(
             div(classes = "container mb-4") {
                 div(classes = "row") {
                     div(classes = "col") {
-                        h1(classes = "text-center fs-2 mb-2") {
+                        h1(classes = "text-center fs-2 mb-4") {
                             +"Leaderboard"
                         }
                     }
                 }
-                div(classes = "row") {
-                    div(classes = "col") {
-                        p(classes = "mx-4 mb-2") {
-                            +"""
-                                Overall performance across all games. 
-                                See individual leaderboards for scoring information.
-                            """.trimIndent()
-                        }
-                    }
-                }
+                BasicScoreHintView(
+                    scoringText = """
+                        Overall performance across all games. 
+                        See individual leaderboards for scoring information.
+                    """.trimIndent()
+                ).renderIn(this)
                 SectionHeaderView("All Time").renderIn(this)
                 div(classes = "row") {
                     ChartView("leaderboard-all-time-points", "Total Points").renderIn(this)
