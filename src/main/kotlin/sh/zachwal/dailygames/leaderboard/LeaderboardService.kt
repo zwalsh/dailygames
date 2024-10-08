@@ -71,7 +71,7 @@ class LeaderboardService @Inject constructor(
         }
     }
 
-    fun gameLeaderboardData(currentUser: User, game: Game): LeaderboardData {
+    fun gameLeaderboardData(game: Game): LeaderboardData {
         val allTimeTotalsByUser = mutableMapOf<Long, TotalPoints>()
         val thirtyDaysTotalsByUser = mutableMapOf<Long, TotalPoints>()
         jdbi.open().use { handle ->

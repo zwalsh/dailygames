@@ -91,7 +91,7 @@ class LeaderboardServiceTest {
             result.copy(score = 4)
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.TOP5)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
 
         assertThat(leaderboardData.allTimeAverage.labels).containsExactly(testUser.username)
         assertThat(leaderboardData.allTimeAverage.dataPoints).containsExactly(4.5)
@@ -104,7 +104,7 @@ class LeaderboardServiceTest {
             result.copy(score = 4)
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.TOP5)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
 
         assertThat(leaderboardData.allTimePoints.labels).containsExactly(testUser.username)
         assertThat(leaderboardData.allTimePoints.dataPoints).containsExactly(9.0)
@@ -117,7 +117,7 @@ class LeaderboardServiceTest {
             result.copy(score = 4)
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.TOP5)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
 
         assertThat(leaderboardData.allTimeGames.labels).containsExactly(testUser.username)
         assertThat(leaderboardData.allTimeGames.dataPoints).containsExactly(2.0)
@@ -130,7 +130,7 @@ class LeaderboardServiceTest {
             result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS))
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.TOP5)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
 
         assertThat(leaderboardData.thirtyDaysAverage.labels).containsExactly(testUser.username)
         assertThat(leaderboardData.thirtyDaysAverage.dataPoints).containsExactly(5.0)
@@ -144,7 +144,7 @@ class LeaderboardServiceTest {
             result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS))
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.TOP5)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
 
         assertThat(leaderboardData.thirtyDaysPoints.labels).containsExactly(testUser.username)
         assertThat(leaderboardData.thirtyDaysPoints.dataPoints).containsExactly(11.0)
@@ -158,7 +158,7 @@ class LeaderboardServiceTest {
             result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS))
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.TOP5)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
 
         assertThat(leaderboardData.thirtyDaysGames.labels).containsExactly(testUser.username)
         assertThat(leaderboardData.thirtyDaysGames.dataPoints).containsExactly(2.0)
@@ -182,7 +182,7 @@ class LeaderboardServiceTest {
             worldleResult
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.WORLDLE)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.WORLDLE)
         val expectedPoints = PuzzleResultPointCalculator().calculatePoints(worldleResult).toDouble()
 
         assertThat(leaderboardData.allTimeAverage.labels).containsExactly(testUser.username)
@@ -201,7 +201,7 @@ class LeaderboardServiceTest {
             result.copy(userId = mikMapUser.id, score = 6)
         )
 
-        val leaderboardData = leaderboardService.gameLeaderboardData(testUser, Game.TOP5)
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
 
         assertThat(leaderboardData.allTimeAverage.labels).containsExactly(
             testUser.username,
