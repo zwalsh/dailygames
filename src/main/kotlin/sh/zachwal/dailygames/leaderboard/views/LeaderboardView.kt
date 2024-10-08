@@ -46,9 +46,9 @@ data class LeaderboardView(
                 ).renderIn(this)
                 SectionHeaderView("All Time").renderIn(this)
                 div(classes = "row") {
-                    ChartView("leaderboard-all-time-points", "Total Points").renderIn(this)
-                    ChartView("leaderboard-all-time-games", "Games Played").renderIn(this)
-                    ChartView("leaderboard-all-time-average", "Average Points").renderIn(this)
+                    ChartView("all-time-points", "Total Points").renderIn(this)
+                    ChartView("all-time-games", "Games Played").renderIn(this)
+                    ChartView("all-time-average", "Average Points").renderIn(this)
                 }
                 SectionHeaderView("Past Thirty Days").renderIn(this)
                 div(classes = "row") {
