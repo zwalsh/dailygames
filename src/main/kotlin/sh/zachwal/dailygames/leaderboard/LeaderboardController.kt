@@ -65,4 +65,12 @@ class LeaderboardController @Inject constructor(
             }
         }
     }
+
+    fun Routing.overallLeaderboardData() {
+        approvedUserRoute("/leaderboard/data") {
+            get {
+                call.respond(HttpStatusCode.OK, leaderboardService.overallLeaderboardData())
+            }
+        }
+    }
 }

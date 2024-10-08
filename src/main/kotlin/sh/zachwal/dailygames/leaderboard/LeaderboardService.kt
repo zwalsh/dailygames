@@ -61,14 +61,15 @@ class LeaderboardService @Inject constructor(
         )
     }
 
-    data class TotalPoints(val games: Int, val totalPoints: Int) {
-        fun averagePoints(): Double {
-            return totalPoints.toDouble() / games
-        }
-
-        fun addPerformance(points: TotalPoints): TotalPoints {
-            return TotalPoints(games + points.games, totalPoints + points.totalPoints)
-        }
+    fun overallLeaderboardData(): LeaderboardData {
+        return LeaderboardData(
+            allTimePoints = ChartInfo(emptyList(), emptyList()),
+            allTimeGames = ChartInfo(emptyList(), emptyList()),
+            allTimeAverage = ChartInfo(emptyList(), emptyList()),
+            thirtyDaysPoints = ChartInfo(emptyList(), emptyList()),
+            thirtyDaysGames = ChartInfo(emptyList(), emptyList()),
+            thirtyDaysAverage = ChartInfo(emptyList(), emptyList()),
+        )
     }
 
     fun gameLeaderboardData(game: Game): LeaderboardData {
@@ -112,5 +113,15 @@ class LeaderboardService @Inject constructor(
             Game.PINPOINT -> handle.attach(PinpointDAO::class.java)
             Game.GEOCIRCLES -> handle.attach(GeocirclesDAO::class.java)
         }
+    }
+}
+
+data class TotalPoints(val games: Int, val totalPoints: Int) {
+    fun averagePoints(): Double {
+        return totalPoints.toDouble() / games
+    }
+
+    fun addPerformance(points: TotalPoints): TotalPoints {
+        return TotalPoints(games + points.games, totalPoints + points.totalPoints)
     }
 }
