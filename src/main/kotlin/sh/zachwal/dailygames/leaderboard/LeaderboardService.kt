@@ -86,33 +86,19 @@ class LeaderboardService @Inject constructor(
         }
 
         return LeaderboardData(
-            allTimePoints = chartInfoTotal(game, allTimeTotalsByUser),
-            allTimeGames = chartInfoGames(game, allTimeTotalsByUser),
-            allTimeAverage = chartInfoAverage(game, allTimeTotalsByUser),
-            thirtyDaysPoints = chartInfoTotal(game, thirtyDaysTotalsByUser),
-            thirtyDaysGames = chartInfoGames(game, thirtyDaysTotalsByUser),
-            thirtyDaysAverage = chartInfoAverage(game, thirtyDaysTotalsByUser),
+            allTimePoints = chartInfo(allTimeTotalsByUser) { it.totalPoints.toDouble() },
+            allTimeGames = chartInfo(allTimeTotalsByUser) { it.games.toDouble() },
+            allTimeAverage = chartInfo(allTimeTotalsByUser) { it.averagePoints() },
+            thirtyDaysPoints = chartInfo(thirtyDaysTotalsByUser) { it.totalPoints.toDouble() },
+            thirtyDaysGames = chartInfo(thirtyDaysTotalsByUser) { it.games.toDouble() },
+            thirtyDaysAverage = chartInfo(thirtyDaysTotalsByUser) { it.averagePoints() },
         )
     }
 
-    private fun chartInfoAverage(game: Game, scores: Map<Long, TotalPoints>): ChartInfo {
-        val sortedScores = scores.entries.sortedByDescending { it.value.averagePoints() }.take(5)
+    private fun chartInfo(scores: Map<Long, TotalPoints>, selector: (TotalPoints) -> Double): ChartInfo {
+        val sortedScores = scores.entries.sortedByDescending { selector(it.value) }.take(5)
         val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
-        val dataPoints = sortedScores.map { it.value.averagePoints() }
-        return ChartInfo(labels, dataPoints)
-    }
-
-    private fun chartInfoTotal(game: Game, scores: Map<Long, TotalPoints>): ChartInfo {
-        val sortedScores = scores.entries.sortedByDescending { it.value.totalPoints }.take(5)
-        val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
-        val dataPoints = sortedScores.map { it.value.totalPoints.toDouble() }
-        return ChartInfo(labels, dataPoints)
-    }
-
-    private fun chartInfoGames(game: Game, scores: Map<Long, TotalPoints>): ChartInfo {
-        val sortedScores = scores.entries.sortedByDescending { it.value.games }.take(5)
-        val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
-        val dataPoints = sortedScores.map { it.value.games.toDouble() }
+        val dataPoints = sortedScores.map { selector(it.value) }
         return ChartInfo(labels, dataPoints)
     }
 
