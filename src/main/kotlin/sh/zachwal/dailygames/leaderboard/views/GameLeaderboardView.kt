@@ -50,11 +50,13 @@ data class GameLeaderboardView(
                 div(classes = "row") {
                     ChartView("game-leaderboard-all-time-points", "Total Points").renderIn(this)
                     ChartView("game-leaderboard-all-time-games", "Games Played").renderIn(this)
+                    ChartView("game-leaderboard-all-time-average", "Average Points").renderIn(this)
                 }
                 SectionHeaderView("Past 30 Days").renderIn(this)
                 div(classes = "row") {
-                    ChartView("game-leaderboard-past-30-days-points", "Total Points").renderIn(this)
-                    ChartView("game-leaderboard-past-30-days-games", "Games Played").renderIn(this)
+                    ChartView("game-leaderboard-thirty-days-points", "Total Points").renderIn(this)
+                    ChartView("game-leaderboard-thirty-days-games", "Games Played").renderIn(this)
+                    ChartView("game-leaderboard-thirty-days-average", "Average Points").renderIn(this)
                 }
             }
             script {

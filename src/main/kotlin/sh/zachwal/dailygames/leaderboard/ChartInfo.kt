@@ -6,6 +6,10 @@ data class ChartInfo(
 )
 
 data class LeaderboardData(
-    val allTime: ChartInfo,
-    val past30Days: ChartInfo
+    val allTimePoints: ChartInfo,
+    val allTimeGames: ChartInfo,
+    val allTimeAverage: ChartInfo,
+    val thirtyDaysPoints: ChartInfo,
+    val thirtyDaysGames: ChartInfo,
+    val thirtyDaysAverage: ChartInfo,
 )

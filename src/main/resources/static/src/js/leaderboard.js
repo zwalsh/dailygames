@@ -1,9 +1,9 @@
-function buildLeaderboardChart(dataLabels, dataValues, elementId) {
+function buildLeaderboardChart(dataLabels, dataValues, datasetLabel, elementId) {
     var ctxAllTime = document.getElementById(elementId);
     var data = {
         labels: dataLabels,
         datasets: [{
-            label: 'Average Score',
+            label: datasetLabel,
             borderRadius: 5,
             data: dataValues
         }]
@@ -45,8 +45,13 @@ function buildLeaderboardChart(dataLabels, dataValues, elementId) {
 }
 
 function renderCharts(response) {
-    buildLeaderboardChart(response.allTime.labels, response.allTime.dataPoints, 'game-leaderboard-all-time');
-    buildLeaderboardChart(response.past30Days.labels, response.past30Days.dataPoints, 'game-leaderboard-past-30-days');
+    buildLeaderboardChart(response.allTimePoints.labels, response.allTimePoints.dataPoints, 'Total Points', 'game-leaderboard-all-time-points');
+    buildLeaderboardChart(response.allTimeGames.labels, response.allTimeGames.dataPoints, 'Games Played', 'game-leaderboard-all-time-games');
+    buildLeaderboardChart(response.allTimeAverage.labels, response.allTimeAverage.dataPoints, 'Average Score', 'game-leaderboard-all-time-average');
+
+    buildLeaderboardChart(response.thirtyDaysPoints.labels, response.thirtyDaysPoints.dataPoints, 'Total Points', 'game-leaderboard-thirty-days-points');
+    buildLeaderboardChart(response.thirtyDaysGames.labels, response.thirtyDaysGames.dataPoints, 'Games Played', 'game-leaderboard-thirty-days-games');
+    buildLeaderboardChart(response.thirtyDaysAverage.labels, response.thirtyDaysAverage.dataPoints, 'Average Score', 'game-leaderboard-thirty-days-average');
 }
 
 

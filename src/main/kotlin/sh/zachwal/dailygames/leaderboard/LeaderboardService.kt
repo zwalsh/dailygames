@@ -72,29 +72,47 @@ class LeaderboardService @Inject constructor(
     }
 
     fun gameLeaderboardData(currentUser: User, game: Game): LeaderboardData {
-        val allTimeAverageScoreByUserId = mutableMapOf<Long, TotalPoints>()
-        val past30DaysAverageScoreByUserId = mutableMapOf<Long, TotalPoints>()
+        val allTimeTotalsByUser = mutableMapOf<Long, TotalPoints>()
+        val thirtyDaysTotalsByUser = mutableMapOf<Long, TotalPoints>()
         jdbi.open().use { handle ->
             val dao = daoForGame(game, handle)
             dao.allResultsStream().forEach { result ->
                 val totalPoints = TotalPoints(1, pointCalculator.calculatePoints(result))
-                allTimeAverageScoreByUserId.merge(result.userId, totalPoints, TotalPoints::addPerformance)
+                allTimeTotalsByUser.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 if (result.instantSubmitted.isAfter(Instant.now().minus(30, ChronoUnit.DAYS))) {
-                    past30DaysAverageScoreByUserId.merge(result.userId, totalPoints, TotalPoints::addPerformance)
+                    thirtyDaysTotalsByUser.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 }
             }
         }
 
         return LeaderboardData(
-            allTime = chartInfoFromAverageScores(game, allTimeAverageScoreByUserId),
-            past30Days = chartInfoFromAverageScores(game, past30DaysAverageScoreByUserId),
+            allTimePoints = chartInfoTotal(game, allTimeTotalsByUser),
+            allTimeGames = chartInfoGames(game, allTimeTotalsByUser),
+            allTimeAverage = chartInfoAverage(game, allTimeTotalsByUser),
+            thirtyDaysPoints = chartInfoTotal(game, thirtyDaysTotalsByUser),
+            thirtyDaysGames = chartInfoGames(game, thirtyDaysTotalsByUser),
+            thirtyDaysAverage = chartInfoAverage(game, thirtyDaysTotalsByUser),
         )
     }
 
-    private fun chartInfoFromAverageScores(game: Game, scores: Map<Long, TotalPoints>): ChartInfo {
+    private fun chartInfoAverage(game: Game, scores: Map<Long, TotalPoints>): ChartInfo {
         val sortedScores = scores.entries.sortedByDescending { it.value.averagePoints() }.take(5)
         val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
         val dataPoints = sortedScores.map { it.value.averagePoints() }
+        return ChartInfo(labels, dataPoints)
+    }
+
+    private fun chartInfoTotal(game: Game, scores: Map<Long, TotalPoints>): ChartInfo {
+        val sortedScores = scores.entries.sortedByDescending { it.value.totalPoints }.take(5)
+        val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
+        val dataPoints = sortedScores.map { it.value.totalPoints.toDouble() }
+        return ChartInfo(labels, dataPoints)
+    }
+
+    private fun chartInfoGames(game: Game, scores: Map<Long, TotalPoints>): ChartInfo {
+        val sortedScores = scores.entries.sortedByDescending { it.value.games }.take(5)
+        val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
+        val dataPoints = sortedScores.map { it.value.games.toDouble() }
         return ChartInfo(labels, dataPoints)
     }
 
