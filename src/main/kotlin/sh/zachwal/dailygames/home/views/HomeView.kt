@@ -22,7 +22,7 @@ const val SHARE_TEXT_ID = "shareTextId"
 
 data class HomeView(
     val resultFeed: List<ResultFeedItemView>,
-    val shareTextModalView: ShareTextModalView,
+    val shareTextModalView: ShareTextModalView?,
     val nav: NavView,
 ) : HTMLView<HTML>() {
 
@@ -35,7 +35,7 @@ data class HomeView(
         body {
             darkMode()
             nav.renderIn(this)
-            shareTextModalView.renderIn(this)
+            shareTextModalView?.renderIn(this)
             div(classes = "container") {
                 div(classes = "row") {
                     div(classes = "col") {
