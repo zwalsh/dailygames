@@ -1,12 +1,15 @@
 package sh.zachwal.dailygames.home.views
 
+import kotlinx.html.ButtonType
 import kotlinx.html.FormMethod.post
 import kotlinx.html.HTML
 import kotlinx.html.body
+import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
+import kotlinx.html.i
 import kotlinx.html.id
 import kotlinx.html.script
 import kotlinx.html.submitInput
@@ -52,7 +55,19 @@ data class HomeView(
                                             placeholder = "e.g. #Worldle #123 (10.08.2024) 4/6 (100%)..."
                                         }
                                     }
-                                    div(classes = "d-flex justify-content-end") {
+                                    val justifyClass = if (shareTextModalView != null) {
+                                        "justify-content-between"
+                                    } else {
+                                        "justify-content-end"
+                                    }
+                                    div(classes = "d-flex $justifyClass") {
+                                        if (shareTextModalView != null) {
+                                            button(classes = "btn btn-secondary") {
+                                                id = "share-text-button"
+                                                type = ButtonType.button
+                                                i(classes = "bi bi-box-arrow-up") {}
+                                            }
+                                        }
                                         submitInput(classes = "btn btn-success") {
                                             value = "Submit"
                                         }
