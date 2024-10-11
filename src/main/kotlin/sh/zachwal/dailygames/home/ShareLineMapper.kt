@@ -26,11 +26,10 @@ class ShareLineMapper {
     }
 
     private fun GeocirclesResult.toShareLine(): String {
-        val perfectEmoji = "\uD83C\uDFAF" // target emoji
         val start = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
 
         return when (score) {
-            10 -> "$start 5/5 $perfectEmoji"
+            10 -> "$start 5/5 ${game.perfectEmoji()}"
             in (5..9) -> "$start 5/5 (${10 - score} wrong)"
             else -> "$start $score/5"
         }
@@ -41,7 +40,7 @@ class ShareLineMapper {
         val start = "${game.emoji()} ${game.displayName()} #$puzzleNumber $numCorrect/5"
 
         return if (isPerfect) {
-            "$start \uD83C\uDF08"
+            "$start ${game.perfectEmoji()}"
         } else if (numIncorrect > 0 && numCorrect == 5) {
             "$start ($numIncorrect wrong)"
         } else {
@@ -53,21 +52,36 @@ class ShareLineMapper {
         if (score == 7) {
             return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6"
         }
-        return "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
+        val line = "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
+        return if (score == 1) {
+            "$line ${game.perfectEmoji()}"
+        } else {
+            line
+        }
     }
 
     private fun WorldleResult.toShareLine(): String {
         if (score == 7) {
             return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6 ($scorePercentage%)"
         }
-        return "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
+        val line = "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
+        return if (score == 1) {
+            "$line ${game.perfectEmoji()}"
+        } else {
+            line
+        }
     }
 
     private fun TradleResult.toShareLine(): String {
         if (score == 7) {
             return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6"
         }
-        return "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
+        val line = "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
+        return if (score == 1) {
+            "$line ${game.perfectEmoji()}"
+        } else {
+            line
+        }
     }
 
     private fun TravleResult.toShareLine(): String {
@@ -86,7 +100,7 @@ class ShareLineMapper {
         }
 
         val withPerfect = if (numPerfect == numGuesses) {
-            "$withHints (Perfect)"
+            "$withHints ${game.perfectEmoji()}"
         } else {
             withHints
         }
@@ -99,6 +113,11 @@ class ShareLineMapper {
         if (score == 6) {
             return "$gameAndPuzzle X/5"
         }
-        return "$gameAndPuzzle $score/5"
+        val line = "$gameAndPuzzle $score/5"
+        return if (score == 1) {
+            "$line ${game.perfectEmoji()}"
+        } else {
+            line
+        }
     }
 }
