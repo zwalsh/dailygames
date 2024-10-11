@@ -30,6 +30,18 @@ enum class Game {
         }
     }
 
+    fun perfectEmoji(): String {
+        return when (this) {
+            WORLDLE -> "\uD83D\uDCCD"
+            TRADLE -> "\uD83D\uDCE6"
+            TRAVLE -> "✅"
+            TOP5 -> "\uD83C\uDF08"
+            FLAGLE -> "\uD83C\uDFC1"
+            PINPOINT -> this.emoji()
+            GEOCIRCLES -> "\uD83C\uDFAF"
+        }
+    }
+
     fun href(): String {
         return when (this) {
             WORLDLE -> "https://worldle.teuteuf.fr/"
