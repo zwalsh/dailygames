@@ -8,6 +8,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
+import kotlin.math.absoluteValue
 
 class PuzzleResultPointCalculator {
 
@@ -61,7 +62,14 @@ class PuzzleResultPointCalculator {
         if (score < 0) {
             return 0
         }
-        val shortestSolutionLength = numGuesses - numIncorrect
+        return maxPoints() - score
+    }
+
+    private fun TravleResult.maxPoints(): Int {
+        // score is negative if the player did not reach the target country.
+        // score will be e.g. +1
+        // meaning shortest solution is always numGuesses minus score
+        val shortestSolutionLength = numGuesses - score.absoluteValue
         val allowedIncorrectGuesses = when (shortestSolutionLength) {
             in Int.MIN_VALUE..2 -> throw IllegalArgumentException("Shortest solution length must be at least 3 but was $shortestSolutionLength for result $shareText")
             3 -> 4
@@ -71,8 +79,7 @@ class PuzzleResultPointCalculator {
             in 13..Int.MAX_VALUE -> 8
             else -> throw IllegalArgumentException("Impossible shortest solution length: $shortestSolutionLength for result $shareText")
         }
-
-        return allowedIncorrectGuesses - numIncorrect + 1
+        return allowedIncorrectGuesses + 1
     }
 
     private fun Top5Result.calculatePoints(): Int {
@@ -84,7 +91,7 @@ class PuzzleResultPointCalculator {
             is WorldleResult -> 6
             is FlagleResult -> 6
             is TradleResult -> 6
-            is TravleResult -> TODO()
+            is TravleResult -> result.maxPoints()
             is Top5Result -> 10
             is PinpointResult -> 5
             is GeocirclesResult -> 10

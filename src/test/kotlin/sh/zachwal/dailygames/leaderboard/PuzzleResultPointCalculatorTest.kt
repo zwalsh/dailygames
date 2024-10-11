@@ -122,36 +122,36 @@ class PuzzleResultPointCalculatorTest {
         }
     }
 
+    /**
+     * From the Travle website:
+     *
+     * # Guesses in Shortest Solution	# Extra Guesses
+     * 3	4
+     * 4-6	5
+     * 7-9	6
+     * 10-12	7
+     * 13+	8
+     *
+     */
+    private val travleExtraGuessesPerShortestSolution = mapOf(
+        3 to 4,
+        4 to 5,
+        5 to 5,
+        6 to 5,
+        7 to 6,
+        8 to 6,
+        9 to 6,
+        10 to 7,
+        11 to 7,
+        12 to 7,
+        13 to 8,
+        14 to 8,
+        15 to 8
+    )
+
     @Test
     fun `allowed guesses in travle matches the given table`() {
-        /**
-         * From the Travle website:
-         *
-         * # Guesses in Shortest Solution	# Extra Guesses
-         * 3	4
-         * 4-6	5
-         * 7-9	6
-         * 10-12	7
-         * 13+	8
-         *
-         */
-        val allowedGuesses = mapOf(
-            3 to 4,
-            4 to 5,
-            5 to 5,
-            6 to 5,
-            7 to 6,
-            8 to 6,
-            9 to 6,
-            10 to 7,
-            11 to 7,
-            12 to 7,
-            13 to 8,
-            14 to 8,
-            15 to 8
-        )
-
-        allowedGuesses.entries.forEach { (shortestSolution, allowedIncorrect) ->
+        travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
             // perfect result at this solution length
             val result = travleResult.copy(numGuesses = shortestSolution, score = 0)
             assertThat(calculator.calculatePoints(result)).isEqualTo(allowedIncorrect + 1)
@@ -192,14 +192,34 @@ class PuzzleResultPointCalculatorTest {
     fun `returns max score for simple games`() {
         assertThat(calculator.maxPoints(worldleResult)).isEqualTo(6)
         assertThat(calculator.maxPoints(flagleResult)).isEqualTo(6)
-        assertThat(calculator.maxPoints(tradleResult)).isEqualTo(7)
+        assertThat(calculator.maxPoints(tradleResult)).isEqualTo(6)
         assertThat(calculator.maxPoints(top5Result)).isEqualTo(10)
         assertThat(calculator.maxPoints(pinpointResult)).isEqualTo(5)
         assertThat(calculator.maxPoints(geocirclesResult)).isEqualTo(10)
     }
 
     @Test
-    fun `max points for travle matches given table`() {
+    fun `max points for travle matches given table for perfect scores`() {
+        travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
+            // perfect result at this solution length
+            val result = travleResult.copy(numGuesses = shortestSolution, score = 0)
+            assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
+        }
+    }
 
+    @Test
+    fun `max points for travle matches given table if score is negative`() {
+        travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
+            val result = travleResult.copy(numGuesses = shortestSolution + allowedIncorrect, score = -allowedIncorrect)
+            assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
+        }
+    }
+
+    @Test
+    fun `max points for travle matches given table if score is positive`() {
+        travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
+            val result = travleResult.copy(numGuesses = shortestSolution + 1, score = 1)
+            assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
+        }
     }
 }
