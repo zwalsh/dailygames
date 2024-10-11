@@ -23,4 +23,5 @@ window.onload = function () {
     if (window.location.href.indexOf("showModal") != -1) {
        popModal();
     }
+    $('#share-text-button').click(popModal);
 }

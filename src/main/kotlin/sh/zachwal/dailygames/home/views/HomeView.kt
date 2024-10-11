@@ -1,9 +1,10 @@
 package sh.zachwal.dailygames.home.views
 
+import kotlinx.html.ButtonType
 import kotlinx.html.FormMethod.post
 import kotlinx.html.HTML
-import kotlinx.html.a
 import kotlinx.html.body
+import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h1
@@ -61,7 +62,9 @@ data class HomeView(
                                     }
                                     div(classes = "d-flex $justifyClass") {
                                         if (shareTextModalView != null) {
-                                            a(href = "/?showModal=true", classes = "btn btn-secondary") {
+                                            button(classes = "btn btn-secondary") {
+                                                id = "share-text-button"
+                                                type = ButtonType.button
                                                 i(classes = "bi bi-box-arrow-up") {}
                                             }
                                         }
