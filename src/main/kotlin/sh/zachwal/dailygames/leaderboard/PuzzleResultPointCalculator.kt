@@ -78,4 +78,16 @@ class PuzzleResultPointCalculator {
     private fun Top5Result.calculatePoints(): Int {
         return score
     }
+
+    fun maxPoints(result: PuzzleResult): Int {
+        return when (result) {
+            is WorldleResult -> 6
+            is FlagleResult -> 6
+            is TradleResult -> 6
+            is TravleResult -> TODO()
+            is Top5Result -> 10
+            is PinpointResult -> 5
+            is GeocirclesResult -> 10
+        }
+    }
 }
