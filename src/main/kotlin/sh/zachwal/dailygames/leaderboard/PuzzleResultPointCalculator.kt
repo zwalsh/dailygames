@@ -8,7 +8,6 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
-import kotlin.math.absoluteValue
 
 class PuzzleResultPointCalculator {
 
