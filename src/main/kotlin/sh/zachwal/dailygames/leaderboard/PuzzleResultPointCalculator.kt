@@ -66,20 +66,39 @@ class PuzzleResultPointCalculator {
     }
 
     private fun TravleResult.maxPoints(): Int {
-        // score is negative if the player did not reach the target country.
-        // score will be e.g. +1
-        // meaning shortest solution is always numGuesses minus score
-        val shortestSolutionLength = numGuesses - score.absoluteValue
-        val allowedIncorrectGuesses = when (shortestSolutionLength) {
-            in Int.MIN_VALUE..2 -> throw IllegalArgumentException("Shortest solution length must be at least 3 but was $shortestSolutionLength for result $shareText")
+        return getAllowedIncorrectGuesses() + 1
+    }
+
+    private fun TravleResult.getAllowedIncorrectGuesses(): Int {
+        if (score >= 0) {
+            // if the score is positive, it represents the excess number of guesses the player took
+            // meaning shortest solution is always numGuesses minus score
+            val shortestSolutionLength = numGuesses - score
+            return calculateAllowedIncorrectGuesses(shortestSolutionLength)
+        } else {
+            // if the score is negative, it represents how far away the player was from the solution
+            // shortest solution + allowed incorrect guesses == numGuesses
+            // iterate through possible shortest solution lengths until we find the correct number
+            for (possibleShortestSolutionLength in (3..100)) {
+                val allowedIncorrectForThisLength = calculateAllowedIncorrectGuesses(possibleShortestSolutionLength)
+                if (possibleShortestSolutionLength + allowedIncorrectForThisLength == numGuesses) {
+                    return allowedIncorrectForThisLength
+                }
+            }
+            throw IllegalArgumentException("Could not calculate allowed incorrect guesses for Travle result: ${this.shareText}")
+        }
+    }
+
+    private fun calculateAllowedIncorrectGuesses(shortestSolutionLength: Int): Int {
+        return when (shortestSolutionLength) {
+            in Int.MIN_VALUE..2 -> throw IllegalArgumentException("Shortest solution length must be at least 3 but was $shortestSolutionLength.")
             3 -> 4
             in 4..6 -> 5
             in 7..9 -> 6
             in 10..12 -> 7
             in 13..Int.MAX_VALUE -> 8
-            else -> throw IllegalArgumentException("Impossible shortest solution length: $shortestSolutionLength for result $shareText")
+            else -> throw IllegalArgumentException("Impossible shortest solution length: $shortestSolutionLength.")
         }
-        return allowedIncorrectGuesses + 1
     }
 
     private fun Top5Result.calculatePoints(): Int {
