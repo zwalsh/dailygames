@@ -8,7 +8,6 @@ import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.i
 import kotlinx.html.id
-import kotlinx.html.submitInput
 import kotlinx.html.textArea
 import sh.zachwal.dailygames.shared_html.HTMLView
 

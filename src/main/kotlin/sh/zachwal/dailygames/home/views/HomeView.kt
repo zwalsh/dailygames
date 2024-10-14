@@ -1,19 +1,11 @@
 package sh.zachwal.dailygames.home.views
 
-import kotlinx.html.ButtonType
-import kotlinx.html.FormMethod.post
 import kotlinx.html.HTML
 import kotlinx.html.body
-import kotlinx.html.button
 import kotlinx.html.div
-import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
-import kotlinx.html.i
-import kotlinx.html.id
 import kotlinx.html.script
-import kotlinx.html.submitInput
-import kotlinx.html.textArea
 import kotlinx.html.title
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
