@@ -1,19 +1,11 @@
 package sh.zachwal.dailygames.home.views
 
-import kotlinx.html.ButtonType
-import kotlinx.html.FormMethod.post
 import kotlinx.html.HTML
 import kotlinx.html.body
-import kotlinx.html.button
 import kotlinx.html.div
-import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
-import kotlinx.html.i
-import kotlinx.html.id
 import kotlinx.html.script
-import kotlinx.html.submitInput
-import kotlinx.html.textArea
 import kotlinx.html.title
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
@@ -28,6 +20,10 @@ data class HomeView(
     val shareTextModalView: ShareTextModalView?,
     val nav: NavView,
 ) : HTMLView<HTML>() {
+
+    val gameSubmitFormView = GameSubmitFormView(
+        includeShareButton = shareTextModalView != null
+    )
 
     override fun HTML.render() {
         head {
@@ -47,37 +43,11 @@ data class HomeView(
                                 h1(classes = "card-title text-center") {
                                     +"Submit Game"
                                 }
-                                form(method = post) {
-                                    div(classes = "mb-3") {
-                                        textArea(classes = "form-control bg-dark-subtle", rows = "5") {
-                                            id = SHARE_TEXT_ID
-                                            name = SHARE_TEXT_ID
-                                            placeholder = "e.g. #Worldle #123 (10.08.2024) 4/6 (100%)..."
-                                        }
-                                    }
-                                    val justifyClass = if (shareTextModalView != null) {
-                                        "justify-content-between"
-                                    } else {
-                                        "justify-content-end"
-                                    }
-                                    div(classes = "d-flex $justifyClass") {
-                                        if (shareTextModalView != null) {
-                                            button(classes = "btn btn-secondary") {
-                                                id = "share-text-button"
-                                                type = ButtonType.button
-                                                i(classes = "bi bi-box-arrow-up") {}
-                                            }
-                                        }
-                                        submitInput(classes = "btn btn-success") {
-                                            value = "Submit"
-                                        }
-                                    }
-                                }
+                                gameSubmitFormView.renderIn(this)
                             }
                         }
                     }
                 }
-                // TODO add button to re-pop modal
 
                 GameLinkView.renderIn(this)
 
