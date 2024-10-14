@@ -19,9 +19,15 @@ function popModal() {
     $('#copy-share-text-button').click(copyShareTextToClipboard);
 }
 
+function disableSubmitButton() {
+    $('#submit-button').addClass('disabled');
+    $('#submit-spinner').removeClass('d-none');
+}
+
 window.onload = function () {
     if (window.location.href.indexOf("showModal") != -1) {
        popModal();
     }
     $('#share-text-button').click(popModal);
+    $('#submit-button').click(disableSubmitButton);
 }
