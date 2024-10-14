@@ -22,7 +22,10 @@ import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
+
+const val MINIMUM_GAMES_FOR_AVERAGE = 10
 
 @Singleton
 class LeaderboardService @Inject constructor(
@@ -30,6 +33,8 @@ class LeaderboardService @Inject constructor(
     private val jdbi: Jdbi,
     private val pointCalculator: PuzzleResultPointCalculator,
     private val navViewFactory: NavViewFactory,
+    @Named("leaderboardMinimumGamesForAverage")
+    private val minimumGamesForAverage: Int,
 ) {
 
     fun overallLeaderboardView(currentUser: User): LeaderboardView {
@@ -82,10 +87,10 @@ class LeaderboardService @Inject constructor(
     ) = LeaderboardData(
         allTimePoints = chartInfo(pointsPerUser.allTime) { it.totalPoints.toDouble() },
         allTimeGames = chartInfo(pointsPerUser.allTime) { it.games.toDouble() },
-        allTimeAverage = chartInfo(pointsPerUser.allTime) { it.averagePoints() },
+        allTimeAverage = chartInfo(pointsPerUser.allTime.filterValues { it.games >= minimumGamesForAverage }) { it.averagePoints() },
         thirtyDaysPoints = chartInfo(pointsPerUser.thirtyDays) { it.totalPoints.toDouble() },
         thirtyDaysGames = chartInfo(pointsPerUser.thirtyDays) { it.games.toDouble() },
-        thirtyDaysAverage = chartInfo(pointsPerUser.thirtyDays) { it.averagePoints() },
+        thirtyDaysAverage = chartInfo(pointsPerUser.thirtyDays.filterValues { it.games >= minimumGamesForAverage }) { it.averagePoints() },
     )
 
     private fun totalPointsPerUserOnGame(game: Game): PointsPerUser {

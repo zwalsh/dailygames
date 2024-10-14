@@ -7,6 +7,7 @@ import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.script
 import kotlinx.html.title
+import sh.zachwal.dailygames.leaderboard.MINIMUM_GAMES_FOR_AVERAGE
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.darkMode
@@ -47,13 +48,13 @@ data class LeaderboardView(
                 div(classes = "row") {
                     ChartView("all-time-points", "Total Points").renderIn(this)
                     ChartView("all-time-games", "Games Played").renderIn(this)
-                    ChartView("all-time-average", "Average Points").renderIn(this)
+                    ChartView("all-time-average", "Average Points (Min $MINIMUM_GAMES_FOR_AVERAGE Games)").renderIn(this)
                 }
                 SectionHeaderView("Past Thirty Days").renderIn(this)
                 div(classes = "row") {
                     ChartView("thirty-days-points", "Total Points").renderIn(this)
                     ChartView("thirty-days-games", "Games Played").renderIn(this)
-                    ChartView("thirty-days-average", "Average Points").renderIn(this)
+                    ChartView("thirty-days-average", "Average Points (Min $MINIMUM_GAMES_FOR_AVERAGE Games)").renderIn(this)
                 }
             }
             script {
