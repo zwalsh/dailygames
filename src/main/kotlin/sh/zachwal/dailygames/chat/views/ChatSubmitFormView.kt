@@ -8,7 +8,6 @@ import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.id
-import kotlinx.html.submitInput
 import kotlinx.html.textArea
 import sh.zachwal.dailygames.chat.CHAT_TEXT_ID
 import sh.zachwal.dailygames.chat.chatLink
