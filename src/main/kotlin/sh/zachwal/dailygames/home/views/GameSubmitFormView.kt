@@ -10,6 +10,7 @@ import kotlinx.html.i
 import kotlinx.html.id
 import kotlinx.html.textArea
 import sh.zachwal.dailygames.shared_html.HTMLView
+import sh.zachwal.dailygames.shared_html.view.SpinnerView
 
 data class GameSubmitFormView(
     val includeShareButton: Boolean,
@@ -38,9 +39,7 @@ data class GameSubmitFormView(
                 }
                 button(classes = "btn btn-success") {
                     id = "submit-button"
-                    i(classes = "bi bi-arrow-repeat me-2 d-none") {
-                        id = "submit-spinner"
-                    }
+                    SpinnerView.renderIn(this)
                     +"Submit"
                 }
             }

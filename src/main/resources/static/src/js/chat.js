@@ -51,8 +51,14 @@ function formHook() {
     });
 }
 
+function disableSubmitButton() {
+    $('#submit-button').addClass('disabled');
+    $('#submit-spinner').removeClass('d-none');
+}
+
 window.onload = function() {
     enableTooltips();
     formHook();
     window.scrollTo(0, document.body.scrollHeight);
+    $('#submit-button').click(disableSubmitButton);
 }
