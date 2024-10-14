@@ -1,12 +1,10 @@
 package sh.zachwal.dailygames.chat.views
 
-import kotlinx.html.FormMethod.post
 import kotlinx.html.HEADER
 import kotlinx.html.HTML
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.div
-import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.i
@@ -14,11 +12,7 @@ import kotlinx.html.id
 import kotlinx.html.p
 import kotlinx.html.script
 import kotlinx.html.style
-import kotlinx.html.submitInput
-import kotlinx.html.textArea
 import kotlinx.html.title
-import sh.zachwal.dailygames.chat.CHAT_TEXT_ID
-import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
@@ -103,39 +97,11 @@ data class ChatView constructor(
                 div(classes = "row mb-2") {
                     div(classes = "col") {
                         card(classes = "mx-3") {
-                            form(method = post, action = "${chatLink(game, puzzleNumber)}/comment") {
-                                id = "chat-form"
-                                div(classes = "mb-3") {
-                                    textArea(classes = "form-control", rows = "3") {
-                                        if (isCommentDisabled) {
-                                            attributes["disabled"] = "true"
-                                            attributes["placeholder"] = "Submit a solution to comment!"
-                                            attributes["data-bs-toggle"] = "tooltip"
-                                            attributes["data-bs-title"] = "Submit a solution to comment!"
-                                        }
-
-                                        id = CHAT_TEXT_ID
-                                        name = CHAT_TEXT_ID
-                                    }
-                                }
-                                // TODO live updating character count
-                                div(classes = "d-flex justify-content-end") {
-                                    if (isCommentDisabled) {
-                                        a(href = "/", classes = "mx-2") {
-                                            +"Submit a solution"
-                                        }
-                                    }
-                                    div {
-                                        if (isCommentDisabled) {
-                                            attributes["data-bs-toggle"] = "tooltip"
-                                            attributes["data-bs-title"] = "Submit a solution to comment!"
-                                        }
-                                        submitInput(classes = "btn btn-primary ${if (isCommentDisabled) "disabled" else ""}") {
-                                            value = "Comment"
-                                        }
-                                    }
-                                }
-                            }
+                            ChatSubmitFormView(
+                                game = game,
+                                puzzleNumber = puzzleNumber,
+                                isCommentDisabled = isCommentDisabled
+                            ).renderIn(this)
                         }
                     }
                 }
