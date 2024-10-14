@@ -216,6 +216,41 @@ class PuzzleResultPointCalculatorTest {
     }
 
     @Test
+    fun `max points for travle matches given table if player was arbitrarily far away from the destination country`() {
+        travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
+            val result = travleResult.copy(numGuesses = shortestSolution + allowedIncorrect, score = -10)
+            assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
+        }
+    }
+
+    @Test
+    fun `max points for travle matches on travle 669`() {
+        /**
+         * #travle #669 (2 away)
+         * 🟧🟩🟥🟧🟧🟩🟧🟧🟩🟧
+         */
+        val resultTwoAway = travleResult.copy(
+            score = -2,
+            numGuesses = 10,
+            numIncorrect = 7,
+            numPerfect = 0,
+        )
+        /**
+         * #travle #669 +0
+         * ✅🟩✅✅✅
+         */
+        val resultPlusZero = travleResult.copy(
+            score = 0,
+            numGuesses = 5,
+            numIncorrect = 0,
+            numPerfect = 4,
+        )
+
+        assertThat(calculator.maxPoints(resultTwoAway))
+            .isEqualTo(calculator.maxPoints(resultPlusZero))
+    }
+
+    @Test
     fun `max points for travle matches given table if score is positive`() {
         travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
             val result = travleResult.copy(numGuesses = shortestSolution + 1, score = 1)
