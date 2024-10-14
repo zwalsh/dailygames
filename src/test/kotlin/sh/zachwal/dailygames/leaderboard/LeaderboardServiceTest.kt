@@ -336,4 +336,31 @@ class LeaderboardServiceTest {
         assertThat(leaderboardData.thirtyDaysGames.labels).containsExactly(testUser.username)
         assertThat(leaderboardData.thirtyDaysGames.dataPoints).containsExactly(2.0)
     }
+
+    @Test
+    fun `average requires minimum ten games for per-game, all time and thirty days`() {
+        val zachList = List(10) { result.copy(userId = zachUser.id, score = 5) }
+        val jackieList = List(9) { result.copy(userId = jackieUser.id, score = 6) }
+        every { top5DAO.allResultsStream() } returns (zachList + jackieList).stream()
+
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
+
+        assertThat(leaderboardData.allTimeAverage.labels).containsExactly(zachUser.username)
+        assertThat(leaderboardData.thirtyDaysAverage.labels).containsExactly(zachUser.username)
+    }
+    
+    @Test
+    fun `average requires minimum ten games for overall, all time and thirty days`() {
+        val zachTop5List = List(5) { result.copy(userId = zachUser.id, score = 5) }
+        val jackieTop5List = List(5) { result.copy(userId = jackieUser.id, score = 6) }
+        every { top5DAO.allResultsStream() } returns (zachTop5List + jackieTop5List).stream()
+        val zachWorldle5List = List(5) { worldleResult.copy(userId = zachUser.id, score = 5) }
+        val jackieWorldleList = List(4) { worldleResult.copy(userId = jackieUser.id, score = 6) }
+        every { worldleDAO.allResultsStream() } returns (zachWorldle5List + jackieWorldleList).stream()
+
+        val leaderboardData = leaderboardService.overallLeaderboardData()
+
+        assertThat(leaderboardData.allTimeAverage.labels).containsExactly(zachUser.username)
+        assertThat(leaderboardData.thirtyDaysAverage.labels).containsExactly(zachUser.username)
+    }
 }
