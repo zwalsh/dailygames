@@ -22,7 +22,10 @@ import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
+
+const val MINIMUM_GAMES_FOR_AVERAGE = 10
 
 @Singleton
 class LeaderboardService @Inject constructor(
@@ -30,6 +33,8 @@ class LeaderboardService @Inject constructor(
     private val jdbi: Jdbi,
     private val pointCalculator: PuzzleResultPointCalculator,
     private val navViewFactory: NavViewFactory,
+    @Named("leaderboardMinimumGamesForAverage")
+    private val minimumGamesForAverage: Int,
 ) {
 
     fun overallLeaderboardView(currentUser: User): LeaderboardView {

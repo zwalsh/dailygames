@@ -6,6 +6,7 @@ import com.google.inject.Singleton
 import com.google.inject.name.Named
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
+import sh.zachwal.dailygames.leaderboard.MINIMUM_GAMES_FOR_AVERAGE
 import java.time.Clock
 import java.util.concurrent.Executors
 
@@ -20,4 +21,8 @@ class ApplicationModule : AbstractModule() {
     @Named("presserDispatcher")
     fun presserDispatcher(): CoroutineDispatcher = Executors.newFixedThreadPool(4)
         .asCoroutineDispatcher()
+
+    @Provides
+    @Named("leaderboardMinimumGamesForAverage")
+    fun minimumGamesForAverage(): Int = MINIMUM_GAMES_FOR_AVERAGE
 }

@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
 import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
@@ -44,21 +45,23 @@ class LeaderboardServiceTest {
         every { getUser(6) } returns zachUser
     }
     private val navViewFactory = mockk<NavViewFactory>(relaxed = true)
+    private val jdbi = mockk<Jdbi> {
+        every { open() } returns mockk(relaxed = true) {
+            every { attach(sh.zachwal.dailygames.db.dao.game.Top5DAO::class) } returns top5DAO
+            every { attach(sh.zachwal.dailygames.db.dao.game.WorldleDAO::class) } returns worldleDAO
+            every { attach(sh.zachwal.dailygames.db.dao.game.TravleDAO::class) } returns mockk(relaxed = true)
+            every { attach(sh.zachwal.dailygames.db.dao.game.TradleDAO::class) } returns mockk(relaxed = true)
+            every { attach(sh.zachwal.dailygames.db.dao.game.FlagleDAO::class) } returns mockk(relaxed = true)
+            every { attach(sh.zachwal.dailygames.db.dao.game.PinpointDAO::class) } returns mockk(relaxed = true)
+            every { attach(sh.zachwal.dailygames.db.dao.game.GeocirclesDAO::class) } returns mockk(relaxed = true)
+        }
+    }
     private val leaderboardService = LeaderboardService(
         userService = userService,
-        jdbi = mockk {
-            every { open() } returns mockk(relaxed = true) {
-                every { attach(Top5DAO::class) } returns top5DAO
-                every { attach(WorldleDAO::class) } returns worldleDAO
-                every { attach(TravleDAO::class) } returns mockk(relaxed = true)
-                every { attach(TradleDAO::class) } returns mockk(relaxed = true)
-                every { attach(FlagleDAO::class) } returns mockk(relaxed = true)
-                every { attach(PinpointDAO::class) } returns mockk(relaxed = true)
-                every { attach(GeocirclesDAO::class) } returns mockk(relaxed = true)
-            }
-        },
+        jdbi = jdbi,
         pointCalculator = PuzzleResultPointCalculator(),
         navViewFactory = navViewFactory,
+        minimumGamesForAverage = 1,
     )
 
     private val result = Top5Result(
@@ -339,6 +342,14 @@ class LeaderboardServiceTest {
 
     @Test
     fun `average requires minimum ten games for per-game, all time and thirty days`() {
+        val leaderboardService = LeaderboardService(
+            userService = userService,
+            jdbi = jdbi,
+            pointCalculator = PuzzleResultPointCalculator(),
+            navViewFactory = navViewFactory,
+            minimumGamesForAverage = 10,
+        )
+
         val zachList = List(10) { result.copy(userId = zachUser.id, score = 5) }
         val jackieList = List(9) { result.copy(userId = jackieUser.id, score = 6) }
         every { top5DAO.allResultsStream() } returns (zachList + jackieList).stream()
@@ -348,9 +359,17 @@ class LeaderboardServiceTest {
         assertThat(leaderboardData.allTimeAverage.labels).containsExactly(zachUser.username)
         assertThat(leaderboardData.thirtyDaysAverage.labels).containsExactly(zachUser.username)
     }
-    
+
     @Test
     fun `average requires minimum ten games for overall, all time and thirty days`() {
+        val leaderboardService = LeaderboardService(
+            userService = userService,
+            jdbi = jdbi,
+            pointCalculator = PuzzleResultPointCalculator(),
+            navViewFactory = navViewFactory,
+            minimumGamesForAverage = 10,
+        )
+
         val zachTop5List = List(5) { result.copy(userId = zachUser.id, score = 5) }
         val jackieTop5List = List(5) { result.copy(userId = jackieUser.id, score = 6) }
         every { top5DAO.allResultsStream() } returns (zachTop5List + jackieTop5List).stream()
