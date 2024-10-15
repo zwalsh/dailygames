@@ -6,9 +6,6 @@ function enableTooltips() {
 }
 
 function chatAdded(form, data) {
-    console.log('Submission was successful.');
-    console.log(data);
-
     const feed = $('#chat-feed');
     const chatToCopy = $('#chat-to-copy');
 
@@ -22,11 +19,14 @@ function chatAdded(form, data) {
     feed.append(newChat);
     form.trigger('reset');
     window.scrollTo(0, document.body.scrollHeight);
+
+    enableSubmitButton();
 }
 
 function chatFailed(form, data) {
     console.log('Submission was not successful.');
     console.log(data);
+    enableSubmitButton();
     alert("Failed to add chat");
 }
 
@@ -54,6 +54,11 @@ function formHook() {
 function disableSubmitButton() {
     $('#submit-button').addClass('disabled');
     $('#submit-spinner').removeClass('d-none');
+}
+
+function enableSubmitButton() {
+    $('#submit-button').removeClass('disabled');
+    $('#submit-spinner').addClass('d-none');
 }
 
 window.onload = function() {
