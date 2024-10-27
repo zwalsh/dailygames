@@ -79,6 +79,11 @@
         "include": {
             "file": "16_create_geocircles_result.json"
         }
+    },
+    {
+        "include": {
+            "file": "17_create_result.json"
+        }
     }
   ]
 }

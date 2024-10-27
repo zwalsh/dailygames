@@ -41,7 +41,8 @@ class TestExtension {
             "chat",
             "user_preferences",
             "pinpoint_result",
-            "geocircles_result"
+            "geocircles_result",
+            "result",
         )
     }
 
