@@ -4,4 +4,4 @@ data class PinpointInfo constructor(
     val puzzleNumber: Int,
     val score: Int,
     val shareTextNoLink: String,
-)
+) : GameInfo()

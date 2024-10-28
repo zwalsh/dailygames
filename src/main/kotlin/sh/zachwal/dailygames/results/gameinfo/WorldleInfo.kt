@@ -8,4 +8,4 @@ data class WorldleInfo constructor(
     val score: Int,
     val percentage: Int,
     val shareTextNoLink: String,
-)
+) : GameInfo()
