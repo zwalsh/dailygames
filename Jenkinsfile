@@ -77,9 +77,13 @@ pipeline {
                 expression { env.GIT_BRANCH == 'origin/main' }
             }
             steps {
+                // Delete all but the three most recent releases
+                sh "ls -t ~dailygames/releases | tail -n +4 | xargs -I {} rm -rf ~dailygames/releases/{}"
+
                 // Create the release
                 sh "mkdir ~dailygames/releases/$GIT_COMMIT"
                 sh "tar -xvf build/distributions/dailygames.tar -C ~dailygames/releases/$GIT_COMMIT"
+
                 // Set it as current
                 sh "rm ~dailygames/releases/current"
                 sh "ln -s ~dailygames/releases/$GIT_COMMIT ~dailygames/releases/current"
