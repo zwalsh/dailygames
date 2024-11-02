@@ -4,6 +4,9 @@ import kotlinx.html.HEAD
 import kotlinx.html.link
 import kotlinx.html.meta
 import kotlinx.html.script
+import kotlinx.html.unsafe
+import sh.zachwal.dailygames.sentry.jsDsn
+import sh.zachwal.dailygames.sentry.jsEnv
 
 fun HEAD.bootstrapCss() {
     link(
@@ -53,19 +56,18 @@ fun HEAD.mobileUI() {
 }
 
 fun HEAD.sentryScript() {
-    // TODO re-add once sentry project created
-//    script(src = "https://js.sentry-cdn.com/$jsDsn.min.js") {
-//        attributes["crossorigin"] = "anonymous"
-//    }
-//    script {
-//        unsafe {
-//            +"""
-//                Sentry.init({
-//                  environment: "$jsEnv",
-//                });
-//            """.trimIndent()
-//        }
-//    }
+    script(src = "https://js.sentry-cdn.com/$jsDsn.min.js") {
+        attributes["crossorigin"] = "anonymous"
+    }
+    script {
+        unsafe {
+            +"""
+                Sentry.init({
+                  environment: "$jsEnv",
+                });
+            """.trimIndent()
+        }
+    }
 }
 
 fun HEAD.headSetup() {
