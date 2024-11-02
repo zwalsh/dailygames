@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
-class SerializeGameInfoTest {
+class SerializeResultInfoTest {
 
     private val objectMapper = jacksonObjectMapper()
 
@@ -19,7 +19,7 @@ class SerializeGameInfoTest {
 
         val worldleInfoJson = objectMapper.writeValueAsString(worldleInfo)
 
-        val deserializedWorldleInfo = objectMapper.readValue<GameInfo>(worldleInfoJson)
+        val deserializedWorldleInfo = objectMapper.readValue<ResultInfo>(worldleInfoJson)
 
         assertThat(deserializedWorldleInfo).isInstanceOf(WorldleInfo::class.java)
         assertThat(deserializedWorldleInfo).isEqualTo(worldleInfo)
@@ -27,10 +27,10 @@ class SerializeGameInfoTest {
 
     @ParameterizedTest
     @MethodSource("sh.zachwal.dailygames.results.gameinfo.SerializeGameInfoTest#gameInfoObjects")
-    fun `can serialize and deserialize different game info objects`(gameInfo: GameInfo) {
+    fun `can serialize and deserialize different game info objects`(gameInfo: ResultInfo) {
         val serialized = objectMapper.writeValueAsString(gameInfo)
 
-        val deserialized: GameInfo = objectMapper.readValue(serialized)
+        val deserialized: ResultInfo = objectMapper.readValue(serialized)
 
         assertThat(deserialized).isEqualTo(gameInfo)
     }

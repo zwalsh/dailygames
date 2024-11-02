@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = TravleInfo::class, name = "travle"),
     JsonSubTypes.Type(value = WorldleInfo::class, name = "worldle"),
 )
-sealed class GameInfo
+sealed class ResultInfo
 
 // TODO refactor ShareTextParser to return a ResultInfo object with a game-specific GameInfo object
 // that is serializable. Then pull up common fields (puzzleNumber, score, shareTextNoLink) & drop serialization of

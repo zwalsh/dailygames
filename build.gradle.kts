@@ -55,6 +55,7 @@ dependencies {
     implementation("org.jdbi:jdbi3-kotlin")
     implementation("org.jdbi:jdbi3-postgres")
     implementation("org.jdbi:jdbi3-kotlin-sqlobject")
+    implementation("org.jdbi:jdbi3-jackson2")
 
     // passwords
     implementation("org.mindrot:jbcrypt:0.4")
