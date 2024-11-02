@@ -30,6 +30,7 @@ import sh.zachwal.dailygames.guice.HikariModule
 import sh.zachwal.dailygames.guice.JdbiModule
 import sh.zachwal.dailygames.roles.RoleAuthorization
 import sh.zachwal.dailygames.roles.RoleService
+import sh.zachwal.dailygames.sentry.initSentry
 import sh.zachwal.dailygames.session.DbSessionStorage
 import sh.zachwal.dailygames.session.SESSION_MAX_DURATION
 import sh.zachwal.dailygames.session.SessionCleanupTask
@@ -56,7 +57,7 @@ fun Application.module(testing: Boolean = false) {
     val config = injector.getInstance(AppConfig::class.java)
     log.info("Starting app in ${config.env}")
 
-//    initSentry(config.sentryConfig, config.env)
+    initSentry(config.sentryConfig, config.env)
 
     val userService = injector.getInstance(UserService::class.java)
     val roleService = injector.getInstance(RoleService::class.java)

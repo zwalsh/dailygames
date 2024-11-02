@@ -8,7 +8,7 @@ data class AppConfig(
     val dbNameOverride: String?,
     val dbUserOverride: String?,
     val dbPasswordOverride: String?,
-//    val sentryConfig: SentryConfig
+    val sentryConfig: SentryConfig
 ) {
     constructor(config: ApplicationConfig) : this(
         env = config.property("ktor.deployment.environment").getString(),
@@ -16,5 +16,9 @@ data class AppConfig(
         dbNameOverride = config.propertyOrNull("ktor.deployment.db_name")?.getString(),
         dbUserOverride = config.propertyOrNull("ktor.deployment.db_user")?.getString(),
         dbPasswordOverride = config.propertyOrNull("ktor.deployment.db_password")?.getString(),
+        sentryConfig = SentryConfig(
+            kotlinDsn = config.property("ktor.sentry.kotlinDsn").getString(),
+            jsDsn = config.property("ktor.sentry.jsDsn").getString(),
+        ),
     )
 }
