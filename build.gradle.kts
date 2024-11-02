@@ -62,6 +62,11 @@ dependencies {
     // DI
     implementation("com.google.inject:guice:4.2.3")
 
+    // Jackson
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+    // TODO remove after refactoring info parsing
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
+
     // Use the Kotlin test library.
     testImplementation(kotlin("test"))
 
@@ -75,6 +80,8 @@ dependencies {
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("org.testcontainers:postgresql:1.20.0")
     testImplementation("org.liquibase:liquibase-core:4.29.1")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.0")
 }
 
 application {

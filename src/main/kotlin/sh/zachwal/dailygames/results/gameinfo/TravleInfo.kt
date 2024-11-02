@@ -8,4 +8,4 @@ data class TravleInfo constructor(
     val numIncorrect: Int,
     val numPerfect: Int,
     val numHints: Int,
-)
+) : GameInfo()

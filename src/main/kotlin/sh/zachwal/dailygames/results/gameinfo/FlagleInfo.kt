@@ -7,4 +7,4 @@ data class FlagleInfo constructor(
     val date: LocalDate,
     val score: Int,
     val shareTextNoLink: String,
-)
+) : GameInfo()
