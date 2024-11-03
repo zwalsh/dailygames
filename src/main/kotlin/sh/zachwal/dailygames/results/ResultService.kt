@@ -18,6 +18,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
+import sh.zachwal.dailygames.results.gameinfo.Top5Info
 import sh.zachwal.dailygames.results.gameinfo.TravleInfo
 import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
 import sh.zachwal.dailygames.users.UserPreferencesService
@@ -115,14 +116,19 @@ class ResultService @Inject constructor(
             }
 
             Game.TOP5 -> {
-                val top5Info = shareTextParser.extractTop5Info(shareText)
+                val result = shareTextParser.extractTop5Info(shareText)
+                if (result.gameInfo !is Top5Info) {
+                    throw IllegalArgumentException("Parsed result $result is not a Top5Info")
+                }
+                val top5Info: Top5Info = result.gameInfo
+
                 val puzzle = getOrCreatePuzzle(Puzzle(Game.TOP5, top5Info.puzzleNumber, null))
 
                 return top5DAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = top5Info.score,
-                    shareText = top5Info.shareTextNoLink,
+                    score = result.score,
+                    shareText = result.shareTextNoLink,
                     numGuesses = top5Info.numGuesses,
                     numCorrect = top5Info.numCorrect,
                     isPerfect = top5Info.isPerfect,

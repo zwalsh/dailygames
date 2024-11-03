@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.gameinfo.Top5Info
 import sh.zachwal.dailygames.results.gameinfo.TravleInfo
 import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
 import java.time.LocalDate
@@ -379,16 +380,19 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Top5 info`() {
-        val top5Info = parser.extractTop5Info(TOP5)
+        val result = parser.extractTop5Info(TOP5)
 
-        assertThat(top5Info.puzzleNumber).isEqualTo(171)
-        assertThat(top5Info.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(171)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 Top 5 #171
                 ⬜🟧🟨⬜⬜🟩⬜⬜
             """.trimIndent()
         )
-        assertThat(top5Info.score).isEqualTo(3)
+        assertThat(result.score).isEqualTo(3)
+        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.gameInfo as Top5Info
+
         assertThat(top5Info.numGuesses).isEqualTo(8)
         assertThat(top5Info.numCorrect).isEqualTo(3)
         assertThat(top5Info.isPerfect).isFalse()
@@ -396,16 +400,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Top5 info with all 5 correct but misses`() {
-        val top5Info = parser.extractTop5Info(TOP5_ALL_5_WITH_MISSES)
+        val result = parser.extractTop5Info(TOP5_ALL_5_WITH_MISSES)
 
-        assertThat(top5Info.puzzleNumber).isEqualTo(170)
-        assertThat(top5Info.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(170)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 Top 5 #170
                 🟥⬜🟩🟨🟦⬜⬜⬜🟧
             """.trimIndent()
         )
-        assertThat(top5Info.score).isEqualTo(6)
+        assertThat(result.score).isEqualTo(6)
+
+        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.gameInfo as Top5Info
+
         assertThat(top5Info.numGuesses).isEqualTo(9)
         assertThat(top5Info.numCorrect).isEqualTo(5)
         assertThat(top5Info.isPerfect).isFalse()
@@ -413,16 +421,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Top5 info with no misses`() {
-        val top5Info = parser.extractTop5Info(TOP5_NO_MISSES)
+        val result = parser.extractTop5Info(TOP5_NO_MISSES)
 
-        assertThat(top5Info.puzzleNumber).isEqualTo(169)
-        assertThat(top5Info.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(169)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 Top 5 #169
                 🟥🟩🟧🟦🟨
             """.trimIndent()
         )
-        assertThat(top5Info.score).isEqualTo(10)
+        assertThat(result.score).isEqualTo(10)
+
+        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.gameInfo as Top5Info
+
         assertThat(top5Info.numGuesses).isEqualTo(5)
         assertThat(top5Info.numCorrect).isEqualTo(5)
         assertThat(top5Info.isPerfect).isFalse()
@@ -430,16 +442,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Top5 info with perfect score`() {
-        val top5Info = parser.extractTop5Info(TOP5_PERFECT)
+        val result = parser.extractTop5Info(TOP5_PERFECT)
 
-        assertThat(top5Info.puzzleNumber).isEqualTo(169)
-        assertThat(top5Info.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(169)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 Top 5 #169
                 🟥🟧🟨🟩🟦
             """.trimIndent()
         )
-        assertThat(top5Info.score).isEqualTo(10)
+        assertThat(result.score).isEqualTo(10)
+
+        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.gameInfo as Top5Info
+
         assertThat(top5Info.numGuesses).isEqualTo(5)
         assertThat(top5Info.numCorrect).isEqualTo(5)
         assertThat(top5Info.isPerfect).isTrue()
