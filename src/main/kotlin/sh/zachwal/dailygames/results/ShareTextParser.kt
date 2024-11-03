@@ -41,7 +41,7 @@ class ShareTextParser {
             puzzleNumber = puzzleNumber.toInt(),
             game = Game.WORLDLE,
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
-            score = score.toInt(),
+            score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
             shareTextNoLink =  shareText.substringBefore("https://").trim(),
             gameInfo = worldleInfo
         )
