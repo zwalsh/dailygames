@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.results.gameinfo
+package sh.zachwal.dailygames.results.resultinfo
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import java.time.LocalDate
@@ -9,5 +9,5 @@ data class ParsedResult(
     val date: LocalDate?,
     val score: Int,
     val shareTextNoLink: String,
-    val gameInfo: GameInfo,
+    val resultInfo: ResultInfo,
 )

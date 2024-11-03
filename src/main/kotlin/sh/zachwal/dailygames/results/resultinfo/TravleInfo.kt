@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.results.gameinfo
+package sh.zachwal.dailygames.results.resultinfo
 
 data class TravleInfo constructor(
     val numGuesses: Int,

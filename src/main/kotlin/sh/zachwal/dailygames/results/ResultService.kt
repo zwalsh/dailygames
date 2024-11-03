@@ -18,9 +18,9 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
-import sh.zachwal.dailygames.results.gameinfo.Top5Info
-import sh.zachwal.dailygames.results.gameinfo.TravleInfo
-import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
+import sh.zachwal.dailygames.results.resultinfo.Top5Info
+import sh.zachwal.dailygames.results.resultinfo.TravleInfo
+import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
@@ -69,7 +69,7 @@ class ResultService @Inject constructor(
         when (game) {
             Game.WORLDLE -> {
                 val parsedResult = shareTextParser.extractWorldleInfo(shareText)
-                if (parsedResult.gameInfo !is WorldleInfo) {
+                if (parsedResult.resultInfo !is WorldleInfo) {
                     throw IllegalArgumentException("Parsed result $parsedResult is not a WorldleInfo")
                 }
                 val puzzle = getOrCreatePuzzle(Puzzle(Game.WORLDLE, parsedResult.puzzleNumber, parsedResult.date))
@@ -79,7 +79,7 @@ class ResultService @Inject constructor(
                     puzzle = puzzle,
                     score = parsedResult.score,
                     shareText = parsedResult.shareTextNoLink,
-                    scorePercentage = parsedResult.gameInfo.percentage,
+                    scorePercentage = parsedResult.resultInfo.percentage,
                 )
             }
 
@@ -97,10 +97,10 @@ class ResultService @Inject constructor(
 
             Game.TRAVLE -> {
                 val parsedResult = shareTextParser.extractTravleInfo(shareText)
-                if (parsedResult.gameInfo !is TravleInfo) {
+                if (parsedResult.resultInfo !is TravleInfo) {
                     throw IllegalArgumentException("Parsed result $parsedResult is not a TravleInfo")
                 }
-                val travleInfo: TravleInfo = parsedResult.gameInfo
+                val travleInfo: TravleInfo = parsedResult.resultInfo
 
                 val puzzle = getOrCreatePuzzle(Puzzle(Game.TRAVLE, parsedResult.puzzleNumber, null))
                 return travleDAO.insertResult(
@@ -117,10 +117,10 @@ class ResultService @Inject constructor(
 
             Game.TOP5 -> {
                 val result = shareTextParser.extractTop5Info(shareText)
-                if (result.gameInfo !is Top5Info) {
+                if (result.resultInfo !is Top5Info) {
                     throw IllegalArgumentException("Parsed result $result is not a Top5Info")
                 }
-                val top5Info: Top5Info = result.gameInfo
+                val top5Info: Top5Info = result.resultInfo
 
                 val puzzle = getOrCreatePuzzle(Puzzle(Game.TOP5, result.puzzleNumber, null))
 

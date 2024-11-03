@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.results.gameinfo
+package sh.zachwal.dailygames.results.resultinfo
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -11,14 +11,14 @@ import org.junit.jupiter.params.provider.MethodSource
  * We have stored game info objects in a database. We must be backwards-compatible & able to deserialize any of them
  * even as we add fields.
  */
-class DeserializeStoredGameInfoTest {
+class DeserializeStoredResultInfoTest {
 
     private val objectMapper = jacksonObjectMapper()
 
     @ParameterizedTest
-    @MethodSource("sh.zachwal.dailygames.results.gameinfo.DeserializeStoredGameInfoTest#arguments")
-    fun `can deserialize stored, serialized GameInfo object`(serialized: String, gameInfo: GameInfo) {
-        assertThat(objectMapper.readValue<GameInfo>(serialized)).isEqualTo(gameInfo)
+    @MethodSource("sh.zachwal.dailygames.results.resultinfo.DeserializeStoredResultInfoTest#arguments")
+    fun `can deserialize stored, serialized ResultInfo object`(serialized: String, resultInfo: ResultInfo) {
+        assertThat(objectMapper.readValue<ResultInfo>(serialized)).isEqualTo(resultInfo)
     }
 
     companion object {

@@ -3,11 +3,11 @@ package sh.zachwal.dailygames.results
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.results.gameinfo.FlagleInfo
-import sh.zachwal.dailygames.results.gameinfo.PinpointInfo
-import sh.zachwal.dailygames.results.gameinfo.Top5Info
-import sh.zachwal.dailygames.results.gameinfo.TravleInfo
-import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
+import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
+import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
+import sh.zachwal.dailygames.results.resultinfo.Top5Info
+import sh.zachwal.dailygames.results.resultinfo.TravleInfo
+import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.LocalDate
 
 const val TRAVLE_PERFECT = """
@@ -216,7 +216,7 @@ class ShareTextParserTest {
         """.trimIndent()
 
         val result = parser.extractWorldleInfo(shareText)
-        assertThat(result.gameInfo).isInstanceOf(WorldleInfo::class.java)
+        assertThat(result.resultInfo).isInstanceOf(WorldleInfo::class.java)
 
         assertThat(result.puzzleNumber).isEqualTo(934)
         assertThat(result.date).isEqualTo(LocalDate.of(2024, 8, 12))
@@ -232,7 +232,7 @@ class ShareTextParserTest {
         )
         assertThat(result.game).isEqualTo(Game.WORLDLE)
 
-        val worldleInfo = result.gameInfo as WorldleInfo
+        val worldleInfo = result.resultInfo as WorldleInfo
         assertThat(worldleInfo.percentage).isEqualTo(100)
     }
 
@@ -320,9 +320,9 @@ class ShareTextParserTest {
             """.trimIndent()
         )
         assertThat(result.game).isEqualTo(Game.TRAVLE)
-        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+        assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
-        val travleInfo = result.gameInfo as TravleInfo
+        val travleInfo = result.resultInfo as TravleInfo
 
         assertThat(travleInfo.numPerfect).isEqualTo(7)
         assertThat(travleInfo.numIncorrect).isEqualTo(0)
@@ -342,9 +342,9 @@ class ShareTextParserTest {
                 ✅✅✅🟩✅✅✅
             """.trimIndent()
         )
-        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+        assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
-        val travleInfo = result.gameInfo as TravleInfo
+        val travleInfo = result.resultInfo as TravleInfo
 
         assertThat(travleInfo.numPerfect).isEqualTo(6)
         assertThat(travleInfo.numIncorrect).isEqualTo(0)
@@ -364,9 +364,9 @@ class ShareTextParserTest {
                 ✅✅🟩🟧🟧✅
             """.trimIndent()
         )
-        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+        assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
-        val travleInfo = result.gameInfo as TravleInfo
+        val travleInfo = result.resultInfo as TravleInfo
 
         assertThat(travleInfo.numPerfect).isEqualTo(3)
         assertThat(travleInfo.numIncorrect).isEqualTo(2)
@@ -386,9 +386,9 @@ class ShareTextParserTest {
                 🟧🟥🟥🟥🟧🟥🟥🟥✅
             """.trimIndent()
         )
-        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+        assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
-        val travleInfo = result.gameInfo as TravleInfo
+        val travleInfo = result.resultInfo as TravleInfo
 
         assertThat(travleInfo.numPerfect).isEqualTo(1)
         assertThat(travleInfo.numIncorrect).isEqualTo(8)
@@ -409,8 +409,8 @@ class ShareTextParserTest {
         )
         assertThat(result.score).isEqualTo(3)
         assertThat(result.game).isEqualTo(Game.TOP5)
-        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
-        val top5Info = result.gameInfo as Top5Info
+        assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.resultInfo as Top5Info
 
         assertThat(top5Info.numGuesses).isEqualTo(8)
         assertThat(top5Info.numCorrect).isEqualTo(3)
@@ -430,8 +430,8 @@ class ShareTextParserTest {
         )
         assertThat(result.score).isEqualTo(6)
 
-        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
-        val top5Info = result.gameInfo as Top5Info
+        assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.resultInfo as Top5Info
 
         assertThat(top5Info.numGuesses).isEqualTo(9)
         assertThat(top5Info.numCorrect).isEqualTo(5)
@@ -451,8 +451,8 @@ class ShareTextParserTest {
         )
         assertThat(result.score).isEqualTo(10)
 
-        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
-        val top5Info = result.gameInfo as Top5Info
+        assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.resultInfo as Top5Info
 
         assertThat(top5Info.numGuesses).isEqualTo(5)
         assertThat(top5Info.numCorrect).isEqualTo(5)
@@ -472,8 +472,8 @@ class ShareTextParserTest {
         )
         assertThat(result.score).isEqualTo(10)
 
-        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
-        val top5Info = result.gameInfo as Top5Info
+        assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.resultInfo as Top5Info
 
         assertThat(top5Info.numGuesses).isEqualTo(5)
         assertThat(top5Info.numCorrect).isEqualTo(5)
@@ -495,7 +495,7 @@ class ShareTextParserTest {
                 🟥🟥🟥
             """.trimIndent()
         )
-        assertThat(flagleInfo.gameInfo).isInstanceOf(FlagleInfo::class.java)
+        assertThat(flagleInfo.resultInfo).isInstanceOf(FlagleInfo::class.java)
     }
 
     @Test
@@ -527,7 +527,7 @@ class ShareTextParserTest {
                 🤔 🤔 📌 ⬜ ⬜ (3/5)
             """.trimIndent()
         )
-        assertThat(pinpointInfo.gameInfo).isInstanceOf(PinpointInfo::class.java)
+        assertThat(pinpointInfo.resultInfo).isInstanceOf(PinpointInfo::class.java)
     }
 
     @Test

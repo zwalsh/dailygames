@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.results.gameinfo
+package sh.zachwal.dailygames.results.resultinfo
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -26,18 +26,18 @@ class SerializeResultInfoTest {
     }
 
     @ParameterizedTest
-    @MethodSource("sh.zachwal.dailygames.results.gameinfo.SerializeGameInfoTest#gameInfoObjects")
-    fun `can serialize and deserialize different game info objects`(gameInfo: ResultInfo) {
-        val serialized = objectMapper.writeValueAsString(gameInfo)
+    @MethodSource("sh.zachwal.dailygames.results.resultinfo.SerializeResultInfoTest#resultInfoList")
+    fun `can serialize and deserialize different game info objects`(resultInfo: ResultInfo) {
+        val serialized = objectMapper.writeValueAsString(resultInfo)
 
         val deserialized: ResultInfo = objectMapper.readValue(serialized)
 
-        assertThat(deserialized).isEqualTo(gameInfo)
+        assertThat(deserialized).isEqualTo(resultInfo)
     }
 
     companion object {
         @JvmStatic
-        fun gameInfoObjects() = listOf(
+        fun resultInfoList() = listOf(
             WorldleInfo(
                 percentage = 100,
             ),

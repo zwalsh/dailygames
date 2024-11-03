@@ -5,7 +5,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
 import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
-import sh.zachwal.dailygames.results.gameinfo.ResultInfo
+import sh.zachwal.dailygames.results.resultinfo.ResultInfo
 
 interface ResultDAO {
 
