@@ -54,11 +54,7 @@ class SerializeGameInfoTest {
                 score = 100,
                 shareTextNoLink = "I got 100% on Geocircles puzzle 1!",
             ),
-            TradleInfo(
-                puzzleNumber = 1,
-                score = 100,
-                shareTextNoLink = "I got 100% on Tradle puzzle 1!",
-            ),
+            TradleInfo,
             FlagleInfo(
                 puzzleNumber = 1,
                 score = 100,
