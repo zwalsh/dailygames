@@ -137,7 +137,7 @@ class ShareTextParser {
 
     val pinpointRegex = Regex(
         """
-            \s*Pinpoint #(?<puzzleNumber>\d+)[\s\S]*\((?<score>\S)/5\)\s+[\s\S]*
+            \s*Pinpoint #(?<puzzleNumber>\d+)[\s\S]*\((?<score>\S)/5\)[\s\S]*
         """.trimIndent()
     )
     fun extractPinpointInfo(shareText: String): PinpointInfo {
