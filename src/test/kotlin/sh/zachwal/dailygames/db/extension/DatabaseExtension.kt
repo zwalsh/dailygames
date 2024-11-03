@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
 import kotlin.io.path.Path
 
-
 private val postgresContainerNamespace = Namespace.create("postgres")
 private const val POSTGRES_CONTAINER_KEY = "POSTGRES_CONTAINER_KEY"
 private const val JDBI_KEY = "JDBI"

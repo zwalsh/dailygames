@@ -11,7 +11,6 @@ import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
-import java.time.LocalDate
 
 @ExtendWith(DatabaseExtension::class)
 class ResultDAOTest(
