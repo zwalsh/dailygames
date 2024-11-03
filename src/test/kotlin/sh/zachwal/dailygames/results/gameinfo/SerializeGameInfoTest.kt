@@ -1,18 +1,15 @@
 package sh.zachwal.dailygames.results.gameinfo
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import java.time.LocalDate
 
 class SerializeGameInfoTest {
 
     private val objectMapper = jacksonObjectMapper()
-        .registerModule(JavaTimeModule())
 
     @Test
     fun `can serialize and deserialize a game info object into a specific type`() {

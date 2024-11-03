@@ -64,8 +64,6 @@ dependencies {
 
     // Jackson
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
-    // TODO remove after refactoring info parsing
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
 
     // Use the Kotlin test library.
     testImplementation(kotlin("test"))
