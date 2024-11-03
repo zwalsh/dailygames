@@ -217,6 +217,7 @@ class ShareTextParserTest {
             🟩🟩🟩🟩🟩🎉
             """.trimIndent()
         )
+        assertThat(result.game).isEqualTo(Game.WORLDLE)
 
         val worldleInfo = result.gameInfo as WorldleInfo
         assertThat(worldleInfo.percentage).isEqualTo(100)
@@ -290,6 +291,7 @@ class ShareTextParserTest {
             🟩🟩🟩🟩🟨
             """.trimIndent()
         )
+        assertThat(tradleInfo.game).isEqualTo(Game.TRADLE)
     }
 
     @Test
@@ -304,6 +306,7 @@ class ShareTextParserTest {
                 ✅✅✅✅✅✅✅
             """.trimIndent()
         )
+        assertThat(result.game).isEqualTo(Game.TRAVLE)
         assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
 
         val travleInfo = result.gameInfo as TravleInfo
@@ -392,6 +395,7 @@ class ShareTextParserTest {
             """.trimIndent()
         )
         assertThat(result.score).isEqualTo(3)
+        assertThat(result.game).isEqualTo(Game.TOP5)
         assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
         val top5Info = result.gameInfo as Top5Info
 
@@ -470,6 +474,7 @@ class ShareTextParserTest {
         assertThat(flagleInfo.puzzleNumber).isEqualTo(905)
         assertThat(flagleInfo.date).isEqualTo(LocalDate.of(2024, 8, 14))
         assertThat(flagleInfo.score).isEqualTo(7)
+        assertThat(flagleInfo.game).isEqualTo(Game.FLAGLE)
         assertThat(flagleInfo.shareTextNoLink).isEqualTo(
             """
                 #Flagle #905 (14.08.2024) X/6
@@ -502,6 +507,7 @@ class ShareTextParserTest {
 
         assertThat(pinpointInfo.puzzleNumber).isEqualTo(126)
         assertThat(pinpointInfo.score).isEqualTo(3)
+        assertThat(pinpointInfo.game).isEqualTo(Game.PINPOINT)
         assertThat(pinpointInfo.shareTextNoLink).isEqualTo(
             """
                 Pinpoint #126
