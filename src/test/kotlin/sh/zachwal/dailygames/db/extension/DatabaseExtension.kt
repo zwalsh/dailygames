@@ -1,7 +1,5 @@
 package sh.zachwal.dailygames.db.extension
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import liquibase.Liquibase
 import liquibase.database.DatabaseFactory
@@ -104,7 +102,6 @@ class DatabaseExtension : ParameterResolver, BeforeEachCallback, AfterEachCallba
 
         // TODO configure prod jdbi this way
         val mapper = jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
 
         jdbi.getConfig(Jackson2Config::class.java).setMapper(mapper)
 

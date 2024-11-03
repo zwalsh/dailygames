@@ -19,16 +19,12 @@ class ResultDAOTest(
     private val fixtures: Fixtures
 ) {
 
-    val resultDAO: ResultDAO = jdbi.onDemand()
+    private val resultDAO: ResultDAO = jdbi.onDemand()
 
     @Test
     fun `can insert a result`() {
         val expectedWorldleInfo = WorldleInfo(
-            fixtures.worldle123Puzzle.number,
-            LocalDate.of(2024, 11, 2),
             3,
-            100,
-            "text",
         )
         val result = resultDAO.insertResult(
             userId = fixtures.zach.id,
