@@ -52,13 +52,21 @@ class ShareTextParser {
             \s*#Tradle\s+#(?<puzzleNumber>\d+)\s+(?<score>\S)/6[\s\S]*
         """.trimIndent()
     )
-    fun extractTradleInfo(shareText: String): TradleInfo {
+    fun extractTradleInfo(shareText: String): ParsedResult {
         val match = tradleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Tradle share")
         val (puzzleNumber, score) = match.destructured
-        return TradleInfo(
+        val tradleInfo = TradleInfo(
             puzzleNumber = puzzleNumber.toInt(),
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points.
             shareTextNoLink = shareText.substringBefore("https://").trim()
+        )
+        return ParsedResult(
+            puzzleNumber = puzzleNumber.toInt(),
+            game = Game.TRADLE,
+            date = null,
+            score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points.
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            gameInfo = tradleInfo
         )
     }
 

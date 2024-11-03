@@ -82,14 +82,14 @@ class ResultService @Inject constructor(
             }
 
             Game.TRADLE -> {
-                val tradleInfo = shareTextParser.extractTradleInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRADLE, tradleInfo.puzzleNumber, null))
+                val parsedResult = shareTextParser.extractTradleInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRADLE, parsedResult.puzzleNumber, null))
 
                 return tradleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = tradleInfo.score,
-                    shareText = tradleInfo.shareTextNoLink,
+                    score = parsedResult.score,
+                    shareText = parsedResult.shareTextNoLink,
                 )
             }
 
