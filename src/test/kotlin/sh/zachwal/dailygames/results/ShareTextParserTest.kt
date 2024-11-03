@@ -78,6 +78,11 @@ Pinpoint #126
 🤔 🤔 📌 ⬜ ⬜ (3/5)
 """
 
+const val PINPOINT_TEST = """
+Pinpoint #126
+📌 ⬜ ⬜ ⬜ ⬜ (1/5)
+"""
+
 class ShareTextParserTest {
 
     private val parser = ShareTextParser()
@@ -174,6 +179,7 @@ class ShareTextParserTest {
         assertThat(parser.identifyGame(PINPOINT_THREE)).isEqualTo(Game.PINPOINT)
         assertThat(parser.identifyGame(PINPOINT_FAIL)).isEqualTo(Game.PINPOINT)
         assertThat(parser.identifyGame(PINPOINT_NO_LINK)).isEqualTo(Game.PINPOINT)
+        assertThat(parser.identifyGame(PINPOINT_TEST)).isEqualTo(Game.PINPOINT)
     }
 
     @Test
@@ -181,6 +187,13 @@ class ShareTextParserTest {
         val shareText = "#Tradle #890 X/6\r\nhttps://oec.world/en/games/tradle"
 
         assertThat(parser.identifyGame(shareText)).isEqualTo(Game.TRADLE)
+    }
+
+    @Test
+    fun `matches Pinpoint with carriage return`() {
+        val shareText = "Pinpoint #126\r\n\uD83D\uDCCC ⬜ ⬜ ⬜ ⬜ (1/5)"
+
+        assertThat(parser.identifyGame(shareText)).isEqualTo(Game.PINPOINT)
     }
 
     // Extraction
