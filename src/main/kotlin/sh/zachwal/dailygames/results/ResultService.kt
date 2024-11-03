@@ -136,38 +136,38 @@ class ResultService @Inject constructor(
             }
 
             Game.FLAGLE -> {
-                val flagleInfo = shareTextParser.extractFlagleInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.FLAGLE, flagleInfo.puzzleNumber, flagleInfo.date))
+                val result = shareTextParser.extractFlagleInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.FLAGLE, result.puzzleNumber, result.date))
 
                 return flagleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = flagleInfo.score,
-                    shareText = flagleInfo.shareTextNoLink,
+                    score = result.score,
+                    shareText = result.shareTextNoLink,
                 )
             }
 
             Game.PINPOINT -> {
-                val pinpointInfo = shareTextParser.extractPinpointInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.PINPOINT, pinpointInfo.puzzleNumber, null))
+                val result = shareTextParser.extractPinpointInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.PINPOINT, result.puzzleNumber, null))
 
                 return pinpointDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = pinpointInfo.score,
-                    shareText = pinpointInfo.shareTextNoLink,
+                    score = result.score,
+                    shareText = result.shareTextNoLink,
                 )
             }
 
             Game.GEOCIRCLES -> {
-                val geocirclesInfo = shareTextParser.extractGeocirclesInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.GEOCIRCLES, geocirclesInfo.puzzleNumber, null))
+                val result = shareTextParser.extractGeocirclesInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.GEOCIRCLES, result.puzzleNumber, null))
 
                 return geocirclesDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = geocirclesInfo.score,
-                    shareText = geocirclesInfo.shareTextNoLink,
+                    score = result.score,
+                    shareText = result.shareTextNoLink,
                 )
             }
         }

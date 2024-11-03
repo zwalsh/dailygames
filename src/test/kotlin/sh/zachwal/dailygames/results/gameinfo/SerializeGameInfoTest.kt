@@ -44,23 +44,10 @@ class SerializeGameInfoTest {
             WorldleInfo(
                 percentage = 100,
             ),
-            PinpointInfo(
-                puzzleNumber = 1,
-                score = 100,
-                shareTextNoLink = "I got 100% on Pinpoint puzzle 1!",
-            ),
-            GeocirclesInfo(
-                puzzleNumber = 1,
-                score = 100,
-                shareTextNoLink = "I got 100% on Geocircles puzzle 1!",
-            ),
+            PinpointInfo,
+            GeocirclesInfo,
             TradleInfo,
-            FlagleInfo(
-                puzzleNumber = 1,
-                score = 100,
-                shareTextNoLink = "I got 100% on Flagle puzzle 1!",
-                date = LocalDate.of(2022, 1, 1),
-            ),
+            FlagleInfo,
             TravleInfo(
                 numGuesses = 6,
                 numIncorrect = 0,

@@ -143,14 +143,16 @@ class ShareTextParser {
             \s*#Flagle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+[\s\S]*
         """.trimIndent()
     )
-    fun extractFlagleInfo(shareText: String): FlagleInfo {
+    fun extractFlagleInfo(shareText: String): ParsedResult {
         val match = flagleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Flagle share")
         val (puzzleNumber, day, month, year, score) = match.destructured
-        return FlagleInfo(
+        return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
+            game = Game.FLAGLE,
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
-            shareTextNoLink = shareText.substringBefore("https://").trim()
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            gameInfo = FlagleInfo,
         )
     }
 
@@ -159,13 +161,16 @@ class ShareTextParser {
             \s*Pinpoint #(?<puzzleNumber>\d+)[\s\S]*\((?<score>\S)/5\)\s+[\s\S]*
         """.trimIndent()
     )
-    fun extractPinpointInfo(shareText: String): PinpointInfo {
+    fun extractPinpointInfo(shareText: String): ParsedResult {
         val match = pinpointRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Pinpoint share")
         val (puzzleNumber, score) = match.destructured
-        return PinpointInfo(
+        return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
+            game = Game.PINPOINT,
+            date = null,
             score = score.toIntOrNull() ?: 6, // X / 5 scored as 6 points
             shareTextNoLink = shareText.substringBefore("lnkd").trim(),
+            gameInfo = PinpointInfo,
         )
     }
 
@@ -175,14 +180,17 @@ class ShareTextParser {
         """.trimIndent()
     )
     val greenCircleOrHeartRegex = Regex("(\uD83D\uDFE2|❤\uFE0F)")
-    fun extractGeocirclesInfo(shareText: String): GeocirclesInfo {
+    fun extractGeocirclesInfo(shareText: String): ParsedResult {
         val match = geocirclesRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Geocircles share")
         val (puzzleNumber) = match.destructured
         val score = greenCircleOrHeartRegex.findAll(shareText).count()
-        return GeocirclesInfo(
+        return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
+            game = Game.GEOCIRCLES,
+            date = null,
             score = score,
-            shareTextNoLink = shareText.substringBefore("https://").trim()
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            gameInfo = GeocirclesInfo
         )
     }
 }

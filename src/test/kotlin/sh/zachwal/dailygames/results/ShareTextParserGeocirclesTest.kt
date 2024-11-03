@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.gameinfo.GeocirclesInfo
 
 const val GEOCIRCLES_PERFECT = """
 Geocircles #55
@@ -67,5 +68,11 @@ class ShareTextParserGeocirclesTest {
     fun `extracts geocircles with lives left`() {
         val info = parser.extractGeocirclesInfo(GEOCIRCLES_LIVES_LEFT)
         assertThat(info.score).isEqualTo(7)
+    }
+
+    @Test
+    fun `sets correct game info`() {
+        val info = parser.extractGeocirclesInfo(GEOCIRCLES_PERFECT)
+        assertThat(info.gameInfo).isEqualTo(GeocirclesInfo)
     }
 }

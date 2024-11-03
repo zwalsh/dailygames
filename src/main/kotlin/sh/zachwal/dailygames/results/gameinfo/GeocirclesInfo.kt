@@ -1,7 +1,8 @@
 package sh.zachwal.dailygames.results.gameinfo
 
-data class GeocirclesInfo constructor(
-    val puzzleNumber: Int,
-    val score: Int,
-    val shareTextNoLink: String,
-) : GameInfo()
+object GeocirclesInfo : GameInfo() {
+    // Must override this because, in deserialization, a new instance is created
+    override fun equals(other: Any?): Boolean {
+        return other is GeocirclesInfo
+    }
+}

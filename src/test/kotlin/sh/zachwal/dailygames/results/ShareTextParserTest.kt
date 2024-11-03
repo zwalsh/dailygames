@@ -3,6 +3,8 @@ package sh.zachwal.dailygames.results
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.gameinfo.FlagleInfo
+import sh.zachwal.dailygames.results.gameinfo.PinpointInfo
 import sh.zachwal.dailygames.results.gameinfo.Top5Info
 import sh.zachwal.dailygames.results.gameinfo.TravleInfo
 import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
@@ -475,6 +477,7 @@ class ShareTextParserTest {
                 🟥🟥🟥
             """.trimIndent()
         )
+        assertThat(flagleInfo.gameInfo).isInstanceOf(FlagleInfo::class.java)
     }
 
     @Test
@@ -505,6 +508,7 @@ class ShareTextParserTest {
                 🤔 🤔 📌 ⬜ ⬜ (3/5)
             """.trimIndent()
         )
+        assertThat(pinpointInfo.gameInfo).isInstanceOf(PinpointInfo::class.java)
     }
 
     @Test
