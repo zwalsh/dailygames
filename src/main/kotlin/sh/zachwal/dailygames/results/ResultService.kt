@@ -18,6 +18,9 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
+import sh.zachwal.dailygames.results.gameinfo.Top5Info
+import sh.zachwal.dailygames.results.gameinfo.TravleInfo
+import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
@@ -65,39 +68,46 @@ class ResultService @Inject constructor(
 
         when (game) {
             Game.WORLDLE -> {
-                val worldleInfo = shareTextParser.extractWorldleInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.WORLDLE, worldleInfo.puzzleNumber, worldleInfo.date))
+                val parsedResult = shareTextParser.extractWorldleInfo(shareText)
+                if (parsedResult.gameInfo !is WorldleInfo) {
+                    throw IllegalArgumentException("Parsed result $parsedResult is not a WorldleInfo")
+                }
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.WORLDLE, parsedResult.puzzleNumber, parsedResult.date))
 
                 return worldleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = worldleInfo.score,
-                    shareText = worldleInfo.shareTextNoLink,
-                    scorePercentage = worldleInfo.percentage,
+                    score = parsedResult.score,
+                    shareText = parsedResult.shareTextNoLink,
+                    scorePercentage = parsedResult.gameInfo.percentage,
                 )
             }
 
             Game.TRADLE -> {
-                val tradleInfo = shareTextParser.extractTradleInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRADLE, tradleInfo.puzzleNumber, null))
+                val parsedResult = shareTextParser.extractTradleInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRADLE, parsedResult.puzzleNumber, null))
 
                 return tradleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = tradleInfo.score,
-                    shareText = tradleInfo.shareTextNoLink,
+                    score = parsedResult.score,
+                    shareText = parsedResult.shareTextNoLink,
                 )
             }
 
             Game.TRAVLE -> {
-                val travleInfo = shareTextParser.extractTravleInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRAVLE, travleInfo.puzzleNumber, null))
+                val parsedResult = shareTextParser.extractTravleInfo(shareText)
+                if (parsedResult.gameInfo !is TravleInfo) {
+                    throw IllegalArgumentException("Parsed result $parsedResult is not a TravleInfo")
+                }
+                val travleInfo: TravleInfo = parsedResult.gameInfo
 
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRAVLE, parsedResult.puzzleNumber, null))
                 return travleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = travleInfo.score,
-                    shareText = travleInfo.shareTextNoLink,
+                    score = parsedResult.score,
+                    shareText = parsedResult.shareTextNoLink,
                     numGuesses = travleInfo.numGuesses,
                     numIncorrect = travleInfo.numIncorrect,
                     numPerfect = travleInfo.numPerfect,
@@ -106,14 +116,19 @@ class ResultService @Inject constructor(
             }
 
             Game.TOP5 -> {
-                val top5Info = shareTextParser.extractTop5Info(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.TOP5, top5Info.puzzleNumber, null))
+                val result = shareTextParser.extractTop5Info(shareText)
+                if (result.gameInfo !is Top5Info) {
+                    throw IllegalArgumentException("Parsed result $result is not a Top5Info")
+                }
+                val top5Info: Top5Info = result.gameInfo
+
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.TOP5, result.puzzleNumber, null))
 
                 return top5DAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = top5Info.score,
-                    shareText = top5Info.shareTextNoLink,
+                    score = result.score,
+                    shareText = result.shareTextNoLink,
                     numGuesses = top5Info.numGuesses,
                     numCorrect = top5Info.numCorrect,
                     isPerfect = top5Info.isPerfect,
@@ -121,38 +136,38 @@ class ResultService @Inject constructor(
             }
 
             Game.FLAGLE -> {
-                val flagleInfo = shareTextParser.extractFlagleInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.FLAGLE, flagleInfo.puzzleNumber, flagleInfo.date))
+                val result = shareTextParser.extractFlagleInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.FLAGLE, result.puzzleNumber, result.date))
 
                 return flagleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = flagleInfo.score,
-                    shareText = flagleInfo.shareTextNoLink,
+                    score = result.score,
+                    shareText = result.shareTextNoLink,
                 )
             }
 
             Game.PINPOINT -> {
-                val pinpointInfo = shareTextParser.extractPinpointInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.PINPOINT, pinpointInfo.puzzleNumber, null))
+                val result = shareTextParser.extractPinpointInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.PINPOINT, result.puzzleNumber, null))
 
                 return pinpointDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = pinpointInfo.score,
-                    shareText = pinpointInfo.shareTextNoLink,
+                    score = result.score,
+                    shareText = result.shareTextNoLink,
                 )
             }
 
             Game.GEOCIRCLES -> {
-                val geocirclesInfo = shareTextParser.extractGeocirclesInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.GEOCIRCLES, geocirclesInfo.puzzleNumber, null))
+                val result = shareTextParser.extractGeocirclesInfo(shareText)
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.GEOCIRCLES, result.puzzleNumber, null))
 
                 return geocirclesDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = geocirclesInfo.score,
-                    shareText = geocirclesInfo.shareTextNoLink,
+                    score = result.score,
+                    shareText = result.shareTextNoLink,
                 )
             }
         }

@@ -3,6 +3,11 @@ package sh.zachwal.dailygames.results
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.gameinfo.FlagleInfo
+import sh.zachwal.dailygames.results.gameinfo.PinpointInfo
+import sh.zachwal.dailygames.results.gameinfo.Top5Info
+import sh.zachwal.dailygames.results.gameinfo.TravleInfo
+import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
 import java.time.LocalDate
 
 const val TRAVLE_PERFECT = """
@@ -210,13 +215,13 @@ class ShareTextParserTest {
             https://worldle.teuteuf.fr
         """.trimIndent()
 
-        val worldleInfo = parser.extractWorldleInfo(shareText)
+        val result = parser.extractWorldleInfo(shareText)
+        assertThat(result.gameInfo).isInstanceOf(WorldleInfo::class.java)
 
-        assertThat(worldleInfo.puzzleNumber).isEqualTo(934)
-        assertThat(worldleInfo.date).isEqualTo(LocalDate.of(2024, 8, 12))
-        assertThat(worldleInfo.score).isEqualTo(4)
-        assertThat(worldleInfo.percentage).isEqualTo(100)
-        assertThat(worldleInfo.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(934)
+        assertThat(result.date).isEqualTo(LocalDate.of(2024, 8, 12))
+        assertThat(result.score).isEqualTo(4)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
             #Worldle #934 (12.08.2024) 4/6 (100%)
             🟩🟩🟩🟩🟨⬅️
@@ -225,6 +230,10 @@ class ShareTextParserTest {
             🟩🟩🟩🟩🟩🎉
             """.trimIndent()
         )
+        assertThat(result.game).isEqualTo(Game.WORLDLE)
+
+        val worldleInfo = result.gameInfo as WorldleInfo
+        assertThat(worldleInfo.percentage).isEqualTo(100)
     }
 
     @Test
@@ -295,20 +304,26 @@ class ShareTextParserTest {
             🟩🟩🟩🟩🟨
             """.trimIndent()
         )
+        assertThat(tradleInfo.game).isEqualTo(Game.TRADLE)
     }
 
     @Test
     fun `extracts Travle info when perfect`() {
-        val travleInfo = parser.extractTravleInfo(TRAVLE_PERFECT)
+        val result = parser.extractTravleInfo(TRAVLE_PERFECT)
 
-        assertThat(travleInfo.puzzleNumber).isEqualTo(607)
-        assertThat(travleInfo.score).isEqualTo(0)
-        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(607)
+        assertThat(result.score).isEqualTo(0)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 #travle #607 +0 (Perfect)
                 ✅✅✅✅✅✅✅
             """.trimIndent()
         )
+        assertThat(result.game).isEqualTo(Game.TRAVLE)
+        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+
+        val travleInfo = result.gameInfo as TravleInfo
+
         assertThat(travleInfo.numPerfect).isEqualTo(7)
         assertThat(travleInfo.numIncorrect).isEqualTo(0)
         assertThat(travleInfo.numGuesses).isEqualTo(7)
@@ -317,16 +332,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Travle info when score is not perfect`() {
-        val travleInfo = parser.extractTravleInfo(TRAVLE_PLUS_0)
+        val result = parser.extractTravleInfo(TRAVLE_PLUS_0)
 
-        assertThat(travleInfo.puzzleNumber).isEqualTo(607)
-        assertThat(travleInfo.score).isEqualTo(0)
-        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(607)
+        assertThat(result.score).isEqualTo(0)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 #travle #607 +0
                 ✅✅✅🟩✅✅✅
             """.trimIndent()
         )
+        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+
+        val travleInfo = result.gameInfo as TravleInfo
+
         assertThat(travleInfo.numPerfect).isEqualTo(6)
         assertThat(travleInfo.numIncorrect).isEqualTo(0)
         assertThat(travleInfo.numGuesses).isEqualTo(7)
@@ -335,16 +354,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Travle info when hints are used`() {
-        val travleInfo = parser.extractTravleInfo(TRAVLE_WITH_HINT)
+        val result = parser.extractTravleInfo(TRAVLE_WITH_HINT)
 
-        assertThat(travleInfo.puzzleNumber).isEqualTo(606)
-        assertThat(travleInfo.score).isEqualTo(2)
-        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(606)
+        assertThat(result.score).isEqualTo(2)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 #travle #606 +2 (1 hint)
                 ✅✅🟩🟧🟧✅
             """.trimIndent()
         )
+        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+
+        val travleInfo = result.gameInfo as TravleInfo
+
         assertThat(travleInfo.numPerfect).isEqualTo(3)
         assertThat(travleInfo.numIncorrect).isEqualTo(2)
         assertThat(travleInfo.numGuesses).isEqualTo(6)
@@ -353,16 +376,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Travle info when did not finish`() {
-        val travleInfo = parser.extractTravleInfo(TRAVLE_THREE_AWAY)
+        val result = parser.extractTravleInfo(TRAVLE_THREE_AWAY)
 
-        assertThat(travleInfo.puzzleNumber).isEqualTo(614)
-        assertThat(travleInfo.score).isEqualTo(-3)
-        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(614)
+        assertThat(result.score).isEqualTo(-3)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 #travle #614 (3 away)
                 🟧🟥🟥🟥🟧🟥🟥🟥✅
             """.trimIndent()
         )
+        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+
+        val travleInfo = result.gameInfo as TravleInfo
+
         assertThat(travleInfo.numPerfect).isEqualTo(1)
         assertThat(travleInfo.numIncorrect).isEqualTo(8)
         assertThat(travleInfo.numGuesses).isEqualTo(9)
@@ -371,16 +398,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Top5 info`() {
-        val top5Info = parser.extractTop5Info(TOP5)
+        val result = parser.extractTop5Info(TOP5)
 
-        assertThat(top5Info.puzzleNumber).isEqualTo(171)
-        assertThat(top5Info.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(171)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 Top 5 #171
                 ⬜🟧🟨⬜⬜🟩⬜⬜
             """.trimIndent()
         )
-        assertThat(top5Info.score).isEqualTo(3)
+        assertThat(result.score).isEqualTo(3)
+        assertThat(result.game).isEqualTo(Game.TOP5)
+        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.gameInfo as Top5Info
+
         assertThat(top5Info.numGuesses).isEqualTo(8)
         assertThat(top5Info.numCorrect).isEqualTo(3)
         assertThat(top5Info.isPerfect).isFalse()
@@ -388,16 +419,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Top5 info with all 5 correct but misses`() {
-        val top5Info = parser.extractTop5Info(TOP5_ALL_5_WITH_MISSES)
+        val result = parser.extractTop5Info(TOP5_ALL_5_WITH_MISSES)
 
-        assertThat(top5Info.puzzleNumber).isEqualTo(170)
-        assertThat(top5Info.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(170)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 Top 5 #170
                 🟥⬜🟩🟨🟦⬜⬜⬜🟧
             """.trimIndent()
         )
-        assertThat(top5Info.score).isEqualTo(6)
+        assertThat(result.score).isEqualTo(6)
+
+        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.gameInfo as Top5Info
+
         assertThat(top5Info.numGuesses).isEqualTo(9)
         assertThat(top5Info.numCorrect).isEqualTo(5)
         assertThat(top5Info.isPerfect).isFalse()
@@ -405,16 +440,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Top5 info with no misses`() {
-        val top5Info = parser.extractTop5Info(TOP5_NO_MISSES)
+        val result = parser.extractTop5Info(TOP5_NO_MISSES)
 
-        assertThat(top5Info.puzzleNumber).isEqualTo(169)
-        assertThat(top5Info.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(169)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 Top 5 #169
                 🟥🟩🟧🟦🟨
             """.trimIndent()
         )
-        assertThat(top5Info.score).isEqualTo(10)
+        assertThat(result.score).isEqualTo(10)
+
+        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.gameInfo as Top5Info
+
         assertThat(top5Info.numGuesses).isEqualTo(5)
         assertThat(top5Info.numCorrect).isEqualTo(5)
         assertThat(top5Info.isPerfect).isFalse()
@@ -422,16 +461,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Top5 info with perfect score`() {
-        val top5Info = parser.extractTop5Info(TOP5_PERFECT)
+        val result = parser.extractTop5Info(TOP5_PERFECT)
 
-        assertThat(top5Info.puzzleNumber).isEqualTo(169)
-        assertThat(top5Info.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(169)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 Top 5 #169
                 🟥🟧🟨🟩🟦
             """.trimIndent()
         )
-        assertThat(top5Info.score).isEqualTo(10)
+        assertThat(result.score).isEqualTo(10)
+
+        assertThat(result.gameInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.gameInfo as Top5Info
+
         assertThat(top5Info.numGuesses).isEqualTo(5)
         assertThat(top5Info.numCorrect).isEqualTo(5)
         assertThat(top5Info.isPerfect).isTrue()
@@ -444,6 +487,7 @@ class ShareTextParserTest {
         assertThat(flagleInfo.puzzleNumber).isEqualTo(905)
         assertThat(flagleInfo.date).isEqualTo(LocalDate.of(2024, 8, 14))
         assertThat(flagleInfo.score).isEqualTo(7)
+        assertThat(flagleInfo.game).isEqualTo(Game.FLAGLE)
         assertThat(flagleInfo.shareTextNoLink).isEqualTo(
             """
                 #Flagle #905 (14.08.2024) X/6
@@ -451,6 +495,7 @@ class ShareTextParserTest {
                 🟥🟥🟥
             """.trimIndent()
         )
+        assertThat(flagleInfo.gameInfo).isInstanceOf(FlagleInfo::class.java)
     }
 
     @Test
@@ -475,12 +520,14 @@ class ShareTextParserTest {
 
         assertThat(pinpointInfo.puzzleNumber).isEqualTo(126)
         assertThat(pinpointInfo.score).isEqualTo(3)
+        assertThat(pinpointInfo.game).isEqualTo(Game.PINPOINT)
         assertThat(pinpointInfo.shareTextNoLink).isEqualTo(
             """
                 Pinpoint #126
                 🤔 🤔 📌 ⬜ ⬜ (3/5)
             """.trimIndent()
         )
+        assertThat(pinpointInfo.gameInfo).isInstanceOf(PinpointInfo::class.java)
     }
 
     @Test

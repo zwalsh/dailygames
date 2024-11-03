@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.gameinfo.FlagleInfo
 import sh.zachwal.dailygames.results.gameinfo.GeocirclesInfo
+import sh.zachwal.dailygames.results.gameinfo.ParsedResult
 import sh.zachwal.dailygames.results.gameinfo.PinpointInfo
 import sh.zachwal.dailygames.results.gameinfo.Top5Info
 import sh.zachwal.dailygames.results.gameinfo.TradleInfo
@@ -30,15 +31,19 @@ class ShareTextParser {
     val worldleRegex = Regex(
         """\s*#Worldle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+\((?<percentage>\d+)%\)[\s\S]*"""
     )
-    fun extractWorldleInfo(shareText: String): WorldleInfo {
+    fun extractWorldleInfo(shareText: String): ParsedResult {
         val match = worldleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Worldle share")
         val (puzzleNumber, day, month, year, score, percentage) = match.destructured
-        return WorldleInfo(
+        val worldleInfo = WorldleInfo(
+            percentage = percentage.toInt(),
+        )
+        return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
+            game = Game.WORLDLE,
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
-            percentage = percentage.toInt(),
-            shareTextNoLink = shareText.substringBefore("https://").trim()
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            gameInfo = worldleInfo
         )
     }
 
@@ -47,13 +52,17 @@ class ShareTextParser {
             \s*#Tradle\s+#(?<puzzleNumber>\d+)\s+(?<score>\S)/6[\s\S]*
         """.trimIndent()
     )
-    fun extractTradleInfo(shareText: String): TradleInfo {
+    fun extractTradleInfo(shareText: String): ParsedResult {
         val match = tradleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Tradle share")
         val (puzzleNumber, score) = match.destructured
-        return TradleInfo(
+        val tradleInfo = TradleInfo
+        return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
+            game = Game.TRADLE,
+            date = null,
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points.
-            shareTextNoLink = shareText.substringBefore("https://").trim()
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            gameInfo = tradleInfo
         )
     }
 
@@ -64,7 +73,7 @@ class ShareTextParser {
     val guessEmojiRegex = Regex("[\uD83D\uDFE7\uD83D\uDFE9✅\uD83D\uDFE7\uD83D\uDFE5\uD83D\uDFE9✅]")
     val incorrectGuessEmojiRegex = Regex("[\uD83D\uDFE7\uD83D\uDFE5]")
     val checkboxEmojiRegex = Regex("✅")
-    fun extractTravleInfo(shareText: String): TravleInfo {
+    fun extractTravleInfo(shareText: String): ParsedResult {
         if (!shareText.contains("#travle")) {
             throw IllegalArgumentException("Share text is not a Travle share")
         }
@@ -80,14 +89,19 @@ class ShareTextParser {
         val numPerfect = checkboxEmojiRegex.findAll(shareText).count()
         val hintCount = hintCountRegex.find(shareText)?.groupValues?.get(1)?.toIntOrNull() ?: 0
 
-        return TravleInfo(
-            puzzleNumber = puzzleNumber.toInt(),
-            score = score,
-            shareTextNoLink = shareText.substringBefore("https://").trim(),
+        val travleInfo = TravleInfo(
             numGuesses = numGuesses,
             numIncorrect = numIncorrect,
             numPerfect = numPerfect,
             numHints = hintCount,
+        )
+        return ParsedResult(
+            puzzleNumber = puzzleNumber.toInt(),
+            game = Game.TRAVLE,
+            date = null,
+            score = score,
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            gameInfo = travleInfo
         )
     }
 
@@ -99,7 +113,7 @@ class ShareTextParser {
     val perfectTop5Regex = Regex("\uD83D\uDFE5\uD83D\uDFE7\uD83D\uDFE8\uD83D\uDFE9\uD83D\uDFE6")
     val top5GuessRegex = Regex("[\uD83D\uDFE5\uD83D\uDFE7\uD83D\uDFE8\uD83D\uDFE9\uD83D\uDFE6⬜]")
     val top5CorrectRegex = Regex("[[\uD83D\uDFE5\uD83D\uDFE7\uD83D\uDFE8\uD83D\uDFE9\uD83D\uDFE6]]")
-    fun extractTop5Info(shareText: String): Top5Info {
+    fun extractTop5Info(shareText: String): ParsedResult {
         val match = top5Regex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Top 5 share")
 
         val (puzzleNumber) = match.destructured
@@ -109,13 +123,18 @@ class ShareTextParser {
         val numCorrect = top5CorrectRegex.findAll(shareText).count()
         val livesAtStart = 5
         val score = livesAtStart - (numGuesses - numCorrect) + numCorrect
-        return Top5Info(
-            puzzleNumber = puzzleNumber.toInt(),
-            score = score,
-            shareTextNoLink = shareText.substringBefore("https://").trim(),
+        val top5Info = Top5Info(
             numGuesses = numGuesses,
             numCorrect = numCorrect,
             isPerfect = isPerfect
+        )
+        return ParsedResult(
+            puzzleNumber = puzzleNumber.toInt(),
+            game = Game.TOP5,
+            date = null,
+            score = score,
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            gameInfo = top5Info
         )
     }
 
@@ -124,14 +143,16 @@ class ShareTextParser {
             \s*#Flagle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+[\s\S]*
         """.trimIndent()
     )
-    fun extractFlagleInfo(shareText: String): FlagleInfo {
+    fun extractFlagleInfo(shareText: String): ParsedResult {
         val match = flagleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Flagle share")
         val (puzzleNumber, day, month, year, score) = match.destructured
-        return FlagleInfo(
+        return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
+            game = Game.FLAGLE,
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
-            shareTextNoLink = shareText.substringBefore("https://").trim()
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            gameInfo = FlagleInfo,
         )
     }
 
@@ -140,13 +161,16 @@ class ShareTextParser {
             \s*Pinpoint #(?<puzzleNumber>\d+)[\s\S]*\((?<score>\S)/5\)[\s\S]*
         """.trimIndent()
     )
-    fun extractPinpointInfo(shareText: String): PinpointInfo {
+    fun extractPinpointInfo(shareText: String): ParsedResult {
         val match = pinpointRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Pinpoint share")
         val (puzzleNumber, score) = match.destructured
-        return PinpointInfo(
+        return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
+            game = Game.PINPOINT,
+            date = null,
             score = score.toIntOrNull() ?: 6, // X / 5 scored as 6 points
             shareTextNoLink = shareText.substringBefore("lnkd").trim(),
+            gameInfo = PinpointInfo,
         )
     }
 
@@ -156,14 +180,17 @@ class ShareTextParser {
         """.trimIndent()
     )
     val greenCircleOrHeartRegex = Regex("(\uD83D\uDFE2|❤\uFE0F)")
-    fun extractGeocirclesInfo(shareText: String): GeocirclesInfo {
+    fun extractGeocirclesInfo(shareText: String): ParsedResult {
         val match = geocirclesRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Geocircles share")
         val (puzzleNumber) = match.destructured
         val score = greenCircleOrHeartRegex.findAll(shareText).count()
-        return GeocirclesInfo(
+        return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
+            game = Game.GEOCIRCLES,
+            date = null,
             score = score,
-            shareTextNoLink = shareText.substringBefore("https://").trim()
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            gameInfo = GeocirclesInfo
         )
     }
 }
