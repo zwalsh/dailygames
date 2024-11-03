@@ -17,11 +17,7 @@ class SerializeGameInfoTest {
     @Test
     fun `can serialize and deserialize a game info object into a specific type`() {
         val worldleInfo = WorldleInfo(
-            puzzleNumber = 1,
-            date = LocalDate.of(2022, 1, 1),
-            score = 100,
             percentage = 100,
-            shareTextNoLink = "I got 100% on Worldle puzzle 1!",
         )
 
         val worldleInfoJson = objectMapper.writeValueAsString(worldleInfo)
@@ -46,11 +42,7 @@ class SerializeGameInfoTest {
         @JvmStatic
         fun gameInfoObjects() = listOf(
             WorldleInfo(
-                puzzleNumber = 1,
-                date = LocalDate.of(2022, 1, 1),
-                score = 100,
                 percentage = 100,
-                shareTextNoLink = "I got 100% on Worldle puzzle 1!",
             ),
             PinpointInfo(
                 puzzleNumber = 1,

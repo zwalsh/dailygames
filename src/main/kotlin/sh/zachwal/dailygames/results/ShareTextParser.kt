@@ -35,11 +35,7 @@ class ShareTextParser {
         val match = worldleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Worldle share")
         val (puzzleNumber, day, month, year, score, percentage) = match.destructured
         val worldleInfo = WorldleInfo(
-            puzzleNumber = puzzleNumber.toInt(),
-            date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
-            score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
             percentage = percentage.toInt(),
-            shareTextNoLink = shareText.substringBefore("https://").trim()
         )
         return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
