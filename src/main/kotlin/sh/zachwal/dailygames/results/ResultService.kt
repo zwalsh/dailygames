@@ -122,7 +122,7 @@ class ResultService @Inject constructor(
                 }
                 val top5Info: Top5Info = result.gameInfo
 
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.TOP5, top5Info.puzzleNumber, null))
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.TOP5, result.puzzleNumber, null))
 
                 return top5DAO.insertResult(
                     userId = user.id,

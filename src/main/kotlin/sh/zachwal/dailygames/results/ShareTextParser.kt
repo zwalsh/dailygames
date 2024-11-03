@@ -124,9 +124,6 @@ class ShareTextParser {
         val livesAtStart = 5
         val score = livesAtStart - (numGuesses - numCorrect) + numCorrect
         val top5Info = Top5Info(
-            puzzleNumber = puzzleNumber.toInt(),
-            score = score,
-            shareTextNoLink = shareText.substringBefore("https://").trim(),
             numGuesses = numGuesses,
             numCorrect = numCorrect,
             isPerfect = isPerfect

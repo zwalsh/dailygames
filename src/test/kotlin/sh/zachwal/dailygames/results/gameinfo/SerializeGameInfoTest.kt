@@ -67,6 +67,11 @@ class SerializeGameInfoTest {
                 numPerfect = 5,
                 numHints = 0,
             ),
+            Top5Info(
+                numGuesses = 5,
+                numCorrect = 5,
+                isPerfect = true,
+            ),
         )
     }
 }
