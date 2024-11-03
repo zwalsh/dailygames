@@ -18,6 +18,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
+import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
@@ -65,15 +66,18 @@ class ResultService @Inject constructor(
 
         when (game) {
             Game.WORLDLE -> {
-                val worldleInfo = shareTextParser.extractWorldleInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.WORLDLE, worldleInfo.puzzleNumber, worldleInfo.date))
+                val parsedResult = shareTextParser.extractWorldleInfo(shareText)
+                if (parsedResult.gameInfo !is WorldleInfo) {
+                    throw IllegalArgumentException("Parsed result $parsedResult is not a WorldleInfo")
+                }
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.WORLDLE, parsedResult.puzzleNumber, parsedResult.date))
 
                 return worldleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = worldleInfo.score,
-                    shareText = worldleInfo.shareTextNoLink,
-                    scorePercentage = worldleInfo.percentage,
+                    score = parsedResult.score,
+                    shareText = parsedResult.shareTextNoLink,
+                    scorePercentage = parsedResult.gameInfo.percentage,
                 )
             }
 

@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.gameinfo.FlagleInfo
 import sh.zachwal.dailygames.results.gameinfo.GeocirclesInfo
+import sh.zachwal.dailygames.results.gameinfo.ParsedResult
 import sh.zachwal.dailygames.results.gameinfo.PinpointInfo
 import sh.zachwal.dailygames.results.gameinfo.Top5Info
 import sh.zachwal.dailygames.results.gameinfo.TradleInfo
@@ -30,15 +31,23 @@ class ShareTextParser {
     val worldleRegex = Regex(
         """\s*#Worldle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+\((?<percentage>\d+)%\)[\s\S]*"""
     )
-    fun extractWorldleInfo(shareText: String): WorldleInfo {
+    fun extractWorldleInfo(shareText: String): ParsedResult {
         val match = worldleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Worldle share")
         val (puzzleNumber, day, month, year, score, percentage) = match.destructured
-        return WorldleInfo(
+        val worldleInfo = WorldleInfo(
             puzzleNumber = puzzleNumber.toInt(),
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
             percentage = percentage.toInt(),
             shareTextNoLink = shareText.substringBefore("https://").trim()
+        )
+        return ParsedResult(
+            puzzleNumber = puzzleNumber.toInt(),
+            game = Game.WORLDLE,
+            date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
+            score = score.toInt(),
+            shareTextNoLink =  shareText.substringBefore("https://").trim(),
+            gameInfo = worldleInfo
         )
     }
 

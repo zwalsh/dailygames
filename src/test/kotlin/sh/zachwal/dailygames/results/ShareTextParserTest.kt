@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
 import java.time.LocalDate
 
 const val TRAVLE_PERFECT = """
@@ -197,13 +198,13 @@ class ShareTextParserTest {
             https://worldle.teuteuf.fr
         """.trimIndent()
 
-        val worldleInfo = parser.extractWorldleInfo(shareText)
+        val result = parser.extractWorldleInfo(shareText)
+        assertThat(result.gameInfo).isInstanceOf(WorldleInfo::class.java)
 
-        assertThat(worldleInfo.puzzleNumber).isEqualTo(934)
-        assertThat(worldleInfo.date).isEqualTo(LocalDate.of(2024, 8, 12))
-        assertThat(worldleInfo.score).isEqualTo(4)
-        assertThat(worldleInfo.percentage).isEqualTo(100)
-        assertThat(worldleInfo.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(934)
+        assertThat(result.date).isEqualTo(LocalDate.of(2024, 8, 12))
+        assertThat(result.score).isEqualTo(4)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
             #Worldle #934 (12.08.2024) 4/6 (100%)
             🟩🟩🟩🟩🟨⬅️
@@ -212,6 +213,9 @@ class ShareTextParserTest {
             🟩🟩🟩🟩🟩🎉
             """.trimIndent()
         )
+
+        val worldleInfo = result.gameInfo as WorldleInfo
+        assertThat(worldleInfo.percentage).isEqualTo(100)
     }
 
     @Test
