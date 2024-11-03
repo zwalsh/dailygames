@@ -61,6 +61,12 @@ class SerializeGameInfoTest {
                 shareTextNoLink = "I got 100% on Flagle puzzle 1!",
                 date = LocalDate.of(2022, 1, 1),
             ),
+            TravleInfo(
+                numGuesses = 6,
+                numIncorrect = 0,
+                numPerfect = 5,
+                numHints = 0,
+            ),
         )
     }
 }

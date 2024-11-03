@@ -90,9 +90,6 @@ class ShareTextParser {
         val hintCount = hintCountRegex.find(shareText)?.groupValues?.get(1)?.toIntOrNull() ?: 0
 
         val travleInfo = TravleInfo(
-            puzzleNumber = puzzleNumber.toInt(),
-            score = score,
-            shareTextNoLink = shareText.substringBefore("https://").trim(),
             numGuesses = numGuesses,
             numIncorrect = numIncorrect,
             numPerfect = numPerfect,
