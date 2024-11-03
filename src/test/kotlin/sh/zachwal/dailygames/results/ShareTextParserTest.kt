@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.gameinfo.TravleInfo
 import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
 import java.time.LocalDate
 
@@ -290,16 +291,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Travle info when perfect`() {
-        val travleInfo = parser.extractTravleInfo(TRAVLE_PERFECT)
+        val result = parser.extractTravleInfo(TRAVLE_PERFECT)
 
-        assertThat(travleInfo.puzzleNumber).isEqualTo(607)
-        assertThat(travleInfo.score).isEqualTo(0)
-        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(607)
+        assertThat(result.score).isEqualTo(0)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 #travle #607 +0 (Perfect)
                 ✅✅✅✅✅✅✅
             """.trimIndent()
         )
+        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+
+        val travleInfo = result.gameInfo as TravleInfo
+
         assertThat(travleInfo.numPerfect).isEqualTo(7)
         assertThat(travleInfo.numIncorrect).isEqualTo(0)
         assertThat(travleInfo.numGuesses).isEqualTo(7)
@@ -308,16 +313,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Travle info when score is not perfect`() {
-        val travleInfo = parser.extractTravleInfo(TRAVLE_PLUS_0)
+        val result = parser.extractTravleInfo(TRAVLE_PLUS_0)
 
-        assertThat(travleInfo.puzzleNumber).isEqualTo(607)
-        assertThat(travleInfo.score).isEqualTo(0)
-        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(607)
+        assertThat(result.score).isEqualTo(0)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 #travle #607 +0
                 ✅✅✅🟩✅✅✅
             """.trimIndent()
         )
+        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+
+        val travleInfo = result.gameInfo as TravleInfo
+
         assertThat(travleInfo.numPerfect).isEqualTo(6)
         assertThat(travleInfo.numIncorrect).isEqualTo(0)
         assertThat(travleInfo.numGuesses).isEqualTo(7)
@@ -326,16 +335,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Travle info when hints are used`() {
-        val travleInfo = parser.extractTravleInfo(TRAVLE_WITH_HINT)
+        val result = parser.extractTravleInfo(TRAVLE_WITH_HINT)
 
-        assertThat(travleInfo.puzzleNumber).isEqualTo(606)
-        assertThat(travleInfo.score).isEqualTo(2)
-        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(606)
+        assertThat(result.score).isEqualTo(2)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 #travle #606 +2 (1 hint)
                 ✅✅🟩🟧🟧✅
             """.trimIndent()
         )
+        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+
+        val travleInfo = result.gameInfo as TravleInfo
+
         assertThat(travleInfo.numPerfect).isEqualTo(3)
         assertThat(travleInfo.numIncorrect).isEqualTo(2)
         assertThat(travleInfo.numGuesses).isEqualTo(6)
@@ -344,16 +357,20 @@ class ShareTextParserTest {
 
     @Test
     fun `extracts Travle info when did not finish`() {
-        val travleInfo = parser.extractTravleInfo(TRAVLE_THREE_AWAY)
+        val result = parser.extractTravleInfo(TRAVLE_THREE_AWAY)
 
-        assertThat(travleInfo.puzzleNumber).isEqualTo(614)
-        assertThat(travleInfo.score).isEqualTo(-3)
-        assertThat(travleInfo.shareTextNoLink).isEqualTo(
+        assertThat(result.puzzleNumber).isEqualTo(614)
+        assertThat(result.score).isEqualTo(-3)
+        assertThat(result.shareTextNoLink).isEqualTo(
             """
                 #travle #614 (3 away)
                 🟧🟥🟥🟥🟧🟥🟥🟥✅
             """.trimIndent()
         )
+        assertThat(result.gameInfo).isInstanceOf(TravleInfo::class.java)
+
+        val travleInfo = result.gameInfo as TravleInfo
+
         assertThat(travleInfo.numPerfect).isEqualTo(1)
         assertThat(travleInfo.numIncorrect).isEqualTo(8)
         assertThat(travleInfo.numGuesses).isEqualTo(9)

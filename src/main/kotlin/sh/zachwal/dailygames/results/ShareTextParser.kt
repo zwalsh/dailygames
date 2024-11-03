@@ -73,7 +73,7 @@ class ShareTextParser {
     val guessEmojiRegex = Regex("[\uD83D\uDFE7\uD83D\uDFE9✅\uD83D\uDFE7\uD83D\uDFE5\uD83D\uDFE9✅]")
     val incorrectGuessEmojiRegex = Regex("[\uD83D\uDFE7\uD83D\uDFE5]")
     val checkboxEmojiRegex = Regex("✅")
-    fun extractTravleInfo(shareText: String): TravleInfo {
+    fun extractTravleInfo(shareText: String): ParsedResult {
         if (!shareText.contains("#travle")) {
             throw IllegalArgumentException("Share text is not a Travle share")
         }
@@ -89,7 +89,7 @@ class ShareTextParser {
         val numPerfect = checkboxEmojiRegex.findAll(shareText).count()
         val hintCount = hintCountRegex.find(shareText)?.groupValues?.get(1)?.toIntOrNull() ?: 0
 
-        return TravleInfo(
+        val travleInfo = TravleInfo(
             puzzleNumber = puzzleNumber.toInt(),
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
@@ -97,6 +97,14 @@ class ShareTextParser {
             numIncorrect = numIncorrect,
             numPerfect = numPerfect,
             numHints = hintCount,
+        )
+        return ParsedResult(
+            puzzleNumber = puzzleNumber.toInt(),
+            game = Game.TRAVLE,
+            date = null,
+            score = score,
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            gameInfo = travleInfo
         )
     }
 

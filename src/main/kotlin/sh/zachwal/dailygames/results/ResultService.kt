@@ -18,6 +18,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
+import sh.zachwal.dailygames.results.gameinfo.TravleInfo
 import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
@@ -94,14 +95,18 @@ class ResultService @Inject constructor(
             }
 
             Game.TRAVLE -> {
-                val travleInfo = shareTextParser.extractTravleInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRAVLE, travleInfo.puzzleNumber, null))
+                val parsedResult = shareTextParser.extractTravleInfo(shareText)
+                if (parsedResult.gameInfo !is TravleInfo) {
+                    throw IllegalArgumentException("Parsed result $parsedResult is not a TravleInfo")
+                }
+                val travleInfo: TravleInfo = parsedResult.gameInfo
 
+                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRAVLE, parsedResult.puzzleNumber, null))
                 return travleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = travleInfo.score,
-                    shareText = travleInfo.shareTextNoLink,
+                    score = parsedResult.score,
+                    shareText = parsedResult.shareTextNoLink,
                     numGuesses = travleInfo.numGuesses,
                     numIncorrect = travleInfo.numIncorrect,
                     numPerfect = travleInfo.numPerfect,
