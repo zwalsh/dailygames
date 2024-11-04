@@ -187,6 +187,43 @@ class ResultDAOTest(
             .inOrder()
     }
 
+    @Test
+    fun `resultsForUserInTimeRange() queries for results in a time range`() {
+        val resultOne = insertResult()
+        val resultOtherUser = insertResult(userId = fixtures.jackie.id)
+        val resultTwo = insertResult(puzzle = fixtures.worldle123Puzzle)
+        Thread.sleep(2)
+        val resultThree = insertResult(puzzle = fixtures.worldle123Puzzle)
+
+        val results = resultDAO.resultsForUserInTimeRange(
+            userId = fixtures.zach.id,
+            start = resultOne.instantSubmitted,
+            end = resultThree.instantSubmitted.minusMillis(1),
+        )
+
+        assertThat(results).containsExactly(resultOne, resultTwo)
+        assertThat(results).doesNotContain(resultThree)
+        assertThat(results).doesNotContain(resultOtherUser)
+    }
+
+    @Test
+    fun `resultsForUserInTimeRange() queries across games and puzzles`() {
+        val worldle124 = puzzleDAO.insertPuzzle(Puzzle(Game.WORLDLE, 124, null))
+        val flagle124 = puzzleDAO.insertPuzzle(Puzzle(Game.FLAGLE, 124, null))
+
+        val resultOne = insertResult()
+        val resultTwo = insertResult(puzzle = flagle124)
+        val resultThree = insertResult(puzzle = worldle124)
+
+        val results = resultDAO.resultsForUserInTimeRange(
+            userId = fixtures.zach.id,
+            start = resultOne.instantSubmitted,
+            end = resultThree.instantSubmitted.plusMillis(1),
+        )
+
+        assertThat(results).containsExactly(resultOne, resultTwo, resultThree)
+    }
+
     private fun insertResult(
         userId: Long = fixtures.zach.id,
         puzzle: Puzzle = fixtures.worldle123Puzzle,

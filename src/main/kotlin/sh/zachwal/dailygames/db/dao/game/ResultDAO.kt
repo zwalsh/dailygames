@@ -60,5 +60,14 @@ interface ResultDAO {
     )
     fun allResultsForGameStream(game: Game): Stream<Result>
 
-//    fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<Result>
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM result
+            WHERE user_id = :userId
+            AND instant_submitted >= :start 
+            AND instant_submitted < :end
+        """
+    )
+    fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<Result>
 }
