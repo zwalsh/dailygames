@@ -122,7 +122,6 @@ class ResultService @Inject constructor(
                 }
                 val top5Info: Top5Info = parsedResult.resultInfo
 
-
                 return top5DAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,

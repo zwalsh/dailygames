@@ -405,7 +405,7 @@ class ResultServiceTest(
 
     @Test
     fun `swallows exceptions when inserting into the result table`() {
-        every { resultDAO.insertResult(any(), any(), any(), any(), any())} throws RuntimeException("Database is down")
+        every { resultDAO.insertResult(any(), any(), any(), any(), any()) } throws RuntimeException("Database is down")
 
         assertDoesNotThrow {
             resultService.createResult(fixtures.zach, TOP5)
