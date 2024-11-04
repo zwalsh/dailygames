@@ -1,5 +1,6 @@
 package sh.zachwal.dailygames.results
 
+import com.google.common.collect.Range
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
@@ -9,8 +10,10 @@ import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.onDemand
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
+import sh.zachwal.dailygames.db.dao.game.ResultDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
@@ -23,6 +26,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
+import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
@@ -31,6 +35,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import kotlin.streams.toList
 
 private val worldle934 = """
             #Worldle #934 (12.08.2024) 4/6 (100%)
@@ -61,12 +66,13 @@ class ResultServiceTest(
 
     private val puzzleDAO = jdbi.onDemand<PuzzleDAO>()
     private val worldleDAO = spyk(jdbi.onDemand<WorldleDAO>())
+    private val resultDAO = spyk(jdbi.onDemand<ResultDAO>())
     private val userService: UserService = mockk()
+
     private val displayTimeService = mockk<DisplayTimeService> {
         every { displayTime(any(), any(), any()) } returns "Just now"
         every { longDisplayTime(any(), any()) } returns "Long time ago"
     }
-
     private val userPreferencesService = mockk<UserPreferencesService> {
         every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
     }
@@ -82,6 +88,7 @@ class ResultServiceTest(
         flagleDAO = jdbi.onDemand(),
         pinpointDAO = jdbi.onDemand(),
         geocirclesDAO = jdbi.onDemand(),
+        resultDAO = resultDAO,
         shareTextParser = ShareTextParser(),
         userService = userService,
         displayTimeService = displayTimeService,
@@ -373,5 +380,35 @@ class ResultServiceTest(
         val expectedEnd = expectedStart.plus(1, ChronoUnit.DAYS)
 
         verify { worldleDAO.resultsForUserInTimeRange(fixtures.zach.id, expectedStart, expectedEnd) }
+    }
+
+    @Test
+    fun `inserts results in the new result table`() {
+        resultService.createResult(fixtures.zach, TOP5)
+
+        val result = resultDAO.allResultsStream().toList().single()
+
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.TOP5)
+        assertThat(result.puzzleNumber).isEqualTo(171)
+        val now = Instant.now()
+        assertThat(result.instantSubmitted).isIn(Range.closed(now.minusSeconds(10), now))
+        assertThat(result.puzzleDate).isNull()
+        assertThat(result.score).isEqualTo(3)
+        assertThat(result.shareText).isEqualTo(TOP5.trimIndent())
+        assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
+        val top5Info = result.resultInfo as Top5Info
+        assertThat(top5Info.numGuesses).isEqualTo(8)
+        assertThat(top5Info.numCorrect).isEqualTo(3)
+        assertThat(top5Info.isPerfect).isFalse()
+    }
+
+    @Test
+    fun `swallows exceptions when inserting into the result table`() {
+        every { resultDAO.insertResult(any(), any(), any(), any(), any()) } throws RuntimeException("Database is down")
+
+        assertDoesNotThrow {
+            resultService.createResult(fixtures.zach, TOP5)
+        }
     }
 }
