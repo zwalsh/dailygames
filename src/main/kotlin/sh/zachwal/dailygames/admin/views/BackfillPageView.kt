@@ -1,10 +1,12 @@
 package sh.zachwal.dailygames.admin.views
 
 import kotlinx.html.DIV
+import kotlinx.html.FormMethod
 import kotlinx.html.HTML
 import kotlinx.html.body
 import kotlinx.html.button
 import kotlinx.html.div
+import kotlinx.html.form
 import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.li
@@ -48,8 +50,10 @@ data class BackfillPageView(
                     }
                 }
                 resultList()
-                button(classes = "btn btn-primary") {
-                    +"Backfill"
+                form(method = FormMethod.post, action = "/admin/backfill") {
+                    button(classes = "btn btn-primary") {
+                        +"Backfill All Results"
+                    }
                 }
             }
         }
