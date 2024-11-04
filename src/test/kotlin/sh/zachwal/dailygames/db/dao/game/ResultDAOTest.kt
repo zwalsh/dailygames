@@ -93,15 +93,12 @@ class ResultDAOTest(
     @Test
     fun `allResultsStream() lists all results across puzzles`() {
         insertResult(
-            userId = fixtures.zach.id,
             puzzle = fixtures.worldle123Puzzle,
         )
         insertResult(
-            userId = fixtures.jackie.id,
             puzzle = fixtures.worldle123Puzzle,
         )
         insertResult(
-            userId = fixtures.zach.id,
             puzzle = fixtures.flagle123Puzzle,
             resultInfo = FlagleInfo,
         )
@@ -116,20 +113,74 @@ class ResultDAOTest(
     @Test
     fun `allResultsStream() lists all results in descending order of submission`() {
         val resultOne = insertResult(
-            userId = fixtures.zach.id,
             puzzle = fixtures.worldle123Puzzle,
         )
         val resultTwo = insertResult(
-            userId = fixtures.jackie.id,
             puzzle = fixtures.worldle123Puzzle,
         )
         val resultThree = insertResult(
-            userId = fixtures.zach.id,
             puzzle = fixtures.flagle123Puzzle,
             resultInfo = FlagleInfo,
         )
 
         val results = resultDAO.allResultsStream().toList()
+
+        assertThat(results)
+            .containsExactly(resultThree, resultTwo, resultOne)
+            .inOrder()
+    }
+
+    @Test
+    fun `allResultsForGameStream() filters by game`() {
+        insertResult(
+            puzzle = fixtures.worldle123Puzzle,
+        )
+        insertResult(
+            puzzle = fixtures.worldle123Puzzle,
+        )
+        insertResult(
+            puzzle = fixtures.flagle123Puzzle,
+            resultInfo = FlagleInfo,
+        )
+
+        val results = resultDAO.allResultsForGameStream(Game.WORLDLE).toList()
+
+        assertThat(results).hasSize(2)
+        assertThat(results.map { it.game }).containsExactly(Game.WORLDLE, Game.WORLDLE)
+    }
+
+    @Test
+    fun `allResultsForGameStream() contains results across puzzles for one game`() {
+        val worldle124 = puzzleDAO.insertPuzzle(Puzzle(Game.WORLDLE, 124, null))
+
+        insertResult(
+            puzzle = fixtures.worldle123Puzzle,
+        )
+        insertResult(
+            puzzle = worldle124,
+        )
+
+        val results = resultDAO.allResultsForGameStream(Game.WORLDLE).toList()
+
+        assertThat(results).hasSize(2)
+        assertThat(results.map { it.puzzleNumber }).containsExactly(123, 124)
+    }
+
+    @Test
+    fun `allResultsForGameStream() returns results in descending submission order`() {
+        val worldle124 = puzzleDAO.insertPuzzle(Puzzle(Game.WORLDLE, 124, null))
+        val resultOne = insertResult(
+            puzzle = fixtures.worldle123Puzzle,
+        )
+        // Should be in the middle even though worldle124 is greater than 123
+        val resultTwo = insertResult(
+            puzzle = worldle124,
+        )
+        val resultThree = insertResult(
+            puzzle = fixtures.worldle123Puzzle,
+        )
+
+        val results = resultDAO.allResultsForGameStream(Game.WORLDLE).toList()
 
         assertThat(results)
             .containsExactly(resultThree, resultTwo, resultOne)

@@ -50,7 +50,15 @@ interface ResultDAO {
     )
     fun allResultsStream(): Stream<Result>
 
-//    fun allResultsForGameStream(game: Game): Stream<Result>
-//
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM result
+            WHERE game = :game
+            ORDER BY instant_submitted DESC
+        """
+    )
+    fun allResultsForGameStream(game: Game): Stream<Result>
+
 //    fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<Result>
 }
