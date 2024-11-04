@@ -9,6 +9,7 @@ import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
 import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
+import sh.zachwal.dailygames.db.dao.game.ResultDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
 import sh.zachwal.dailygames.db.dao.game.TravleDAO
@@ -48,6 +49,7 @@ class ResultService @Inject constructor(
     private val flagleDAO: FlagleDAO,
     private val pinpointDAO: PinpointDAO,
     private val geocirclesDAO: GeocirclesDAO,
+    private val resultDAO: ResultDAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
     private val displayTimeService: DisplayTimeService,
@@ -69,6 +71,8 @@ class ResultService @Inject constructor(
 
         val parsedResult = parseResult(shareText, game)
         val puzzle = getOrCreatePuzzle(Puzzle(game, parsedResult.puzzleNumber, parsedResult.date))
+
+        insertNewResultSafe(user.id, puzzle, parsedResult)
 
         when (game) {
             Game.WORLDLE -> {
@@ -173,6 +177,20 @@ class ResultService @Inject constructor(
 
     private fun getOrCreatePuzzle(puzzle: Puzzle): Puzzle {
         return puzzleDAO.getPuzzle(puzzle.game, puzzle.number) ?: puzzleDAO.insertPuzzle(puzzle)
+    }
+
+    private fun insertNewResultSafe(userId: Long, puzzle: Puzzle, parsedResult: ParsedResult) {
+        try {
+            resultDAO.insertResult(
+                userId = userId,
+                puzzle = puzzle,
+                score = parsedResult.score,
+                shareText = parsedResult.shareTextNoLink,
+                resultInfo = parsedResult.resultInfo,
+            )
+        } catch (e: Exception) {
+            logger.error("Error inserting result for ${parsedResult.game} #${parsedResult.puzzleNumber}", e)
+        }
     }
 
     fun resultFeed(userId: Long): List<ResultFeedItemView> {
