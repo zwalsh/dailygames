@@ -99,9 +99,7 @@ class DatabaseExtension : ParameterResolver, BeforeEachCallback, AfterEachCallba
             .installPlugin(KotlinSqlObjectPlugin())
             .installPlugin(Jackson2Plugin())
 
-        // TODO configure prod jdbi this way
         val mapper = jacksonObjectMapper()
-
         jdbi.getConfig(Jackson2Config::class.java).setMapper(mapper)
 
         return jdbi
