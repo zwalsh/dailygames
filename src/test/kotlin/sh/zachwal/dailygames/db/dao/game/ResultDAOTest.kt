@@ -8,9 +8,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
+import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
+import sh.zachwal.dailygames.results.resultinfo.ResultInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
 
@@ -49,19 +51,13 @@ class ResultDAOTest(
 
     @Test
     fun `can query results by puzzle`() {
-        resultDAO.insertResult(
+        insertResult(
             userId = fixtures.zach.id,
             puzzle = fixtures.worldle123Puzzle,
-            score = 3,
-            shareText = "Worldle #123",
-            resultInfo = WorldleInfo(100),
         )
-        resultDAO.insertResult(
+        insertResult(
             userId = fixtures.jackie.id,
             puzzle = fixtures.worldle123Puzzle,
-            score = 4,
-            shareText = "Worldle #123",
-            resultInfo = WorldleInfo(100),
         )
 
         val results = resultDAO.resultsForPuzzle(fixtures.worldle123Puzzle)
@@ -72,33 +68,33 @@ class ResultDAOTest(
 
     @Test
     fun `resultsForPuzzle excludes results for other games, puzzle numbers`() {
-        resultDAO.insertResult(
-            userId = fixtures.zach.id,
-            puzzle = fixtures.worldle123Puzzle,
-            score = 3,
-            shareText = "Worldle #123",
-            resultInfo = WorldleInfo(100),
-        )
-        resultDAO.insertResult(
-            userId = fixtures.zach.id,
-            puzzle = fixtures.flagle123Puzzle,
-            score = 3,
-            shareText = "Flagle #123",
-            resultInfo = FlagleInfo,
-        )
         val worldle124 = Puzzle(Game.WORLDLE, 124, null)
         puzzleDAO.insertPuzzle(worldle124)
-        resultDAO.insertResult(
-            userId = fixtures.jackie.id,
+
+        insertResult(
+            puzzle = fixtures.worldle123Puzzle,
+        )
+        insertResult(
+            puzzle = fixtures.flagle123Puzzle,
+            resultInfo = FlagleInfo,
+        )
+        insertResult(
             puzzle = worldle124,
-            score = 4,
-            shareText = "Worldle #124",
-            resultInfo = WorldleInfo(100),
         )
 
         val results = resultDAO.resultsForPuzzle(fixtures.worldle123Puzzle)
 
         assertThat(results).hasSize(1)
         assertThat(results.map { it.userId }).containsExactly(fixtures.zach.id)
+    }
+
+    private fun insertResult(
+        userId: Long = fixtures.zach.id,
+        puzzle: Puzzle = fixtures.worldle123Puzzle,
+        score: Int = 5,
+        shareText: String = "",
+        resultInfo: ResultInfo = WorldleInfo(100),
+    ): Result {
+        return resultDAO.insertResult(userId, puzzle, score, shareText, resultInfo)
     }
 }

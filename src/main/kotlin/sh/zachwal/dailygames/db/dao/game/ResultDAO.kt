@@ -41,8 +41,15 @@ interface ResultDAO {
     )
     fun resultsForPuzzle(puzzle: Puzzle): List<Result>
 
-//    fun allResultsStream(): Stream<Result>
-//
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM result
+            ORDER BY instant_submitted DESC
+        """
+    )
+    fun allResultsStream(): Stream<Result>
+
 //    fun allResultsForGameStream(game: Game): Stream<Result>
 //
 //    fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<Result>
