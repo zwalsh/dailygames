@@ -1,8 +1,8 @@
-package sh.zachwal.dailygames.results.gameinfo
+package sh.zachwal.dailygames.results.resultinfo
 
-object TradleInfo : GameInfo() {
+object FlagleInfo : ResultInfo() {
     // Must override this because, in deserialization, a new instance is created
     override fun equals(other: Any?): Boolean {
-        return other is TradleInfo
+        return other is FlagleInfo
     }
 }

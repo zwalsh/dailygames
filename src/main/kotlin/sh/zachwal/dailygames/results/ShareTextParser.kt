@@ -1,14 +1,14 @@
 package sh.zachwal.dailygames.results
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.results.gameinfo.FlagleInfo
-import sh.zachwal.dailygames.results.gameinfo.GeocirclesInfo
-import sh.zachwal.dailygames.results.gameinfo.ParsedResult
-import sh.zachwal.dailygames.results.gameinfo.PinpointInfo
-import sh.zachwal.dailygames.results.gameinfo.Top5Info
-import sh.zachwal.dailygames.results.gameinfo.TradleInfo
-import sh.zachwal.dailygames.results.gameinfo.TravleInfo
-import sh.zachwal.dailygames.results.gameinfo.WorldleInfo
+import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
+import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
+import sh.zachwal.dailygames.results.resultinfo.ParsedResult
+import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
+import sh.zachwal.dailygames.results.resultinfo.Top5Info
+import sh.zachwal.dailygames.results.resultinfo.TradleInfo
+import sh.zachwal.dailygames.results.resultinfo.TravleInfo
+import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.LocalDate
 import javax.inject.Singleton
 
@@ -43,7 +43,7 @@ class ShareTextParser {
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            gameInfo = worldleInfo
+            resultInfo = worldleInfo
         )
     }
 
@@ -62,7 +62,7 @@ class ShareTextParser {
             date = null,
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points.
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            gameInfo = tradleInfo
+            resultInfo = tradleInfo
         )
     }
 
@@ -101,7 +101,7 @@ class ShareTextParser {
             date = null,
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            gameInfo = travleInfo
+            resultInfo = travleInfo
         )
     }
 
@@ -134,7 +134,7 @@ class ShareTextParser {
             date = null,
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            gameInfo = top5Info
+            resultInfo = top5Info
         )
     }
 
@@ -152,7 +152,7 @@ class ShareTextParser {
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            gameInfo = FlagleInfo,
+            resultInfo = FlagleInfo,
         )
     }
 
@@ -170,7 +170,7 @@ class ShareTextParser {
             date = null,
             score = score.toIntOrNull() ?: 6, // X / 5 scored as 6 points
             shareTextNoLink = shareText.substringBefore("lnkd").trim(),
-            gameInfo = PinpointInfo,
+            resultInfo = PinpointInfo,
         )
     }
 
@@ -190,7 +190,7 @@ class ShareTextParser {
             date = null,
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            gameInfo = GeocirclesInfo
+            resultInfo = GeocirclesInfo
         )
     }
 }

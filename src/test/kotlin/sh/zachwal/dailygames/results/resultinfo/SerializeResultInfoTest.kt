@@ -1,4 +1,4 @@
-package sh.zachwal.dailygames.results.gameinfo
+package sh.zachwal.dailygames.results.resultinfo
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
-class SerializeGameInfoTest {
+class SerializeResultInfoTest {
 
     private val objectMapper = jacksonObjectMapper()
 
@@ -19,25 +19,25 @@ class SerializeGameInfoTest {
 
         val worldleInfoJson = objectMapper.writeValueAsString(worldleInfo)
 
-        val deserializedWorldleInfo = objectMapper.readValue<GameInfo>(worldleInfoJson)
+        val deserializedWorldleInfo = objectMapper.readValue<ResultInfo>(worldleInfoJson)
 
         assertThat(deserializedWorldleInfo).isInstanceOf(WorldleInfo::class.java)
         assertThat(deserializedWorldleInfo).isEqualTo(worldleInfo)
     }
 
     @ParameterizedTest
-    @MethodSource("sh.zachwal.dailygames.results.gameinfo.SerializeGameInfoTest#gameInfoObjects")
-    fun `can serialize and deserialize different game info objects`(gameInfo: GameInfo) {
-        val serialized = objectMapper.writeValueAsString(gameInfo)
+    @MethodSource("sh.zachwal.dailygames.results.resultinfo.SerializeResultInfoTest#resultInfoList")
+    fun `can serialize and deserialize different game info objects`(resultInfo: ResultInfo) {
+        val serialized = objectMapper.writeValueAsString(resultInfo)
 
-        val deserialized: GameInfo = objectMapper.readValue(serialized)
+        val deserialized: ResultInfo = objectMapper.readValue(serialized)
 
-        assertThat(deserialized).isEqualTo(gameInfo)
+        assertThat(deserialized).isEqualTo(resultInfo)
     }
 
     companion object {
         @JvmStatic
-        fun gameInfoObjects() = listOf(
+        fun resultInfoList() = listOf(
             WorldleInfo(
                 percentage = 100,
             ),

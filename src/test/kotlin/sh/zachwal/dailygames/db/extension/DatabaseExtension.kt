@@ -1,11 +1,14 @@
 package sh.zachwal.dailygames.db.extension
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import liquibase.Liquibase
 import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
 import liquibase.resource.DirectoryResourceAccessor
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.kotlin.KotlinPlugin
+import org.jdbi.v3.jackson2.Jackson2Config
+import org.jdbi.v3.jackson2.Jackson2Plugin
 import org.jdbi.v3.postgres.PostgresPlugin
 import org.jdbi.v3.sqlobject.kotlin.KotlinSqlObjectPlugin
 import org.junit.jupiter.api.extension.AfterEachCallback
@@ -90,9 +93,18 @@ class DatabaseExtension : ParameterResolver, BeforeEachCallback, AfterEachCallba
 
     private fun createJdbiInstance(context: ExtensionContext): Jdbi {
         val container = getPostgresContainer(context)
-        return Jdbi.create(container.jdbcConnection()).installPlugin(KotlinPlugin())
+
+        val jdbi = Jdbi.create(container.jdbcConnection()).installPlugin(KotlinPlugin())
             .installPlugin(PostgresPlugin())
             .installPlugin(KotlinSqlObjectPlugin())
+            .installPlugin(Jackson2Plugin())
+
+        // TODO configure prod jdbi this way
+        val mapper = jacksonObjectMapper()
+
+        jdbi.getConfig(Jackson2Config::class.java).setMapper(mapper)
+
+        return jdbi
     }
 
     private fun getFixturesInstance(context: ExtensionContext): Fixtures {
