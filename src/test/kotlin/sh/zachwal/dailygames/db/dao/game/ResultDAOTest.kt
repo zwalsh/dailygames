@@ -252,6 +252,22 @@ class ResultDAOTest(
         }
     }
 
+    @Test
+    fun `findResult() returns null if none exists`() {
+        val result = resultDAO.findResult(fixtures.zach.id, fixtures.worldle123Puzzle)
+
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `findResult() retrieves the result if it exists`() {
+        val result = insertResult()
+
+        val foundResult = resultDAO.findResult(fixtures.zach.id, fixtures.worldle123Puzzle)
+
+        assertThat(foundResult).isEqualTo(result)
+    }
+
     private fun insertResult(
         userId: Long = fixtures.zach.id,
         puzzle: Puzzle = fixtures.worldle123Puzzle,

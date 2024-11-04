@@ -70,4 +70,16 @@ interface ResultDAO {
         """
     )
     fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<Result>
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM result
+            WHERE user_id = :userId
+            AND game = :puzzle.game
+            AND puzzle_number = :puzzle.number
+            LIMIT 1
+        """
+    )
+    fun findResult(userId: Long, puzzle: Puzzle): Result?
 }
