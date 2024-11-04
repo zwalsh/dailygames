@@ -11,10 +11,12 @@ import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.results.FLAGLE
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.ResultInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
+import kotlin.streams.toList
 
 @ExtendWith(DatabaseExtension::class)
 class ResultDAOTest(
@@ -86,6 +88,52 @@ class ResultDAOTest(
 
         assertThat(results).hasSize(1)
         assertThat(results.map { it.userId }).containsExactly(fixtures.zach.id)
+    }
+
+    @Test
+    fun `allResultsStream() lists all results across puzzles`() {
+        insertResult(
+            userId = fixtures.zach.id,
+            puzzle = fixtures.worldle123Puzzle,
+        )
+        insertResult(
+            userId = fixtures.jackie.id,
+            puzzle = fixtures.worldle123Puzzle,
+        )
+        insertResult(
+            userId = fixtures.zach.id,
+            puzzle = fixtures.flagle123Puzzle,
+            resultInfo = FlagleInfo,
+        )
+
+        val results = resultDAO.allResultsStream().toList()
+
+        assertThat(results).hasSize(3)
+        assertThat(results.map { it.game }).containsExactly(Game.WORLDLE, Game.WORLDLE, Game.FLAGLE)
+        assertThat(results.map { it.puzzleNumber }).containsExactly(123, 123, 123)
+    }
+
+    @Test
+    fun `allResultsStream() lists all results in descending order of submission`() {
+        val resultOne = insertResult(
+            userId = fixtures.zach.id,
+            puzzle = fixtures.worldle123Puzzle,
+        )
+        val resultTwo = insertResult(
+            userId = fixtures.jackie.id,
+            puzzle = fixtures.worldle123Puzzle,
+        )
+        val resultThree = insertResult(
+            userId = fixtures.zach.id,
+            puzzle = fixtures.flagle123Puzzle,
+            resultInfo = FlagleInfo,
+        )
+
+        val results = resultDAO.allResultsStream().toList()
+
+        assertThat(results)
+            .containsExactly(resultThree, resultTwo, resultOne)
+            .inOrder()
     }
 
     private fun insertResult(
