@@ -18,6 +18,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
+import sh.zachwal.dailygames.results.resultinfo.ParsedResult
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
@@ -66,13 +67,14 @@ class ResultService @Inject constructor(
             throw IllegalArgumentException("Share text could not be recognized as a valid game")
         }
 
+        val parsedResult = parseResult(shareText, game)
+        val puzzle = getOrCreatePuzzle(Puzzle(game, parsedResult.puzzleNumber, parsedResult.date))
+
         when (game) {
             Game.WORLDLE -> {
-                val parsedResult = shareTextParser.extractWorldleInfo(shareText)
                 if (parsedResult.resultInfo !is WorldleInfo) {
                     throw IllegalArgumentException("Parsed result $parsedResult is not a WorldleInfo")
                 }
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.WORLDLE, parsedResult.puzzleNumber, parsedResult.date))
 
                 return worldleDAO.insertResult(
                     userId = user.id,
@@ -84,9 +86,6 @@ class ResultService @Inject constructor(
             }
 
             Game.TRADLE -> {
-                val parsedResult = shareTextParser.extractTradleInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRADLE, parsedResult.puzzleNumber, null))
-
                 return tradleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
@@ -96,13 +95,11 @@ class ResultService @Inject constructor(
             }
 
             Game.TRAVLE -> {
-                val parsedResult = shareTextParser.extractTravleInfo(shareText)
                 if (parsedResult.resultInfo !is TravleInfo) {
                     throw IllegalArgumentException("Parsed result $parsedResult is not a TravleInfo")
                 }
                 val travleInfo: TravleInfo = parsedResult.resultInfo
 
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.TRAVLE, parsedResult.puzzleNumber, null))
                 return travleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
@@ -116,19 +113,17 @@ class ResultService @Inject constructor(
             }
 
             Game.TOP5 -> {
-                val result = shareTextParser.extractTop5Info(shareText)
-                if (result.resultInfo !is Top5Info) {
-                    throw IllegalArgumentException("Parsed result $result is not a Top5Info")
+                if (parsedResult.resultInfo !is Top5Info) {
+                    throw IllegalArgumentException("Parsed result $parsedResult is not a Top5Info")
                 }
-                val top5Info: Top5Info = result.resultInfo
+                val top5Info: Top5Info = parsedResult.resultInfo
 
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.TOP5, result.puzzleNumber, null))
 
                 return top5DAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = result.score,
-                    shareText = result.shareTextNoLink,
+                    score = parsedResult.score,
+                    shareText = parsedResult.shareTextNoLink,
                     numGuesses = top5Info.numGuesses,
                     numCorrect = top5Info.numCorrect,
                     isPerfect = top5Info.isPerfect,
@@ -136,40 +131,43 @@ class ResultService @Inject constructor(
             }
 
             Game.FLAGLE -> {
-                val result = shareTextParser.extractFlagleInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.FLAGLE, result.puzzleNumber, result.date))
-
                 return flagleDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = result.score,
-                    shareText = result.shareTextNoLink,
+                    score = parsedResult.score,
+                    shareText = parsedResult.shareTextNoLink,
                 )
             }
 
             Game.PINPOINT -> {
-                val result = shareTextParser.extractPinpointInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.PINPOINT, result.puzzleNumber, null))
-
                 return pinpointDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = result.score,
-                    shareText = result.shareTextNoLink,
+                    score = parsedResult.score,
+                    shareText = parsedResult.shareTextNoLink,
                 )
             }
 
             Game.GEOCIRCLES -> {
-                val result = shareTextParser.extractGeocirclesInfo(shareText)
-                val puzzle = getOrCreatePuzzle(Puzzle(Game.GEOCIRCLES, result.puzzleNumber, null))
-
                 return geocirclesDAO.insertResult(
                     userId = user.id,
                     puzzle = puzzle,
-                    score = result.score,
-                    shareText = result.shareTextNoLink,
+                    score = parsedResult.score,
+                    shareText = parsedResult.shareTextNoLink,
                 )
             }
+        }
+    }
+
+    private fun parseResult(shareText: String, game: Game): ParsedResult {
+        return when (game) {
+            Game.WORLDLE -> shareTextParser.extractWorldleInfo(shareText)
+            Game.TRADLE -> shareTextParser.extractTradleInfo(shareText)
+            Game.TRAVLE -> shareTextParser.extractTravleInfo(shareText)
+            Game.TOP5 -> shareTextParser.extractTop5Info(shareText)
+            Game.FLAGLE -> shareTextParser.extractFlagleInfo(shareText)
+            Game.PINPOINT -> shareTextParser.extractPinpointInfo(shareText)
+            Game.GEOCIRCLES -> shareTextParser.extractGeocirclesInfo(shareText)
         }
     }
 
