@@ -29,7 +29,7 @@ class ResultDAOTest(
             userId = fixtures.zach.id,
             puzzle = fixtures.worldle123Puzzle,
             score = 3,
-            shareText = "",
+            shareText = "Worldle #123 2.11.2024 3/6",
             resultInfo = expectedWorldleInfo
         )
 
@@ -38,7 +38,7 @@ class ResultDAOTest(
         assertThat(result.puzzleNumber).isEqualTo(123)
         assertThat(result.instantSubmitted).isIn(Range.closed(Instant.now().minusSeconds(10), Instant.now()))
         assertThat(result.score).isEqualTo(3)
-        assertThat(result.shareText).isEqualTo("")
+        assertThat(result.shareText).isEqualTo("Worldle #123 2.11.2024 3/6")
         assertThat(result.resultInfo).isInstanceOf(WorldleInfo::class.java)
         val worldleInfo = result.resultInfo as WorldleInfo
         assertThat(worldleInfo).isEqualTo(expectedWorldleInfo)
