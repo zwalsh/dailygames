@@ -4,6 +4,8 @@ import io.ktor.application.call
 import io.ktor.auth.Authentication
 import io.ktor.auth.session
 import io.ktor.response.respondRedirect
+import io.sentry.Sentry
+import io.sentry.protocol.User
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
 
@@ -14,8 +16,12 @@ fun Authentication.Configuration.configureSessionAuth() {
         challenge {
             call.respondRedirect("/login")
         }
-        validate {
-            it.takeIf(UserSessionPrincipal::isValid)
+        validate { session ->
+            val sentryUser = User().apply {
+                username = session.user
+            }
+            Sentry.setUser(sentryUser)
+            session.takeIf(UserSessionPrincipal::isValid)
         }
     }
 }

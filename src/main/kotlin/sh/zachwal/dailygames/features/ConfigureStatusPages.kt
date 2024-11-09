@@ -5,7 +5,6 @@ import io.ktor.features.StatusPages.Configuration
 import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.uri
-import io.sentry.Sentry
 import kotlinx.html.DIV
 import kotlinx.html.HTML
 import kotlinx.html.body
@@ -23,9 +22,8 @@ private val logger = LoggerFactory.getLogger("StatusPage")
 
 fun Configuration.configureStatusPages() {
 
-    exception<Throwable> {
+    exception<Exception> {
         logger.error("Unhandled error", it)
-        Sentry.captureException(it)
         call.respondHtml(HttpStatusCode.InternalServerError) {
             statusPage("Internal Server Error") {
                 h1 {
