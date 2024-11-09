@@ -180,6 +180,7 @@ class ResultService @Inject constructor(
 
     private fun insertNewResultSafe(userId: Long, puzzle: Puzzle, parsedResult: ParsedResult) {
         try {
+            // TODO catch the unique constraint violation and handle it when using the new table
             resultDAO.insertResult(
                 userId = userId,
                 puzzle = puzzle,
