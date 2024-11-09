@@ -51,7 +51,6 @@ interface ResultDAO {
         instantSubmitted: Instant,
     ): Result
 
-
     @SqlQuery(
         """
             SELECT * 
