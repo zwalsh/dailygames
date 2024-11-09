@@ -138,29 +138,31 @@ class BackfillService @Inject constructor(
     }
 
     private fun WorldleResult.tryBackfill() {
-        resultDAO.insertResult(
+        resultDAO.insertResultWithInstantSubmitted(
             userId = userId,
             puzzle = Puzzle(game, puzzleNumber, puzzleDate),
             score = score,
             shareText = shareText,
             resultInfo = WorldleInfo(
                 percentage = scorePercentage
-            )
+            ),
+            instantSubmitted = instantSubmitted,
         )
     }
 
     private fun TradleResult.tryBackfill() {
-        resultDAO.insertResult(
+        resultDAO.insertResultWithInstantSubmitted(
             userId = userId,
             puzzle = Puzzle(game, puzzleNumber, puzzleDate),
             score = score,
             shareText = shareText,
             resultInfo = TradleInfo,
+            instantSubmitted = instantSubmitted,
         )
     }
 
     private fun TravleResult.tryBackfill() {
-        resultDAO.insertResult(
+        resultDAO.insertResultWithInstantSubmitted(
             userId = userId,
             puzzle = Puzzle(game, puzzleNumber, puzzleDate),
             score = score,
@@ -171,11 +173,12 @@ class BackfillService @Inject constructor(
                 numPerfect = numPerfect,
                 numHints = numHints,
             ),
+            instantSubmitted = instantSubmitted,
         )
     }
 
     private fun Top5Result.tryBackfill() {
-        resultDAO.insertResult(
+        resultDAO.insertResultWithInstantSubmitted(
             userId = userId,
             puzzle = Puzzle(game, puzzleNumber, puzzleDate),
             score = score,
@@ -185,36 +188,40 @@ class BackfillService @Inject constructor(
                 numCorrect = numCorrect,
                 isPerfect = isPerfect,
             ),
+            instantSubmitted = instantSubmitted,
         )
     }
 
     private fun FlagleResult.tryBackfill() {
-        resultDAO.insertResult(
+        resultDAO.insertResultWithInstantSubmitted(
             userId = userId,
             puzzle = Puzzle(game, puzzleNumber, puzzleDate),
             score = score,
             shareText = shareText,
             resultInfo = FlagleInfo,
+            instantSubmitted = instantSubmitted,
         )
     }
 
     private fun PinpointResult.tryBackfill() {
-        resultDAO.insertResult(
+        resultDAO.insertResultWithInstantSubmitted(
             userId = userId,
             puzzle = Puzzle(game, puzzleNumber, puzzleDate),
             score = score,
             shareText = shareText,
             resultInfo = PinpointInfo,
+            instantSubmitted = instantSubmitted,
         )
     }
 
     private fun GeocirclesResult.tryBackfill() {
-        resultDAO.insertResult(
+        resultDAO.insertResultWithInstantSubmitted(
             userId = userId,
             puzzle = Puzzle(game, puzzleNumber, puzzleDate),
             score = score,
             shareText = shareText,
             resultInfo = GeocirclesInfo,
+            instantSubmitted = instantSubmitted,
         )
     }
 }
