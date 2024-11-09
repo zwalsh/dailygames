@@ -1,0 +1,17 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "18",
+        "author": "zach",
+        "changes": [
+          {
+            "sql": {
+              "sql": "CREATE UNIQUE INDEX result_unique_idx ON result(user_id, game, puzzle_number) WHERE game != 'FLAGLE'"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

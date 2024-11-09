@@ -3,8 +3,11 @@ package sh.zachwal.dailygames.db.dao.game
 import com.google.common.collect.Range
 import com.google.common.truth.Truth.assertThat
 import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.core.statement.UnableToExecuteStatementException
 import org.jdbi.v3.sqlobject.kotlin.onDemand
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
@@ -96,6 +99,7 @@ class ResultDAOTest(
             puzzle = fixtures.worldle123Puzzle,
         )
         insertResult(
+            userId = fixtures.jackie.id,
             puzzle = fixtures.worldle123Puzzle,
         )
         insertResult(
@@ -116,6 +120,7 @@ class ResultDAOTest(
             puzzle = fixtures.worldle123Puzzle,
         )
         val resultTwo = insertResult(
+            userId = fixtures.jackie.id,
             puzzle = fixtures.worldle123Puzzle,
         )
         val resultThree = insertResult(
@@ -136,6 +141,7 @@ class ResultDAOTest(
             puzzle = fixtures.worldle123Puzzle,
         )
         insertResult(
+            userId = fixtures.jackie.id,
             puzzle = fixtures.worldle123Puzzle,
         )
         insertResult(
@@ -177,6 +183,7 @@ class ResultDAOTest(
             puzzle = worldle124,
         )
         val resultThree = insertResult(
+            userId = fixtures.jackie.id,
             puzzle = fixtures.worldle123Puzzle,
         )
 
@@ -191,9 +198,9 @@ class ResultDAOTest(
     fun `resultsForUserInTimeRange() queries for results in a time range`() {
         val resultOne = insertResult()
         val resultOtherUser = insertResult(userId = fixtures.jackie.id)
-        val resultTwo = insertResult(puzzle = fixtures.worldle123Puzzle)
+        val resultTwo = insertResult(puzzle = fixtures.flagle123Puzzle)
         Thread.sleep(2)
-        val resultThree = insertResult(puzzle = fixtures.worldle123Puzzle)
+        val resultThree = insertResult(userId = fixtures.jackie.id, puzzle = fixtures.flagle123Puzzle)
 
         val results = resultDAO.resultsForUserInTimeRange(
             userId = fixtures.zach.id,
@@ -209,6 +216,7 @@ class ResultDAOTest(
     @Test
     fun `resultsForUserInTimeRange() queries across games and puzzles`() {
         val worldle124 = puzzleDAO.insertPuzzle(Puzzle(Game.WORLDLE, 124, null))
+
         val flagle124 = puzzleDAO.insertPuzzle(Puzzle(Game.FLAGLE, 124, null))
 
         val resultOne = insertResult()
@@ -222,6 +230,26 @@ class ResultDAOTest(
         )
 
         assertThat(results).containsExactly(resultOne, resultTwo, resultThree)
+    }
+
+    @Test
+    fun `unique index prevents inserting duplicate results`() {
+        insertResult()
+
+        val exception = assertThrows<UnableToExecuteStatementException> {
+            insertResult()
+        }
+
+        assertThat(exception.message).contains("duplicate key value violates unique constraint")
+    }
+
+    @Test
+    fun `unique index does not prevent inserting duplicate flagle results (flagle is broken)`() {
+        insertResult(puzzle = fixtures.flagle123Puzzle)
+
+        assertDoesNotThrow {
+            insertResult(puzzle = fixtures.flagle123Puzzle)
+        }
     }
 
     private fun insertResult(
