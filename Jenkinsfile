@@ -19,11 +19,6 @@ pipeline {
                 sh './gradlew assemble testClasses'
             }
         }
-        stage('lint') {
-            steps {
-                sh './gradlew ktlintCheck'
-            }
-        }
         stage('test') {
             steps {
                 sh './gradlew build'
