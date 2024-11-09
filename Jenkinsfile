@@ -9,14 +9,9 @@ pipeline {
                 setBuildStatus('pending')
             }
         }
-        stage('clean') {
-            steps {
-                sh './gradlew clean'
-            }
-        }
         stage('assemble') {
             steps {
-                sh './gradlew assemble testClasses'
+                sh './gradlew assemble testClasses --parallel --build-cache'
             }
         }
         stage('test') {
