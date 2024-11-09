@@ -81,6 +81,37 @@ class DatabaseExtension : ParameterResolver, BeforeEachCallback, AfterEachCallba
         liquibase.update()
     }
 
+    private fun truncateData(container: DailyGamesPostgresContainer) {
+        assert(container.isRunning)
+
+        val truncate = """
+            DO $$ DECLARE
+                r RECORD;
+            BEGIN
+                -- Disable all triggers (including foreign key constraints)
+                PERFORM 'ALTER TABLE ' || quote_ident(schemaname) || '.' || quote_ident(tablename) || ' DISABLE TRIGGER ALL'
+                FROM pg_tables
+                WHERE schemaname = 'public';
+
+                -- Truncate all tables
+                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename != 'game') LOOP
+                    EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || ' CASCADE';
+                END LOOP;
+
+                -- Enable all triggers
+                PERFORM 'ALTER TABLE ' || quote_ident(schemaname) || '.' || quote_ident(tablename) || ' ENABLE TRIGGER ALL'
+                FROM pg_tables
+                WHERE schemaname = 'public';
+            END $$;
+        """.trimIndent()
+
+        container.jdbcConnection().use { connection ->
+            connection.createStatement().use { statement ->
+                statement.execute(truncate)
+            }
+        }
+    }
+
     private fun getJdbiInstance(context: ExtensionContext): Jdbi {
         return context
             .getStore(postgresContainerNamespace)
@@ -122,7 +153,7 @@ class DatabaseExtension : ParameterResolver, BeforeEachCallback, AfterEachCallba
 
     override fun afterEach(context: ExtensionContext) {
         val container = getPostgresContainer(context)
-        resetDatabase(container)
+        truncateData(container)
     }
 
     override fun beforeEach(context: ExtensionContext) {
