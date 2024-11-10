@@ -11,7 +11,7 @@ pipeline {
         }
         stage('assemble') {
             steps {
-                sh './gradlew assemble testClasses --parallel --build-cache'
+                sh './gradlew assemble testClasses'
             }
         }
         stage('lint') {
