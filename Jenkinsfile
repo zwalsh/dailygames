@@ -14,6 +14,11 @@ pipeline {
                 sh './gradlew assemble testClasses --parallel --build-cache'
             }
         }
+        stage('lint') {
+            steps {
+                sh './gradlew ktlintCheck'
+            }
+        }
         stage('test') {
             steps {
                 sh './gradlew build'
