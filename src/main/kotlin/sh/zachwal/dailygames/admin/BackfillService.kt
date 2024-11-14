@@ -24,8 +24,10 @@ import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TradleInfo
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
+import java.time.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.absoluteValue
 import kotlin.streams.toList
 
 @Singleton
@@ -113,7 +115,13 @@ class BackfillService @Inject constructor(
                         existing++
                         return@forEach
                     } else {
-                        logger.warn("Flagle result already exists, attempting to backfill anyway due to Flagle issues with puzzle number.")
+                        val timeDifferenceMillis = result.instantSubmitted.toEpochMilli() - existingResult.instantSubmitted.toEpochMilli()
+                        val timeDifference = Duration.ofMillis(timeDifferenceMillis.absoluteValue)
+                        if (timeDifference < Duration.ofMinutes(10)) {
+                            logger.info("Flagle result already exists and is within 10 minutes of existing result, skipping")
+                            existing++
+                            return@forEach
+                        }
                     }
                 }
 
