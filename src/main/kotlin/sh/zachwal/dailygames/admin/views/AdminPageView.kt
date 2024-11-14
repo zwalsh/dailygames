@@ -46,6 +46,11 @@ data class AdminPageView constructor(
                             +"Reset User Password"
                         }
                     }
+                    li {
+                        a(href = "/admin/backfill") {
+                            +"Backfill Result Data"
+                        }
+                    }
                 }
             }
         }

@@ -33,6 +33,26 @@ interface ResultDAO {
 
     @SqlQuery(
         """
+            INSERT INTO result
+            (user_id, game, puzzle_number, instant_submitted, score, share_text, result_info)
+            VALUES
+            (:userId, :puzzle.game, :puzzle.number, :instantSubmitted, :score, :shareText, :resultInfo)
+            RETURNING *
+        """
+    )
+    fun insertResultWithInstantSubmitted(
+        userId: Long,
+        @BindBean("puzzle")
+        puzzle: Puzzle,
+        score: Int,
+        shareText: String,
+        @Json
+        resultInfo: ResultInfo,
+        instantSubmitted: Instant,
+    ): Result
+
+    @SqlQuery(
+        """
             SELECT * 
             FROM result
             WHERE puzzle_number = :puzzle.number
@@ -70,4 +90,15 @@ interface ResultDAO {
         """
     )
     fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<Result>
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM result
+            WHERE user_id = :userId
+            AND game = :puzzle.game
+            AND puzzle_number = :puzzle.number
+        """
+    )
+    fun findResults(userId: Long, puzzle: Puzzle): List<Result>
 }

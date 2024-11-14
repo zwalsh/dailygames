@@ -33,6 +33,7 @@ class AdminController @Inject constructor(
     private val roleService: RoleService,
     private val adminService: AdminService,
     private val navViewFactory: NavViewFactory,
+    private val backfillService: BackfillService,
 ) {
 
     private fun sortedUsers(users: List<User>, roles: Map<User, List<Role>>): List<User> {
@@ -121,6 +122,21 @@ class AdminController @Inject constructor(
                 val view = adminService.resetUserPassword(username, newPassword)
                 call.respondHtml {
                     view.renderIn(this)
+                }
+            }
+        }
+    }
+
+    internal fun Routing.backfill() {
+        adminRoute("/admin/backfill") {
+            get {
+                call.respondHtml {
+                    backfillService.backfillView().renderIn(this)
+                }
+            }
+            post {
+                call.respondHtml {
+                    backfillService.backfillAllResults().renderIn(this)
                 }
             }
         }

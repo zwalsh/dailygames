@@ -252,6 +252,32 @@ class ResultDAOTest(
         }
     }
 
+    @Test
+    fun `findResults() returns empty if none exists`() {
+        val results = resultDAO.findResults(fixtures.zach.id, fixtures.worldle123Puzzle)
+
+        assertThat(results).isEmpty()
+    }
+
+    @Test
+    fun `findResult() retrieves the result if it exists`() {
+        val result = insertResult()
+
+        val results = resultDAO.findResults(fixtures.zach.id, fixtures.worldle123Puzzle)
+
+        assertThat(results.single()).isEqualTo(result)
+    }
+
+    @Test
+    fun `findResult() can find multiples`() {
+        insertResult(puzzle = fixtures.flagle123Puzzle)
+        insertResult(puzzle = fixtures.flagle123Puzzle)
+
+        val results = resultDAO.findResults(fixtures.zach.id, fixtures.flagle123Puzzle)
+
+        assertThat(results).hasSize(2)
+    }
+
     private fun insertResult(
         userId: Long = fixtures.zach.id,
         puzzle: Puzzle = fixtures.worldle123Puzzle,
