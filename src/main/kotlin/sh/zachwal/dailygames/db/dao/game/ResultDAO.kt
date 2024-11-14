@@ -98,8 +98,7 @@ interface ResultDAO {
             WHERE user_id = :userId
             AND game = :puzzle.game
             AND puzzle_number = :puzzle.number
-            LIMIT 1
         """
     )
-    fun findResult(userId: Long, puzzle: Puzzle): Result?
+    fun findResults(userId: Long, puzzle: Puzzle): List<Result>
 }

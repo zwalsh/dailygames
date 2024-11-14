@@ -14,6 +14,8 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
+import sh.zachwal.dailygames.db.jdbi.Result
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
@@ -107,18 +109,18 @@ class BackfillService @Inject constructor(
             val results = resultService.allResultsForPuzzle(puzzle).sortedBy { it.instantSubmitted }
             logger.info("Found ${results.size} results for puzzle $puzzle")
             results.forEach { result ->
-                logger.info("Attempting to backfill result $result")
-                val existingResult = resultDAO.findResult(result.userId, puzzle)
-                if (existingResult != null) {
+                logger.info("Checking if result exists: $result")
+                val existingResults = resultDAO.findResults(result.userId, puzzle)
+                if (existingResults.isNotEmpty()) {
                     if (game != Game.FLAGLE) {
                         logger.info("Result already exists, skipping")
                         existing++
                         return@forEach
                     } else {
-                        val timeDifferenceMillis = result.instantSubmitted.toEpochMilli() - existingResult.instantSubmitted.toEpochMilli()
-                        val timeDifference = Duration.ofMillis(timeDifferenceMillis.absoluteValue)
-                        if (timeDifference < Duration.ofMinutes(10)) {
-                            logger.info("Flagle result already exists and is within 10 minutes of existing result, skipping")
+                        val existingResult = existingResults.find { isFlagleResultClose(result, it) }
+
+                        if (existingResult != null) {
+                            logger.info("Flagle result already exists and is within 10 minutes of existing result: $existingResult, skipping")
                             existing++
                             return@forEach
                         }
@@ -126,6 +128,7 @@ class BackfillService @Inject constructor(
                 }
 
                 try {
+                    logger.info("Backfilling result $result")
                     when (result) {
                         is WorldleResult -> result.tryBackfill()
                         is TradleResult -> result.tryBackfill()
@@ -143,6 +146,12 @@ class BackfillService @Inject constructor(
             }
         }
         return BackfillResult(backfilled, existing, failed)
+    }
+
+    private fun isFlagleResultClose(result: PuzzleResult, existingResult: Result): Boolean {
+        val timeDifferenceMillis = result.instantSubmitted.toEpochMilli() - existingResult.instantSubmitted.toEpochMilli()
+        val timeDifference = Duration.ofMillis(timeDifferenceMillis.absoluteValue)
+        return timeDifference < Duration.ofMinutes(10)
     }
 
     private fun WorldleResult.tryBackfill() {
