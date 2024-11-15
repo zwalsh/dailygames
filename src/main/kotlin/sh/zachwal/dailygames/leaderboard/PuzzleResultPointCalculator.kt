@@ -39,7 +39,7 @@ class PuzzleResultPointCalculator {
             Game.TOP5 -> score
             Game.FLAGLE -> 7 - score
             Game.PINPOINT -> 6 - score
-            Game.GEOCIRCLES -> 10 - score
+            Game.GEOCIRCLES -> score
         }
     }
 

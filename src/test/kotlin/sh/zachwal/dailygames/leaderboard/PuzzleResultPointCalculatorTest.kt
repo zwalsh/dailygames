@@ -348,7 +348,7 @@ class PuzzleResultPointCalculatorTest {
         id = 1L,
         userId = 1L,
         game = Game.GEOCIRCLES,
-        score = 5,
+        score = 8,
         puzzleNumber = 30,
         puzzleDate = null,
         instantSubmitted = Instant.now(),
@@ -362,19 +362,19 @@ class PuzzleResultPointCalculatorTest {
         puzzleNumber = 30,
         instantSubmitted = Instant.now(),
         puzzleDate = null,
-        score = 5,
+        score = 8,
         shareText = "",
         resultInfo = GeocirclesInfo,
     )
 
     @Test
     fun `returns score directly for geocircles`() {
-        assertThat(calculator.calculatePoints(geocirclesResult)).isEqualTo(5)
+        assertThat(calculator.calculatePoints(geocirclesResult)).isEqualTo(8)
     }
 
     @Test
     fun `returns score directly for new geocircles result`() {
-        assertThat(calculator.calculatePoints(newGeocirclesResult)).isEqualTo(5)
+        assertThat(calculator.calculatePoints(newGeocirclesResult)).isEqualTo(8)
     }
 
     @Test
