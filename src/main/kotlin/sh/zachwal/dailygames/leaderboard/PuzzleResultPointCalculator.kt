@@ -1,6 +1,8 @@
 package sh.zachwal.dailygames.leaderboard
 
+import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
+import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
@@ -8,6 +10,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
+import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 
 class PuzzleResultPointCalculator {
 
@@ -28,6 +31,18 @@ class PuzzleResultPointCalculator {
         }
     }
 
+    fun calculatePoints(result: Result): Int = with(result) {
+        when (game) {
+            Game.WORLDLE -> 7 - score
+            Game.TRADLE -> 7 - score
+            Game.TRAVLE -> (result.resultInfo as TravleInfo).calculatePoints(score) // TODO safe cast method on result?
+            Game.TOP5 -> score
+            Game.FLAGLE -> 7 - score
+            Game.PINPOINT -> 6 - score
+            Game.GEOCIRCLES -> 10 - score
+        }
+    }
+
     private fun WorldleResult.calculatePoints(): Int {
         return 7 - score
     }
@@ -44,6 +59,24 @@ class PuzzleResultPointCalculator {
         return 6 - score
     }
 
+    private fun TravleResult.calculatePoints(): Int {
+        return TravleInfo(
+            numGuesses = numGuesses,
+            numIncorrect = numIncorrect,
+            numPerfect = numPerfect,
+            numHints = numHints,
+        ).calculatePoints(score)
+    }
+
+    private fun TravleResult.maxPoints(): Int {
+        return TravleInfo(
+            numGuesses = numGuesses,
+            numIncorrect = numIncorrect,
+            numPerfect = numPerfect,
+            numHints = numHints,
+        ).maxPoints(score)
+    }
+
     /**
      * Travle's points system works as follows:
      *
@@ -57,18 +90,18 @@ class PuzzleResultPointCalculator {
      *
      * See https://travle.earth/extra_info
      */
-    private fun TravleResult.calculatePoints(): Int {
+    private fun TravleInfo.calculatePoints(score: Int): Int {
         if (score < 0) {
             return 0
         }
-        return maxPoints() - score
+        return maxPoints(score) - score
     }
 
-    private fun TravleResult.maxPoints(): Int {
-        return getAllowedIncorrectGuesses() + 1
+    private fun TravleInfo.maxPoints(score: Int): Int {
+        return getAllowedIncorrectGuesses(score) + 1
     }
 
-    private fun TravleResult.getAllowedIncorrectGuesses(): Int {
+    private fun TravleInfo.getAllowedIncorrectGuesses(score: Int): Int {
         if (score >= 0) {
             // if the score is positive, it represents the excess number of guesses the player took
             // meaning shortest solution is always numGuesses minus score
@@ -84,7 +117,7 @@ class PuzzleResultPointCalculator {
                     return allowedIncorrectForThisLength
                 }
             }
-            throw IllegalArgumentException("Could not calculate allowed incorrect guesses for Travle result: ${this.shareText}")
+            throw IllegalArgumentException("Could not calculate allowed incorrect guesses for Travle result.")
         }
     }
 
@@ -113,6 +146,18 @@ class PuzzleResultPointCalculator {
             is Top5Result -> 10
             is PinpointResult -> 5
             is GeocirclesResult -> 10
+        }
+    }
+
+    fun maxPoints(result: Result): Int = with(result) {
+        when (game) {
+            Game.WORLDLE -> 6
+            Game.TRADLE -> 6
+            Game.TRAVLE -> (result.resultInfo as TravleInfo).maxPoints(score)
+            Game.TOP5 -> 10
+            Game.FLAGLE -> 6
+            Game.PINPOINT -> 5
+            Game.GEOCIRCLES -> 10
         }
     }
 }
