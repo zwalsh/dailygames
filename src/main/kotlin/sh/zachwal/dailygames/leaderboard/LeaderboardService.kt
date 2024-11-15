@@ -1,15 +1,8 @@
 package sh.zachwal.dailygames.leaderboard
 
-import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi
-import sh.zachwal.dailygames.db.dao.game.FlagleDAO
-import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
-import sh.zachwal.dailygames.db.dao.game.PinpointDAO
-import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
-import sh.zachwal.dailygames.db.dao.game.Top5DAO
-import sh.zachwal.dailygames.db.dao.game.TradleDAO
-import sh.zachwal.dailygames.db.dao.game.TravleDAO
-import sh.zachwal.dailygames.db.dao.game.WorldleDAO
+import org.jdbi.v3.sqlobject.kotlin.attach
+import sh.zachwal.dailygames.db.dao.game.ResultDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.leaderboard.views.BasicScoreHintView
@@ -97,8 +90,8 @@ class LeaderboardService @Inject constructor(
         val allTimeTotalsPerUser = mutableMapOf<Long, TotalPoints>()
         val thirtyDaysTotalsPerUser = mutableMapOf<Long, TotalPoints>()
         jdbi.open().use { handle ->
-            val dao = daoForGame(game, handle)
-            dao.allResultsStream().forEach { result ->
+            val dao = handle.attach<ResultDAO>()
+            dao.allResultsForGameStream(game).forEach { result ->
                 val totalPoints = TotalPoints(1, pointCalculator.calculatePoints(result))
                 allTimeTotalsPerUser.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 if (result.instantSubmitted.isAfter(Instant.now().minus(30, ChronoUnit.DAYS))) {
@@ -114,18 +107,6 @@ class LeaderboardService @Inject constructor(
         val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
         val dataPoints = sortedScores.map { selector(it.value) }
         return ChartInfo(labels, dataPoints)
-    }
-
-    private fun daoForGame(game: Game, handle: Handle): PuzzleResultDAO<*> {
-        return when (game) {
-            Game.WORLDLE -> handle.attach(WorldleDAO::class.java)
-            Game.TRADLE -> handle.attach(TradleDAO::class.java)
-            Game.TRAVLE -> handle.attach(TravleDAO::class.java)
-            Game.TOP5 -> handle.attach(Top5DAO::class.java)
-            Game.FLAGLE -> handle.attach(FlagleDAO::class.java)
-            Game.PINPOINT -> handle.attach(PinpointDAO::class.java)
-            Game.GEOCIRCLES -> handle.attach(GeocirclesDAO::class.java)
-        }
     }
 }
 
