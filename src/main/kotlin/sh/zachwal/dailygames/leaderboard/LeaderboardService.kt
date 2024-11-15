@@ -1,17 +1,8 @@
 package sh.zachwal.dailygames.leaderboard
 
-import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
-import sh.zachwal.dailygames.db.dao.game.FlagleDAO
-import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
-import sh.zachwal.dailygames.db.dao.game.PinpointDAO
-import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.dao.game.ResultDAO
-import sh.zachwal.dailygames.db.dao.game.Top5DAO
-import sh.zachwal.dailygames.db.dao.game.TradleDAO
-import sh.zachwal.dailygames.db.dao.game.TravleDAO
-import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.leaderboard.views.BasicScoreHintView

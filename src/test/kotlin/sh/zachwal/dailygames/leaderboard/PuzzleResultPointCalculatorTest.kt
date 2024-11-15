@@ -2,7 +2,6 @@ package sh.zachwal.dailygames.leaderboard
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestFactory
 import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -259,7 +258,6 @@ class PuzzleResultPointCalculatorTest {
             assertThat(calculator.calculatePoints(result)).isEqualTo(allowedIncorrect + 1)
         }
     }
-
 
     @Test
     fun `returns number of allowed incorrect guesses plus one minus actual guesses for new travle`() {

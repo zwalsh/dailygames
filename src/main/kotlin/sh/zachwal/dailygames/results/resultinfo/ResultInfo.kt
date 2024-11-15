@@ -2,7 +2,6 @@ package sh.zachwal.dailygames.results.resultinfo
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
