@@ -3,14 +3,7 @@ package sh.zachwal.dailygames.leaderboard
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.Result
-import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
-import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
@@ -23,18 +16,7 @@ import java.time.Instant
 class PuzzleResultPointCalculatorTest {
     private val calculator = PuzzleResultPointCalculator()
 
-    val worldleResult = WorldleResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.WORLDLE,
-        score = 5,
-        puzzleNumber = 30,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
-        shareText = "",
-        scorePercentage = 100,
-    )
-    val newWorldleResult = Result(
+    private val worldleResult = Result(
         id = 1L,
         userId = 1L,
         game = Game.WORLDLE,
@@ -49,26 +31,11 @@ class PuzzleResultPointCalculatorTest {
     )
 
     @Test
-    fun `returns 7 minus score for worldle`() {
+    fun `returns 7 minus score for worldle result`() {
         assertThat(calculator.calculatePoints(worldleResult)).isEqualTo(2)
     }
 
-    @Test
-    fun `returns 7 minus score for new worldle result`() {
-        assertThat(calculator.calculatePoints(newWorldleResult)).isEqualTo(2)
-    }
-
-    val flagleResult = FlagleResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.FLAGLE,
-        score = 6,
-        puzzleNumber = 30,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
-        shareText = "",
-    )
-    private val newFlagleResult = Result(
+    private val flagleResult = Result(
         id = 1L,
         userId = 1L,
         game = Game.FLAGLE,
@@ -81,27 +48,11 @@ class PuzzleResultPointCalculatorTest {
     )
 
     @Test
-    fun `returns 7 minus score for flagle`() {
+    fun `returns 7 minus score for flagle result`() {
         assertThat(calculator.calculatePoints(flagleResult)).isEqualTo(1)
     }
 
-    @Test
-    fun `returns 7 minus score for new flagle result`() {
-        assertThat(calculator.calculatePoints(newFlagleResult)).isEqualTo(1)
-    }
-
-    val tradleResult = TradleResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.TRADLE,
-        score = 7,
-        puzzleNumber = 30,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
-        shareText = "",
-    )
-
-    private val newTradleResult = Result(
+    private val tradleResult = Result(
         id = 1L,
         userId = 1L,
         game = Game.TRADLE,
@@ -114,30 +65,11 @@ class PuzzleResultPointCalculatorTest {
     )
 
     @Test
-    fun `returns 7 minus score for tradle`() {
+    fun `returns 7 minus score for tradle result`() {
         assertThat(calculator.calculatePoints(tradleResult)).isEqualTo(0)
     }
 
-    @Test
-    fun `returns 7 minus score for new tradle result`() {
-        assertThat(calculator.calculatePoints(newTradleResult)).isEqualTo(0)
-    }
-
-    val top5Result = Top5Result(
-        id = 1L,
-        userId = 1L,
-        game = Game.TOP5,
-        score = 5,
-        puzzleNumber = 30,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
-        shareText = "",
-        numGuesses = 0,
-        numCorrect = 0,
-        isPerfect = false,
-    )
-
-    private val newTop5Result = Result(
+    private val top5Result = Result(
         id = 1L,
         userId = 1L,
         game = Game.TOP5,
@@ -154,31 +86,11 @@ class PuzzleResultPointCalculatorTest {
     )
 
     @Test
-    fun `returns score directly for top5`() {
+    fun `returns score directly for top5 result`() {
         assertThat(calculator.calculatePoints(top5Result)).isEqualTo(5)
     }
 
-    @Test
-    fun `returns score directly for new top5 result`() {
-        assertThat(calculator.calculatePoints(newTop5Result)).isEqualTo(5)
-    }
-
-    private val travleResult = TravleResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.TRAVLE,
-        score = 0,
-        puzzleNumber = 30,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
-        shareText = "",
-        numGuesses = 7,
-        numIncorrect = 0,
-        numPerfect = 7,
-        numHints = 0,
-    )
-
-    private val newTravleResult = Result(
+    private val travleResult = Result(
         id = 1L,
         userId = 1L,
         game = Game.TRAVLE,
@@ -194,34 +106,6 @@ class PuzzleResultPointCalculatorTest {
             numHints = 0,
         ),
     )
-
-    @Test
-    fun `returns number of allowed incorrect guesses plus one minus actual guesses for travle`() {
-        // When the Travle puzzle has a shortest solution of 7 guesses
-        assertThat(travleResult.numGuesses).isEqualTo(7)
-        assertThat(travleResult.score).isEqualTo(0)
-
-        // Then the number of allowed incorrect guesses is 6
-        // And the number of incorrect guesses in this case is 0
-        // So the score is 7
-
-        assertThat(calculator.calculatePoints(travleResult)).isEqualTo(7)
-    }
-
-    @Test
-    fun `returns zero when travle score is negative`() {
-        val result = travleResult.copy(score = -1)
-        assertThat(calculator.calculatePoints(result)).isEqualTo(0)
-    }
-
-    @Test
-    fun `deducts one point for each incorrect guess in travle`() {
-        for (numWrong in 1..7) {
-            // shortest solution is 7
-            val result = travleResult.copy(score = numWrong, numGuesses = 7 + numWrong, numIncorrect = numWrong)
-            assertThat(calculator.calculatePoints(result)).isEqualTo(7 - numWrong)
-        }
-    }
 
     /**
      * From the Travle website:
@@ -251,39 +135,30 @@ class PuzzleResultPointCalculatorTest {
     )
 
     @Test
-    fun `allowed guesses in travle matches the given table`() {
-        travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
-            // perfect result at this solution length
-            val result = travleResult.copy(numGuesses = shortestSolution, score = 0)
-            assertThat(calculator.calculatePoints(result)).isEqualTo(allowedIncorrect + 1)
-        }
-    }
-
-    @Test
-    fun `returns number of allowed incorrect guesses plus one minus actual guesses for new travle`() {
+    fun `returns number of allowed incorrect guesses plus one minus actual guesses for travle`() {
         // When the Travle puzzle has a shortest solution of 7 guesses
-        val info = newTravleResult.resultInfo as TravleInfo
+        val info = travleResult.resultInfo as TravleInfo
         assertThat(info.numGuesses).isEqualTo(7)
-        assertThat(newTravleResult.score).isEqualTo(0)
+        assertThat(travleResult.score).isEqualTo(0)
 
         // Then the number of allowed incorrect guesses is 6
         // And the number of incorrect guesses in this case is 0
         // So the score is 7
 
-        assertThat(calculator.calculatePoints(newTravleResult)).isEqualTo(7)
+        assertThat(calculator.calculatePoints(travleResult)).isEqualTo(7)
     }
 
     @Test
-    fun `returns zero when travle score is negative for new travle result`() {
-        val result = newTravleResult.copy(score = -1)
+    fun `returns zero when travle score is negative`() {
+        val result = travleResult.copy(score = -1)
         assertThat(calculator.calculatePoints(result)).isEqualTo(0)
     }
 
     @Test
-    fun `deducts one point for each incorrect guess in travle for new result`() {
+    fun `deducts one point for each incorrect guess in travle`() {
         for (numWrong in 1..7) {
             // shortest solution is 7
-            val result = newTravleResult.copy(
+            val result = travleResult.copy(
                 score = numWrong,
                 resultInfo = TravleInfo(
                     numGuesses = 7 + numWrong,
@@ -297,11 +172,11 @@ class PuzzleResultPointCalculatorTest {
     }
 
     @Test
-    fun `allowed guesses in travle matches the given table for new travle`() {
+    fun `allowed guesses in travle matches the given table for travle`() {
         travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
             // perfect result at this solution length
-            val info = newTravleResult.resultInfo as TravleInfo
-            val result = newTravleResult.copy(
+            val info = travleResult.resultInfo as TravleInfo
+            val result = travleResult.copy(
                 score = 0,
                 resultInfo = info.copy(
                     numGuesses = shortestSolution,
@@ -311,18 +186,7 @@ class PuzzleResultPointCalculatorTest {
         }
     }
 
-    private val pinpointResult = PinpointResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.PINPOINT,
-        score = 2,
-        puzzleNumber = 30,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
-        shareText = "",
-    )
-
-    private val newPinpointResult = Result(
+    private val pinpointResult = Result(
         id = 1L,
         userId = 1L,
         game = Game.PINPOINT,
@@ -335,27 +199,11 @@ class PuzzleResultPointCalculatorTest {
     )
 
     @Test
-    fun `returns 6 minus score for pinpoint`() {
+    fun `returns 6 minus score for pinpoint result`() {
         assertThat(calculator.calculatePoints(pinpointResult)).isEqualTo(4)
     }
 
-    @Test
-    fun `returns 6 minus score for new pinpoint result`() {
-        assertThat(calculator.calculatePoints(newPinpointResult)).isEqualTo(4)
-    }
-
-    private val geocirclesResult = GeocirclesResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.GEOCIRCLES,
-        score = 8,
-        puzzleNumber = 30,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
-        shareText = "",
-    )
-
-    private val newGeocirclesResult = Result(
+    private val geocirclesResult = Result(
         id = 1L,
         userId = 1L,
         game = Game.GEOCIRCLES,
@@ -373,11 +221,6 @@ class PuzzleResultPointCalculatorTest {
     }
 
     @Test
-    fun `returns score directly for new geocircles result`() {
-        assertThat(calculator.calculatePoints(newGeocirclesResult)).isEqualTo(8)
-    }
-
-    @Test
     fun `returns max score for simple games`() {
         assertThat(calculator.maxPoints(worldleResult)).isEqualTo(6)
         assertThat(calculator.maxPoints(flagleResult)).isEqualTo(6)
@@ -388,20 +231,15 @@ class PuzzleResultPointCalculatorTest {
     }
 
     @Test
-    fun `returns max score for new simple games`() {
-        assertThat(calculator.maxPoints(newWorldleResult)).isEqualTo(6)
-        assertThat(calculator.maxPoints(newFlagleResult)).isEqualTo(6)
-        assertThat(calculator.maxPoints(newTradleResult)).isEqualTo(6)
-        assertThat(calculator.maxPoints(newTop5Result)).isEqualTo(10)
-        assertThat(calculator.maxPoints(newPinpointResult)).isEqualTo(5)
-        assertThat(calculator.maxPoints(newGeocirclesResult)).isEqualTo(10)
-    }
-
-    @Test
     fun `max points for travle matches given table for perfect scores`() {
         travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
             // perfect result at this solution length
-            val result = travleResult.copy(numGuesses = shortestSolution, score = 0)
+            val result = travleResult.copy(
+                score = 0,
+                resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                    numGuesses = shortestSolution
+                )
+            )
             assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
         }
     }
@@ -409,7 +247,12 @@ class PuzzleResultPointCalculatorTest {
     @Test
     fun `max points for travle matches given table if score is negative`() {
         travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
-            val result = travleResult.copy(numGuesses = shortestSolution + allowedIncorrect, score = -allowedIncorrect)
+            val result = travleResult.copy(
+                score = -allowedIncorrect,
+                resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                    numGuesses = shortestSolution + allowedIncorrect
+                )
+            )
             assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
         }
     }
@@ -417,7 +260,12 @@ class PuzzleResultPointCalculatorTest {
     @Test
     fun `max points for travle matches given table if player was arbitrarily far away from the destination country`() {
         travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
-            val result = travleResult.copy(numGuesses = shortestSolution + allowedIncorrect, score = -10)
+            val result = travleResult.copy(
+                score = -10,
+                resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                    numGuesses = shortestSolution + allowedIncorrect
+                )
+            )
             assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
         }
     }
@@ -430,9 +278,11 @@ class PuzzleResultPointCalculatorTest {
          */
         val resultTwoAway = travleResult.copy(
             score = -2,
-            numGuesses = 10,
-            numIncorrect = 7,
-            numPerfect = 0,
+            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                numGuesses = 10,
+                numIncorrect = 7,
+                numPerfect = 0,
+            )
         )
 
         /**
@@ -441,9 +291,11 @@ class PuzzleResultPointCalculatorTest {
          */
         val resultPlusZero = travleResult.copy(
             score = 0,
-            numGuesses = 5,
-            numIncorrect = 0,
-            numPerfect = 4,
+            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                numGuesses = 5,
+                numIncorrect = 0,
+                numPerfect = 4,
+            )
         )
 
         assertThat(calculator.maxPoints(resultTwoAway))
@@ -453,7 +305,12 @@ class PuzzleResultPointCalculatorTest {
     @Test
     fun `max points for travle matches given table if score is positive`() {
         travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
-            val result = travleResult.copy(numGuesses = shortestSolution + 1, score = 1)
+            val result = travleResult.copy(
+                score = 1,
+                resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                    numGuesses = shortestSolution + 1
+                )
+            )
             assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
         }
     }
