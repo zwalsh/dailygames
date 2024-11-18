@@ -379,7 +379,7 @@ class ResultServiceTest(
         // 12am PT + 1 day
         val expectedEnd = expectedStart.plus(1, ChronoUnit.DAYS)
 
-        verify { worldleDAO.resultsForUserInTimeRange(fixtures.zach.id, expectedStart, expectedEnd) }
+        verify { resultDAO.resultsForUserInTimeRange(fixtures.zach.id, expectedStart, expectedEnd) }
     }
 
     @Test
