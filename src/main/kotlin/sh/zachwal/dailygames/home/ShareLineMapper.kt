@@ -1,31 +1,28 @@
 package sh.zachwal.dailygames.home
 
-import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
-import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
+import sh.zachwal.dailygames.db.jdbi.Result
+import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.resultinfo.Top5Info
+import sh.zachwal.dailygames.results.resultinfo.TravleInfo
+import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import javax.inject.Singleton
 
 @Singleton
 class ShareLineMapper {
 
-    fun mapToShareLine(puzzleResult: PuzzleResult): String {
-        return when (puzzleResult) {
-            is FlagleResult -> puzzleResult.toShareLine()
-            is Top5Result -> puzzleResult.toShareLine()
-            is TradleResult -> puzzleResult.toShareLine()
-            is TravleResult -> puzzleResult.toShareLine()
-            is WorldleResult -> puzzleResult.toShareLine()
-            is PinpointResult -> puzzleResult.toShareLine()
-            is GeocirclesResult -> puzzleResult.toShareLine()
+    fun mapToShareLine(result: Result): String {
+        return when (result.game) {
+            Game.FLAGLE -> result.toFlagleShareLine()
+            Game.TOP5 -> result.toTop5ShareLine()
+            Game.TRADLE -> result.toTradleShareLine()
+            Game.TRAVLE -> result.toTravleShareLine()
+            Game.WORLDLE -> result.toWorldleShareLine()
+            Game.PINPOINT -> result.toPinpointShareLine()
+            Game.GEOCIRCLES -> result.toGeocirclesShareLine()
         }
     }
 
-    private fun GeocirclesResult.toShareLine(): String {
+    private fun Result.toGeocirclesShareLine(): String {
         val start = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
 
         return when (score) {
@@ -35,7 +32,7 @@ class ShareLineMapper {
         }
     }
 
-    private fun Top5Result.toShareLine(): String {
+    private fun Result.toTop5ShareLine(): String = with(resultInfo as Top5Info) {
         val numIncorrect = numGuesses - numCorrect
         val start = "${game.emoji()} ${game.displayName()} #$puzzleNumber $numCorrect/5"
 
@@ -48,7 +45,7 @@ class ShareLineMapper {
         }
     }
 
-    private fun FlagleResult.toShareLine(): String {
+    private fun Result.toFlagleShareLine(): String {
         if (score == 7) {
             return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6"
         }
@@ -60,9 +57,9 @@ class ShareLineMapper {
         }
     }
 
-    private fun WorldleResult.toShareLine(): String {
+    private fun Result.toWorldleShareLine(): String = with(resultInfo as WorldleInfo) {
         if (score == 7) {
-            return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6 ($scorePercentage%)"
+            return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6 ($percentage%)"
         }
         val line = "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
         return if (score == 1) {
@@ -72,7 +69,7 @@ class ShareLineMapper {
         }
     }
 
-    private fun TradleResult.toShareLine(): String {
+    private fun Result.toTradleShareLine(): String {
         if (score == 7) {
             return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6"
         }
@@ -84,7 +81,7 @@ class ShareLineMapper {
         }
     }
 
-    private fun TravleResult.toShareLine(): String {
+    private fun Result.toTravleShareLine(): String = with(resultInfo as TravleInfo) {
         val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
         val withScore = if (score < 0) {
             "$gameAndPuzzle (${-score} away)"
@@ -108,7 +105,7 @@ class ShareLineMapper {
         return withPerfect
     }
 
-    private fun PinpointResult.toShareLine(): String {
+    private fun Result.toPinpointShareLine(): String {
         val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
         if (score == 6) {
             return "$gameAndPuzzle X/5"
