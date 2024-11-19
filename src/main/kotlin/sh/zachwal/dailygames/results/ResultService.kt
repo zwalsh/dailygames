@@ -14,6 +14,7 @@ import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
 import sh.zachwal.dailygames.db.dao.game.TravleDAO
 import sh.zachwal.dailygames.db.dao.game.WorldleDAO
+import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
@@ -239,14 +240,12 @@ class ResultService @Inject constructor(
         }
     }
 
-    fun resultsForUserToday(user: User): List<PuzzleResult> {
+    fun resultsForUserToday(user: User): List<Result> {
         val userTimeZone = userPreferencesService.getTimeZone(user.id)
         val startOfToday = clock.instant().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
         val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)
 
-        return daos.flatMap { dao ->
-            dao.resultsForUserInTimeRange(user.id, startOfToday, endOfToday)
-        }
+        return resultDAO.resultsForUserInTimeRange(user.id, startOfToday, endOfToday)
     }
 
     private val daoClasses = listOf(

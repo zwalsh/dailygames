@@ -1,15 +1,8 @@
 package sh.zachwal.dailygames.leaderboard
 
 import sh.zachwal.dailygames.db.jdbi.Result
-import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
-import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 
 class PuzzleResultPointCalculator {
@@ -19,18 +12,6 @@ class PuzzleResultPointCalculator {
      *
      * This is useful for sorting on leaderboards.
      */
-    fun calculatePoints(result: PuzzleResult): Int {
-        return when (result) {
-            is WorldleResult -> result.calculatePoints()
-            is FlagleResult -> result.calculatePoints()
-            is TradleResult -> result.calculatePoints()
-            is TravleResult -> result.calculatePoints()
-            is Top5Result -> result.calculatePoints()
-            is PinpointResult -> result.calculatePoints()
-            is GeocirclesResult -> result.score
-        }
-    }
-
     fun calculatePoints(result: Result): Int = with(result) {
         when (game) {
             Game.WORLDLE -> 7 - score
@@ -41,31 +22,6 @@ class PuzzleResultPointCalculator {
             Game.PINPOINT -> 6 - score
             Game.GEOCIRCLES -> score
         }
-    }
-
-    private fun WorldleResult.calculatePoints(): Int {
-        return 7 - score
-    }
-
-    private fun FlagleResult.calculatePoints(): Int {
-        return 7 - score
-    }
-
-    private fun TradleResult.calculatePoints(): Int {
-        return 7 - score
-    }
-
-    private fun PinpointResult.calculatePoints(): Int {
-        return 6 - score
-    }
-
-    private fun TravleResult.calculatePoints(): Int {
-        return TravleInfo(
-            numGuesses = numGuesses,
-            numIncorrect = numIncorrect,
-            numPerfect = numPerfect,
-            numHints = numHints,
-        ).calculatePoints(score)
     }
 
     private fun TravleResult.maxPoints(): Int {
@@ -130,22 +86,6 @@ class PuzzleResultPointCalculator {
             in 10..12 -> 7
             in 13..Int.MAX_VALUE -> 8
             else -> throw IllegalArgumentException("Impossible shortest solution length: $shortestSolutionLength.")
-        }
-    }
-
-    private fun Top5Result.calculatePoints(): Int {
-        return score
-    }
-
-    fun maxPoints(result: PuzzleResult): Int {
-        return when (result) {
-            is WorldleResult -> 6
-            is FlagleResult -> 6
-            is TradleResult -> 6
-            is TravleResult -> result.maxPoints()
-            is Top5Result -> 10
-            is PinpointResult -> 5
-            is GeocirclesResult -> 10
         }
     }
 

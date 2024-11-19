@@ -2,19 +2,20 @@ package sh.zachwal.dailygames.home
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
-import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
+import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
-import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
+import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
+import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
+import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
+import sh.zachwal.dailygames.results.resultinfo.Top5Info
+import sh.zachwal.dailygames.results.resultinfo.TradleInfo
+import sh.zachwal.dailygames.results.resultinfo.TravleInfo
+import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
 
 class ShareLineMapperTest {
 
-    private val worldleResult = WorldleResult(
+    private val worldleResult = Result(
         id = 1,
         userId = 1,
         game = Game.WORLDLE,
@@ -23,7 +24,9 @@ class ShareLineMapperTest {
         instantSubmitted = Instant.now(),
         score = 1,
         shareText = "share text",
-        scorePercentage = 100,
+        resultInfo = WorldleInfo(
+            percentage = 100,
+        ),
     )
 
     @Test
@@ -43,7 +46,7 @@ class ShareLineMapperTest {
     @Test
     fun `for Worldle fail, includes percentage`() {
         // Given
-        val failResult = worldleResult.copy(score = 7, scorePercentage = 50)
+        val failResult = worldleResult.copy(score = 7, resultInfo = WorldleInfo(percentage = 50))
 
         // When
         val shareLine = ShareLineMapper().mapToShareLine(failResult)
@@ -52,7 +55,7 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.WORLDLE.emoji()} Worldle #123 X/6 (50%)")
     }
 
-    private val tradleResult = TradleResult(
+    private val tradleResult = Result(
         id = 1,
         userId = 1,
         game = Game.TRADLE,
@@ -61,6 +64,7 @@ class ShareLineMapperTest {
         instantSubmitted = Instant.now(),
         score = 1,
         shareText = "share text",
+        resultInfo = TradleInfo,
     )
 
     @Test
@@ -88,7 +92,7 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.TRADLE.emoji()} Tradle #123 X/6")
     }
 
-    private val travleResult = TravleResult(
+    private val travleResult = Result(
         id = 1L,
         userId = 1L,
         game = Game.TRAVLE,
@@ -97,13 +101,15 @@ class ShareLineMapperTest {
         instantSubmitted = Instant.now(),
         score = 0,
         shareText = "share text",
-        numGuesses = 6,
-        numIncorrect = 0,
-        numPerfect = 6,
-        numHints = 0,
+        resultInfo = TravleInfo(
+            numGuesses = 6,
+            numIncorrect = 0,
+            numPerfect = 6,
+            numHints = 0,
+        ),
     )
 
-    private val flagleResult = FlagleResult(
+    private val flagleResult = Result(
         id = 1,
         userId = 1,
         game = Game.FLAGLE,
@@ -112,6 +118,7 @@ class ShareLineMapperTest {
         instantSubmitted = Instant.now(),
         score = 1,
         shareText = "share text",
+        resultInfo = FlagleInfo
     )
 
     @Test
@@ -148,7 +155,10 @@ class ShareLineMapperTest {
 
     @Test
     fun `maps travle plus zero non-perfect`() {
-        val result = travleResult.copy(score = 0, numPerfect = 5)
+        val result = travleResult.copy(
+            score = 0,
+            resultInfo = (travleResult.resultInfo as TravleInfo).copy(numPerfect = 5)
+        )
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
@@ -157,7 +167,14 @@ class ShareLineMapperTest {
 
     @Test
     fun `maps travle plus one`() {
-        val result = travleResult.copy(score = 1, numGuesses = 7, numPerfect = 6, numIncorrect = 1)
+        val result = travleResult.copy(
+            score = 1,
+            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                numGuesses = 7,
+                numPerfect = 6,
+                numIncorrect = 1,
+            )
+        )
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
@@ -166,7 +183,15 @@ class ShareLineMapperTest {
 
     @Test
     fun `maps travle with hints`() {
-        val result = travleResult.copy(score = 1, numGuesses = 7, numPerfect = 6, numIncorrect = 1, numHints = 2)
+        val result = travleResult.copy(
+            score = 1,
+            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                numGuesses = 7,
+                numPerfect = 6,
+                numIncorrect = 1,
+                numHints = 2,
+            )
+        )
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
@@ -175,7 +200,14 @@ class ShareLineMapperTest {
 
     @Test
     fun `maps travle with negative score`() {
-        val result = travleResult.copy(score = -1, numGuesses = 10, numPerfect = 6, numIncorrect = 4)
+        val result = travleResult.copy(
+            score = -1,
+            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                numGuesses = 10,
+                numPerfect = 6,
+                numIncorrect = 4,
+            )
+        )
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
@@ -184,14 +216,22 @@ class ShareLineMapperTest {
 
     @Test
     fun `maps travle with negative score and one hint`() {
-        val result = travleResult.copy(score = -1, numHints = 1, numGuesses = 10, numPerfect = 6, numIncorrect = 4)
+        val result = travleResult.copy(
+            score = -1,
+            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                numGuesses = 10,
+                numPerfect = 6,
+                numIncorrect = 4,
+                numHints = 1,
+            )
+        )
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
         assertThat(shareLine).isEqualTo("${Game.TRAVLE.emoji()} Travle #123 (1 away) (1 hint)")
     }
 
-    private val top5Result = Top5Result(
+    private val top5Result = Result(
         id = 1,
         userId = 1,
         game = Game.TOP5,
@@ -200,9 +240,11 @@ class ShareLineMapperTest {
         instantSubmitted = Instant.now(),
         score = 5,
         shareText = "share text",
-        numGuesses = 5,
-        numCorrect = 5,
-        isPerfect = true,
+        resultInfo = Top5Info(
+            numGuesses = 5,
+            numCorrect = 5,
+            isPerfect = true,
+        )
     )
 
     @Test
@@ -214,7 +256,11 @@ class ShareLineMapperTest {
 
     @Test
     fun `maps top5 five correct, no misses, but not perfect`() {
-        val result = top5Result.copy(isPerfect = false)
+        val result = top5Result.copy(
+            resultInfo = (top5Result.resultInfo as Top5Info).copy(
+                isPerfect = false
+            )
+        )
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
@@ -223,7 +269,13 @@ class ShareLineMapperTest {
 
     @Test
     fun `maps top5 with five correct but some misses`() {
-        val result = top5Result.copy(numCorrect = 5, numGuesses = 6, isPerfect = false)
+        val result = top5Result.copy(
+            resultInfo = (top5Result.resultInfo as Top5Info).copy(
+                numCorrect = 5,
+                numGuesses = 6,
+                isPerfect = false,
+            )
+        )
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
@@ -232,14 +284,20 @@ class ShareLineMapperTest {
 
     @Test
     fun `maps top5 with misses`() {
-        val result = top5Result.copy(numCorrect = 4, numGuesses = 10, isPerfect = false)
+        val result = top5Result.copy(
+            resultInfo = (top5Result.resultInfo as Top5Info).copy(
+                numCorrect = 4,
+                numGuesses = 10,
+                isPerfect = false,
+            )
+        )
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
         assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top 5 #123 4/5")
     }
 
-    private val pinpointResult = PinpointResult(
+    private val pinpointResult = Result(
         id = 1,
         userId = 1,
         game = Game.PINPOINT,
@@ -248,6 +306,7 @@ class ShareLineMapperTest {
         instantSubmitted = Instant.now(),
         score = 1,
         shareText = "share text",
+        resultInfo = PinpointInfo,
     )
 
     @Test
@@ -273,7 +332,7 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.PINPOINT.emoji()} Pinpoint #123 X/5")
     }
 
-    private val geocirclesResult = GeocirclesResult(
+    private val geocirclesResult = Result(
         id = 1,
         userId = 1,
         game = Game.GEOCIRCLES,
@@ -282,6 +341,7 @@ class ShareLineMapperTest {
         instantSubmitted = Instant.now(),
         score = 10,
         shareText = "share text",
+        resultInfo = GeocirclesInfo,
     )
 
     @Test

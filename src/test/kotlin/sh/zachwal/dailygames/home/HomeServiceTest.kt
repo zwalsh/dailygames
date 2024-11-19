@@ -4,13 +4,14 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
+import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.leaderboard.PuzzleResultPointCalculator
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
+import sh.zachwal.dailygames.results.resultinfo.TravleInfo
+import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
 
 class HomeServiceTest {
@@ -31,7 +32,7 @@ class HomeServiceTest {
         navViewFactory = navViewFactory
     )
 
-    private val worldleResult = WorldleResult(
+    private val worldleResult = Result(
         id = 1L,
         userId = 1L,
         game = Game.WORLDLE,
@@ -40,9 +41,11 @@ class HomeServiceTest {
         puzzleDate = null,
         instantSubmitted = Instant.now(),
         shareText = "",
-        scorePercentage = 100,
+        resultInfo = WorldleInfo(
+            percentage = 100,
+        ),
     )
-    private val travleResult = TravleResult(
+    private val travleResult = Result(
         id = 1L,
         userId = 1L,
         game = Game.TRAVLE,
@@ -51,10 +54,12 @@ class HomeServiceTest {
         puzzleDate = null,
         instantSubmitted = Instant.now(),
         shareText = "",
-        numGuesses = 10,
-        numIncorrect = 2,
-        numPerfect = 3,
-        numHints = 1,
+        resultInfo = TravleInfo(
+            numGuesses = 10,
+            numIncorrect = 2,
+            numPerfect = 3,
+            numHints = 1,
+        )
     )
 
     @Test
