@@ -1,14 +1,13 @@
 package sh.zachwal.dailygames.results
 
-import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.sqlobject.kotlin.attach
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.dao.game.FlagleDAO
 import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
 import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
-import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.dao.game.ResultDAO
 import sh.zachwal.dailygames.db.dao.game.Top5DAO
 import sh.zachwal.dailygames.db.dao.game.TradleDAO
@@ -31,7 +30,6 @@ import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.stream.Stream
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.streams.toList
@@ -208,24 +206,15 @@ class ResultService @Inject constructor(
         }
     }
 
-    private fun readRecentResults(): List<PuzzleResult> {
+    private fun readRecentResults(): List<Result> {
         // Must use JDBI Handle directly to use streaming API
         return jdbi.open().use { handle ->
-            val results = puzzleResultDAOs(handle).flatMap { dao ->
-                dao.allResultsStream().use {
-                    readRecentResults(it)
-                }
-            }
-
-            results.sortedByDescending { it.instantSubmitted }.take(FEED_SIZE)
+            val dao = handle.attach<ResultDAO>()
+            dao.allResultsStream()
+                .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(lookBackWindow)) }
+                .limit(FEED_SIZE.toLong())
+                .toList()
         }
-    }
-
-    private fun <T : PuzzleResult> readRecentResults(stream: Stream<T>): List<T> {
-        return stream
-            .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(lookBackWindow)) }
-            .limit(FEED_SIZE.toLong())
-            .toList()
     }
 
     fun allResultsForPuzzle(puzzle: Puzzle): List<Result> {
@@ -238,29 +227,5 @@ class ResultService @Inject constructor(
         val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)
 
         return resultDAO.resultsForUserInTimeRange(user.id, startOfToday, endOfToday)
-    }
-
-    private val daoClasses = listOf(
-        WorldleDAO::class.java,
-        TradleDAO::class.java,
-        TravleDAO::class.java,
-        Top5DAO::class.java,
-        FlagleDAO::class.java,
-        PinpointDAO::class.java,
-        GeocirclesDAO::class.java,
-    )
-
-    private val daos = listOf(
-        worldleDAO,
-        tradleDAO,
-        travleDAO,
-        top5DAO,
-        flagleDAO,
-        pinpointDAO,
-        geocirclesDAO,
-    )
-
-    private fun puzzleResultDAOs(handle: Handle): List<PuzzleResultDAO<*>> {
-        return daoClasses.map { handle.attach(it) }
     }
 }
