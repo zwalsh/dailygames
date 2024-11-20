@@ -16,16 +16,9 @@ import sh.zachwal.dailygames.db.dao.SessionDAO
 import sh.zachwal.dailygames.db.dao.UserDAO
 import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import sh.zachwal.dailygames.db.dao.UserRoleDAO
-import sh.zachwal.dailygames.db.dao.game.FlagleDAO
 import sh.zachwal.dailygames.db.dao.game.GameDAO
-import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
-import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.ResultDAO
-import sh.zachwal.dailygames.db.dao.game.Top5DAO
-import sh.zachwal.dailygames.db.dao.game.TradleDAO
-import sh.zachwal.dailygames.db.dao.game.TravleDAO
-import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import javax.sql.DataSource
 
 class JdbiModule : AbstractModule() {
@@ -61,31 +54,10 @@ class JdbiModule : AbstractModule() {
     fun puzzleDao(jdbi: Jdbi): PuzzleDAO = jdbi.onDemand()
 
     @Provides
-    fun worldleDao(jdbi: Jdbi): WorldleDAO = jdbi.onDemand()
-
-    @Provides
-    fun tradleDao(jdbi: Jdbi): TradleDAO = jdbi.onDemand()
-
-    @Provides
-    fun travleDao(jdbi: Jdbi): TravleDAO = jdbi.onDemand()
-
-    @Provides
-    fun top5Dao(jdbi: Jdbi): Top5DAO = jdbi.onDemand()
-
-    @Provides
-    fun flagleDao(jdbi: Jdbi): FlagleDAO = jdbi.onDemand()
-
-    @Provides
     fun chatDao(jdbi: Jdbi): ChatDAO = jdbi.onDemand()
 
     @Provides
     fun userPreferencesDao(jdbi: Jdbi): UserPreferencesDAO = jdbi.onDemand()
-
-    @Provides
-    fun pinpointDao(jdbi: Jdbi): PinpointDAO = jdbi.onDemand()
-
-    @Provides
-    fun geocirclesDao(jdbi: Jdbi): GeocirclesDAO = jdbi.onDemand()
 
     @Provides
     fun resultDao(jdbi: Jdbi): ResultDAO = jdbi.onDemand()
