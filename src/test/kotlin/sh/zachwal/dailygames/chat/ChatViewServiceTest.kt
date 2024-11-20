@@ -13,12 +13,14 @@ import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.Chat
+import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
+import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
 import java.time.Clock
@@ -96,7 +98,7 @@ class ChatViewServiceTest {
     }
 
     private val worldle943 = Puzzle(Game.WORLDLE, 943, null)
-    private val worldleResult = WorldleResult(
+    private val worldleResult = Result(
         id = 1L,
         userId = 1L,
         game = Game.WORLDLE,
@@ -105,7 +107,9 @@ class ChatViewServiceTest {
         puzzleDate = null,
         instantSubmitted = Instant.now(),
         shareText = "",
-        scorePercentage = 100,
+        resultInfo = WorldleInfo(
+            percentage = 100,
+        )
     )
 
     @Test
@@ -208,7 +212,7 @@ class ChatViewServiceTest {
             text = "My chat!",
             instantSubmitted = Instant.now(),
         )
-        val result = WorldleResult(
+        val result = Result(
             id = 1L,
             userId = 1L,
             game = Game.WORLDLE,
@@ -217,7 +221,9 @@ class ChatViewServiceTest {
             puzzleDate = null,
             instantSubmitted = Instant.now(),
             shareText = "",
-            scorePercentage = 100,
+            resultInfo = WorldleInfo(
+                percentage = 100,
+            ),
         )
         every { chatDAO.chatsForPuzzleDescending(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(chat)
         every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(result)
