@@ -1,28 +1,19 @@
 package sh.zachwal.dailygames.results
 
 import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.core.statement.UnableToExecuteStatementException
 import org.jdbi.v3.sqlobject.kotlin.attach
+import org.postgresql.util.PSQLException
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.chat.chatLink
-import sh.zachwal.dailygames.db.dao.game.FlagleDAO
-import sh.zachwal.dailygames.db.dao.game.GeocirclesDAO
-import sh.zachwal.dailygames.db.dao.game.PinpointDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.ResultDAO
-import sh.zachwal.dailygames.db.dao.game.Top5DAO
-import sh.zachwal.dailygames.db.dao.game.TradleDAO
-import sh.zachwal.dailygames.db.dao.game.TravleDAO
-import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
-import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.results.resultinfo.ParsedResult
-import sh.zachwal.dailygames.results.resultinfo.Top5Info
-import sh.zachwal.dailygames.results.resultinfo.TravleInfo
-import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
@@ -41,13 +32,6 @@ val lookBackWindow: Duration = Duration.ofDays(3)
 class ResultService @Inject constructor(
     private val jdbi: Jdbi,
     private val puzzleDAO: PuzzleDAO,
-    private val worldleDAO: WorldleDAO,
-    private val tradleDAO: TradleDAO,
-    private val travleDAO: TravleDAO,
-    private val top5DAO: Top5DAO,
-    private val flagleDAO: FlagleDAO,
-    private val pinpointDAO: PinpointDAO,
-    private val geocirclesDAO: GeocirclesDAO,
     private val resultDAO: ResultDAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
@@ -61,7 +45,7 @@ class ResultService @Inject constructor(
     fun createResult(
         user: User,
         shareText: String
-    ): PuzzleResult {
+    ): Result {
         // regex & parse share text
         val game = shareTextParser.identifyGame(shareText) ?: run {
             logger.error("Could not recognize $shareText as a valid game")
@@ -71,92 +55,22 @@ class ResultService @Inject constructor(
         val parsedResult = parseResult(shareText, game)
         val puzzle = getOrCreatePuzzle(Puzzle(game, parsedResult.puzzleNumber, parsedResult.date))
 
-        insertNewResultSafe(user.id, puzzle, parsedResult)
-
-        when (game) {
-            Game.WORLDLE -> {
-                if (parsedResult.resultInfo !is WorldleInfo) {
-                    throw IllegalArgumentException("Parsed result $parsedResult is not a WorldleInfo")
-                }
-
-                return worldleDAO.insertResult(
-                    userId = user.id,
-                    puzzle = puzzle,
-                    score = parsedResult.score,
-                    shareText = parsedResult.shareTextNoLink,
-                    scorePercentage = parsedResult.resultInfo.percentage,
-                )
-            }
-
-            Game.TRADLE -> {
-                return tradleDAO.insertResult(
-                    userId = user.id,
-                    puzzle = puzzle,
-                    score = parsedResult.score,
-                    shareText = parsedResult.shareTextNoLink,
-                )
-            }
-
-            Game.TRAVLE -> {
-                if (parsedResult.resultInfo !is TravleInfo) {
-                    throw IllegalArgumentException("Parsed result $parsedResult is not a TravleInfo")
-                }
-                val travleInfo: TravleInfo = parsedResult.resultInfo
-
-                return travleDAO.insertResult(
-                    userId = user.id,
-                    puzzle = puzzle,
-                    score = parsedResult.score,
-                    shareText = parsedResult.shareTextNoLink,
-                    numGuesses = travleInfo.numGuesses,
-                    numIncorrect = travleInfo.numIncorrect,
-                    numPerfect = travleInfo.numPerfect,
-                    numHints = travleInfo.numHints,
-                )
-            }
-
-            Game.TOP5 -> {
-                if (parsedResult.resultInfo !is Top5Info) {
-                    throw IllegalArgumentException("Parsed result $parsedResult is not a Top5Info")
-                }
-                val top5Info: Top5Info = parsedResult.resultInfo
-
-                return top5DAO.insertResult(
-                    userId = user.id,
-                    puzzle = puzzle,
-                    score = parsedResult.score,
-                    shareText = parsedResult.shareTextNoLink,
-                    numGuesses = top5Info.numGuesses,
-                    numCorrect = top5Info.numCorrect,
-                    isPerfect = top5Info.isPerfect,
-                )
-            }
-
-            Game.FLAGLE -> {
-                return flagleDAO.insertResult(
-                    userId = user.id,
-                    puzzle = puzzle,
-                    score = parsedResult.score,
-                    shareText = parsedResult.shareTextNoLink,
-                )
-            }
-
-            Game.PINPOINT -> {
-                return pinpointDAO.insertResult(
-                    userId = user.id,
-                    puzzle = puzzle,
-                    score = parsedResult.score,
-                    shareText = parsedResult.shareTextNoLink,
-                )
-            }
-
-            Game.GEOCIRCLES -> {
-                return geocirclesDAO.insertResult(
-                    userId = user.id,
-                    puzzle = puzzle,
-                    score = parsedResult.score,
-                    shareText = parsedResult.shareTextNoLink,
-                )
+        return try {
+            // TODO check existing Flagle within time range
+            resultDAO.insertResult(
+                userId = user.id,
+                puzzle = puzzle,
+                score = parsedResult.score,
+                shareText = parsedResult.shareTextNoLink,
+                resultInfo = parsedResult.resultInfo,
+            )
+        } catch (e: UnableToExecuteStatementException) {
+            if (e.cause is PSQLException && (e.cause as PSQLException).message?.contains("duplicate key value violates unique constraint") == true) {
+                logger.info("User ${user.id} tried to submit a duplicate result for ${game.displayName()} #${parsedResult.puzzleNumber}")
+                throw IllegalArgumentException("You have already submitted a result for puzzle ${game.displayName()} #${parsedResult.puzzleNumber}")
+            } else {
+                logger.error("Error inserting result for ${game.displayName()} #${parsedResult.puzzleNumber} for user ${user.username}", e)
+                throw e
             }
         }
     }

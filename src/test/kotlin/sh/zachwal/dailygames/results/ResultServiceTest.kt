@@ -10,23 +10,17 @@ import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.onDemand
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.ResultDAO
-import sh.zachwal.dailygames.db.dao.game.WorldleDAO
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
-import sh.zachwal.dailygames.db.jdbi.puzzle.FlagleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.db.jdbi.puzzle.GeocirclesResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.PinpointResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
-import sh.zachwal.dailygames.db.jdbi.puzzle.Top5Result
-import sh.zachwal.dailygames.db.jdbi.puzzle.TradleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
-import sh.zachwal.dailygames.db.jdbi.puzzle.WorldleResult
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
+import sh.zachwal.dailygames.results.resultinfo.TravleInfo
+import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
@@ -65,7 +59,6 @@ class ResultServiceTest(
 ) {
 
     private val puzzleDAO = jdbi.onDemand<PuzzleDAO>()
-    private val worldleDAO = spyk(jdbi.onDemand<WorldleDAO>())
     private val resultDAO = spyk(jdbi.onDemand<ResultDAO>())
     private val userService: UserService = mockk()
 
@@ -81,13 +74,6 @@ class ResultServiceTest(
     private val resultService = ResultService(
         jdbi = jdbi,
         puzzleDAO = puzzleDAO,
-        worldleDAO = worldleDAO,
-        tradleDAO = jdbi.onDemand(),
-        travleDAO = jdbi.onDemand(),
-        top5DAO = jdbi.onDemand(),
-        flagleDAO = jdbi.onDemand(),
-        pinpointDAO = jdbi.onDemand(),
-        geocirclesDAO = jdbi.onDemand(),
         resultDAO = resultDAO,
         shareTextParser = ShareTextParser(),
         userService = userService,
@@ -108,16 +94,11 @@ class ResultServiceTest(
     fun `can create worldle result`() {
         val result = resultService.createResult(fixtures.zach, worldle934)
 
-        assertThat(result).isInstanceOf(WorldleResult::class.java)
-
-        val worldleResult = result as WorldleResult
-
-        assertThat(worldleResult.userId).isEqualTo(fixtures.zach.id)
-        assertThat(worldleResult.game).isEqualTo(Game.WORLDLE)
-        assertThat(worldleResult.puzzleNumber).isEqualTo(934)
-        assertThat(worldleResult.score).isEqualTo(4)
-        assertThat(worldleResult.scorePercentage).isEqualTo(100)
-        assertThat(worldleResult.shareText).isEqualTo(
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.WORLDLE)
+        assertThat(result.puzzleNumber).isEqualTo(934)
+        assertThat(result.score).isEqualTo(4)
+        assertThat(result.shareText).isEqualTo(
             """
             #Worldle #934 (12.08.2024) 4/6 (100%)
             🟩🟩🟩🟩🟨⬅️
@@ -126,21 +107,22 @@ class ResultServiceTest(
             🟩🟩🟩🟩🟩🎉
             """.trimIndent()
         )
+
+        assertThat(result.resultInfo).isInstanceOf(WorldleInfo::class.java)
+        val info = result.resultInfo as WorldleInfo
+
+        assertThat(info.percentage).isEqualTo(100)
     }
 
     @Test
     fun `can create Tradle result`() {
         val result = resultService.createResult(fixtures.zach, tradle890)
 
-        assertThat(result).isInstanceOf(TradleResult::class.java)
-
-        val tradleResult = result as TradleResult
-
-        assertThat(tradleResult.userId).isEqualTo(fixtures.zach.id)
-        assertThat(tradleResult.game).isEqualTo(Game.TRADLE)
-        assertThat(tradleResult.puzzleNumber).isEqualTo(890)
-        assertThat(tradleResult.score).isEqualTo(7)
-        assertThat(tradleResult.shareText).isEqualTo(
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.TRADLE)
+        assertThat(result.puzzleNumber).isEqualTo(890)
+        assertThat(result.score).isEqualTo(7)
+        assertThat(result.shareText).isEqualTo(
             """
             #Tradle #890 X/6
             🟩🟩⬜⬜⬜
@@ -157,62 +139,58 @@ class ResultServiceTest(
     fun `can create Travle result`() {
         val result = resultService.createResult(fixtures.zach, TRAVLE_WITH_HINT)
 
-        assertThat(result).isInstanceOf(TravleResult::class.java)
-
-        val travleResult = result as TravleResult
-
-        assertThat(travleResult.userId).isEqualTo(fixtures.zach.id)
-        assertThat(travleResult.game).isEqualTo(Game.TRAVLE)
-        assertThat(travleResult.puzzleNumber).isEqualTo(606)
-        assertThat(travleResult.score).isEqualTo(2)
-        assertThat(travleResult.shareText).isEqualTo(
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.TRAVLE)
+        assertThat(result.puzzleNumber).isEqualTo(606)
+        assertThat(result.score).isEqualTo(2)
+        assertThat(result.shareText).isEqualTo(
             """
             #travle #606 +2 (1 hint)
             ✅✅🟩🟧🟧✅
             """.trimIndent()
         )
-        assertThat(travleResult.numGuesses).isEqualTo(6)
-        assertThat(travleResult.numIncorrect).isEqualTo(2)
-        assertThat(travleResult.numPerfect).isEqualTo(3)
-        assertThat(travleResult.numHints).isEqualTo(1)
+
+        assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
+        val info = result.resultInfo as TravleInfo
+
+        assertThat(info.numGuesses).isEqualTo(6)
+        assertThat(info.numIncorrect).isEqualTo(2)
+        assertThat(info.numPerfect).isEqualTo(3)
+        assertThat(info.numHints).isEqualTo(1)
     }
 
     @Test
     fun `can create Top5 result`() {
         val result = resultService.createResult(fixtures.zach, TOP5)
 
-        assertThat(result).isInstanceOf(Top5Result::class.java)
-
-        val top5Result = result as Top5Result
-
-        assertThat(top5Result.userId).isEqualTo(fixtures.zach.id)
-        assertThat(top5Result.game).isEqualTo(Game.TOP5)
-        assertThat(top5Result.puzzleNumber).isEqualTo(171)
-        assertThat(top5Result.score).isEqualTo(3)
-        assertThat(top5Result.shareText).isEqualTo(
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.TOP5)
+        assertThat(result.puzzleNumber).isEqualTo(171)
+        assertThat(result.score).isEqualTo(3)
+        assertThat(result.shareText).isEqualTo(
             """
             Top 5 #171
             ⬜🟧🟨⬜⬜🟩⬜⬜
             """.trimIndent()
         )
-        assertThat(top5Result.numGuesses).isEqualTo(8)
-        assertThat(top5Result.numCorrect).isEqualTo(3)
-        assertThat(top5Result.isPerfect).isFalse()
+
+        assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
+        val info = result.resultInfo as Top5Info
+
+        assertThat(info.numGuesses).isEqualTo(8)
+        assertThat(info.numCorrect).isEqualTo(3)
+        assertThat(info.isPerfect).isFalse()
     }
 
     @Test
     fun `can create Flagle result`() {
         val result = resultService.createResult(fixtures.zach, FLAGLE)
 
-        assertThat(result).isInstanceOf(FlagleResult::class.java)
-
-        val flagleResult = result as FlagleResult
-
-        assertThat(flagleResult.userId).isEqualTo(fixtures.zach.id)
-        assertThat(flagleResult.game).isEqualTo(Game.FLAGLE)
-        assertThat(flagleResult.puzzleNumber).isEqualTo(905)
-        assertThat(flagleResult.score).isEqualTo(7)
-        assertThat(flagleResult.shareText).isEqualTo(
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.FLAGLE)
+        assertThat(result.puzzleNumber).isEqualTo(905)
+        assertThat(result.score).isEqualTo(7)
+        assertThat(result.shareText).isEqualTo(
             """
             #Flagle #905 (14.08.2024) X/6
             🟥🟥🟥
@@ -225,15 +203,11 @@ class ResultServiceTest(
     fun `can create Pinpoint result`() {
         val result = resultService.createResult(fixtures.zach, PINPOINT_THREE)
 
-        assertThat(result).isInstanceOf(PinpointResult::class.java)
-
-        val pinpointResult = result as PinpointResult
-
-        assertThat(pinpointResult.userId).isEqualTo(fixtures.zach.id)
-        assertThat(pinpointResult.game).isEqualTo(Game.PINPOINT)
-        assertThat(pinpointResult.puzzleNumber).isEqualTo(126)
-        assertThat(pinpointResult.score).isEqualTo(3)
-        assertThat(pinpointResult.shareText).isEqualTo(
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.PINPOINT)
+        assertThat(result.puzzleNumber).isEqualTo(126)
+        assertThat(result.score).isEqualTo(3)
+        assertThat(result.shareText).isEqualTo(
             """
             Pinpoint #126
             🤔 🤔 📌 ⬜ ⬜ (3/5)
@@ -245,21 +219,28 @@ class ResultServiceTest(
     fun `can create Geocircles result`() {
         val result = resultService.createResult(fixtures.zach, GEOCIRCLES_PERFECT)
 
-        assertThat(result).isInstanceOf(GeocirclesResult::class.java)
-
-        val geocirclesResult = result as GeocirclesResult
-
-        assertThat(geocirclesResult.userId).isEqualTo(fixtures.zach.id)
-        assertThat(geocirclesResult.game).isEqualTo(Game.GEOCIRCLES)
-        assertThat(geocirclesResult.puzzleNumber).isEqualTo(55)
-        assertThat(geocirclesResult.score).isEqualTo(10)
-        assertThat(geocirclesResult.shareText).isEqualTo(
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.GEOCIRCLES)
+        assertThat(result.puzzleNumber).isEqualTo(55)
+        assertThat(result.score).isEqualTo(10)
+        assertThat(result.shareText).isEqualTo(
             """
             Geocircles #55
             🟢🟢🟢🟢🟢
             ❤️❤️❤️❤️❤️
             """.trimIndent()
         )
+    }
+
+    @Test
+    fun `submitting a result twice throws a helpful error`() {
+        resultService.createResult(fixtures.zach, worldle934)
+
+        val e = assertThrows<IllegalArgumentException> {
+            resultService.createResult(fixtures.zach, worldle934)
+        }
+
+        assertThat(e.message).isEqualTo("You have already submitted a result for puzzle Worldle #934")
     }
 
     @Test
@@ -373,8 +354,8 @@ class ResultServiceTest(
         assertThat(results.any { it.userId == fixtures.jackie.id }).isTrue()
         assertThat(results.any { it.game == Game.FLAGLE }).isFalse()
 
-//        assertThat(results).containsExactly(result1, result2)
-//        assertThat(results).doesNotContain(differentPuzzleResult)
+        assertThat(results).containsExactly(result1, result2)
+        assertThat(results).doesNotContain(differentPuzzleResult)
     }
 
     @Test
@@ -410,14 +391,5 @@ class ResultServiceTest(
         assertThat(top5Info.numGuesses).isEqualTo(8)
         assertThat(top5Info.numCorrect).isEqualTo(3)
         assertThat(top5Info.isPerfect).isFalse()
-    }
-
-    @Test
-    fun `swallows exceptions when inserting into the result table`() {
-        every { resultDAO.insertResult(any(), any(), any(), any(), any()) } throws RuntimeException("Database is down")
-
-        assertDoesNotThrow {
-            resultService.createResult(fixtures.zach, TOP5)
-        }
     }
 }
