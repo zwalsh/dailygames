@@ -364,8 +364,14 @@ class ResultServiceTest(
 
         val results = resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 934, null))
 
-        assertThat(results).containsExactly(result1, result2)
-        assertThat(results).doesNotContain(differentPuzzleResult)
+        assertThat(results).hasSize(2)
+        assertThat(results.all { it.game == Game.WORLDLE && it.puzzleNumber == 934 }).isTrue()
+        assertThat(results.any { it.userId == fixtures.zach.id }).isTrue()
+        assertThat(results.any { it.userId == fixtures.jackie.id }).isTrue()
+        assertThat(results.any { it.game == Game.FLAGLE }).isFalse()
+
+//        assertThat(results).containsExactly(result1, result2)
+//        assertThat(results).doesNotContain(differentPuzzleResult)
     }
 
     @Test

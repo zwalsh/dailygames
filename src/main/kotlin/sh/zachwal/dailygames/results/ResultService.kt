@@ -228,16 +228,8 @@ class ResultService @Inject constructor(
             .toList()
     }
 
-    fun allResultsForPuzzle(puzzle: Puzzle): List<PuzzleResult> {
-        return when (puzzle.game) {
-            Game.WORLDLE -> worldleDAO.resultsForPuzzle(puzzle)
-            Game.TRADLE -> tradleDAO.resultsForPuzzle(puzzle)
-            Game.TRAVLE -> travleDAO.resultsForPuzzle(puzzle)
-            Game.TOP5 -> top5DAO.resultsForPuzzle(puzzle)
-            Game.FLAGLE -> flagleDAO.resultsForPuzzle(puzzle)
-            Game.PINPOINT -> pinpointDAO.resultsForPuzzle(puzzle)
-            Game.GEOCIRCLES -> geocirclesDAO.resultsForPuzzle(puzzle)
-        }
+    fun allResultsForPuzzle(puzzle: Puzzle): List<Result> {
+        return resultDAO.resultsForPuzzle(puzzle)
     }
 
     fun resultsForUserToday(user: User): List<Result> {
