@@ -2,7 +2,6 @@ package sh.zachwal.dailygames.leaderboard
 
 import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.db.jdbi.puzzle.TravleResult
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 
 class PuzzleResultPointCalculator {
@@ -22,15 +21,6 @@ class PuzzleResultPointCalculator {
             Game.PINPOINT -> 6 - score
             Game.GEOCIRCLES -> score
         }
-    }
-
-    private fun TravleResult.maxPoints(): Int {
-        return TravleInfo(
-            numGuesses = numGuesses,
-            numIncorrect = numIncorrect,
-            numPerfect = numPerfect,
-            numHints = numHints,
-        ).maxPoints(score)
     }
 
     /**
