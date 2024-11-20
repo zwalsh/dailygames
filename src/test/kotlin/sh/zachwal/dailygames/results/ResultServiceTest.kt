@@ -11,6 +11,7 @@ import org.jdbi.v3.sqlobject.kotlin.onDemand
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.ResultDAO
@@ -230,6 +231,17 @@ class ResultServiceTest(
             ❤️❤️❤️❤️❤️
             """.trimIndent()
         )
+    }
+
+    @Test
+    fun `submitting a result twice throws a helpful error`() {
+        resultService.createResult(fixtures.zach, worldle934)
+
+        val e = assertThrows<IllegalArgumentException> {
+            resultService.createResult(fixtures.zach, worldle934)
+        }
+
+        assertThat(e.message).isEqualTo("You have already submitted a result for puzzle Worldle #934")
     }
 
     @Test

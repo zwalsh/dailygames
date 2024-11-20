@@ -1,7 +1,9 @@
 package sh.zachwal.dailygames.results
 
 import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.core.statement.UnableToExecuteStatementException
 import org.jdbi.v3.sqlobject.kotlin.attach
+import org.postgresql.util.PSQLException
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
@@ -53,13 +55,24 @@ class ResultService @Inject constructor(
         val parsedResult = parseResult(shareText, game)
         val puzzle = getOrCreatePuzzle(Puzzle(game, parsedResult.puzzleNumber, parsedResult.date))
 
-        return resultDAO.insertResult(
-            userId = user.id,
-            puzzle = puzzle,
-            score = parsedResult.score,
-            shareText = parsedResult.shareTextNoLink,
-            resultInfo = parsedResult.resultInfo,
-        )
+        return try {
+            // TODO check existing Flagle within time range
+            resultDAO.insertResult(
+                userId = user.id,
+                puzzle = puzzle,
+                score = parsedResult.score,
+                shareText = parsedResult.shareTextNoLink,
+                resultInfo = parsedResult.resultInfo,
+            )
+        } catch (e: UnableToExecuteStatementException) {
+            if (e.cause is PSQLException && (e.cause as PSQLException).message?.contains("duplicate key value violates unique constraint") == true) {
+                logger.info("User ${user.id} tried to submit a duplicate result for ${game.displayName()} #${parsedResult.puzzleNumber}")
+                throw IllegalArgumentException("You have already submitted a result for puzzle ${game.displayName()} #${parsedResult.puzzleNumber}")
+            } else {
+                logger.error("Error inserting result for ${game.displayName()} #${parsedResult.puzzleNumber} for user ${user.username}", e)
+                throw e
+            }
+        }
     }
 
     private fun parseResult(shareText: String, game: Game): ParsedResult {
