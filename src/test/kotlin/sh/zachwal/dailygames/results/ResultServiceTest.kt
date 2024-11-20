@@ -318,7 +318,10 @@ class ResultServiceTest(
     @Test
     fun `result feed returns capped number of results`() {
         repeat(FEED_SIZE + 5) {
-            resultService.createResult(fixtures.zach, worldle934)
+            resultService.createResult(
+                fixtures.zach,
+                worldle934.replace("934", (934 + it).toString()),
+            )
         }
 
         val feed = resultService.resultFeed(1L)
