@@ -1,7 +1,7 @@
 package sh.zachwal.dailygames.home
 
-import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo

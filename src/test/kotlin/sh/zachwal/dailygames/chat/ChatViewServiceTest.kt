@@ -13,10 +13,10 @@ import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.Chat
-import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo

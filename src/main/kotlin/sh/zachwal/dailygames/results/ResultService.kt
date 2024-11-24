@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
-import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.results.resultinfo.ParsedResult
 import sh.zachwal.dailygames.users.UserPreferencesService

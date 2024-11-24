@@ -7,9 +7,9 @@ import io.mockk.verify
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
-import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.resultinfo.Top5Info

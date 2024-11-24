@@ -3,9 +3,9 @@ package sh.zachwal.dailygames.db.dao.game
 import org.jdbi.v3.json.Json
 import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
-import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.ResultInfo
 import java.time.Instant
 import java.util.stream.Stream

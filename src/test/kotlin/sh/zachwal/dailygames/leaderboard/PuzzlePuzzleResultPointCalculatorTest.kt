@@ -2,8 +2,8 @@ package sh.zachwal.dailygames.leaderboard
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
-import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
