@@ -26,7 +26,7 @@ class SerializePuzzleResultInfoTest {
     }
 
     @ParameterizedTest
-    @MethodSource("sh.zachwal.dailygames.results.resultinfo.SerializeResultInfoTest#resultInfoList")
+    @MethodSource("sh.zachwal.dailygames.results.resultinfo.SerializePuzzleResultInfoTest#resultInfoList")
     fun `can serialize and deserialize different game info objects`(resultInfo: ResultInfo) {
         val serialized = objectMapper.writeValueAsString(resultInfo)
 
