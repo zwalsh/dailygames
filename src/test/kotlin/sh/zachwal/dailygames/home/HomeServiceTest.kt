@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import sh.zachwal.dailygames.db.jdbi.Result
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.leaderboard.PuzzleResultPointCalculator
@@ -32,7 +32,7 @@ class HomeServiceTest {
         navViewFactory = navViewFactory
     )
 
-    private val worldleResult = Result(
+    private val worldleResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.WORLDLE,
@@ -45,7 +45,7 @@ class HomeServiceTest {
             percentage = 100,
         ),
     )
-    private val travleResult = Result(
+    private val travleResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.TRAVLE,

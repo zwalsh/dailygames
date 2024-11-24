@@ -3,14 +3,14 @@ package sh.zachwal.dailygames.db.dao.game
 import org.jdbi.v3.json.Json
 import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
-import sh.zachwal.dailygames.db.jdbi.Result
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.results.resultinfo.ResultInfo
 import java.time.Instant
 import java.util.stream.Stream
 
-interface ResultDAO {
+interface PuzzleResultDAO {
 
     @SqlQuery(
         """
@@ -29,7 +29,7 @@ interface ResultDAO {
         shareText: String,
         @Json
         resultInfo: ResultInfo,
-    ): Result
+    ): PuzzleResult
 
     @SqlQuery(
         """
@@ -49,7 +49,7 @@ interface ResultDAO {
         @Json
         resultInfo: ResultInfo,
         instantSubmitted: Instant,
-    ): Result
+    ): PuzzleResult
 
     @SqlQuery(
         """
@@ -59,7 +59,7 @@ interface ResultDAO {
             AND game = :puzzle.game
         """
     )
-    fun resultsForPuzzle(puzzle: Puzzle): List<Result>
+    fun resultsForPuzzle(puzzle: Puzzle): List<PuzzleResult>
 
     @SqlQuery(
         """
@@ -68,7 +68,7 @@ interface ResultDAO {
             ORDER BY instant_submitted DESC
         """
     )
-    fun allResultsStream(): Stream<Result>
+    fun allResultsStream(): Stream<PuzzleResult>
 
     @SqlQuery(
         """
@@ -78,7 +78,7 @@ interface ResultDAO {
             ORDER BY instant_submitted DESC
         """
     )
-    fun allResultsForGameStream(game: Game): Stream<Result>
+    fun allResultsForGameStream(game: Game): Stream<PuzzleResult>
 
     @SqlQuery(
         """
@@ -89,7 +89,7 @@ interface ResultDAO {
             AND instant_submitted < :end
         """
     )
-    fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<Result>
+    fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<PuzzleResult>
 
     @SqlQuery(
         """
@@ -100,5 +100,5 @@ interface ResultDAO {
             AND puzzle_number = :puzzle.number
         """
     )
-    fun findResults(userId: Long, puzzle: Puzzle): List<Result>
+    fun findResults(userId: Long, puzzle: Puzzle): List<PuzzleResult>
 }

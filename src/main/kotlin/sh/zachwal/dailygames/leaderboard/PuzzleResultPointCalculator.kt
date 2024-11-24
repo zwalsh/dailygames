@@ -1,6 +1,6 @@
 package sh.zachwal.dailygames.leaderboard
 
-import sh.zachwal.dailygames.db.jdbi.Result
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 
@@ -11,7 +11,7 @@ class PuzzleResultPointCalculator {
      *
      * This is useful for sorting on leaderboards.
      */
-    fun calculatePoints(result: Result): Int = with(result) {
+    fun calculatePoints(result: PuzzleResult): Int = with(result) {
         when (game) {
             Game.WORLDLE -> 7 - score
             Game.TRADLE -> 7 - score
@@ -79,7 +79,7 @@ class PuzzleResultPointCalculator {
         }
     }
 
-    fun maxPoints(result: Result): Int = with(result) {
+    fun maxPoints(result: PuzzleResult): Int = with(result) {
         when (game) {
             Game.WORLDLE -> 6
             Game.TRADLE -> 6

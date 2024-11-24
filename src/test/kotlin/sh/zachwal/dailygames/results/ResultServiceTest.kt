@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
-import sh.zachwal.dailygames.db.dao.game.ResultDAO
+import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -59,7 +59,7 @@ class ResultServiceTest(
 ) {
 
     private val puzzleDAO = jdbi.onDemand<PuzzleDAO>()
-    private val resultDAO = spyk(jdbi.onDemand<ResultDAO>())
+    private val resultDAO = spyk(jdbi.onDemand<PuzzleResultDAO>())
     private val userService: UserService = mockk()
 
     private val displayTimeService = mockk<DisplayTimeService> {

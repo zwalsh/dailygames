@@ -18,7 +18,7 @@ import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import sh.zachwal.dailygames.db.dao.UserRoleDAO
 import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
-import sh.zachwal.dailygames.db.dao.game.ResultDAO
+import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import javax.sql.DataSource
 
 class JdbiModule : AbstractModule() {
@@ -60,5 +60,5 @@ class JdbiModule : AbstractModule() {
     fun userPreferencesDao(jdbi: Jdbi): UserPreferencesDAO = jdbi.onDemand()
 
     @Provides
-    fun resultDao(jdbi: Jdbi): ResultDAO = jdbi.onDemand()
+    fun resultDao(jdbi: Jdbi): PuzzleResultDAO = jdbi.onDemand()
 }

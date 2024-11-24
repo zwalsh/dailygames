@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource
  * We have stored game info objects in a database. We must be backwards-compatible & able to deserialize any of them
  * even as we add fields.
  */
-class DeserializeStoredResultInfoTest {
+class DeserializeStoredPuzzleResultInfoTest {
 
     private val objectMapper = jacksonObjectMapper()
 

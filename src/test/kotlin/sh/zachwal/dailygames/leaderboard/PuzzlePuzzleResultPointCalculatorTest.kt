@@ -2,7 +2,7 @@ package sh.zachwal.dailygames.leaderboard
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
-import sh.zachwal.dailygames.db.jdbi.Result
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
@@ -13,10 +13,10 @@ import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
 
-class PuzzleResultPointCalculatorTest {
+class PuzzlePuzzleResultPointCalculatorTest {
     private val calculator = PuzzleResultPointCalculator()
 
-    private val worldleResult = Result(
+    private val worldleResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.WORLDLE,
@@ -35,7 +35,7 @@ class PuzzleResultPointCalculatorTest {
         assertThat(calculator.calculatePoints(worldleResult)).isEqualTo(2)
     }
 
-    private val flagleResult = Result(
+    private val flagleResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.FLAGLE,
@@ -52,7 +52,7 @@ class PuzzleResultPointCalculatorTest {
         assertThat(calculator.calculatePoints(flagleResult)).isEqualTo(1)
     }
 
-    private val tradleResult = Result(
+    private val tradleResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.TRADLE,
@@ -69,7 +69,7 @@ class PuzzleResultPointCalculatorTest {
         assertThat(calculator.calculatePoints(tradleResult)).isEqualTo(0)
     }
 
-    private val top5Result = Result(
+    private val top5Result = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.TOP5,
@@ -90,7 +90,7 @@ class PuzzleResultPointCalculatorTest {
         assertThat(calculator.calculatePoints(top5Result)).isEqualTo(5)
     }
 
-    private val travleResult = Result(
+    private val travleResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.TRAVLE,
@@ -186,7 +186,7 @@ class PuzzleResultPointCalculatorTest {
         }
     }
 
-    private val pinpointResult = Result(
+    private val pinpointResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.PINPOINT,
@@ -203,7 +203,7 @@ class PuzzleResultPointCalculatorTest {
         assertThat(calculator.calculatePoints(pinpointResult)).isEqualTo(4)
     }
 
-    private val geocirclesResult = Result(
+    private val geocirclesResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.GEOCIRCLES,
