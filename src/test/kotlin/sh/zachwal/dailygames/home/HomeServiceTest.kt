@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
+import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
@@ -25,10 +26,15 @@ class HomeServiceTest {
         every { navView(any(), any()) } returns mockk()
     }
 
+    private val gameDAO = mockk<GameDAO> {
+        every { listGamesCreatedAfter(any()) } returns emptyList()
+    }
+
     private val homeService = HomeService(
         resultService = resultService,
         shareLineMapper = shareLineMapper,
         pointsCalculator = PuzzleResultPointCalculator(),
+        gameDAO = gameDAO,
         navViewFactory = navViewFactory
     )
 
@@ -97,5 +103,39 @@ class HomeServiceTest {
         val view = homeService.homeView(user)
 
         assertThat(view.shareTextModalView).isNull()
+    }
+
+    @Test
+    fun `returns GameListView with all Games`() {
+        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+
+        assertThat(view.gameListView.games).hasSize(Game.values().size)
+        assertThat(view.gameListView.games.map { it.game }).containsExactly(*Game.values())
+    }
+
+    @Test
+    fun `GameListView has new games first`() {
+        val newGames = listOf(Game.WORLDLE, Game.TRAVLE)
+        every { gameDAO.listGamesCreatedAfter(any()) } returns newGames
+
+        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+
+        val games = view.gameListView.games.map { it.game }
+
+        assertThat(games.take(2)).containsExactly(Game.WORLDLE, Game.TRAVLE).inOrder()
+        assertThat(games).containsNoDuplicates()
+    }
+
+    @Test
+    fun `GameListView marks new games as new`() {
+        val newGames = listOf(Game.WORLDLE, Game.TRAVLE)
+        every { gameDAO.listGamesCreatedAfter(any()) } returns newGames
+
+        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+
+        val gameLinkViews = view.gameListView.games
+
+        assertThat(gameLinkViews.find { it.game == Game.WORLDLE }!!.isNew).isTrue()
+        assertThat(gameLinkViews.find { it.game == Game.TRAVLE }!!.isNew).isTrue()
     }
 }

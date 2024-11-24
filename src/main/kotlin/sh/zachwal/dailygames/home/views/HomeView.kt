@@ -7,6 +7,7 @@ import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.script
 import kotlinx.html.title
+import sh.zachwal.dailygames.home.views.gamelinks.GameListView
 import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.darkMode
@@ -18,6 +19,7 @@ const val SHARE_TEXT_ID = "shareTextId"
 data class HomeView(
     val resultFeed: List<ResultFeedItemView>,
     val shareTextModalView: ShareTextModalView?,
+    val gameListView: GameListView,
     val nav: NavView,
 ) : HTMLView<HTML>() {
 
@@ -49,7 +51,7 @@ data class HomeView(
                     }
                 }
 
-                GameLinkView.renderIn(this)
+                gameListView.renderIn(this)
 
                 div(classes = "row border-top") {
                     div(classes = "col") {
