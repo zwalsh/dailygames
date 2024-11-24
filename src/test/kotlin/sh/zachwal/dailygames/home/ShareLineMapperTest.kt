@@ -157,7 +157,7 @@ class ShareLineMapperTest {
     fun `maps travle plus zero non-perfect`() {
         val result = travleResult.copy(
             score = 0,
-            resultInfo = (travleResult.resultInfo as TravleInfo).copy(numPerfect = 5)
+            resultInfo = (travleResult.info<TravleInfo>()).copy(numPerfect = 5)
         )
 
         val shareLine = ShareLineMapper().mapToShareLine(result)
@@ -169,7 +169,7 @@ class ShareLineMapperTest {
     fun `maps travle plus one`() {
         val result = travleResult.copy(
             score = 1,
-            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+            resultInfo = (travleResult.info<TravleInfo>()).copy(
                 numGuesses = 7,
                 numPerfect = 6,
                 numIncorrect = 1,
@@ -185,7 +185,7 @@ class ShareLineMapperTest {
     fun `maps travle with hints`() {
         val result = travleResult.copy(
             score = 1,
-            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+            resultInfo = (travleResult.info<TravleInfo>()).copy(
                 numGuesses = 7,
                 numPerfect = 6,
                 numIncorrect = 1,
@@ -202,7 +202,7 @@ class ShareLineMapperTest {
     fun `maps travle with negative score`() {
         val result = travleResult.copy(
             score = -1,
-            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+            resultInfo = (travleResult.info<TravleInfo>()).copy(
                 numGuesses = 10,
                 numPerfect = 6,
                 numIncorrect = 4,
@@ -218,7 +218,7 @@ class ShareLineMapperTest {
     fun `maps travle with negative score and one hint`() {
         val result = travleResult.copy(
             score = -1,
-            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+            resultInfo = (travleResult.info<TravleInfo>()).copy(
                 numGuesses = 10,
                 numPerfect = 6,
                 numIncorrect = 4,
@@ -257,7 +257,7 @@ class ShareLineMapperTest {
     @Test
     fun `maps top5 five correct, no misses, but not perfect`() {
         val result = top5Result.copy(
-            resultInfo = (top5Result.resultInfo as Top5Info).copy(
+            resultInfo = (top5Result.info<Top5Info>()).copy(
                 isPerfect = false
             )
         )
@@ -270,7 +270,7 @@ class ShareLineMapperTest {
     @Test
     fun `maps top5 with five correct but some misses`() {
         val result = top5Result.copy(
-            resultInfo = (top5Result.resultInfo as Top5Info).copy(
+            resultInfo = (top5Result.info<Top5Info>()).copy(
                 numCorrect = 5,
                 numGuesses = 6,
                 isPerfect = false,
@@ -285,7 +285,7 @@ class ShareLineMapperTest {
     @Test
     fun `maps top5 with misses`() {
         val result = top5Result.copy(
-            resultInfo = (top5Result.resultInfo as Top5Info).copy(
+            resultInfo = (top5Result.info<Top5Info>()).copy(
                 numCorrect = 4,
                 numGuesses = 10,
                 isPerfect = false,

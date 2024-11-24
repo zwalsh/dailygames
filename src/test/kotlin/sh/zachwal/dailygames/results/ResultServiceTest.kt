@@ -109,7 +109,7 @@ class ResultServiceTest(
         )
 
         assertThat(result.resultInfo).isInstanceOf(WorldleInfo::class.java)
-        val info = result.resultInfo as WorldleInfo
+        val info = result.info<WorldleInfo>()
 
         assertThat(info.percentage).isEqualTo(100)
     }
@@ -151,7 +151,7 @@ class ResultServiceTest(
         )
 
         assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
-        val info = result.resultInfo as TravleInfo
+        val info = result.info<TravleInfo>()
 
         assertThat(info.numGuesses).isEqualTo(6)
         assertThat(info.numIncorrect).isEqualTo(2)
@@ -175,7 +175,7 @@ class ResultServiceTest(
         )
 
         assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
-        val info = result.resultInfo as Top5Info
+        val info = result.info<Top5Info>()
 
         assertThat(info.numGuesses).isEqualTo(8)
         assertThat(info.numCorrect).isEqualTo(3)
@@ -387,7 +387,7 @@ class ResultServiceTest(
         assertThat(result.score).isEqualTo(3)
         assertThat(result.shareText).isEqualTo(TOP5.trimIndent())
         assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
-        val top5Info = result.resultInfo as Top5Info
+        val top5Info = result.info<Top5Info>()
         assertThat(top5Info.numGuesses).isEqualTo(8)
         assertThat(top5Info.numCorrect).isEqualTo(3)
         assertThat(top5Info.isPerfect).isFalse()

@@ -137,7 +137,7 @@ class PuzzlePuzzleResultPointCalculatorTest {
     @Test
     fun `returns number of allowed incorrect guesses plus one minus actual guesses for travle`() {
         // When the Travle puzzle has a shortest solution of 7 guesses
-        val info = travleResult.resultInfo as TravleInfo
+        val info = travleResult.info<TravleInfo>()
         assertThat(info.numGuesses).isEqualTo(7)
         assertThat(travleResult.score).isEqualTo(0)
 
@@ -175,7 +175,7 @@ class PuzzlePuzzleResultPointCalculatorTest {
     fun `allowed guesses in travle matches the given table for travle`() {
         travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
             // perfect result at this solution length
-            val info = travleResult.resultInfo as TravleInfo
+            val info = travleResult.info<TravleInfo>()
             val result = travleResult.copy(
                 score = 0,
                 resultInfo = info.copy(
@@ -236,7 +236,7 @@ class PuzzlePuzzleResultPointCalculatorTest {
             // perfect result at this solution length
             val result = travleResult.copy(
                 score = 0,
-                resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                resultInfo = (travleResult.info<TravleInfo>()).copy(
                     numGuesses = shortestSolution
                 )
             )
@@ -249,7 +249,7 @@ class PuzzlePuzzleResultPointCalculatorTest {
         travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
             val result = travleResult.copy(
                 score = -allowedIncorrect,
-                resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                resultInfo = (travleResult.info<TravleInfo>()).copy(
                     numGuesses = shortestSolution + allowedIncorrect
                 )
             )
@@ -262,7 +262,7 @@ class PuzzlePuzzleResultPointCalculatorTest {
         travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
             val result = travleResult.copy(
                 score = -10,
-                resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                resultInfo = (travleResult.info<TravleInfo>()).copy(
                     numGuesses = shortestSolution + allowedIncorrect
                 )
             )
@@ -278,7 +278,7 @@ class PuzzlePuzzleResultPointCalculatorTest {
          */
         val resultTwoAway = travleResult.copy(
             score = -2,
-            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+            resultInfo = (travleResult.info<TravleInfo>()).copy(
                 numGuesses = 10,
                 numIncorrect = 7,
                 numPerfect = 0,
@@ -291,7 +291,7 @@ class PuzzlePuzzleResultPointCalculatorTest {
          */
         val resultPlusZero = travleResult.copy(
             score = 0,
-            resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+            resultInfo = (travleResult.info<TravleInfo>()).copy(
                 numGuesses = 5,
                 numIncorrect = 0,
                 numPerfect = 4,
@@ -307,7 +307,7 @@ class PuzzlePuzzleResultPointCalculatorTest {
         travleExtraGuessesPerShortestSolution.entries.forEach { (shortestSolution, allowedIncorrect) ->
             val result = travleResult.copy(
                 score = 1,
-                resultInfo = (travleResult.resultInfo as TravleInfo).copy(
+                resultInfo = (travleResult.info<TravleInfo>()).copy(
                     numGuesses = shortestSolution + 1
                 )
             )

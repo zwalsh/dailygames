@@ -49,7 +49,7 @@ class PuzzlePuzzleResultDAOTest(
         assertThat(result.score).isEqualTo(3)
         assertThat(result.shareText).isEqualTo("Worldle #123 2.11.2024 3/6")
         assertThat(result.resultInfo).isInstanceOf(WorldleInfo::class.java)
-        val worldleInfo = result.resultInfo as WorldleInfo
+        val worldleInfo = result.info<WorldleInfo>()
         assertThat(worldleInfo).isEqualTo(expectedWorldleInfo)
     }
 
