@@ -27,21 +27,16 @@ class TestExtension {
         while (resultSet.next()) {
             tables.add(resultSet.getString(1))
         }
-        assertThat(tables).containsAtLeast(
+        assertThat(tables).containsExactly(
+            "databasechangelog",
+            "databasechangeloglock",
             "user",
             "session",
             "role",
             "game",
             "puzzle",
-            "worldle_result",
-            "tradle_result",
-            "travle_result",
-            "top5_result",
-            "flagle_result",
             "chat",
             "user_preferences",
-            "pinpoint_result",
-            "geocircles_result",
             "result",
         )
     }
