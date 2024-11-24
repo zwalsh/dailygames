@@ -15,7 +15,7 @@ class PuzzleResultPointCalculator {
         when (game) {
             Game.WORLDLE -> 7 - score
             Game.TRADLE -> 7 - score
-            Game.TRAVLE -> (result.resultInfo as TravleInfo).calculatePoints(score) // TODO safe cast method on result?
+            Game.TRAVLE -> (result.info<TravleInfo>()).calculatePoints(score)
             Game.TOP5 -> score
             Game.FLAGLE -> 7 - score
             Game.PINPOINT -> 6 - score
@@ -83,7 +83,7 @@ class PuzzleResultPointCalculator {
         when (game) {
             Game.WORLDLE -> 6
             Game.TRADLE -> 6
-            Game.TRAVLE -> (result.resultInfo as TravleInfo).maxPoints(score)
+            Game.TRAVLE -> (result.info<TravleInfo>()).maxPoints(score)
             Game.TOP5 -> 10
             Game.FLAGLE -> 6
             Game.PINPOINT -> 5

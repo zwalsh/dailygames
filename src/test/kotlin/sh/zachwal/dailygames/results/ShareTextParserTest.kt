@@ -232,7 +232,7 @@ class ShareTextParserTest {
         )
         assertThat(result.game).isEqualTo(Game.WORLDLE)
 
-        val worldleInfo = result.resultInfo as WorldleInfo
+        val worldleInfo = result.info<WorldleInfo>()
         assertThat(worldleInfo.percentage).isEqualTo(100)
     }
 
@@ -322,7 +322,7 @@ class ShareTextParserTest {
         assertThat(result.game).isEqualTo(Game.TRAVLE)
         assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
-        val travleInfo = result.resultInfo as TravleInfo
+        val travleInfo = result.info<TravleInfo>()
 
         assertThat(travleInfo.numPerfect).isEqualTo(7)
         assertThat(travleInfo.numIncorrect).isEqualTo(0)
@@ -344,7 +344,7 @@ class ShareTextParserTest {
         )
         assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
-        val travleInfo = result.resultInfo as TravleInfo
+        val travleInfo = result.info<TravleInfo>()
 
         assertThat(travleInfo.numPerfect).isEqualTo(6)
         assertThat(travleInfo.numIncorrect).isEqualTo(0)
@@ -366,7 +366,7 @@ class ShareTextParserTest {
         )
         assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
-        val travleInfo = result.resultInfo as TravleInfo
+        val travleInfo = result.info<TravleInfo>()
 
         assertThat(travleInfo.numPerfect).isEqualTo(3)
         assertThat(travleInfo.numIncorrect).isEqualTo(2)
@@ -388,7 +388,7 @@ class ShareTextParserTest {
         )
         assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
-        val travleInfo = result.resultInfo as TravleInfo
+        val travleInfo = result.info<TravleInfo>()
 
         assertThat(travleInfo.numPerfect).isEqualTo(1)
         assertThat(travleInfo.numIncorrect).isEqualTo(8)
@@ -410,7 +410,7 @@ class ShareTextParserTest {
         assertThat(result.score).isEqualTo(3)
         assertThat(result.game).isEqualTo(Game.TOP5)
         assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
-        val top5Info = result.resultInfo as Top5Info
+        val top5Info = result.info<Top5Info>()
 
         assertThat(top5Info.numGuesses).isEqualTo(8)
         assertThat(top5Info.numCorrect).isEqualTo(3)
@@ -431,7 +431,7 @@ class ShareTextParserTest {
         assertThat(result.score).isEqualTo(6)
 
         assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
-        val top5Info = result.resultInfo as Top5Info
+        val top5Info = result.info<Top5Info>()
 
         assertThat(top5Info.numGuesses).isEqualTo(9)
         assertThat(top5Info.numCorrect).isEqualTo(5)
@@ -452,7 +452,7 @@ class ShareTextParserTest {
         assertThat(result.score).isEqualTo(10)
 
         assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
-        val top5Info = result.resultInfo as Top5Info
+        val top5Info = result.info<Top5Info>()
 
         assertThat(top5Info.numGuesses).isEqualTo(5)
         assertThat(top5Info.numCorrect).isEqualTo(5)
@@ -473,7 +473,7 @@ class ShareTextParserTest {
         assertThat(result.score).isEqualTo(10)
 
         assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
-        val top5Info = result.resultInfo as Top5Info
+        val top5Info = result.info<Top5Info>()
 
         assertThat(top5Info.numGuesses).isEqualTo(5)
         assertThat(top5Info.numCorrect).isEqualTo(5)

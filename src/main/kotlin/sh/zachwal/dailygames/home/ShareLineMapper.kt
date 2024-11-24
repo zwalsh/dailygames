@@ -32,7 +32,7 @@ class ShareLineMapper {
         }
     }
 
-    private fun PuzzleResult.toTop5ShareLine(): String = with(resultInfo as Top5Info) {
+    private fun PuzzleResult.toTop5ShareLine(): String = with(info<Top5Info>()) {
         val numIncorrect = numGuesses - numCorrect
         val start = "${game.emoji()} ${game.displayName()} #$puzzleNumber $numCorrect/5"
 
@@ -57,7 +57,7 @@ class ShareLineMapper {
         }
     }
 
-    private fun PuzzleResult.toWorldleShareLine(): String = with(resultInfo as WorldleInfo) {
+    private fun PuzzleResult.toWorldleShareLine(): String = with(info<WorldleInfo>()) {
         if (score == 7) {
             return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6 ($percentage%)"
         }
@@ -81,7 +81,7 @@ class ShareLineMapper {
         }
     }
 
-    private fun PuzzleResult.toTravleShareLine(): String = with(resultInfo as TravleInfo) {
+    private fun PuzzleResult.toTravleShareLine(): String = with(info<TravleInfo>()) {
         val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
         val withScore = if (score < 0) {
             "$gameAndPuzzle (${-score} away)"
