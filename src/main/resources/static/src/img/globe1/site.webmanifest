@@ -1,6 +1,6 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "Daily Games",
+  "short_name": "Daily Games",
   "icons": [
     {
       "src": "/static/src/img/globe1/web-app-manifest-192x192.png",
