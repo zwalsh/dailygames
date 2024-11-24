@@ -1,0 +1,5 @@
+test.svg taken from https://www.svgrepo.com/svg/439003/test-driven-development
+
+Under MIT License
+
+Auther: Andreas Mehlsen

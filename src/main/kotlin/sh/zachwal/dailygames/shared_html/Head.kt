@@ -45,7 +45,27 @@ fun HEAD.jquery() {
 }
 
 fun HEAD.favicon() {
-    link(rel = "icon", href = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>\uD83C\uDF0D</text></svg>")
+    if (System.getenv("ENV") == "PROD") {
+        link(rel = "icon", type = "image/png", href = "/static/src/img/globe1/favicon-96x96.png") {
+            attributes["sizes"] = "96x96"
+        }
+        link(rel = "icon", type = "image/svg+xml", href = "/static/src/img/globe1/favicon.svg")
+        link(rel = "shortcut icon", href = "/static/src/img/globe1/favicon.ico")
+        link(rel = "apple-touch-icon", href = "/static/src/img/globe1/apple-touch-icon.png") {
+            attributes["sizes"] = "180x180"
+        }
+        link(rel = "manifest", href = "/static/src/img/globe1/site.webmanifest")
+    } else {
+        link(rel = "icon", type = "image/png", href = "/static/src/img/test/favicon-96x96.png") {
+            attributes["sizes"] = "96x96"
+        }
+        link(rel = "icon", type = "image/svg+xml", href = "/static/src/img/test/favicon.svg")
+        link(rel = "shortcut icon", href = "/static/src/img/test/favicon.ico")
+        link(rel = "apple-touch-icon", href = "/static/src/img/test/apple-touch-icon.png") {
+            attributes["sizes"] = "180x180"
+        }
+        link(rel = "manifest", href = "/static/src/img/test/site.webmanifest")
+    }
 }
 
 fun HEAD.mobileUI() {
