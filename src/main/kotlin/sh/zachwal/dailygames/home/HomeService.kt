@@ -11,6 +11,7 @@ import sh.zachwal.dailygames.leaderboard.PuzzleResultPointCalculator
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
+import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -24,6 +25,7 @@ class HomeService @Inject constructor(
     private val navViewFactory: NavViewFactory,
     private val gameDAO: GameDAO,
 ) {
+    private val newGameDuration = Duration.ofDays(3)
 
     fun homeView(user: User): HomeView {
 
@@ -41,7 +43,7 @@ class HomeService @Inject constructor(
     }
 
     private fun gameListView(): GameListView {
-        val newGames = gameDAO.listGamesCreatedAfter(Instant.now().minus(3, ChronoUnit.DAYS))
+        val newGames = gameDAO.listGamesCreatedAfter(Instant.now().minus(newGameDuration))
         // List the new games first
         val games = newGames + Game.values().filter { it !in newGames }
         val gameLinkViews = games.map { game ->
