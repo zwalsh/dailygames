@@ -2,7 +2,6 @@ package sh.zachwal.dailygames.home.views.gamelinks
 
 import kotlinx.html.DIV
 import kotlinx.html.div
-import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.shared_html.HTMLView
 
 data class GameListView(

@@ -4,8 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 @ExtendWith(DatabaseExtension::class)
 class TestExtension {
