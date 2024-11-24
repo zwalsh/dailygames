@@ -13,10 +13,10 @@ import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.Chat
-import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
@@ -97,7 +97,7 @@ class ChatViewServiceTest {
     }
 
     private val worldle943 = Puzzle(Game.WORLDLE, 943, null)
-    private val worldleResult = Result(
+    private val worldleResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.WORLDLE,
@@ -211,7 +211,7 @@ class ChatViewServiceTest {
             text = "My chat!",
             instantSubmitted = Instant.now(),
         )
-        val result = Result(
+        val result = PuzzleResult(
             id = 1L,
             userId = 1L,
             game = Game.WORLDLE,

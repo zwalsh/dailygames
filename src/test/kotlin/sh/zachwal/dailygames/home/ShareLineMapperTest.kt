@@ -2,8 +2,8 @@ package sh.zachwal.dailygames.home
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
-import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
@@ -15,7 +15,7 @@ import java.time.Instant
 
 class ShareLineMapperTest {
 
-    private val worldleResult = Result(
+    private val worldleResult = PuzzleResult(
         id = 1,
         userId = 1,
         game = Game.WORLDLE,
@@ -55,7 +55,7 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.WORLDLE.emoji()} Worldle #123 X/6 (50%)")
     }
 
-    private val tradleResult = Result(
+    private val tradleResult = PuzzleResult(
         id = 1,
         userId = 1,
         game = Game.TRADLE,
@@ -92,7 +92,7 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.TRADLE.emoji()} Tradle #123 X/6")
     }
 
-    private val travleResult = Result(
+    private val travleResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.TRAVLE,
@@ -109,7 +109,7 @@ class ShareLineMapperTest {
         ),
     )
 
-    private val flagleResult = Result(
+    private val flagleResult = PuzzleResult(
         id = 1,
         userId = 1,
         game = Game.FLAGLE,
@@ -231,7 +231,7 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.TRAVLE.emoji()} Travle #123 (1 away) (1 hint)")
     }
 
-    private val top5Result = Result(
+    private val top5Result = PuzzleResult(
         id = 1,
         userId = 1,
         game = Game.TOP5,
@@ -297,7 +297,7 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top 5 #123 4/5")
     }
 
-    private val pinpointResult = Result(
+    private val pinpointResult = PuzzleResult(
         id = 1,
         userId = 1,
         game = Game.PINPOINT,
@@ -332,7 +332,7 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.PINPOINT.emoji()} Pinpoint #123 X/5")
     }
 
-    private val geocirclesResult = Result(
+    private val geocirclesResult = PuzzleResult(
         id = 1,
         userId = 1,
         game = Game.GEOCIRCLES,

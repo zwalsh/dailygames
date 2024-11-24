@@ -11,12 +11,12 @@ import org.junit.jupiter.params.provider.MethodSource
  * We have stored game info objects in a database. We must be backwards-compatible & able to deserialize any of them
  * even as we add fields.
  */
-class DeserializeStoredResultInfoTest {
+class DeserializeStoredPuzzleResultInfoTest {
 
     private val objectMapper = jacksonObjectMapper()
 
     @ParameterizedTest
-    @MethodSource("sh.zachwal.dailygames.results.resultinfo.DeserializeStoredResultInfoTest#arguments")
+    @MethodSource("sh.zachwal.dailygames.results.resultinfo.DeserializeStoredPuzzleResultInfoTest#arguments")
     fun `can deserialize stored, serialized ResultInfo object`(serialized: String, resultInfo: ResultInfo) {
         assertThat(objectMapper.readValue<ResultInfo>(serialized)).isEqualTo(resultInfo)
     }

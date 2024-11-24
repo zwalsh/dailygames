@@ -11,10 +11,9 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
-import sh.zachwal.dailygames.db.jdbi.Result
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
-import sh.zachwal.dailygames.results.FLAGLE
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.ResultInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
@@ -22,12 +21,12 @@ import java.time.Instant
 import kotlin.streams.toList
 
 @ExtendWith(DatabaseExtension::class)
-class ResultDAOTest(
+class PuzzlePuzzleResultDAOTest(
     jdbi: Jdbi,
     private val fixtures: Fixtures
 ) {
 
-    private val resultDAO: ResultDAO = jdbi.onDemand()
+    private val resultDAO: PuzzleResultDAO = jdbi.onDemand()
     private val puzzleDAO: PuzzleDAO = jdbi.onDemand()
 
     @Test
@@ -284,7 +283,7 @@ class ResultDAOTest(
         score: Int = 5,
         shareText: String = "",
         resultInfo: ResultInfo = WorldleInfo(100),
-    ): Result {
+    ): PuzzleResult {
         return resultDAO.insertResult(userId, puzzle, score, shareText, resultInfo)
     }
 }

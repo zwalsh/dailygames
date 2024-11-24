@@ -1,12 +1,11 @@
-package sh.zachwal.dailygames.db.jdbi
+package sh.zachwal.dailygames.db.jdbi.puzzle
 
 import org.jdbi.v3.json.Json
-import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.resultinfo.ResultInfo
 import java.time.Instant
 import java.time.LocalDate
 
-data class Result(
+data class PuzzleResult(
     val id: Long,
     val userId: Long,
     val game: Game,

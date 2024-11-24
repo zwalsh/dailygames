@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
-class SerializeResultInfoTest {
+class SerializePuzzleResultInfoTest {
 
     private val objectMapper = jacksonObjectMapper()
 
@@ -26,7 +26,7 @@ class SerializeResultInfoTest {
     }
 
     @ParameterizedTest
-    @MethodSource("sh.zachwal.dailygames.results.resultinfo.SerializeResultInfoTest#resultInfoList")
+    @MethodSource("sh.zachwal.dailygames.results.resultinfo.SerializePuzzleResultInfoTest#resultInfoList")
     fun `can serialize and deserialize different game info objects`(resultInfo: ResultInfo) {
         val serialized = objectMapper.writeValueAsString(resultInfo)
 

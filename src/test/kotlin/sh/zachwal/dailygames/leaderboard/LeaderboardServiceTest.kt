@@ -6,10 +6,10 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
-import sh.zachwal.dailygames.db.dao.game.ResultDAO
-import sh.zachwal.dailygames.db.jdbi.Result
+import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
@@ -21,7 +21,7 @@ import java.util.stream.Stream
 import kotlin.test.Test
 
 class LeaderboardServiceTest {
-    private val resultDAO: ResultDAO = mockk {
+    private val resultDAO: PuzzleResultDAO = mockk {
         every { allResultsForGameStream(any()) } answers {
             Stream.empty()
         }
@@ -45,7 +45,7 @@ class LeaderboardServiceTest {
     private val navViewFactory = mockk<NavViewFactory>(relaxed = true)
     private val jdbi = mockk<Jdbi> {
         every { open() } returns mockk(relaxed = true) {
-            every { attach<ResultDAO>() } returns resultDAO
+            every { attach<PuzzleResultDAO>() } returns resultDAO
         }
     }
     private val leaderboardService = LeaderboardService(
@@ -56,7 +56,7 @@ class LeaderboardServiceTest {
         minimumGamesForAverage = 1,
     )
 
-    private val result = Result(
+    private val result = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.TOP5,
@@ -173,7 +173,7 @@ class LeaderboardServiceTest {
 
     @Test
     fun `gameLeaderboardData fetches from correct DAO`() {
-        val worldleResult = Result(
+        val worldleResult = PuzzleResult(
             id = 1L,
             userId = testUser.id,
             game = Game.WORLDLE,
@@ -222,7 +222,7 @@ class LeaderboardServiceTest {
         assertThat(leaderboardData.allTimeAverage.labels).doesNotContain(zachUser.username)
     }
 
-    private val worldleResult = Result(
+    private val worldleResult = PuzzleResult(
         id = 1L,
         userId = 1L,
         game = Game.WORLDLE,

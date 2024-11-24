@@ -7,11 +7,11 @@ import org.postgresql.util.PSQLException
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.chat.chatLink
 import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
-import sh.zachwal.dailygames.db.dao.game.ResultDAO
-import sh.zachwal.dailygames.db.jdbi.Result
+import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
 import sh.zachwal.dailygames.results.resultinfo.ParsedResult
 import sh.zachwal.dailygames.users.UserPreferencesService
@@ -32,7 +32,7 @@ val lookBackWindow: Duration = Duration.ofDays(3)
 class ResultService @Inject constructor(
     private val jdbi: Jdbi,
     private val puzzleDAO: PuzzleDAO,
-    private val resultDAO: ResultDAO,
+    private val resultDAO: PuzzleResultDAO,
     private val shareTextParser: ShareTextParser,
     private val userService: UserService,
     private val displayTimeService: DisplayTimeService,
@@ -45,7 +45,7 @@ class ResultService @Inject constructor(
     fun createResult(
         user: User,
         shareText: String
-    ): Result {
+    ): PuzzleResult {
         // regex & parse share text
         val game = shareTextParser.identifyGame(shareText) ?: run {
             logger.error("Could not recognize $shareText as a valid game")
@@ -120,10 +120,10 @@ class ResultService @Inject constructor(
         }
     }
 
-    private fun readRecentResults(): List<Result> {
+    private fun readRecentResults(): List<PuzzleResult> {
         // Must use JDBI Handle directly to use streaming API
         return jdbi.open().use { handle ->
-            val dao = handle.attach<ResultDAO>()
+            val dao = handle.attach<PuzzleResultDAO>()
             dao.allResultsStream()
                 .takeWhile { it.instantSubmitted.isAfter(Instant.now().minus(lookBackWindow)) }
                 .limit(FEED_SIZE.toLong())
@@ -131,11 +131,11 @@ class ResultService @Inject constructor(
         }
     }
 
-    fun allResultsForPuzzle(puzzle: Puzzle): List<Result> {
+    fun allResultsForPuzzle(puzzle: Puzzle): List<PuzzleResult> {
         return resultDAO.resultsForPuzzle(puzzle)
     }
 
-    fun resultsForUserToday(user: User): List<Result> {
+    fun resultsForUserToday(user: User): List<PuzzleResult> {
         val userTimeZone = userPreferencesService.getTimeZone(user.id)
         val startOfToday = clock.instant().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
         val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)

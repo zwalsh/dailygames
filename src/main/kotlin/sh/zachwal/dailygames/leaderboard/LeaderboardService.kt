@@ -2,7 +2,7 @@ package sh.zachwal.dailygames.leaderboard
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
-import sh.zachwal.dailygames.db.dao.game.ResultDAO
+import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.leaderboard.views.BasicScoreHintView
@@ -90,7 +90,7 @@ class LeaderboardService @Inject constructor(
         val allTimeTotalsPerUser = mutableMapOf<Long, TotalPoints>()
         val thirtyDaysTotalsPerUser = mutableMapOf<Long, TotalPoints>()
         jdbi.open().use { handle ->
-            val dao = handle.attach<ResultDAO>()
+            val dao = handle.attach<PuzzleResultDAO>()
             dao.allResultsForGameStream(game).forEach { result ->
                 val totalPoints = TotalPoints(1, pointCalculator.calculatePoints(result))
                 allTimeTotalsPerUser.merge(result.userId, totalPoints, TotalPoints::addPerformance)
