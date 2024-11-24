@@ -94,6 +94,11 @@
       "include": {
         "file": "19_drop_result_tables.json"
       }
+    },
+    {
+      "include": {
+        "file": "20_game_instant_created_column.json"
+      }
     }
   ]
 }

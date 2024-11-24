@@ -7,7 +7,7 @@ interface GameDAO {
 
     @SqlQuery(
         """
-            SELECT * FROM game
+            SELECT name FROM game
         """
     )
     fun listGames(): List<Game>

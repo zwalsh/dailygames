@@ -1,0 +1,29 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "20",
+        "author": "zach",
+        "changes": [
+          {
+            "addColumn": {
+              "tableName": "game",
+              "columns": [
+                {
+                  "column": {
+                    "name": "instant_created",
+                    "type": "timestamptz",
+                    "constraints": {
+                      "nullable": false
+                    },
+                    "defaultValueComputed": "now() - interval '3 days'"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
