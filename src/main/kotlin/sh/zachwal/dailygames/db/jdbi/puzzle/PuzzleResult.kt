@@ -16,4 +16,12 @@ data class PuzzleResult(
     val shareText: String,
     @Json
     val resultInfo: ResultInfo,
-)
+) {
+    inline fun <reified T : ResultInfo> info(): T {
+        if (resultInfo !is T) {
+            throw ClassCastException("Attempted to use $resultInfo (of type ${resultInfo::class.simpleName}) as ResultInfo of type ${T::class.simpleName} for result with id=$id")
+        }
+
+        return resultInfo
+    }
+}
