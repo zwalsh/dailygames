@@ -1,0 +1,47 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "19",
+        "author": "zach",
+        "changes": [
+          {
+            "dropTable": {
+              "tableName": "worldle_result"
+            }
+          },
+          {
+            "dropTable": {
+              "tableName": "tradle_result"
+            }
+          },
+          {
+            "dropTable": {
+              "tableName": "travle_result"
+            }
+          },
+          {
+            "dropTable": {
+              "tableName": "top5_result"
+            }
+          },
+          {
+            "dropTable": {
+              "tableName": "flagle_result"
+            }
+          },
+          {
+            "dropTable": {
+              "tableName": "pinpoint_result"
+            }
+          },
+          {
+            "dropTable": {
+              "tableName": "geocircles_result"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

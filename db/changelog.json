@@ -89,6 +89,11 @@
         "include": {
             "file": "18_add_unique_index.json"
         }
+    },
+    {
+      "include": {
+        "file": "19_drop_result_tables.json"
+      }
     }
   ]
 }
