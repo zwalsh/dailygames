@@ -236,7 +236,7 @@ class ResultServiceTest(
     fun `submitting a result twice throws a helpful error`() {
         resultService.createResult(fixtures.zach, worldle934)
 
-        val e = assertThrows<IllegalArgumentException> {
+        val e = assertThrows<ConflictingPuzzleResultException> {
             resultService.createResult(fixtures.zach, worldle934)
         }
 

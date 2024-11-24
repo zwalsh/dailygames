@@ -67,7 +67,7 @@ class ResultService @Inject constructor(
         } catch (e: UnableToExecuteStatementException) {
             if (e.cause is PSQLException && (e.cause as PSQLException).message?.contains("duplicate key value violates unique constraint") == true) {
                 logger.info("User ${user.id} tried to submit a duplicate result for ${game.displayName()} #${parsedResult.puzzleNumber}")
-                throw IllegalArgumentException("You have already submitted a result for puzzle ${game.displayName()} #${parsedResult.puzzleNumber}")
+                throw ConflictingPuzzleResultException(puzzle = puzzle, userId = user.id)
             } else {
                 logger.error("Error inserting result for ${game.displayName()} #${parsedResult.puzzleNumber} for user ${user.username}", e)
                 throw e
@@ -89,21 +89,6 @@ class ResultService @Inject constructor(
 
     private fun getOrCreatePuzzle(puzzle: Puzzle): Puzzle {
         return puzzleDAO.getPuzzle(puzzle.game, puzzle.number) ?: puzzleDAO.insertPuzzle(puzzle)
-    }
-
-    private fun insertNewResultSafe(userId: Long, puzzle: Puzzle, parsedResult: ParsedResult) {
-        try {
-            // TODO catch the unique constraint violation and handle it when using the new table
-            resultDAO.insertResult(
-                userId = userId,
-                puzzle = puzzle,
-                score = parsedResult.score,
-                shareText = parsedResult.shareTextNoLink,
-                resultInfo = parsedResult.resultInfo,
-            )
-        } catch (e: Exception) {
-            logger.error("Error inserting result for ${parsedResult.game} #${parsedResult.puzzleNumber}", e)
-        }
     }
 
     fun resultFeed(userId: Long): List<ResultFeedItemView> {
