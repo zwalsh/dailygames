@@ -20,6 +20,7 @@ class PuzzleResultPointCalculator {
             Game.FLAGLE -> 7 - score
             Game.PINPOINT -> 6 - score
             Game.GEOCIRCLES -> score
+            Game.FRAMED -> TODO()
         }
     }
 
@@ -88,6 +89,7 @@ class PuzzleResultPointCalculator {
             Game.FLAGLE -> 6
             Game.PINPOINT -> 5
             Game.GEOCIRCLES -> 10
+            Game.FRAMED -> TODO()
         }
     }
 }

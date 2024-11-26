@@ -19,6 +19,7 @@ class ShareLineMapper {
             Game.WORLDLE -> result.toWorldleShareLine()
             Game.PINPOINT -> result.toPinpointShareLine()
             Game.GEOCIRCLES -> result.toGeocirclesShareLine()
+            Game.FRAMED -> TODO()
         }
     }
 

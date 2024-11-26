@@ -47,6 +47,7 @@ class LeaderboardService @Inject constructor(
             Game.FLAGLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
             Game.PINPOINT -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/5 = 4 points.")
             Game.GEOCIRCLES -> BasicScoreHintView("Scoring: 1 point for each green circle, 1 point for each life left.")
+            Game.FRAMED -> TODO()
         }
         val navView = navViewFactory.navView(
             username = currentUser.username,
