@@ -212,11 +212,7 @@ class ShareTextParser {
         val match = framedRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Framed share")
         val (puzzleNumber) = match.destructured
         val incorrectGuesses = redSquareRegex.findAll(shareText).count()
-        val score = if (incorrectGuesses == 6) {
-            0
-        } else {
-            incorrectGuesses + 1
-        }
+        val score = incorrectGuesses + 1
         return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
             game = Game.FRAMED,

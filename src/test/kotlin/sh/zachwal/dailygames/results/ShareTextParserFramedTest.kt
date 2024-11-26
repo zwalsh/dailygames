@@ -55,7 +55,7 @@ class ShareTextParserFramedTest {
     @Test
     fun `extracts framed 0 points`() {
         val info = parser.extractFramedInfo(FRAMED_ZERO)
-        assertThat(info.score).isEqualTo(0)
+        assertThat(info.score).isEqualTo(7)  // Total miss becomes score of 7
     }
 
     @Test

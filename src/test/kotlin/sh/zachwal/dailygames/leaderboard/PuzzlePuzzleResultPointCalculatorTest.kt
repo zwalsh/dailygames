@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
+import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
@@ -220,6 +221,29 @@ class PuzzlePuzzleResultPointCalculatorTest {
         assertThat(calculator.calculatePoints(geocirclesResult)).isEqualTo(8)
     }
 
+    private val framedResult = PuzzleResult(
+        id = 1L,
+        userId = 1L,
+        game = Game.FRAMED,
+        puzzleNumber = 30,
+        instantSubmitted = Instant.now(),
+        puzzleDate = null,
+        score = 4,
+        shareText = "",
+        resultInfo = FramedInfo,
+    )
+
+    @Test
+    fun `returns 7 minus score for framed result`() {
+        assertThat(calculator.calculatePoints(framedResult)).isEqualTo(3)
+    }
+
+    @Test
+    fun `returns 0 for framed result with 7 incorrect guesses`() {
+        val result = framedResult.copy(score = 7)
+        assertThat(calculator.calculatePoints(result)).isEqualTo(0)
+    }
+
     @Test
     fun `returns max score for simple games`() {
         assertThat(calculator.maxPoints(worldleResult)).isEqualTo(6)
@@ -228,6 +252,7 @@ class PuzzlePuzzleResultPointCalculatorTest {
         assertThat(calculator.maxPoints(top5Result)).isEqualTo(10)
         assertThat(calculator.maxPoints(pinpointResult)).isEqualTo(5)
         assertThat(calculator.maxPoints(geocirclesResult)).isEqualTo(10)
+        assertThat(calculator.maxPoints(framedResult)).isEqualTo(6)
     }
 
     @Test
