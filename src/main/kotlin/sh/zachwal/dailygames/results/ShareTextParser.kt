@@ -24,6 +24,7 @@ class ShareTextParser {
             flagleRegex.matches(shareText) -> Game.FLAGLE
             pinpointRegex.matches(shareText) -> Game.PINPOINT
             geocirclesRegex.matches(shareText) -> Game.GEOCIRCLES
+            framedRegex.matches(shareText) -> Game.FRAMED
             else -> null
         }
     }
@@ -193,4 +194,10 @@ class ShareTextParser {
             resultInfo = GeocirclesInfo
         )
     }
+
+    val framedRegex = Regex(
+        """
+            \s*Framed #(?<puzzleNumber>\d+)[\s\S]*
+        """.trimIndent()
+    )
 }
