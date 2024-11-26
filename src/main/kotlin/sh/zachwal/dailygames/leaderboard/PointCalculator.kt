@@ -4,7 +4,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 
-class PuzzleResultPointCalculator {
+class PointCalculator {
 
     /**
      * Returns a number of points for the given puzzle result, where a positive number is always better.
@@ -13,13 +13,32 @@ class PuzzleResultPointCalculator {
      */
     fun calculatePoints(result: PuzzleResult): Int = with(result) {
         when (game) {
-            Game.WORLDLE -> 7 - score
-            Game.TRADLE -> 7 - score
-            Game.TRAVLE -> (result.info<TravleInfo>()).calculatePoints(score)
-            Game.TOP5 -> score
-            Game.FLAGLE -> 7 - score
-            Game.PINPOINT -> 6 - score
+            Game.WORLDLE,
+            Game.TRADLE,
+            Game.FLAGLE,
+            Game.PINPOINT,
+            Game.FRAMED -> maxPoints(result) + 1 - score
+
+            Game.TOP5,
             Game.GEOCIRCLES -> score
+
+            Game.TRAVLE -> (result.info<TravleInfo>()).calculatePoints(score)
+        }
+    }
+
+    fun maxPoints(result: PuzzleResult): Int = with(result) {
+        when (game) {
+            Game.WORLDLE,
+            Game.TRADLE,
+            Game.FLAGLE,
+            Game.FRAMED -> 6
+
+            Game.PINPOINT -> 5
+
+            Game.TOP5,
+            Game.GEOCIRCLES -> 10
+
+            Game.TRAVLE -> (result.info<TravleInfo>()).maxPoints(score)
         }
     }
 
@@ -76,18 +95,6 @@ class PuzzleResultPointCalculator {
             in 10..12 -> 7
             in 13..Int.MAX_VALUE -> 8
             else -> throw IllegalArgumentException("Impossible shortest solution length: $shortestSolutionLength.")
-        }
-    }
-
-    fun maxPoints(result: PuzzleResult): Int = with(result) {
-        when (game) {
-            Game.WORLDLE -> 6
-            Game.TRADLE -> 6
-            Game.TRAVLE -> (result.info<TravleInfo>()).maxPoints(score)
-            Game.TOP5 -> 10
-            Game.FLAGLE -> 6
-            Game.PINPOINT -> 5
-            Game.GEOCIRCLES -> 10
         }
     }
 }

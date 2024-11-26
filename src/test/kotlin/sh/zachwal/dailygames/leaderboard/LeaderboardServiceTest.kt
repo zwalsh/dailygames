@@ -51,7 +51,7 @@ class LeaderboardServiceTest {
     private val leaderboardService = LeaderboardService(
         userService = userService,
         jdbi = jdbi,
-        pointCalculator = PuzzleResultPointCalculator(),
+        pointCalculator = PointCalculator(),
         navViewFactory = navViewFactory,
         minimumGamesForAverage = 1,
     )
@@ -192,7 +192,7 @@ class LeaderboardServiceTest {
         )
 
         val leaderboardData = leaderboardService.gameLeaderboardData(Game.WORLDLE)
-        val expectedPoints = PuzzleResultPointCalculator().calculatePoints(worldleResult).toDouble()
+        val expectedPoints = PointCalculator().calculatePoints(worldleResult).toDouble()
 
         assertThat(leaderboardData.allTimeAverage.labels).containsExactly(testUser.username)
         assertThat(leaderboardData.allTimeAverage.dataPoints).containsExactly(expectedPoints)
@@ -343,7 +343,7 @@ class LeaderboardServiceTest {
         val leaderboardService = LeaderboardService(
             userService = userService,
             jdbi = jdbi,
-            pointCalculator = PuzzleResultPointCalculator(),
+            pointCalculator = PointCalculator(),
             navViewFactory = navViewFactory,
             minimumGamesForAverage = 10,
         )
@@ -363,7 +363,7 @@ class LeaderboardServiceTest {
         val leaderboardService = LeaderboardService(
             userService = userService,
             jdbi = jdbi,
-            pointCalculator = PuzzleResultPointCalculator(),
+            pointCalculator = PointCalculator(),
             navViewFactory = navViewFactory,
             minimumGamesForAverage = 10,
         )

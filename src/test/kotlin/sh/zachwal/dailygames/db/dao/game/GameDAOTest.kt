@@ -45,6 +45,7 @@ class GameDAOTest(
 
     @Test
     fun `listGamesCreatedAfter returns games just created`() {
+        val before = Instant.now()
         jdbi.withHandle<Unit, Exception> {
             it.execute(
                 """
@@ -55,9 +56,7 @@ class GameDAOTest(
             )
         }
 
-        val games = dao.listGamesCreatedAfter(
-            Instant.now().minus(1, ChronoUnit.MINUTES)
-        )
+        val games = dao.listGamesCreatedAfter(before)
 
         assertThat(games).containsExactly(Game.WORLDLE)
     }

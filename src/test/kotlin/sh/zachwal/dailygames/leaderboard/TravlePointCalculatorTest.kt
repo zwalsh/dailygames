@@ -4,91 +4,11 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
-import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
-import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
-import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
-import sh.zachwal.dailygames.results.resultinfo.Top5Info
-import sh.zachwal.dailygames.results.resultinfo.TradleInfo
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
-import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
 
-class PuzzlePuzzleResultPointCalculatorTest {
-    private val calculator = PuzzleResultPointCalculator()
-
-    private val worldleResult = PuzzleResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.WORLDLE,
-        puzzleNumber = 30,
-        instantSubmitted = Instant.now(),
-        puzzleDate = null,
-        score = 5,
-        shareText = "",
-        resultInfo = WorldleInfo(
-            percentage = 100
-        ),
-    )
-
-    @Test
-    fun `returns 7 minus score for worldle result`() {
-        assertThat(calculator.calculatePoints(worldleResult)).isEqualTo(2)
-    }
-
-    private val flagleResult = PuzzleResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.FLAGLE,
-        puzzleNumber = 30,
-        instantSubmitted = Instant.now(),
-        puzzleDate = null,
-        score = 6,
-        shareText = "",
-        resultInfo = FlagleInfo
-    )
-
-    @Test
-    fun `returns 7 minus score for flagle result`() {
-        assertThat(calculator.calculatePoints(flagleResult)).isEqualTo(1)
-    }
-
-    private val tradleResult = PuzzleResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.TRADLE,
-        puzzleNumber = 30,
-        instantSubmitted = Instant.now(),
-        puzzleDate = null,
-        score = 7,
-        shareText = "",
-        resultInfo = TradleInfo,
-    )
-
-    @Test
-    fun `returns 7 minus score for tradle result`() {
-        assertThat(calculator.calculatePoints(tradleResult)).isEqualTo(0)
-    }
-
-    private val top5Result = PuzzleResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.TOP5,
-        puzzleNumber = 30,
-        instantSubmitted = Instant.now(),
-        puzzleDate = null,
-        score = 5,
-        shareText = "",
-        resultInfo = Top5Info(
-            numGuesses = 0,
-            numCorrect = 0,
-            isPerfect = false,
-        ),
-    )
-
-    @Test
-    fun `returns score directly for top5 result`() {
-        assertThat(calculator.calculatePoints(top5Result)).isEqualTo(5)
-    }
+class TravlePointCalculatorTest {
+    private val calculator = PointCalculator()
 
     private val travleResult = PuzzleResult(
         id = 1L,
@@ -184,50 +104,6 @@ class PuzzlePuzzleResultPointCalculatorTest {
             )
             assertThat(calculator.calculatePoints(result)).isEqualTo(allowedIncorrect + 1)
         }
-    }
-
-    private val pinpointResult = PuzzleResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.PINPOINT,
-        puzzleNumber = 30,
-        instantSubmitted = Instant.now(),
-        puzzleDate = null,
-        score = 2,
-        shareText = "",
-        resultInfo = PinpointInfo,
-    )
-
-    @Test
-    fun `returns 6 minus score for pinpoint result`() {
-        assertThat(calculator.calculatePoints(pinpointResult)).isEqualTo(4)
-    }
-
-    private val geocirclesResult = PuzzleResult(
-        id = 1L,
-        userId = 1L,
-        game = Game.GEOCIRCLES,
-        puzzleNumber = 30,
-        instantSubmitted = Instant.now(),
-        puzzleDate = null,
-        score = 8,
-        shareText = "",
-        resultInfo = GeocirclesInfo,
-    )
-
-    @Test
-    fun `returns score directly for geocircles`() {
-        assertThat(calculator.calculatePoints(geocirclesResult)).isEqualTo(8)
-    }
-
-    @Test
-    fun `returns max score for simple games`() {
-        assertThat(calculator.maxPoints(worldleResult)).isEqualTo(6)
-        assertThat(calculator.maxPoints(flagleResult)).isEqualTo(6)
-        assertThat(calculator.maxPoints(tradleResult)).isEqualTo(6)
-        assertThat(calculator.maxPoints(top5Result)).isEqualTo(10)
-        assertThat(calculator.maxPoints(pinpointResult)).isEqualTo(5)
-        assertThat(calculator.maxPoints(geocirclesResult)).isEqualTo(10)
     }
 
     @Test

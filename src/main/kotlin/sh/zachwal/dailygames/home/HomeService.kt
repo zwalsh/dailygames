@@ -7,7 +7,7 @@ import sh.zachwal.dailygames.home.views.HomeView
 import sh.zachwal.dailygames.home.views.ShareTextModalView
 import sh.zachwal.dailygames.home.views.gamelinks.GameLinkView
 import sh.zachwal.dailygames.home.views.gamelinks.GameListView
-import sh.zachwal.dailygames.leaderboard.PuzzleResultPointCalculator
+import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 class HomeService @Inject constructor(
     private val resultService: ResultService,
     private val shareLineMapper: ShareLineMapper,
-    private val pointsCalculator: PuzzleResultPointCalculator,
+    private val pointsCalculator: PointCalculator,
     private val navViewFactory: NavViewFactory,
     private val gameDAO: GameDAO,
 ) {
