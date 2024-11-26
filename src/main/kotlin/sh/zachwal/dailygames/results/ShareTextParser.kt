@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.results
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
+import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.ParsedResult
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
@@ -32,6 +33,7 @@ class ShareTextParser {
     val worldleRegex = Regex(
         """\s*#Worldle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+\((?<percentage>\d+)%\)[\s\S]*"""
     )
+
     fun extractWorldleInfo(shareText: String): ParsedResult {
         val match = worldleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Worldle share")
         val (puzzleNumber, day, month, year, score, percentage) = match.destructured
@@ -53,6 +55,7 @@ class ShareTextParser {
             \s*#Tradle\s+#(?<puzzleNumber>\d+)\s+(?<score>\S)/6[\s\S]*
         """.trimIndent()
     )
+
     fun extractTradleInfo(shareText: String): ParsedResult {
         val match = tradleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Tradle share")
         val (puzzleNumber, score) = match.destructured
@@ -82,7 +85,7 @@ class ShareTextParser {
         val puzzleNumber = puzzleNumberRegex.find(shareText)?.groupValues?.get(1)
             ?: throw IllegalArgumentException("Puzzle number not found")
         val score = scoreRegex.find(shareText)?.groupValues?.get(1)?.toInt()
-            // Use the number away times negative one as the score if the result is a Did Not Finish
+        // Use the number away times negative one as the score if the result is a Did Not Finish
             ?: numAwayRegex.find(shareText)?.groupValues?.get(1)?.toInt()?.times(-1)
             ?: throw IllegalArgumentException("Score not found")
         val numGuesses = guessEmojiRegex.findAll(shareText).count()
@@ -144,6 +147,7 @@ class ShareTextParser {
             \s*#Flagle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+[\s\S]*
         """.trimIndent()
     )
+
     fun extractFlagleInfo(shareText: String): ParsedResult {
         val match = flagleRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Flagle share")
         val (puzzleNumber, day, month, year, score) = match.destructured
@@ -162,8 +166,10 @@ class ShareTextParser {
             \s*Pinpoint #(?<puzzleNumber>\d+)[\s\S]*\((?<score>\S)/5\)[\s\S]*
         """.trimIndent()
     )
+
     fun extractPinpointInfo(shareText: String): ParsedResult {
-        val match = pinpointRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Pinpoint share")
+        val match =
+            pinpointRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Pinpoint share")
         val (puzzleNumber, score) = match.destructured
         return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
@@ -182,7 +188,8 @@ class ShareTextParser {
     )
     val greenCircleOrHeartRegex = Regex("(\uD83D\uDFE2|❤\uFE0F)")
     fun extractGeocirclesInfo(shareText: String): ParsedResult {
-        val match = geocirclesRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Geocircles share")
+        val match =
+            geocirclesRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Geocircles share")
         val (puzzleNumber) = match.destructured
         val score = greenCircleOrHeartRegex.findAll(shareText).count()
         return ParsedResult(
@@ -200,4 +207,23 @@ class ShareTextParser {
             \s*Framed #(?<puzzleNumber>\d+)[\s\S]*
         """.trimIndent()
     )
+    val redSquareRegex = Regex("\uD83D\uDFE5")
+    fun extractFramedInfo(shareText: String): ParsedResult {
+        val match = framedRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Framed share")
+        val (puzzleNumber) = match.destructured
+        val incorrectGuesses = redSquareRegex.findAll(shareText).count()
+        val score = if (incorrectGuesses == 6) {
+            0
+        } else {
+            incorrectGuesses + 1
+        }
+        return ParsedResult(
+            puzzleNumber = puzzleNumber.toInt(),
+            game = Game.FRAMED,
+            date = null,
+            score = score,
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            resultInfo = FramedInfo
+        )
+    }
 }
