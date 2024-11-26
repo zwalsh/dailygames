@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
-import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 
 const val FRAMED_PERFECT = """
 Framed #990
@@ -55,7 +54,7 @@ class ShareTextParserFramedTest {
     @Test
     fun `extracts framed 0 points`() {
         val info = parser.extractFramedInfo(FRAMED_ZERO)
-        assertThat(info.score).isEqualTo(7)  // Total miss becomes score of 7
+        assertThat(info.score).isEqualTo(7) // Total miss becomes score of 7
     }
 
     @Test
