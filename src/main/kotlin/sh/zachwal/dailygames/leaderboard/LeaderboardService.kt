@@ -40,14 +40,16 @@ class LeaderboardService @Inject constructor(
 
     fun gameLeaderboardView(currentUser: User, game: Game): GameLeaderboardView {
         val scoreHintView = when (game) {
-            Game.WORLDLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
-            Game.TRADLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
-            Game.TRAVLE -> TravleScoreHintView()
-            Game.TOP5 -> BasicScoreHintView("Scoring: One point per correct guess. One point per life left if all 5 answers guessed correctly.")
-            Game.FLAGLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
+            Game.WORLDLE,
+            Game.TRADLE,
+            Game.FLAGLE,
+            Game.FRAMED -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
             Game.PINPOINT -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/5 = 4 points.")
+
+            Game.TOP5 -> BasicScoreHintView("Scoring: One point per correct guess. One point per life left if all 5 answers guessed correctly.")
             Game.GEOCIRCLES -> BasicScoreHintView("Scoring: 1 point for each green circle, 1 point for each life left.")
-            Game.FRAMED -> TODO()
+
+            Game.TRAVLE -> TravleScoreHintView()
         }
         val navView = navViewFactory.navView(
             username = currentUser.username,
