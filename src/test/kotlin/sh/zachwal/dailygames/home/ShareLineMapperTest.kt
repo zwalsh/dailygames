@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
+import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
@@ -376,5 +377,33 @@ class ShareLineMapperTest {
         val shareLine = ShareLineMapper().mapToShareLine(result)
 
         assertThat(shareLine).isEqualTo("${Game.GEOCIRCLES.emoji()} Geocircles #123 0/5")
+    }
+
+    private val framedResult = PuzzleResult(
+        id = 1,
+        userId = 1,
+        game = Game.FRAMED,
+        puzzleNumber = 123,
+        puzzleDate = null,
+        instantSubmitted = Instant.now(),
+        score = 2,
+        shareText = "share text",
+        resultInfo = FramedInfo,
+    )
+
+    @Test
+    fun `maps framed line`() {
+        val shareLine = ShareLineMapper().mapToShareLine(framedResult)
+
+        assertThat(shareLine).isEqualTo("${Game.FRAMED.emoji()} Framed #123 2/6")
+    }
+
+    @Test
+    fun `maps framed line perfect`() {
+        val perfectResult = framedResult.copy(score = 1)
+
+        val shareLine = ShareLineMapper().mapToShareLine(perfectResult)
+
+        assertThat(shareLine).isEqualTo("${Game.FRAMED.emoji()} Framed #123 1/6 ${Game.FRAMED.perfectEmoji()}")
     }
 }

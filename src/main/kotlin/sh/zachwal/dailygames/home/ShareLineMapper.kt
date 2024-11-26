@@ -19,7 +19,7 @@ class ShareLineMapper {
             Game.WORLDLE -> result.toWorldleShareLine()
             Game.PINPOINT -> result.toPinpointShareLine()
             Game.GEOCIRCLES -> result.toGeocirclesShareLine()
-            Game.FRAMED -> TODO()
+            Game.FRAMED -> result.toFramedShareLine()
         }
     }
 
@@ -112,6 +112,19 @@ class ShareLineMapper {
             return "$gameAndPuzzle X/5"
         }
         val line = "$gameAndPuzzle $score/5"
+        return if (score == 1) {
+            "$line ${game.perfectEmoji()}"
+        } else {
+            line
+        }
+    }
+
+    private fun PuzzleResult.toFramedShareLine(): String {
+        val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
+        if (score == 6) {
+            return "$gameAndPuzzle X/6"
+        }
+        val line = "$gameAndPuzzle $score/6"
         return if (score == 1) {
             "$line ${game.perfectEmoji()}"
         } else {
