@@ -9,7 +9,8 @@ enum class Game {
     TOP5,
     FLAGLE,
     PINPOINT,
-    GEOCIRCLES;
+    GEOCIRCLES,
+    FRAMED;
 
     fun displayName(): String {
         return when (this) {
