@@ -99,6 +99,11 @@
       "include": {
         "file": "20_game_instant_created_column.json"
       }
+    },
+    {
+      "include": {
+        "file": "21_add_framed.json"
+      }
     }
   ]
 }

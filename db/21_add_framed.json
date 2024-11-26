@@ -1,0 +1,31 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "21",
+        "author": "zach",
+        "changes": [
+          {
+            "insert": {
+              "tableName": "game",
+              "columns": [
+                {
+                  "column": {
+                    "name": "name",
+                    "value": "FRAMED"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_created",
+                    "valueComputed": "now()"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
