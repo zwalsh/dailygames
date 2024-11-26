@@ -2,7 +2,7 @@ package sh.zachwal.dailygames.home
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
-import sh.zachwal.dailygames.leaderboard.PuzzleResultPointCalculator
+import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ShareLineMapper @Inject constructor(
-    private val pointCalculator: PuzzleResultPointCalculator
+    private val pointCalculator: PointCalculator
 ) {
 
     fun mapToShareLine(result: PuzzleResult): String {

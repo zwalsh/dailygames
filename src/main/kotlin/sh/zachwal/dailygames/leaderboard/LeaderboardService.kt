@@ -24,7 +24,7 @@ const val MINIMUM_GAMES_FOR_AVERAGE = 10
 class LeaderboardService @Inject constructor(
     private val userService: UserService,
     private val jdbi: Jdbi,
-    private val pointCalculator: PuzzleResultPointCalculator,
+    private val pointCalculator: PointCalculator,
     private val navViewFactory: NavViewFactory,
     @Named("leaderboardMinimumGamesForAverage")
     private val minimumGamesForAverage: Int,

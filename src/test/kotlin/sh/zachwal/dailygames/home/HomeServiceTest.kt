@@ -8,7 +8,7 @@ import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
-import sh.zachwal.dailygames.leaderboard.PuzzleResultPointCalculator
+import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
@@ -22,7 +22,7 @@ class HomeServiceTest {
         every { resultsForUserToday(any()) } returns emptyList()
     }
     private val shareLineMapper = ShareLineMapper(
-        pointCalculator = PuzzleResultPointCalculator()
+        pointCalculator = PointCalculator()
     )
     private val navViewFactory = mockk<NavViewFactory> {
         every { navView(any(), any()) } returns mockk()
@@ -35,7 +35,7 @@ class HomeServiceTest {
     private val homeService = HomeService(
         resultService = resultService,
         shareLineMapper = shareLineMapper,
-        pointsCalculator = PuzzleResultPointCalculator(),
+        pointsCalculator = PointCalculator(),
         gameDAO = gameDAO,
         navViewFactory = navViewFactory
     )

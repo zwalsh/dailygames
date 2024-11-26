@@ -4,7 +4,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 
-class PuzzleResultPointCalculator {
+class PointCalculator {
 
     /**
      * Returns a number of points for the given puzzle result, where a positive number is always better.

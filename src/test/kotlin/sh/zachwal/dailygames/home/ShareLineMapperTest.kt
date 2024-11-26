@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
-import sh.zachwal.dailygames.leaderboard.PuzzleResultPointCalculator
+import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
@@ -18,7 +18,7 @@ import java.time.Instant
 class ShareLineMapperTest {
 
     private val mapper = ShareLineMapper(
-        pointCalculator = PuzzleResultPointCalculator()
+        pointCalculator = PointCalculator()
     )
 
     private val worldleResult = PuzzleResult(
