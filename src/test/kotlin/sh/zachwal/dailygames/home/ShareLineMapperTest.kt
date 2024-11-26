@@ -406,4 +406,13 @@ class ShareLineMapperTest {
 
         assertThat(shareLine).isEqualTo("${Game.FRAMED.emoji()} Framed #123 1/6 ${Game.FRAMED.perfectEmoji()}")
     }
+
+    @Test
+    fun `maps framed line fail`() {
+        val failResult = framedResult.copy(score = 7)
+
+        val shareLine = ShareLineMapper().mapToShareLine(failResult)
+
+        assertThat(shareLine).isEqualTo("${Game.FRAMED.emoji()} Framed #123 X/6")
+    }
 }

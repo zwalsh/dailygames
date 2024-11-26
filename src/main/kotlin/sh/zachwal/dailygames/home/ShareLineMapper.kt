@@ -121,7 +121,7 @@ class ShareLineMapper {
 
     private fun PuzzleResult.toFramedShareLine(): String {
         val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
-        if (score == 6) {
+        if (score == 7) {
             return "$gameAndPuzzle X/6"
         }
         val line = "$gameAndPuzzle $score/6"
