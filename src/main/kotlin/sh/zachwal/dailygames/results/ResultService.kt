@@ -84,7 +84,7 @@ class ResultService @Inject constructor(
             Game.FLAGLE -> shareTextParser.extractFlagleInfo(shareText)
             Game.PINPOINT -> shareTextParser.extractPinpointInfo(shareText)
             Game.GEOCIRCLES -> shareTextParser.extractGeocirclesInfo(shareText)
-            Game.FRAMED -> TODO()
+            Game.FRAMED -> shareTextParser.extractFramedInfo(shareText)
         }
     }
 

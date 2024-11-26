@@ -18,6 +18,7 @@ import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
@@ -230,6 +231,23 @@ class ResultServiceTest(
             ❤️❤️❤️❤️❤️
             """.trimIndent()
         )
+    }
+
+    @Test
+    fun `can create Framed result`() {
+        val result = resultService.createResult(fixtures.zach, FRAMED_FOUR)
+
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.FRAMED)
+        assertThat(result.puzzleNumber).isEqualTo(990)
+        assertThat(result.score).isEqualTo(4)
+        assertThat(result.shareText).isEqualTo(
+            """
+            Framed #990
+            🎥 🟥 🟥 🟥 🟩 ⬛ ⬛
+            """.trimIndent()
+        )
+        assertThat(result.info<FramedInfo>()).isEqualTo(FramedInfo)
     }
 
     @Test
