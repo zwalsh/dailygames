@@ -21,7 +21,9 @@ class HomeServiceTest {
         every { resultFeed(any()) } returns emptyList()
         every { resultsForUserToday(any()) } returns emptyList()
     }
-    private val shareLineMapper = ShareLineMapper()
+    private val shareLineMapper = ShareLineMapper(
+        pointCalculator = PuzzleResultPointCalculator()
+    )
     private val navViewFactory = mockk<NavViewFactory> {
         every { navView(any(), any()) } returns mockk()
     }

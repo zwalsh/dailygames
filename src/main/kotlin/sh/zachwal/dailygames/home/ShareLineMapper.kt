@@ -2,24 +2,43 @@ package sh.zachwal.dailygames.home
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
+import sh.zachwal.dailygames.leaderboard.PuzzleResultPointCalculator
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ShareLineMapper {
+class ShareLineMapper @Inject constructor(
+    private val pointCalculator: PuzzleResultPointCalculator
+) {
 
     fun mapToShareLine(result: PuzzleResult): String {
         return when (result.game) {
-            Game.FLAGLE -> result.toFlagleShareLine()
-            Game.TOP5 -> result.toTop5ShareLine()
-            Game.TRADLE -> result.toTradleShareLine()
-            Game.TRAVLE -> result.toTravleShareLine()
-            Game.WORLDLE -> result.toWorldleShareLine()
-            Game.PINPOINT -> result.toPinpointShareLine()
+            Game.FLAGLE,
+            Game.TRADLE,
+            Game.FRAMED,
+            Game.PINPOINT -> result.toStandardShareLine()
+
             Game.GEOCIRCLES -> result.toGeocirclesShareLine()
-            Game.FRAMED -> result.toFramedShareLine()
+            Game.TOP5 -> result.toTop5ShareLine()
+            Game.WORLDLE -> result.toWorldleShareLine()
+            Game.TRAVLE -> result.toTravleShareLine()
+        }
+    }
+
+    private fun PuzzleResult.toStandardShareLine(): String {
+        val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
+        val maxPoints = pointCalculator.maxPoints(this)
+        if (score == maxPoints + 1) {
+            return "$gameAndPuzzle X/$maxPoints"
+        }
+        val line = "$gameAndPuzzle $score/$maxPoints"
+        return if (score == 1) {
+            "$line ${game.perfectEmoji()}"
+        } else {
+            line
         }
     }
 
@@ -46,33 +65,9 @@ class ShareLineMapper {
         }
     }
 
-    private fun PuzzleResult.toFlagleShareLine(): String {
-        if (score == 7) {
-            return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6"
-        }
-        val line = "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
-        return if (score == 1) {
-            "$line ${game.perfectEmoji()}"
-        } else {
-            line
-        }
-    }
-
     private fun PuzzleResult.toWorldleShareLine(): String = with(info<WorldleInfo>()) {
         if (score == 7) {
             return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6 ($percentage%)"
-        }
-        val line = "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
-        return if (score == 1) {
-            "$line ${game.perfectEmoji()}"
-        } else {
-            line
-        }
-    }
-
-    private fun PuzzleResult.toTradleShareLine(): String {
-        if (score == 7) {
-            return "${game.emoji()} ${game.displayName()} #$puzzleNumber X/6"
         }
         val line = "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/6"
         return if (score == 1) {
@@ -104,31 +99,5 @@ class ShareLineMapper {
         }
 
         return withPerfect
-    }
-
-    private fun PuzzleResult.toPinpointShareLine(): String {
-        val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
-        if (score == 6) {
-            return "$gameAndPuzzle X/5"
-        }
-        val line = "$gameAndPuzzle $score/5"
-        return if (score == 1) {
-            "$line ${game.perfectEmoji()}"
-        } else {
-            line
-        }
-    }
-
-    private fun PuzzleResult.toFramedShareLine(): String {
-        val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
-        if (score == 7) {
-            return "$gameAndPuzzle X/6"
-        }
-        val line = "$gameAndPuzzle $score/6"
-        return if (score == 1) {
-            "$line ${game.perfectEmoji()}"
-        } else {
-            line
-        }
     }
 }
