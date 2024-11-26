@@ -28,6 +28,7 @@ enum class Game {
             FLAGLE -> "\uD83D\uDEA9"
             PINPOINT -> "\uD83D\uDCCC"
             GEOCIRCLES -> "\uD83D\uDFE2"
+            FRAMED -> "\uD83C\uDFA5"
         }
     }
 
@@ -40,6 +41,7 @@ enum class Game {
             FLAGLE -> "\uD83C\uDFC1"
             PINPOINT -> this.emoji()
             GEOCIRCLES -> "\uD83C\uDFAF"
+            FRAMED -> "\uD83C\uDF7F"
         }
     }
 
@@ -52,6 +54,7 @@ enum class Game {
             FLAGLE -> "https://www.flagle.io/"
             PINPOINT -> "https://www.linkedin.com/games/pinpoint/"
             GEOCIRCLES -> "https://geocircles.io/"
+            FRAMED -> "https://framed.wtf/"
         }
     }
 }
