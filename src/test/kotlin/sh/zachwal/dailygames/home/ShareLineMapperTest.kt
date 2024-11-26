@@ -20,7 +20,7 @@ class ShareLineMapperTest {
     private val mapper = ShareLineMapper(
         pointCalculator = PuzzleResultPointCalculator()
     )
-    
+
     private val worldleResult = PuzzleResult(
         id = 1,
         userId = 1,
@@ -61,15 +61,9 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.WORLDLE.emoji()} Worldle #123 X/6 (50%)")
     }
 
-    private val tradleResult = PuzzleResult(
-        id = 1,
-        userId = 1,
+    private val tradleResult = worldleResult.copy(
         game = Game.TRADLE,
-        puzzleNumber = 123,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
         score = 1,
-        shareText = "share text",
         resultInfo = TradleInfo,
     )
 
@@ -98,15 +92,9 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.TRADLE.emoji()} Tradle #123 X/6")
     }
 
-    private val travleResult = PuzzleResult(
-        id = 1L,
-        userId = 1L,
+    private val travleResult = worldleResult.copy(
         game = Game.TRAVLE,
-        puzzleNumber = 123,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
         score = 0,
-        shareText = "share text",
         resultInfo = TravleInfo(
             numGuesses = 6,
             numIncorrect = 0,
@@ -115,15 +103,9 @@ class ShareLineMapperTest {
         ),
     )
 
-    private val flagleResult = PuzzleResult(
-        id = 1,
-        userId = 1,
+    private val flagleResult = worldleResult.copy(
         game = Game.FLAGLE,
-        puzzleNumber = 123,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
         score = 1,
-        shareText = "share text",
         resultInfo = FlagleInfo
     )
 
@@ -237,15 +219,9 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.TRAVLE.emoji()} Travle #123 (1 away) (1 hint)")
     }
 
-    private val top5Result = PuzzleResult(
-        id = 1,
-        userId = 1,
+    private val top5Result = worldleResult.copy(
         game = Game.TOP5,
-        puzzleNumber = 123,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
         score = 5,
-        shareText = "share text",
         resultInfo = Top5Info(
             numGuesses = 5,
             numCorrect = 5,
@@ -303,15 +279,9 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.TOP5.emoji()} Top 5 #123 4/5")
     }
 
-    private val pinpointResult = PuzzleResult(
-        id = 1,
-        userId = 1,
+    private val pinpointResult = worldleResult.copy(
         game = Game.PINPOINT,
-        puzzleNumber = 123,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
         score = 1,
-        shareText = "share text",
         resultInfo = PinpointInfo,
     )
 
@@ -338,15 +308,9 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.PINPOINT.emoji()} Pinpoint #123 X/5")
     }
 
-    private val geocirclesResult = PuzzleResult(
-        id = 1,
-        userId = 1,
+    private val geocirclesResult = worldleResult.copy(
         game = Game.GEOCIRCLES,
-        puzzleNumber = 123,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
         score = 10,
-        shareText = "share text",
         resultInfo = GeocirclesInfo,
     )
 
@@ -384,15 +348,9 @@ class ShareLineMapperTest {
         assertThat(shareLine).isEqualTo("${Game.GEOCIRCLES.emoji()} Geocircles #123 0/5")
     }
 
-    private val framedResult = PuzzleResult(
-        id = 1,
-        userId = 1,
+    private val framedResult = worldleResult.copy(
         game = Game.FRAMED,
-        puzzleNumber = 123,
-        puzzleDate = null,
-        instantSubmitted = Instant.now(),
         score = 2,
-        shareText = "share text",
         resultInfo = FramedInfo,
     )
 
