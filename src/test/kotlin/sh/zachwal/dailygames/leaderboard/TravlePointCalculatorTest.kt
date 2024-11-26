@@ -4,14 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
-import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
-import sh.zachwal.dailygames.results.resultinfo.FramedInfo
-import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
-import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
-import sh.zachwal.dailygames.results.resultinfo.Top5Info
-import sh.zachwal.dailygames.results.resultinfo.TradleInfo
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
-import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
 
 class TravlePointCalculatorTest {
