@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.wrapped
 
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
+import sh.zachwal.dailygames.wrapped.views.StatSection
 import sh.zachwal.dailygames.wrapped.views.WelcomeSection
 import sh.zachwal.dailygames.wrapped.views.WrappedView
 import javax.inject.Inject
@@ -20,6 +21,11 @@ class WrappedService @Inject constructor(
             navView = navView,
             sections = listOf(
                 WelcomeSection(year, "zach"),
+                StatSection(
+                    topText = "You played...",
+                    stat = 123,
+                    bottomText = "...games this year.",
+                )
             )
         )
     }

@@ -7,7 +7,7 @@ import sh.zachwal.dailygames.shared_html.HTMLView
 abstract class WrappedSection : HTMLView<DIV>() {
     override fun DIV.render() {
         div(classes = "row vh-90 snapChild") {
-            div(classes = "col card vw-100 mt-3 mx-3 p-3 d-flex justify-content-center bg-dark-subtle $classes") {
+            div(classes = "col card vw-100 mt-3 mx-3 p-3 d-flex bg-dark-subtle $classes") {
                 content()
             }
         }
