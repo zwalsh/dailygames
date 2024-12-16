@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.wrapped
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
+import sh.zachwal.dailygames.wrapped.views.RanksTableSection
 import sh.zachwal.dailygames.wrapped.views.StatSection
 import sh.zachwal.dailygames.wrapped.views.TextSection
 import sh.zachwal.dailygames.wrapped.views.WelcomeSection
@@ -33,12 +34,6 @@ class WrappedService @Inject constructor(
                     stat = 15,
                     bottomText = "...across all players!",
                 ),
-                TextSection(
-                    topText = "That's in the top...",
-                    middleText = "15%",
-                    bottomText = "...overall!",
-                    fontSizeOverride = "35vw",
-                ),
                 // points scored
                 StatSection(
                     topText = "You scored...",
@@ -50,32 +45,16 @@ class WrappedService @Inject constructor(
                     stat = 10,
                     bottomText = "...overall!",
                 ),
-                TextSection(
-                    topText = "That's in the top...",
-                    middleText = "10%",
-                    bottomText = "...of all players!",
-                    fontSizeOverride = "35vw",
-                ),
                 // Favorite game
                 TextSection(
                     topText = "Your favorite game was...",
-                    middleText = "${Game.WORLDLE.emoji()} Worldle ${Game.WORLDLE.emoji()}",
-                    bottomText = "",
-                ),
-                StatSection(
-                    topText = "You played ...",
-                    stat = 123,
-                    bottomText = "...games of Worldle.",
+                    middleText = "${Game.WORLDLE.emoji()}Worldle${Game.WORLDLE.emoji()}",
+                    bottomText = "...you played it 123 times!",
                 ),
                 TextSection(
                     topText = "Your best day was...",
                     middleText = "September 14th",
-                    bottomText = "",
-                ),
-                StatSection(
-                    topText = "You scored...",
-                    stat = 39,
-                    bottomText = "...points that day!",
+                    bottomText = "...when you scored 39 points!",
                 ),
                 StatSection(
                     topText = "You played Daily Games for...",
@@ -89,18 +68,21 @@ class WrappedService @Inject constructor(
                 ),
                 TextSection(
                     topText = "Your best game was...",
-                    middleText = "${Game.WORLDLE.emoji()} Worldle ${Game.WORLDLE.emoji()}",
+                    middleText = "${Game.WORLDLE.emoji()}Worldle${Game.WORLDLE.emoji()}",
                     bottomText = "",
                 ),
                 TextSection(
                     topText = "Your average Worldle score was...",
                     middleText = "5.5",
-                    bottomText = "",
+                    bottomText = "...which ranks #2!",
+                    fontSizeOverride = "35vw;"
                 ),
-                StatSection(
-                    topText = "Which ranks...",
-                    stat = 2,
-                    bottomText = "...overall!",
+                // TODO stats page here too
+                RanksTableSection(
+                    title = "Totals",
+                ),
+                RanksTableSection(
+                    title = "Averages",
                 ),
             )
         )

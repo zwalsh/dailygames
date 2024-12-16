@@ -4,9 +4,11 @@ import kotlinx.html.DIV
 import kotlinx.html.div
 import sh.zachwal.dailygames.shared_html.HTMLView
 
-abstract class WrappedSection : HTMLView<DIV>() {
+abstract class WrappedSection(
+    val height: String = "vh-90",
+) : HTMLView<DIV>() {
     override fun DIV.render() {
-        div(classes = "row vh-90 snapChild") {
+        div(classes = "row $height snapChild") {
             div(classes = "col card vw-100 mt-3 mx-3 p-3 d-flex bg-dark-subtle $classes") {
                 content()
             }
