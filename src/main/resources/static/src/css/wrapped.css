@@ -23,35 +23,6 @@ body, html {
   font-size: 10vw;
 }
 
-.rank h1 {
-  font-size: 35vw;
-}
-
-.percentile h1 {
-  font-size: 35vw;
-}
-
-.uniqueDaysCount h1 {
-  font-size: 35vw;
-}
-
-.uniqueDaysRank h1 {
-  font-size: 35vw;
-}
-
-.uniqueDaysPercentile h1 {
-  font-size: 35vw;
-}
-
-/* Day of week could be 10 characters */
-.day h1 {
-  font-size: 12vw;
-}
-
-.day-count h1 {
-  font-size: 35vw;
-}
-
 .top-text {
   margin-top: 20px;
 }
@@ -59,10 +30,6 @@ body, html {
 .bottom-text {
   margin-bottom: 20px;
   text-align: right;
-}
-
-.btn {
-  font-size: 35vw;
 }
 
 @keyframes reveal {
