@@ -33,6 +33,12 @@ class WrappedService @Inject constructor(
                     stat = 15,
                     bottomText = "...across all players!",
                 ),
+                TextSection(
+                    topText = "That's in the top...",
+                    middleText = "15%",
+                    bottomText = "...overall!",
+                    fontSizeOverride = "35vw",
+                ),
                 // points scored
                 StatSection(
                     topText = "You scored...",
@@ -42,7 +48,13 @@ class WrappedService @Inject constructor(
                 StatSection(
                     topText = "That ranks...",
                     stat = 10,
-                    bottomText = "...across all players!",
+                    bottomText = "...overall!",
+                ),
+                TextSection(
+                    topText = "That's in the top...",
+                    middleText = "10%",
+                    bottomText = "...of all players!",
+                    fontSizeOverride = "35vw",
                 ),
                 // Favorite game
                 TextSection(
@@ -64,7 +76,17 @@ class WrappedService @Inject constructor(
                     topText = "You scored...",
                     stat = 39,
                     bottomText = "...points that day!",
-                )
+                ),
+                StatSection(
+                    topText = "You played Daily Games for...",
+                    stat = 1212,
+                    bottomText = "...minutes this year.",
+                ),
+                StatSection(
+                    topText = "That's number...",
+                    stat = 3,
+                    bottomText = "... of all players!",
+                ),
             )
         )
     }

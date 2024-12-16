@@ -4,6 +4,7 @@ function countUp(counterElement) {
 
     // No point in animating if it won't tick up every frame
     if (targetValue < 10) {
+       counterElement.innerText = targetValue;
        return;
     }
 
