@@ -87,6 +87,21 @@ class WrappedService @Inject constructor(
                     stat = 3,
                     bottomText = "... of all players!",
                 ),
+                TextSection(
+                    topText = "Your best game was...",
+                    middleText = "${Game.WORLDLE.emoji()} Worldle ${Game.WORLDLE.emoji()}",
+                    bottomText = "",
+                ),
+                TextSection(
+                    topText = "Your average Worldle score was...",
+                    middleText = "5.5",
+                    bottomText = "",
+                ),
+                StatSection(
+                    topText = "Which ranks...",
+                    stat = 2,
+                    bottomText = "...overall!",
+                ),
             )
         )
     }
