@@ -1,8 +1,6 @@
 package sh.zachwal.dailygames.wrapped
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.nav.NavItem
-import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.wrapped.views.RanksTableSection
 import sh.zachwal.dailygames.wrapped.views.StatSection
 import sh.zachwal.dailygames.wrapped.views.TextSection
@@ -12,16 +10,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WrappedService @Inject constructor(
-    private val navViewFactory: NavViewFactory,
-) {
+class WrappedService @Inject constructor() {
 
     fun wrappedView(year: Int, wrappedId: String): WrappedView {
-        val navView = navViewFactory.navView("zach", NavItem.PROFILE)
         return WrappedView(
             name = "zach",
             year = year,
-            navView = navView,
             sections = listOf(
                 WelcomeSection(year, "zach"),
                 StatSection(

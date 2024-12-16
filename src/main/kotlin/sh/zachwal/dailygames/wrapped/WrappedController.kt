@@ -7,13 +7,11 @@ import io.ktor.routing.get
 import io.ktor.util.getOrFail
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.roles.approvedUserRoute
-import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
 
 @Controller
 class WrappedController @Inject constructor(
     private val wrappedService: WrappedService,
-    private val userService: UserService,
 ) {
 
     internal fun Routing.wrapped() {

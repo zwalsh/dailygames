@@ -7,7 +7,6 @@ import kotlinx.html.head
 import kotlinx.html.link
 import kotlinx.html.script
 import kotlinx.html.title
-import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
@@ -15,7 +14,6 @@ import sh.zachwal.dailygames.shared_html.headSetup
 data class WrappedView(
     val name: String,
     val year: Int,
-    val navView: NavView,
     val sections: List<WrappedSection>,
 ) : HTMLView<HTML>() {
     override fun HTML.render() {
