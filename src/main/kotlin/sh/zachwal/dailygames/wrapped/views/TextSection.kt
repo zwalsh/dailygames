@@ -15,8 +15,9 @@ data class TextSection(
             +topText
         }
         div(classes = "d-flex flex-row justify-content-center") {
-            h1(classes = "animate-reveal") {
-                +middleText
+            h1(classes = "animate animate-rev") {
+                attributes["text"] = middleText
+                +"..."
             }
         }
         h3(classes = "bottom-text") {

@@ -25,6 +25,22 @@ function countUp(counterElement) {
     updateCounter();
 }
 
+function animateReveal(element) {
+    element.classList.remove('animate-rev');
+    element.innerText = element.attributes['text'].value
+    // CSS animation triggers on .animate-reveal
+    element.classList.add('animate-reveal');
+}
+
+function animate(element) {
+    if (element.classList.contains('animate-count-up')) {
+        countUp(element);
+    }
+    if (element.classList.contains('animate-rev')) {
+        animateReveal(element);
+    }
+}
+
 function runOnFirstAppearance(element, callback) {
     const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -40,6 +56,6 @@ function runOnFirstAppearance(element, callback) {
 
 
 window.onload = function () {
-    const counters = document.querySelectorAll('.animate-count-up');
-    counters.forEach(counter => runOnFirstAppearance(counter, countUp));
+    const counters = document.querySelectorAll('.animate');
+    counters.forEach(counter => runOnFirstAppearance(counter, animate));
 };

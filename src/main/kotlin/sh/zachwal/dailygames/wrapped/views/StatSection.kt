@@ -15,7 +15,7 @@ data class StatSection(
             +topText
         }
         div(classes = "d-flex flex-row justify-content-center") {
-            h1(classes = "animate-count-up") {
+            h1(classes = "animate animate-count-up") {
                 attributes["data-count"] = stat.toString()
                 +"0"
             }
