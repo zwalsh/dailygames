@@ -69,7 +69,6 @@ data class RanksTableSection(
                     td { +"8" }
                 }
             }
-
         }
     }
 

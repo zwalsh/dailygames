@@ -5,7 +5,6 @@ import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.head
 import kotlinx.html.link
-import kotlinx.html.nav
 import kotlinx.html.script
 import kotlinx.html.title
 import sh.zachwal.dailygames.nav.NavView
@@ -22,7 +21,7 @@ data class WrappedView(
     override fun HTML.render() {
         head {
             title {
-                +"${name}'s $year Wrapped"
+                +"$name's $year Wrapped"
             }
             headSetup()
             link(href = "/static/src/css/wrapped.css", rel = "stylesheet")

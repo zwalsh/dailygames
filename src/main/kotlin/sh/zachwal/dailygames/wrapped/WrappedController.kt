@@ -16,7 +16,6 @@ class WrappedController @Inject constructor(
     private val userService: UserService,
 ) {
 
-
     internal fun Routing.wrapped() {
         approvedUserRoute("/wrapped/{year}/{wrappedId}") {
             get {
