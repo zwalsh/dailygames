@@ -5,9 +5,9 @@ import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.h3
 
-data class StatSection(
+data class TextSection(
     val topText: String,
-    val stat: Int,
+    val middleText: String,
     val bottomText: String,
 ) : WrappedSection() {
     override fun DIV.content() {
@@ -15,9 +15,8 @@ data class StatSection(
             +topText
         }
         div(classes = "d-flex flex-row justify-content-center") {
-            h1(classes = "animate-count-up") {
-                attributes["data-count"] = stat.toString()
-                +"0"
+            h1(classes = "animate-reveal") {
+                +middleText
             }
         }
         h3(classes = "bottom-text") {
@@ -25,5 +24,5 @@ data class StatSection(
         }
     }
 
-    override val classes = "justify-content-between count-section"
+    override val classes = "justify-content-between text-section"
 }

@@ -32,7 +32,7 @@ data class WrappedView(
         }
         body {
             darkMode()
-            div(classes = "container") {
+            div(classes = "container mb-4") {
                 sections.forEach {
                     it.renderIn(this@div)
                 }

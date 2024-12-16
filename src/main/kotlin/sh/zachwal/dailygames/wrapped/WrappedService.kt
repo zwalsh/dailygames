@@ -1,8 +1,10 @@
 package sh.zachwal.dailygames.wrapped
 
+import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.wrapped.views.StatSection
+import sh.zachwal.dailygames.wrapped.views.TextSection
 import sh.zachwal.dailygames.wrapped.views.WelcomeSection
 import sh.zachwal.dailygames.wrapped.views.WrappedView
 import javax.inject.Inject
@@ -25,6 +27,43 @@ class WrappedService @Inject constructor(
                     topText = "You played...",
                     stat = 123,
                     bottomText = "...games this year.",
+                ),
+                StatSection(
+                    topText = "That ranks...",
+                    stat = 15,
+                    bottomText = "...across all players!",
+                ),
+                // points scored
+                StatSection(
+                    topText = "You scored...",
+                    stat = 1234,
+                    bottomText = "...points this year.",
+                ),
+                StatSection(
+                    topText = "That ranks...",
+                    stat = 10,
+                    bottomText = "...across all players!",
+                ),
+                // Favorite game
+                TextSection(
+                    topText = "Your favorite game was...",
+                    middleText = "${Game.WORLDLE.emoji()} Worldle ${Game.WORLDLE.emoji()}",
+                    bottomText = "",
+                ),
+                StatSection(
+                    topText = "You played ...",
+                    stat = 123,
+                    bottomText = "...games of Worldle.",
+                ),
+                TextSection(
+                    topText = "Your best day was...",
+                    middleText = "September 14th",
+                    bottomText = "",
+                ),
+                StatSection(
+                    topText = "You scored...",
+                    stat = 39,
+                    bottomText = "...points that day!",
                 )
             )
         )

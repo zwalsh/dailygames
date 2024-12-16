@@ -21,5 +21,5 @@ data class WelcomeSection(
         }
     }
 
-    override val classes = "justify-content-center welcome"
+    override val classes = "justify-content-center welcome-section"
 }
