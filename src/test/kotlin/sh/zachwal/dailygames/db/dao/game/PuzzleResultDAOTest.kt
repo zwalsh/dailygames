@@ -21,7 +21,7 @@ import java.time.Instant
 import kotlin.streams.toList
 
 @ExtendWith(DatabaseExtension::class)
-class PuzzlePuzzleResultDAOTest(
+class PuzzleResultDAOTest(
     jdbi: Jdbi,
     private val fixtures: Fixtures
 ) {
@@ -132,6 +132,35 @@ class PuzzlePuzzleResultDAOTest(
         assertThat(results)
             .containsExactly(resultThree, resultTwo, resultOne)
             .inOrder()
+    }
+
+    @Test
+    fun `allResultsBetweenStream() filters by time range`() {
+        val resultOne = insertResult()
+        val resultTwo = insertResult(userId = fixtures.jackie.id)
+        val resultThree = insertResult(puzzle = fixtures.flagle123Puzzle)
+
+        val results = resultDAO.allResultsBetweenStream(
+            start = resultOne.instantSubmitted,
+            end = resultThree.instantSubmitted.minusMillis(1),
+        ).toList()
+
+        assertThat(results).containsExactly(resultOne, resultTwo)
+        assertThat(results).doesNotContain(resultThree)
+    }
+
+    @Test
+    fun `allResultsBetweenStream() sorts ascending`() {
+        val resultOne = insertResult()
+        val resultTwo = insertResult(userId = fixtures.jackie.id)
+        val resultThree = insertResult(puzzle = fixtures.flagle123Puzzle)
+
+        val results = resultDAO.allResultsBetweenStream(
+            start = resultOne.instantSubmitted,
+            end = resultThree.instantSubmitted,
+        ).toList()
+
+        assertThat(results).containsExactly(resultOne, resultTwo).inOrder()
     }
 
     @Test

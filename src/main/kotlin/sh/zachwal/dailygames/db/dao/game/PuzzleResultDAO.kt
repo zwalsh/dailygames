@@ -74,6 +74,17 @@ interface PuzzleResultDAO {
         """
             SELECT * 
             FROM result
+            WHERE instant_submitted >= :start 
+            AND instant_submitted < :end
+            ORDER BY instant_submitted
+        """
+    )
+    fun allResultsBetweenStream(start: Instant, end: Instant): Stream<PuzzleResult>
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM result
             WHERE game = :game
             ORDER BY instant_submitted DESC
         """

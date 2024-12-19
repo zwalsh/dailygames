@@ -47,6 +47,16 @@ data class AdminPageView constructor(
                         }
                     }
                 }
+                h2 {
+                    +"Wrapped"
+                }
+                ul {
+                    li {
+                        a(href = "/admin/wrapped-test") {
+                            +"Wrapped Test"
+                        }
+                    }
+                }
             }
         }
     }

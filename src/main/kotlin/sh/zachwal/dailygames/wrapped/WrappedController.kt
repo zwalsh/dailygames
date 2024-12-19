@@ -2,10 +2,12 @@ package sh.zachwal.dailygames.wrapped
 
 import io.ktor.application.call
 import io.ktor.html.respondHtml
+import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.util.getOrFail
 import sh.zachwal.dailygames.controller.Controller
+import sh.zachwal.dailygames.roles.adminRoute
 import sh.zachwal.dailygames.roles.approvedUserRoute
 import javax.inject.Inject
 
@@ -23,6 +25,14 @@ class WrappedController @Inject constructor(
                 call.respondHtml {
                     wrappedService.wrappedView(year, wrappedId).renderIn(this)
                 }
+            }
+        }
+    }
+
+    internal fun Routing.wrappedTest() {
+        adminRoute("/admin/wrapped-test") {
+            get {
+                call.respond(wrappedService.generateWrappedData(year = 2024)) // TODO set year
             }
         }
     }
