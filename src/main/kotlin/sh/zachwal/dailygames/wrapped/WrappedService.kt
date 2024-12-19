@@ -11,11 +11,8 @@ import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
 import sh.zachwal.dailygames.wrapped.views.TextSection
 import sh.zachwal.dailygames.wrapped.views.WelcomeSection
 import sh.zachwal.dailygames.wrapped.views.WrappedView
-import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.ZoneOffset
-import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
