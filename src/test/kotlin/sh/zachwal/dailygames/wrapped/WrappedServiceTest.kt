@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.wrapped
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import org.junit.jupiter.api.Test
@@ -58,5 +59,16 @@ class WrappedServiceTest {
 
         val userTwo = wrappedData.single { it.userId == 2L }
         assertThat(userTwo.totalGamesPlayed).isEqualTo(2)
+    }
+
+    @Test
+    fun `wrapped data queries for year start and end`() {
+        // Uses eastern time
+        every { resultDAO.allResultsBetweenStream(Instant.parse("2024-01-01T05:00:00Z"), Instant.parse("2025-01-01T05:00:00Z")) } returns Stream.empty()
+
+        service.generateWrappedData(2024)
+
+        // Verify that the DAO was called with the correct start and end times
+        verify { resultDAO.allResultsBetweenStream(Instant.parse("2024-01-01T05:00:00Z"), Instant.parse("2025-01-01T05:00:00Z")) }
     }
 }
