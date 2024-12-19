@@ -27,21 +27,22 @@ data class RanksTableSection(
                     th(scope = ThScope.col) { +"Rank" }
                 }
             }
+            // 🥇🥈🥉
             tbody {
                 tr {
                     th(scope = ThScope.row) { +"${Game.WORLDLE.emoji()} Worldle" }
                     td { +"1234" }
-                    td { +"1 ${Game.WORLDLE.perfectEmoji()}" }
+                    td { +"1 ${Game.WORLDLE.perfectEmoji()} \uD83E\uDD47" }
                 }
                 tr {
                     th(scope = ThScope.row) { +"${Game.TRADLE.emoji()} Tradle" }
                     td { +"345" }
-                    td { +"3" }
+                    td { +"3 \uD83E\uDD49" }
                 }
                 tr {
                     th(scope = ThScope.row) { +"${Game.TRAVLE.emoji()} Travle" }
                     td { +"678" }
-                    td { +"2" }
+                    td { +"2 \uD83E\uDD48" }
                 }
                 tr {
                     th(scope = ThScope.row) { +"${Game.TOP5.emoji()} Top 5" }
@@ -56,7 +57,7 @@ data class RanksTableSection(
                 tr {
                     th(scope = ThScope.row) { +"${Game.PINPOINT.emoji()} Pinpoint" }
                     td { +"1314" }
-                    td { +"6" }
+                    td { +"3 \uD83E\uDD49" }
                 }
                 tr {
                     th(scope = ThScope.row) { +"${Game.GEOCIRCLES.emoji()} Geocircles" }
