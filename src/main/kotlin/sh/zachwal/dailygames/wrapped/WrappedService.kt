@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.wrapped
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.wrapped.views.RanksTableSection
 import sh.zachwal.dailygames.wrapped.views.StatSection
+import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
 import sh.zachwal.dailygames.wrapped.views.TextSection
 import sh.zachwal.dailygames.wrapped.views.WelcomeSection
 import sh.zachwal.dailygames.wrapped.views.WrappedView
@@ -71,7 +72,9 @@ class WrappedService @Inject constructor() {
                     bottomText = "...which ranks #2!",
                     fontSizeOverride = "35vw;"
                 ),
-                // TODO stats page here too
+                SummaryTableSection(
+                    f = "f"
+                ),
                 RanksTableSection(
                     title = "Totals",
                 ),
