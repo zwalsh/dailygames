@@ -50,7 +50,7 @@ class WrappedServiceTest {
             result.copy(userId = 2),
         )
 
-        val wrappedData = service.generateWrappedData()
+        val wrappedData = service.generateWrappedData(2024)
 
         assertThat(wrappedData).hasSize(2)
 

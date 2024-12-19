@@ -32,7 +32,7 @@ class WrappedController @Inject constructor(
     internal fun Routing.wrappedTest() {
         adminRoute("/admin/wrapped-test") {
             get {
-                call.respond(wrappedService.generateWrappedData())
+                call.respond(wrappedService.generateWrappedData(year = 2024)) // TODO set year
             }
         }
     }

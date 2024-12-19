@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.wrapped
 
 import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.jdbi.WrappedInfo
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -10,6 +11,11 @@ import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
 import sh.zachwal.dailygames.wrapped.views.TextSection
 import sh.zachwal.dailygames.wrapped.views.WelcomeSection
 import sh.zachwal.dailygames.wrapped.views.WrappedView
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -90,8 +96,34 @@ class WrappedService @Inject constructor(
         )
     }
 
-    fun generateWrappedData(): List<WrappedInfo> {
+    fun generateWrappedData(year: Int): List<WrappedInfo> {
+        val resultDAO = jdbi.open().attach<PuzzleResultDAO>()
+        val yearStartInstant = LocalDate.ofYearDay(year, 1)
+            .atStartOfDay(ZoneId.systemDefault())
+            .toInstant()
+        val yearEndInstant = LocalDate.ofYearDay(year + 1, 1)
+            .atStartOfDay(ZoneId.systemDefault())
+            .toInstant()
+        val allResults = resultDAO.allResultsBetweenStream(
+            start = yearStartInstant,
+            end = yearEndInstant
+        )
 
-        return emptyList()
+        val userIds = mutableSetOf<Long>()
+        val totalGamesPlayed = mutableMapOf<Long, Int>()
+
+        // Iterate over the result stream and accumulate the data needed to create the WrappedInfo objects
+        allResults.forEach {
+            userIds.add(it.userId)
+            totalGamesPlayed[it.userId] = totalGamesPlayed.getOrDefault(it.userId, 0) + 1
+        }
+
+        return userIds.map {
+            WrappedInfo(
+                id = 0,
+                userId = it,
+                totalGamesPlayed = totalGamesPlayed[it] ?: 0,
+            )
+        }
     }
 }
