@@ -9,4 +9,5 @@ data class WrappedInfo(
     val id: Long,
     @ColumnName("user_id")
     val userId: Long,
+    val totalGamesPlayed: Int,
 )

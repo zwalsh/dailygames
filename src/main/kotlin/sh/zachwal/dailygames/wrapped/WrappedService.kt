@@ -1,5 +1,8 @@
 package sh.zachwal.dailygames.wrapped
 
+import org.jdbi.v3.core.Jdbi
+import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
+import sh.zachwal.dailygames.db.jdbi.WrappedInfo
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.wrapped.views.RanksTableSection
 import sh.zachwal.dailygames.wrapped.views.StatSection
@@ -11,7 +14,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WrappedService @Inject constructor() {
+class WrappedService @Inject constructor(
+    private val jdbi: Jdbi,
+) {
 
     fun wrappedView(year: Int, wrappedId: String): WrappedView {
         return WrappedView(
@@ -83,5 +88,10 @@ class WrappedService @Inject constructor() {
                 ),
             )
         )
+    }
+
+    fun generateWrappedData(): List<WrappedInfo> {
+
+        return emptyList()
     }
 }
