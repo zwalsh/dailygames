@@ -5,6 +5,7 @@ import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.jdbi.WrappedInfo
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.wrapped.views.RanksTableSection
 import sh.zachwal.dailygames.wrapped.views.StatSection
 import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
@@ -19,6 +20,7 @@ import javax.inject.Singleton
 @Singleton
 class WrappedService @Inject constructor(
     private val jdbi: Jdbi,
+    private val calculator: PointCalculator,
 ) {
 
     fun wrappedView(year: Int, wrappedId: String): WrappedView {
@@ -108,11 +110,20 @@ class WrappedService @Inject constructor(
 
         val userIds = mutableSetOf<Long>()
         val totalGamesPlayed = mutableMapOf<Long, Int>()
+        val gamesPlayedByGame = mutableMapOf<Long, MutableMap<Game, Int>>()
+        val pointsByGame = mutableMapOf<Long, MutableMap<Game, Int>>()
 
         // Iterate over the result stream and accumulate the data needed to create the WrappedInfo objects
-        allResults.forEach {
+        allResults.peek {
             userIds.add(it.userId)
-            totalGamesPlayed[it.userId] = totalGamesPlayed.getOrDefault(it.userId, 0) + 1
+        }.peek {
+            gamesPlayedByGame.getOrPut(it.userId) { mutableMapOf() }
+                .merge(it.game, 1, Int::plus)
+        }.peek {
+            pointsByGame.getOrPut(it.userId) { mutableMapOf() }
+                .merge(it.game, calculator.calculatePoints(it), Int::plus)
+        }.forEach {
+            totalGamesPlayed.merge(it.userId, 1, Int::plus)
         }
 
         return userIds.map {
@@ -120,6 +131,8 @@ class WrappedService @Inject constructor(
                 id = 0,
                 userId = it,
                 totalGamesPlayed = totalGamesPlayed[it] ?: 0,
+                gamesPlayedByGame = gamesPlayedByGame[it] ?: emptyMap(),
+                pointsByGame = pointsByGame[it] ?: emptyMap()
             )
         }
     }
