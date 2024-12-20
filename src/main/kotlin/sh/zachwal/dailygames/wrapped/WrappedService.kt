@@ -12,8 +12,11 @@ import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
 import sh.zachwal.dailygames.wrapped.views.TextSection
 import sh.zachwal.dailygames.wrapped.views.WelcomeSection
 import sh.zachwal.dailygames.wrapped.views.WrappedView
+import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -112,6 +115,8 @@ class WrappedService @Inject constructor(
         val totalGamesPlayed = mutableMapOf<Long, Int>()
         val gamesPlayedByGame = mutableMapOf<Long, MutableMap<Game, Int>>()
         val pointsByGame = mutableMapOf<Long, MutableMap<Game, Int>>()
+        val previousGameInstant = mutableMapOf<Long, Instant>()
+        val totalTimePlayed = mutableMapOf<Long, Duration>()
 
         // Iterate over the result stream and accumulate the data needed to create the WrappedInfo objects
         allResults.peek {
@@ -122,6 +127,13 @@ class WrappedService @Inject constructor(
         }.peek {
             pointsByGame.getOrPut(it.userId) { mutableMapOf() }
                 .merge(it.game, calculator.calculatePoints(it), Int::plus)
+        }.peek {
+            previousGameInstant.put(it.userId, it.instantSubmitted)?.let { previous ->
+                val difference = Duration.between(previous, it.instantSubmitted)
+                if (difference < Duration.of(20, ChronoUnit.MINUTES)) {
+                    totalTimePlayed.merge(it.userId, difference, Duration::plus)
+                }
+            }
         }.forEach {
             totalGamesPlayed.merge(it.userId, 1, Int::plus)
         }
@@ -139,7 +151,7 @@ class WrappedService @Inject constructor(
                 totalPointsRank = usersRankedByPoints.indexOf(it) + 1,
                 gamesPlayedByGame = gamesPlayedByGame[it] ?: emptyMap(),
                 pointsByGame = pointsByGame[it] ?: emptyMap(),
-                totalMinutes = 0,
+                totalMinutes = totalTimePlayed[it]?.toMinutes()?.toInt() ?: 0,
             )
         }
     }
