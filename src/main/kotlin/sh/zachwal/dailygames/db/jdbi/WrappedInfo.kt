@@ -6,7 +6,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 /**
  * TODO Will generate and store the wrapped info in the database so we don't have to repeatedly query all games.
  */
-data class WrappedInfo(
+data class WrappedInfo constructor(
     val id: Long,
     @ColumnName("user_id")
     val userId: Long,
@@ -16,4 +16,5 @@ data class WrappedInfo(
     val totalPointsRank: Int,
     val gamesPlayedByGame: Map<Game, Int>,
     val pointsByGame: Map<Game, Int>,
+    val totalMinutes: Int,
 )

@@ -138,7 +138,8 @@ class WrappedService @Inject constructor(
                 totalPoints = pointsByGame[it]?.values?.sum() ?: 0,
                 totalPointsRank = usersRankedByPoints.indexOf(it) + 1,
                 gamesPlayedByGame = gamesPlayedByGame[it] ?: emptyMap(),
-                pointsByGame = pointsByGame[it] ?: emptyMap()
+                pointsByGame = pointsByGame[it] ?: emptyMap(),
+                totalMinutes = 0,
             )
         }
     }

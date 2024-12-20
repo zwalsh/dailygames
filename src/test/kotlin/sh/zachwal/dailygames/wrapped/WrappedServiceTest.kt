@@ -15,6 +15,7 @@ import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
 
 class WrappedServiceTest {
@@ -187,5 +188,34 @@ class WrappedServiceTest {
 
         val userThree = wrappedData.single { it.userId == 3L }
         assertThat(userThree.totalPointsRank).isEqualTo(3)
+    }
+
+    @Test
+    fun `calculates total minutes a player played`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS).plusSeconds(120)),
+            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS).plusSeconds(180)),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.totalMinutes).isEqualTo(3)
+    }
+
+    @Test
+    fun `calculates total minutes, skipping gaps of larger than 20 minutes`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS).plus(1, ChronoUnit.MINUTES)),
+            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS).plus(21, ChronoUnit.MINUTES)),
+            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS).plus(22, ChronoUnit.MINUTES)),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.totalMinutes).isEqualTo(2)
     }
 }
