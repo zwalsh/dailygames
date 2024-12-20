@@ -12,6 +12,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
+import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
@@ -122,5 +123,70 @@ class WrappedServiceTest {
             Game.WORLDLE, 14,
             Game.GEOCIRCLES, 15,
         )
+    }
+
+    @Test
+    fun `calculates total points`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(score = 1),
+            result.copy(score = 1),
+            result.copy(game = Game.GEOCIRCLES, score = 5, resultInfo = GeocirclesInfo),
+            result.copy(game = Game.GEOCIRCLES, score = 10, resultInfo = GeocirclesInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.totalPoints).isEqualTo(29)
+    }
+
+    @Test
+    fun `ranks players by games played`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(),
+            result.copy(userId = 2),
+            result.copy(userId = 2),
+            result.copy(userId = 2, game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(userId = 3, game = Game.PINPOINT, resultInfo = PinpointInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.totalGamesRank).isEqualTo(1)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.totalGamesRank).isEqualTo(2)
+
+        val userThree = wrappedData.single { it.userId == 3L }
+        assertThat(userThree.totalGamesRank).isEqualTo(3)
+    }
+
+    @Test
+    fun `ranks players by total points`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            // user 1 has 12 points (from Worldle)
+            result,
+            result.copy(score = 1),
+            result.copy(score = 1),
+            // user 2 has 15 points (from Geocircles)
+            result.copy(userId = 2, game = Game.GEOCIRCLES, score = 5, resultInfo = GeocirclesInfo),
+            result.copy(userId = 2, game = Game.GEOCIRCLES, score = 10, resultInfo = GeocirclesInfo),
+            // user 3 has 1 point (from Pinpoint)
+            result.copy(userId = 3, game = Game.PINPOINT, score = 5, resultInfo = PinpointInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.totalPointsRank).isEqualTo(1)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.totalPointsRank).isEqualTo(2)
+
+        val userThree = wrappedData.single { it.userId == 3L }
+        assertThat(userThree.totalPointsRank).isEqualTo(3)
     }
 }

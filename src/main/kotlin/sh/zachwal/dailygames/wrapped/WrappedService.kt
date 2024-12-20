@@ -126,11 +126,17 @@ class WrappedService @Inject constructor(
             totalGamesPlayed.merge(it.userId, 1, Int::plus)
         }
 
+        val usersRankedByGames = userIds.sortedByDescending { totalGamesPlayed[it] }
+        val usersRankedByPoints = userIds.sortedByDescending { pointsByGame[it]?.values?.sum() ?: 0 }
+
         return userIds.map {
             WrappedInfo(
                 id = 0,
                 userId = it,
                 totalGamesPlayed = totalGamesPlayed[it] ?: 0,
+                totalGamesRank = usersRankedByGames.indexOf(it) + 1,
+                totalPoints = pointsByGame[it]?.values?.sum() ?: 0,
+                totalPointsRank = usersRankedByPoints.indexOf(it) + 1,
                 gamesPlayedByGame = gamesPlayedByGame[it] ?: emptyMap(),
                 pointsByGame = pointsByGame[it] ?: emptyMap()
             )

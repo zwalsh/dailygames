@@ -11,6 +11,9 @@ data class WrappedInfo(
     @ColumnName("user_id")
     val userId: Long,
     val totalGamesPlayed: Int,
+    val totalGamesRank: Int,
+    val totalPoints: Int,
+    val totalPointsRank: Int,
     val gamesPlayedByGame: Map<Game, Int>,
     val pointsByGame: Map<Game, Int>,
 )
