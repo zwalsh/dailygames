@@ -23,9 +23,10 @@ class WrappedController @Inject constructor(
             get {
                 val year = call.parameters.getOrFail("year").toInt()
                 val userId = currentUser(call, userService).id
+                val wrappedView = wrappedService.wrappedView(year, userId)
 
                 call.respondHtml {
-                    wrappedService.wrappedView(year, userId).renderIn(this)
+                    wrappedView.renderIn(this)
                 }
             }
         }
@@ -34,9 +35,10 @@ class WrappedController @Inject constructor(
             get {
                 val year = call.parameters.getOrFail("year").toInt()
                 val userId = call.parameters.getOrFail("userId").toLong()
+                val wrappedView = wrappedService.wrappedView(year, userId)
 
                 call.respondHtml {
-                    wrappedService.wrappedView(year, userId).renderIn(this)
+                    wrappedView.renderIn(this)
                 }
             }
         }
