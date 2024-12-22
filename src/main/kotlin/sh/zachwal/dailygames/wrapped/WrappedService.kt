@@ -25,6 +25,8 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import sh.zachwal.dailygames.db.jdbi.User
+import sh.zachwal.dailygames.wrapped.views.GuestWelcomeSection
 import sh.zachwal.dailygames.wrapped.views.WrappedShareView
 
 @Singleton
@@ -39,8 +41,34 @@ class WrappedService @Inject constructor(
 
     private val bestDayFormatter = DateTimeFormatter.ofPattern("MMMM d")
 
-    fun wrappedView(year: Int, userId: Long): WrappedView {
+    fun guestWrappedView(year: Int, username: String): WrappedView {
         val wrappedData = generateWrappedData(year)
+        val userId = userService.getUser(username)?.id
+            ?: throw RuntimeException("Could not find this Wrapped for user=${username}.")
+
+        val wrappedInfo = wrappedData.firstOrNull { it.userId == userId }
+            ?: throw RuntimeException("Could not find this Wrapped.")
+
+        logger.info("Generating guest Wrapped for $username in $year using $wrappedInfo")
+
+        var wrappedIndex = 0
+
+        return WrappedView(
+            name = username,
+            year = year,
+            sections = listOf(
+                GuestWelcomeSection(year, username, wrappedIndex++),
+                SummaryTableSection(wrappedInfo, wrappedIndex++),
+                buildRanksTableTotals(wrappedInfo, wrappedIndex++),
+                buildRanksTableAverages(wrappedInfo, wrappedIndex),
+            )
+        )
+    }
+
+    fun wrappedView(year: Int, currentUser: User): WrappedView {
+        val wrappedData = generateWrappedData(year)
+        val userId = currentUser.id
+
         val wrappedInfo = wrappedData.firstOrNull { it.userId == userId }
             ?: throw RuntimeException("Could not find this Wrapped.")
         val userName = userService.getUsernameCached(userId)
@@ -138,50 +166,58 @@ class WrappedService @Inject constructor(
                     wrappedInfo = wrappedInfo,
                     wrappedIndex = wrappedIndex++,
                 ),
-                wrappedInfo.ranksPerGameTotal.let { ranks ->
-                    // Use Game.values() to get consistent ordering
-                    val rows = Game.values().mapNotNull { game ->
-                        ranks[game]?.let { rank ->
-                            RanksTableRowView(
-                                game = game,
-                                statText = (wrappedInfo.pointsByGame[game] ?: 0).toString(),
-                                rank = rank,
-                            )
-                        }
-                    }
-                    RanksTableSection(
-                        title = "Totals",
-                        heading = "Points",
-                        subHeading = null,
-                        rows = rows,
-                        wrappedIndex = wrappedIndex++,
-                    )
-                },
-                wrappedInfo.ranksPerGameAverage.let { ranks ->
-                    // Use Game.values() to get consistent ordering
-                    val rows = Game.values().mapNotNull { game ->
-                        ranks[game]?.let { rank ->
-                            RanksTableRowView(
-                                game = game,
-                                statText = (wrappedInfo.averagesByGame[game] ?: 0.0).toString(),
-                                rank = rank,
-                            )
-                        }
-                    }
-                    RanksTableSection(
-                        title = "Averages",
-                        heading = "Average",
-                        subHeading = "(min $MINIMUM_GAMES_FOR_AVERAGE games)",
-                        rows = rows,
-                        wrappedIndex = wrappedIndex++,
-                    )
-                },
+                buildRanksTableTotals(wrappedInfo, wrappedIndex++),
+                buildRanksTableAverages(wrappedInfo, wrappedIndex++),
             ),
             wrappedShareView = WrappedShareView(
                 year = year,
                 username = userName,
             )
         )
+    }
+
+    private fun buildRanksTableTotals(wrappedInfo: WrappedInfo, wrappedIndex: Int): RanksTableSection {
+        return wrappedInfo.ranksPerGameTotal.let { ranks ->
+            // Use Game.values() to get consistent ordering
+            val rows = Game.values().mapNotNull { game ->
+                ranks[game]?.let { rank ->
+                    RanksTableRowView(
+                        game = game,
+                        statText = (wrappedInfo.pointsByGame[game] ?: 0).toString(),
+                        rank = rank,
+                    )
+                }
+            }
+            RanksTableSection(
+                title = "Totals",
+                heading = "Points",
+                subHeading = null,
+                rows = rows,
+                wrappedIndex = wrappedIndex,
+            )
+        }
+    }
+
+    private fun buildRanksTableAverages(wrappedInfo: WrappedInfo, wrappedIndex: Int): RanksTableSection {
+        return wrappedInfo.ranksPerGameAverage.let { ranks ->
+            // Use Game.values() to get consistent ordering
+            val rows = Game.values().mapNotNull { game ->
+                ranks[game]?.let { rank ->
+                    RanksTableRowView(
+                        game = game,
+                        statText = (wrappedInfo.averagesByGame[game] ?: 0.0).toString(),
+                        rank = rank,
+                    )
+                }
+            }
+            RanksTableSection(
+                title = "Averages",
+                heading = "Average",
+                subHeading = "(min $MINIMUM_GAMES_FOR_AVERAGE games)",
+                rows = rows,
+                wrappedIndex = wrappedIndex,
+            )
+        }
     }
 
     fun generateWrappedData(year: Int): List<WrappedInfo> = jdbi.open().use { handle ->
