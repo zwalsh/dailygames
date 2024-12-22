@@ -18,6 +18,7 @@ import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
+import sh.zachwal.dailygames.results.resultinfo.Top5Info
 
 class WrappedServiceTest {
 
@@ -336,9 +337,9 @@ class WrappedServiceTest {
         }
 
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns
-            playerOneWorldle
-                .plus(playerTwoWorldle)
-                .stream()
+                playerOneWorldle
+                    .plus(playerTwoWorldle)
+                    .stream()
 
         val wrappedData = service.generateWrappedData(2024)
 
@@ -350,5 +351,35 @@ class WrappedServiceTest {
         assertThat(userTwo.ranksPerGameAverage).containsAtLeast(
             Game.WORLDLE, 1
         )
+    }
+
+    @Test
+    fun `calculate a user's best game (highest rank by average)`() {
+        val results = listOf(
+            // user 3 is third at Worldle
+            result.copy(userId = 1, game = Game.WORLDLE, score = 1),
+            result.copy(userId = 2, game = Game.WORLDLE, score = 2),
+            result.copy(userId = 3, game = Game.WORLDLE, score = 3),
+            // user 3 is third at Geocircles
+            result.copy(userId = 1, game = Game.GEOCIRCLES, score = 10, resultInfo = GeocirclesInfo),
+            result.copy(userId = 2, game = Game.GEOCIRCLES, score = 7, resultInfo = GeocirclesInfo),
+            result.copy(userId = 3, game = Game.GEOCIRCLES, score = 5, resultInfo = GeocirclesInfo),
+            // user 3 is second at Top5
+            result.copy(userId = 1, game = Game.TOP5, score = 10, resultInfo = Top5Info(5, 5, false)),
+            result.copy(userId = 2, game = Game.TOP5, score = 5, resultInfo = Top5Info(5, 5, false)),
+            result.copy(userId = 3, game = Game.TOP5, score = 9, resultInfo = Top5Info(5, 5, false)),
+        )
+
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns
+                // repeat 10 times to exceed minimum cutoff
+                List(10) { results }
+                    .flatten()
+                    .stream()
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userThree = wrappedData.single { it.userId == 3L }
+        assertThat(userThree.bestGame).isEqualTo(Game.TOP5)
+        assertThat(userThree.ranksPerGameAverage[Game.TOP5]).isEqualTo(2)
     }
 }

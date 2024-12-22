@@ -187,7 +187,10 @@ class WrappedService @Inject constructor(
                 .associateWith { game -> usersRankedByTotal[game]!!.indexOf(userId) + 1 }
             val userRanksByGameAverage = gamesPlayedByUser
                 .associateWith { game -> usersRankedByAverage[game]!!.indexOf(userId) + 1 }
-            
+            val bestGame = userRanksByGameAverage
+                .minByOrNull { (_, rank) -> rank }!!
+                .key
+
             WrappedInfo(
                 id = 0,
                 userId = userId,
@@ -200,6 +203,7 @@ class WrappedService @Inject constructor(
                 pointsByGame = pointsByGame[userId] ?: emptyMap(),
                 totalMinutes = totalTimePlayed[userId]?.toMinutes()?.toInt() ?: 0,
                 totalMinutesRank = usersRankedByTotalMinutes.indexOf(userId) + 1,
+                bestGame = bestGame,
                 averagesByGame = averagesByUser[userId] ?: emptyMap(),
                 ranksPerGameTotal = userRanksByGameTotal,
                 ranksPerGameAverage = userRanksByGameAverage,
