@@ -19,11 +19,13 @@ class WrappedController @Inject constructor(
 ) {
 
     internal fun Routing.wrapped() {
-        adminRoute("/wrapped/{year}") {
+
+        adminRoute("/wrapped/{year}/as/{userName}") {
             get {
                 val year = call.parameters.getOrFail("year").toInt()
-                val userId = currentUser(call, userService).id
-                val wrappedView = wrappedService.wrappedView(year, userId)
+                val username = call.parameters.getOrFail("userName")
+                val user = userService.getUser(username) ?: throw RuntimeException("User=$username not found")
+                val wrappedView = wrappedService.wrappedView(year, user)
 
                 call.respondHtml {
                     wrappedView.renderIn(this)
@@ -31,11 +33,23 @@ class WrappedController @Inject constructor(
             }
         }
 
-        adminRoute("/wrapped/{year}/{userId}") {
+        adminRoute("/wrapped/{year}") {
             get {
                 val year = call.parameters.getOrFail("year").toInt()
-                val userId = call.parameters.getOrFail("userId").toLong()
-                val wrappedView = wrappedService.wrappedView(year, userId)
+                val user = currentUser(call, userService)
+                val wrappedView = wrappedService.wrappedView(year, user)
+
+                call.respondHtml {
+                    wrappedView.renderIn(this)
+                }
+            }
+        }
+
+        adminRoute("/wrapped/{year}/{userName}") {
+            get {
+                val year = call.parameters.getOrFail("year").toInt()
+                val username = call.parameters.getOrFail("userName")
+                val wrappedView = wrappedService.guestWrappedView(year, username)
 
                 call.respondHtml {
                     wrappedView.renderIn(this)

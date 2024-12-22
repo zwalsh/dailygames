@@ -10,11 +10,13 @@ import kotlinx.html.title
 import sh.zachwal.dailygames.shared_html.HTMLView
 import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
+import sh.zachwal.dailygames.shared_html.jquery
 
 data class WrappedView(
     val name: String,
     val year: Int,
     val sections: List<WrappedSection>,
+    val wrappedShareView: WrappedShareView? = null,
 ) : HTMLView<HTML>() {
     override fun HTML.render() {
         head {
@@ -23,6 +25,7 @@ data class WrappedView(
             }
             headSetup()
             link(href = "/static/src/css/wrapped.css", rel = "stylesheet")
+            jquery()
             script {
                 src = "/static/src/js/wrapped.js"
             }
@@ -33,6 +36,7 @@ data class WrappedView(
                 sections.forEach {
                     it.renderIn(this@div)
                 }
+                wrappedShareView?.renderIn(this@div)
             }
         }
     }

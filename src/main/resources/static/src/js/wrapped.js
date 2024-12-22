@@ -55,8 +55,23 @@ function runOnFirstAppearance(element, callback) {
     observer.observe(element);
 }
 
+function addWebShare() {
+   $('#share-button').click(async () => {
+       console.log('Share button clicked');
+       const year = $('#share-button')[0].attributes['data-year'].value;
+       const username = $('#share-button')[0].attributes['data-username'].value;
+
+       await navigator.share({
+          title: username + '\'s Daily Games Wrapped ' + year,
+          text: 'Check out ' + username +'\'s Daily Games Wrapped, ' + year +'!',
+          url: '/wrapped/' + year + '/' + username
+       });
+   });
+}
 
 window.onload = function () {
     const counters = document.querySelectorAll('.animate');
     counters.forEach(counter => runOnFirstAppearance(counter, animate));
+
+    addWebShare();
 };
