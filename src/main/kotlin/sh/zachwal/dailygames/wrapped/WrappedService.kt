@@ -118,7 +118,7 @@ class WrappedService @Inject constructor(
                     )
                 },
                 SummaryTableSection(
-                    f = "f"
+                    wrappedInfo = wrappedInfo
                 ),
                 wrappedInfo.ranksPerGameTotal.let { ranks ->
                     val rows = ranks.entries.map { (game, rank) ->
