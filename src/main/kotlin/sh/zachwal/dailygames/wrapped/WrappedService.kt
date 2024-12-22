@@ -22,12 +22,14 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import sh.zachwal.dailygames.users.UserPreferencesService
 
 @Singleton
 class WrappedService @Inject constructor(
     private val jdbi: Jdbi,
     private val calculator: PointCalculator,
     private val userService: UserService,
+    private val userPreferencesService: UserPreferencesService,
 ) {
 
     private val logger = LoggerFactory.getLogger(WrappedService::class.java)
@@ -219,12 +221,14 @@ class WrappedService @Inject constructor(
                 totalPointsRank = usersRankedByPoints.indexOf(userId) + 1,
                 favoriteGame = favoriteGameByUser.getValue(userId),
                 gamesPlayedByGame = gamesPlayedByGame[userId] ?: emptyMap(),
-                pointsByGame = pointsByGame[userId] ?: emptyMap(),
+                bestDay = null,
+                bestDayPoints = 0,
                 totalMinutes = totalTimePlayed[userId]?.toMinutes()?.toInt() ?: 0,
                 totalMinutesRank = usersRankedByTotalMinutes.indexOf(userId) + 1,
                 bestGame = bestGame,
-                averagesByGame = averagesByUser[userId] ?: emptyMap(),
+                pointsByGame = pointsByGame[userId] ?: emptyMap(),
                 ranksPerGameTotal = userRanksByGameTotal,
+                averagesByGame = averagesByUser[userId] ?: emptyMap(),
                 ranksPerGameAverage = userRanksByGameAverage,
             )
         }
