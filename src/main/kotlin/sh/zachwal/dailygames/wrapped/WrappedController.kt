@@ -19,21 +19,28 @@ class WrappedController @Inject constructor(
 ) {
 
     internal fun Routing.wrapped() {
-        adminRoute("/wrapped/{year}") {
+
+        adminRoute("/wrapped/{year}/as/{userName}") {
             get {
                 val year = call.parameters.getOrFail("year").toInt()
-<<<<<<< HEAD
-                val userId = currentUser(call, userService).id
-                val wrappedView = wrappedService.wrappedView(year, userId)
+                val username = call.parameters.getOrFail("userName")
+                val user = userService.getUser(username) ?: throw RuntimeException("User=${username} not found")
+                val wrappedView = wrappedService.wrappedView(year, user)
 
                 call.respondHtml {
                     wrappedView.renderIn(this)
-=======
+                }
+            }
+        }
+
+        adminRoute("/wrapped/{year}") {
+            get {
+                val year = call.parameters.getOrFail("year").toInt()
                 val user = currentUser(call, userService)
+                val wrappedView = wrappedService.wrappedView(year, user)
 
                 call.respondHtml {
-                    wrappedService.wrappedView(year, user).renderIn(this)
->>>>>>> 583f4fd... Wrapped guest page
+                    wrappedView.renderIn(this)
                 }
             }
         }
@@ -41,18 +48,11 @@ class WrappedController @Inject constructor(
         adminRoute("/wrapped/{year}/{userName}") {
             get {
                 val year = call.parameters.getOrFail("year").toInt()
-<<<<<<< HEAD
-                val userId = call.parameters.getOrFail("userId").toLong()
-                val wrappedView = wrappedService.wrappedView(year, userId)
+                val username = call.parameters.getOrFail("userName")
+                val wrappedView = wrappedService.guestWrappedView(year, username)
 
                 call.respondHtml {
                     wrappedView.renderIn(this)
-=======
-                val username = call.parameters.getOrFail("userName")
-
-                call.respondHtml {
-                    wrappedService.guestWrappedView(year, username).renderIn(this)
->>>>>>> 583f4fd... Wrapped guest page
                 }
             }
         }
