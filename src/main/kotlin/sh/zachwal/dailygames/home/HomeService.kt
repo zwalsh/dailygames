@@ -1,24 +1,23 @@
 package sh.zachwal.dailygames.home
 
-import java.time.Clock
 import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.home.views.HomeView
 import sh.zachwal.dailygames.home.views.ShareTextModalView
+import sh.zachwal.dailygames.home.views.WrappedLinkView
 import sh.zachwal.dailygames.home.views.gamelinks.GameLinkView
 import sh.zachwal.dailygames.home.views.gamelinks.GameListView
 import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
+import sh.zachwal.dailygames.users.UserPreferencesService
+import java.time.Clock
 import java.time.Duration
 import java.time.Instant
-import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
-import sh.zachwal.dailygames.home.views.WrappedLinkView
-import sh.zachwal.dailygames.users.UserPreferencesService
 
 @Singleton
 class HomeService @Inject constructor(

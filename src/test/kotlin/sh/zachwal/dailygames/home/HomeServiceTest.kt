@@ -3,7 +3,6 @@ package sh.zachwal.dailygames.home
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
-import java.time.Clock
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.jdbi.User
@@ -14,9 +13,10 @@ import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
+import sh.zachwal.dailygames.users.UserPreferencesService
+import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
-import sh.zachwal.dailygames.users.UserPreferencesService
 
 class HomeServiceTest {
 

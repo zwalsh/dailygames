@@ -9,9 +9,9 @@ import io.ktor.util.getOrFail
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.roles.adminRoute
+import sh.zachwal.dailygames.roles.approvedUserRoute
 import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
-import sh.zachwal.dailygames.roles.approvedUserRoute
 
 @Controller
 class WrappedController @Inject constructor(
