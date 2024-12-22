@@ -8,6 +8,7 @@ import sh.zachwal.dailygames.db.jdbi.WrappedInfo
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.leaderboard.MINIMUM_GAMES_FOR_AVERAGE
 import sh.zachwal.dailygames.leaderboard.PointCalculator
+import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.wrapped.views.RanksTableSection
 import sh.zachwal.dailygames.wrapped.views.StatSection
@@ -23,7 +24,6 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import sh.zachwal.dailygames.users.UserPreferencesService
 
 @Singleton
 class WrappedService @Inject constructor(

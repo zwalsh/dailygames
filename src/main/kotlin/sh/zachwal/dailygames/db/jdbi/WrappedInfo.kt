@@ -1,8 +1,8 @@
 package sh.zachwal.dailygames.db.jdbi
 
-import java.time.LocalDate
 import org.jdbi.v3.core.mapper.reflect.ColumnName
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import java.time.LocalDate
 
 /**
  * TODO Will generate and store the wrapped info in the database so we don't have to repeatedly query all games.

@@ -15,12 +15,12 @@ import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
+import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
-import sh.zachwal.dailygames.users.UserPreferencesService
 
 class WrappedServiceTest {
 
