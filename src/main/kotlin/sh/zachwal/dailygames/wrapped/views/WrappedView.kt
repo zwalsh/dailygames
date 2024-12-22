@@ -15,6 +15,7 @@ data class WrappedView(
     val name: String,
     val year: Int,
     val sections: List<WrappedSection>,
+    val wrappedShareView: WrappedShareView? = null,
 ) : HTMLView<HTML>() {
     override fun HTML.render() {
         head {
@@ -33,6 +34,7 @@ data class WrappedView(
                 sections.forEach {
                     it.renderIn(this@div)
                 }
+                wrappedShareView?.renderIn(this@div)
             }
         }
     }

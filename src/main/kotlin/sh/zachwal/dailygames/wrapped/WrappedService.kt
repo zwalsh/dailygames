@@ -25,6 +25,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import sh.zachwal.dailygames.wrapped.views.WrappedShareView
 
 @Singleton
 class WrappedService @Inject constructor(
@@ -175,6 +176,10 @@ class WrappedService @Inject constructor(
                         wrappedIndex = wrappedIndex++,
                     )
                 },
+            ),
+            wrappedShareView = WrappedShareView(
+                year = year,
+                username = userName,
             )
         )
     }
