@@ -10,6 +10,7 @@ import sh.zachwal.dailygames.leaderboard.MINIMUM_GAMES_FOR_AVERAGE
 import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.wrapped.views.RanksTableRowView
 import sh.zachwal.dailygames.wrapped.views.RanksTableSection
 import sh.zachwal.dailygames.wrapped.views.StatSection
 import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
@@ -119,12 +120,36 @@ class WrappedService @Inject constructor(
                 SummaryTableSection(
                     f = "f"
                 ),
-                RanksTableSection(
-                    title = "Totals",
-                ),
-                RanksTableSection(
-                    title = "Averages",
-                ),
+                wrappedInfo.ranksPerGameTotal.let { ranks ->
+                    val rows = ranks.entries.map { (game, rank) ->
+                        RanksTableRowView(
+                            game = game,
+                            stat = wrappedInfo.pointsByGame[game] ?: 0,
+                            rank = rank,
+                        )
+                    }
+                    RanksTableSection(
+                        title = "Totals",
+                        heading = "Points",
+                        subHeading = null,
+                        rows = rows
+                    )
+                },
+                wrappedInfo.ranksPerGameAverage.let { ranks ->
+                    val rows = ranks.entries.map { (game, rank) ->
+                        RanksTableRowView(
+                            game = game,
+                            stat = wrappedInfo.averagesByGame[game]?.toInt() ?: 0,
+                            rank = rank,
+                        )
+                    }
+                    RanksTableSection(
+                        title = "Averages",
+                        heading = "Average",
+                        subHeading = "(min $MINIMUM_GAMES_FOR_AVERAGE games)",
+                        rows = rows
+                    )
+                },
             )
         )
     }
