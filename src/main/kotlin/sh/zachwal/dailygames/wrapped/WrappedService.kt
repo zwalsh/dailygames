@@ -118,7 +118,7 @@ class WrappedService @Inject constructor(
                     )
                 },
                 SummaryTableSection(
-                    f = "f"
+                    wrappedInfo = wrappedInfo
                 ),
                 wrappedInfo.ranksPerGameTotal.let { ranks ->
                     // Use Game.values() to get consistent ordering

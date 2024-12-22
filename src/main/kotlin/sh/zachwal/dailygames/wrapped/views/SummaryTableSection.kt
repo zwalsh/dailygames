@@ -8,13 +8,36 @@ import kotlinx.html.tbody
 import kotlinx.html.td
 import kotlinx.html.th
 import kotlinx.html.tr
-import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.db.jdbi.WrappedInfo
+import java.time.format.DateTimeFormatter
+
+private val bestDayFormatter = DateTimeFormatter.ofPattern("M/d/yy")
 
 data class SummaryTableSection(
-    val f: String,
+    val wrappedInfo: WrappedInfo,
 ) : WrappedSection(
     height = "", // Don't force view height = 90
 ) {
+
+    private val rankString = when (wrappedInfo.totalPointsRank) {
+        1 -> "\uD83E\uDD47"
+        2 -> "\uD83E\uDD48"
+        3 -> "\uD83E\uDD49"
+        else -> "${wrappedInfo.totalPointsRank}"
+    }
+
+    private val favoriteGameString = wrappedInfo.favoriteGame.let { game ->
+        "${game.emoji()}${game.displayName()}${game.emoji()} "
+    }
+
+    private val bestDayString = wrappedInfo.bestDay?.let { day ->
+        "${bestDayFormatter.format(day)} - ${wrappedInfo.bestDayPoints} points"
+    }
+
+    private val bestGameString = wrappedInfo.bestGame?.let { game ->
+        "${game.emoji()} ${game.displayName()} - #${wrappedInfo.ranksPerGameAverage[game]}"
+    }
+
     override fun DIV.content() {
         h1 { +"Summary" }
 
@@ -22,31 +45,35 @@ data class SummaryTableSection(
             tbody {
                 tr {
                     th(scope = ThScope.row) { +"Total Games Played" }
-                    td { +"982" }
+                    td { +wrappedInfo.totalGamesPlayed.toString() }
                 }
                 tr {
                     th(scope = ThScope.row) { +"Total Points" }
-                    td { +"5487" }
+                    td { +wrappedInfo.totalPoints.toString() }
                 }
                 tr {
                     th(scope = ThScope.row) { +"Overall Rank" }
-                    td { +"1 \uD83E\uDD47" } // 🥇🥈🥉
+                    td { +rankString } // 🥇🥈🥉
                 }
                 tr {
                     th(scope = ThScope.row) { +"Favorite Game" }
-                    td { +"${Game.TRAVLE.emoji()}Travle${Game.TRAVLE.emoji()} " }
+                    td { +favoriteGameString }
                 }
-                tr {
-                    th(scope = ThScope.row) { +"Best Day" }
-                    td { +"9/14/24 - 48 points" }
+                bestDayString?.let {
+                    tr {
+                        th(scope = ThScope.row) { +"Best Day" }
+                        td { +bestDayString }
+                    }
                 }
                 tr {
                     th(scope = ThScope.row) { +"Minutes Played" }
-                    td { +"1112" }
+                    td { +wrappedInfo.totalMinutes.toString() }
                 }
-                tr {
-                    th(scope = ThScope.row) { +"Best Game" }
-                    td { +"${Game.WORLDLE.emoji()} Worldle - 3rd \uD83E\uDD49" }
+                bestGameString?.let {
+                    tr {
+                        th(scope = ThScope.row) { +"Best Game" }
+                        td { +bestGameString }
+                    }
                 }
             }
         }
