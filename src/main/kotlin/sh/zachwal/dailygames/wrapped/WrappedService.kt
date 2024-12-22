@@ -19,6 +19,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,6 +35,8 @@ class WrappedService @Inject constructor(
 
     private val logger = LoggerFactory.getLogger(WrappedService::class.java)
 
+    private val bestDayFormatter = DateTimeFormatter.ofPattern("MMMM d")
+
     fun wrappedView(year: Int, userId: Long): WrappedView {
         val wrappedData = generateWrappedData(year)
         val wrappedInfo = wrappedData.firstOrNull { it.userId == userId }
@@ -43,91 +46,86 @@ class WrappedService @Inject constructor(
 
         logger.info("Generating Wrapped for $userName in $year using $wrappedInfo")
 
-        val favoriteGame = wrappedInfo.favoriteGame
-        val favoriteGameText = "${favoriteGame.emoji()}${favoriteGame.displayName()}${favoriteGame.emoji()}"
-        val favoriteGamePlayCount = wrappedInfo.gamesPlayedByGame[favoriteGame]
-
-        val sections = listOf(
-            WelcomeSection(year, userName),
-            StatSection(
-                topText = "You played...",
-                stat = wrappedInfo.totalGamesPlayed,
-                bottomText = "...games this year.",
-            ),
-            StatSection(
-                topText = "That ranks...",
-                stat = wrappedInfo.totalGamesRank,
-                bottomText = "...across all players!",
-            ),
-            // points scored
-            StatSection(
-                topText = "You scored...",
-                stat = wrappedInfo.totalPoints,
-                bottomText = "...points this year.",
-            ),
-            StatSection(
-                topText = "That ranks...",
-                stat = wrappedInfo.totalPointsRank,
-                bottomText = "...overall!",
-            ),
-            // Favorite game
-            TextSection(
-                topText = "Your favorite game was...",
-                middleText = favoriteGameText,
-                bottomText = "...you played it $favoriteGamePlayCount times!",
-            ),
-            TextSection(
-                topText = "Your best day was...",
-                middleText = "September 14th",
-                bottomText = "...when you scored 39 points!",
-            ),
-            StatSection(
-                topText = "You played Daily Games for...",
-                stat = wrappedInfo.totalMinutes,
-                bottomText = "...minutes this year.",
-            ),
-            StatSection(
-                topText = "That's number...",
-                stat = wrappedInfo.totalMinutesRank,
-                bottomText = "... of all players!",
-            )
-        )
-
-        val bestGameSections = wrappedInfo.bestGame?.let {
-            val bestGameText = "${it.emoji()}${it.displayName()}${it.emoji()}"
-            val bestGameAverage = wrappedInfo.averagesByGame[it]!!
-            val bestGameRank = wrappedInfo.ranksPerGameAverage[it]!!
-
-            listOf(
-                TextSection(
-                    topText = "Your best game was...",
-                    middleText = bestGameText,
-                    bottomText = "",
-                ),
-                TextSection(
-                    topText = "Your average ${it.displayName()} score was...",
-                    middleText = bestGameAverage.toString(),
-                    bottomText = "...which ranks #$bestGameRank!",
-                    fontSizeOverride = "35vw;"
-                ),
-            )
-        } ?: emptyList()
-
-        val tableSections = listOf(
-            SummaryTableSection(
-                f = "f"
-            ),
-            RanksTableSection(
-                title = "Totals",
-            ),
-            RanksTableSection(
-                title = "Averages",
-            ),
-        )
         return WrappedView(
             name = userName,
             year = year,
-            sections = sections + bestGameSections + tableSections
+            sections = listOfNotNull(
+                WelcomeSection(year, userName),
+                StatSection(
+                    topText = "You played...",
+                    stat = wrappedInfo.totalGamesPlayed,
+                    bottomText = "...games this year.",
+                ),
+                StatSection(
+                    topText = "That ranks...",
+                    stat = wrappedInfo.totalGamesRank,
+                    bottomText = "...across all players!",
+                ),
+                // points scored
+                StatSection(
+                    topText = "You scored...",
+                    stat = wrappedInfo.totalPoints,
+                    bottomText = "...points this year.",
+                ),
+                StatSection(
+                    topText = "That ranks...",
+                    stat = wrappedInfo.totalPointsRank,
+                    bottomText = "...overall!",
+                ),
+                wrappedInfo.favoriteGame.let {
+                    val favoriteGameText = "${it.emoji()}${it.displayName()}${it.emoji()}"
+                    val favoriteGamePlayCount = wrappedInfo.gamesPlayedByGame[it]
+                    TextSection(
+                        topText = "Your favorite game was...",
+                        middleText = favoriteGameText,
+                        bottomText = "...you played it $favoriteGamePlayCount times!",
+                    )
+                },
+                wrappedInfo.bestDay?.let {
+                    TextSection(
+                        topText = "Your best day was...",
+                        middleText = it.format(bestDayFormatter),
+                        bottomText = "...when you scored ${wrappedInfo.bestDayPoints} points!",
+                    )
+                },
+                StatSection(
+                    topText = "You played Daily Games for...",
+                    stat = wrappedInfo.totalMinutes,
+                    bottomText = "...minutes this year.",
+                ),
+                StatSection(
+                    topText = "That's number...",
+                    stat = wrappedInfo.totalMinutesRank,
+                    bottomText = "... of all players!",
+                ),
+                wrappedInfo.bestGame?.let {
+                    val bestGameText = "${it.emoji()}${it.displayName()}${it.emoji()}"
+                    TextSection(
+                        topText = "Your best game was...",
+                        middleText = bestGameText,
+                        bottomText = "",
+                    )
+                },
+                wrappedInfo.bestGame?.let {
+                    val bestGameAverage = wrappedInfo.averagesByGame[it]!!
+                    val bestGameRank = wrappedInfo.ranksPerGameAverage[it]!!
+                    TextSection(
+                        topText = "Your average ${it.displayName()} score was...",
+                        middleText = bestGameAverage.toString(),
+                        bottomText = "...which ranks #$bestGameRank!",
+                        fontSizeOverride = "35vw;"
+                    )
+                },
+                SummaryTableSection(
+                    f = "f"
+                ),
+                RanksTableSection(
+                    title = "Totals",
+                ),
+                RanksTableSection(
+                    title = "Averages",
+                ),
+            )
         )
     }
 
