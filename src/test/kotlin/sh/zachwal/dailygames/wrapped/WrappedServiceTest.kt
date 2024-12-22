@@ -14,6 +14,7 @@ import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
+import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
@@ -40,9 +41,11 @@ class WrappedServiceTest {
         }
     }
 
+    private val userService = mockk<UserService>()
     private val service = WrappedService(
         jdbi = jdbi,
         calculator = PointCalculator(),
+        userService = userService,
     )
 
     @Test
@@ -217,5 +220,82 @@ class WrappedServiceTest {
 
         val userOne = wrappedData.single { it.userId == 1L }
         assertThat(userOne.totalMinutes).isEqualTo(2)
+    }
+
+    @Test
+    fun `ranks users by total minutes`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.MINUTES)),
+            result,
+            result.copy(userId = 2, instantSubmitted = Instant.now().minus(2, ChronoUnit.MINUTES)),
+            result.copy(userId = 2),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.totalMinutesRank).isEqualTo(2)
+
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.totalMinutesRank).isEqualTo(1)
+    }
+
+    @Test
+    fun `calculates most played game`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(),
+            result.copy(),
+            result.copy(game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(game = Game.PINPOINT, resultInfo = PinpointInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.favoriteGame).isEqualTo(Game.WORLDLE)
+    }
+
+    @Test
+    fun `calculates each user's most played game`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(userId = 2),
+            result.copy(userId = 3),
+            result.copy(userId = 2, game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(userId = 2, game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(userId = 3, game = Game.PINPOINT, resultInfo = PinpointInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.favoriteGame).isEqualTo(Game.WORLDLE)
+
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.favoriteGame).isEqualTo(Game.GEOCIRCLES)
+
+        val userThree = wrappedData.single { it.userId == 3L }
+        assertThat(userThree.favoriteGame).isAnyOf(Game.WORLDLE, Game.GEOCIRCLES, Game.PINPOINT)
+    }
+
+    @Test
+    fun `calculates averages by game rounded to one decimal`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(score = 1),
+            result.copy(score = 1),
+            result.copy(game = Game.GEOCIRCLES, score = 5, resultInfo = GeocirclesInfo),
+            result.copy(game = Game.GEOCIRCLES, score = 10, resultInfo = GeocirclesInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.averagesByGame).containsAtLeast(
+            Game.WORLDLE, 4.7,
+            Game.GEOCIRCLES, 7.5,
+        )
     }
 }

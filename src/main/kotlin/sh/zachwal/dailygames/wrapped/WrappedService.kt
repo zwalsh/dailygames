@@ -6,6 +6,7 @@ import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.jdbi.WrappedInfo
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.leaderboard.PointCalculator
+import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.wrapped.views.RanksTableSection
 import sh.zachwal.dailygames.wrapped.views.StatSection
 import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
@@ -24,40 +25,51 @@ import javax.inject.Singleton
 class WrappedService @Inject constructor(
     private val jdbi: Jdbi,
     private val calculator: PointCalculator,
+    private val userService: UserService,
 ) {
 
-    fun wrappedView(year: Int, wrappedId: String): WrappedView {
+    fun wrappedView(year: Int, userId: Long): WrappedView {
+        val wrappedData = generateWrappedData(year)
+        val wrappedInfo = wrappedData.firstOrNull { it.userId == userId }
+            ?: throw RuntimeException("Could not find this Wrapped.")
+        val userName = userService.getUsernameCached(userId)
+            ?: throw RuntimeException("Could not find this Wrapped.")
+
+        val favoriteGame = wrappedInfo.favoriteGame
+        val favoriteGameText = "${favoriteGame.emoji()}${favoriteGame.displayName()}${favoriteGame.emoji()}"
+        val favoriteGamePlayCount = wrappedInfo.gamesPlayedByGame[favoriteGame]
+
         return WrappedView(
-            name = "zach",
+            name = userName,
             year = year,
             sections = listOf(
-                WelcomeSection(year, "zach"),
+                WelcomeSection(year, userName),
                 StatSection(
                     topText = "You played...",
-                    stat = 123,
+                    stat = wrappedInfo.totalGamesPlayed,
                     bottomText = "...games this year.",
                 ),
                 StatSection(
                     topText = "That ranks...",
-                    stat = 15,
+                    stat = wrappedInfo.totalGamesRank,
                     bottomText = "...across all players!",
                 ),
                 // points scored
                 StatSection(
                     topText = "You scored...",
-                    stat = 1234,
+                    stat = wrappedInfo.totalPoints,
                     bottomText = "...points this year.",
                 ),
                 StatSection(
                     topText = "That ranks...",
-                    stat = 10,
+                    stat = wrappedInfo.totalPointsRank,
                     bottomText = "...overall!",
                 ),
                 // Favorite game
                 TextSection(
                     topText = "Your favorite game was...",
-                    middleText = "${Game.WORLDLE.emoji()}Worldle${Game.WORLDLE.emoji()}",
-                    bottomText = "...you played it 123 times!",
+                    middleText = favoriteGameText,
+                    bottomText = "...you played it $favoriteGamePlayCount times!",
                 ),
                 TextSection(
                     topText = "Your best day was...",
@@ -66,12 +78,12 @@ class WrappedService @Inject constructor(
                 ),
                 StatSection(
                     topText = "You played Daily Games for...",
-                    stat = 1212,
+                    stat = wrappedInfo.totalMinutes,
                     bottomText = "...minutes this year.",
                 ),
                 StatSection(
                     topText = "That's number...",
-                    stat = 3,
+                    stat = wrappedInfo.totalMinutesRank,
                     bottomText = "... of all players!",
                 ),
                 TextSection(
@@ -98,8 +110,8 @@ class WrappedService @Inject constructor(
         )
     }
 
-    fun generateWrappedData(year: Int): List<WrappedInfo> {
-        val resultDAO = jdbi.open().attach<PuzzleResultDAO>()
+    fun generateWrappedData(year: Int): List<WrappedInfo> = jdbi.open().use { handle ->
+        val resultDAO = handle.attach<PuzzleResultDAO>()
         val yearStartInstant = LocalDate.ofYearDay(year, 1)
             .atStartOfDay(ZoneId.systemDefault())
             .toInstant()
@@ -140,6 +152,24 @@ class WrappedService @Inject constructor(
 
         val usersRankedByGames = userIds.sortedByDescending { totalGamesPlayed[it] }
         val usersRankedByPoints = userIds.sortedByDescending { pointsByGame[it]?.values?.sum() ?: 0 }
+        val usersRankedByTotalMinutes = userIds.sortedByDescending { totalTimePlayed[it]?.toMinutes() ?: 0 }
+        val favoriteGameByUser = gamesPlayedByGame.mapValues { (_, gameCounts) ->
+            // Take each user's most-played game, or a random one if they haven't played any
+            gameCounts.maxByOrNull { (_, count) -> count }?.key ?: Game.values().first()
+        }
+
+        val averagesByUser = userIds.associateWith { userId ->
+            Game.values().associateWith { game ->
+                val gamesPlayed = gamesPlayedByGame[userId]?.get(game) ?: 0
+                val points = pointsByGame[userId]?.get(game) ?: 0
+                if (gamesPlayed == 0) {
+                    0.0
+                } else {
+                    // round to 1 decimal place
+                    Math.round(10.0 * points / gamesPlayed) / 10.0
+                }
+            }
+        }
 
         return userIds.map {
             WrappedInfo(
@@ -149,9 +179,12 @@ class WrappedService @Inject constructor(
                 totalGamesRank = usersRankedByGames.indexOf(it) + 1,
                 totalPoints = pointsByGame[it]?.values?.sum() ?: 0,
                 totalPointsRank = usersRankedByPoints.indexOf(it) + 1,
+                favoriteGame = favoriteGameByUser.getValue(it),
                 gamesPlayedByGame = gamesPlayedByGame[it] ?: emptyMap(),
                 pointsByGame = pointsByGame[it] ?: emptyMap(),
                 totalMinutes = totalTimePlayed[it]?.toMinutes()?.toInt() ?: 0,
+                totalMinutesRank = usersRankedByTotalMinutes.indexOf(it) + 1,
+                averagesByGame = averagesByUser[it] ?: emptyMap(),
             )
         }
     }
