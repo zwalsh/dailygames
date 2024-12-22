@@ -6,24 +6,27 @@ import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.util.getOrFail
+import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.roles.adminRoute
 import sh.zachwal.dailygames.roles.approvedUserRoute
+import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
 
 @Controller
 class WrappedController @Inject constructor(
     private val wrappedService: WrappedService,
+    private val userService: UserService,
 ) {
 
     internal fun Routing.wrapped() {
-        approvedUserRoute("/wrapped/{year}/{wrappedId}") {
+        approvedUserRoute("/wrapped/{year}/{userId}") {
             get {
                 val year = call.parameters.getOrFail("year").toInt()
-                val wrappedId = call.parameters.getOrFail("wrappedId")
+                val userId = call.parameters["userId"]?.toLongOrNull() ?: currentUser(call, userService).id
 
                 call.respondHtml {
-                    wrappedService.wrappedView(year, wrappedId).renderIn(this)
+                    wrappedService.wrappedView(year, userId).renderIn(this)
                 }
             }
         }

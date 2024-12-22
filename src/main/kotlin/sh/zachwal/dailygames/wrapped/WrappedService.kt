@@ -1,17 +1,5 @@
 package sh.zachwal.dailygames.wrapped
 
-import org.jdbi.v3.core.Jdbi
-import org.jdbi.v3.sqlobject.kotlin.attach
-import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
-import sh.zachwal.dailygames.db.jdbi.WrappedInfo
-import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.leaderboard.PointCalculator
-import sh.zachwal.dailygames.wrapped.views.RanksTableSection
-import sh.zachwal.dailygames.wrapped.views.StatSection
-import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
-import sh.zachwal.dailygames.wrapped.views.TextSection
-import sh.zachwal.dailygames.wrapped.views.WelcomeSection
-import sh.zachwal.dailygames.wrapped.views.WrappedView
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -19,38 +7,58 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.sqlobject.kotlin.attach
+import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
+import sh.zachwal.dailygames.db.jdbi.WrappedInfo
+import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.leaderboard.PointCalculator
+import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.wrapped.views.RanksTableSection
+import sh.zachwal.dailygames.wrapped.views.StatSection
+import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
+import sh.zachwal.dailygames.wrapped.views.TextSection
+import sh.zachwal.dailygames.wrapped.views.WelcomeSection
+import sh.zachwal.dailygames.wrapped.views.WrappedView
 
 @Singleton
 class WrappedService @Inject constructor(
     private val jdbi: Jdbi,
     private val calculator: PointCalculator,
+    private val userService: UserService,
 ) {
 
-    fun wrappedView(year: Int, wrappedId: String): WrappedView {
+    fun wrappedView(year: Int, userId: Long): WrappedView {
+        val wrappedData = generateWrappedData(year)
+        val wrappedInfo = wrappedData.firstOrNull { it.userId == userId }
+            ?: throw RuntimeException("Could not find this Wrapped.")
+        val userName = userService.getUsernameCached(userId)
+            ?: throw RuntimeException("Could not find this Wrapped.")
+
         return WrappedView(
-            name = "zach",
+            name = userName,
             year = year,
             sections = listOf(
-                WelcomeSection(year, "zach"),
+                WelcomeSection(year, userName),
                 StatSection(
                     topText = "You played...",
-                    stat = 123,
+                    stat = wrappedInfo.totalGamesPlayed,
                     bottomText = "...games this year.",
                 ),
                 StatSection(
                     topText = "That ranks...",
-                    stat = 15,
+                    stat = wrappedInfo.totalGamesRank,
                     bottomText = "...across all players!",
                 ),
                 // points scored
                 StatSection(
                     topText = "You scored...",
-                    stat = 1234,
+                    stat = wrappedInfo.totalPoints,
                     bottomText = "...points this year.",
                 ),
                 StatSection(
                     topText = "That ranks...",
-                    stat = 10,
+                    stat = wrappedInfo.totalPointsRank,
                     bottomText = "...overall!",
                 ),
                 // Favorite game
@@ -66,7 +74,7 @@ class WrappedService @Inject constructor(
                 ),
                 StatSection(
                     topText = "You played Daily Games for...",
-                    stat = 1212,
+                    stat = wrappedInfo.totalMinutes,
                     bottomText = "...minutes this year.",
                 ),
                 StatSection(
@@ -98,8 +106,8 @@ class WrappedService @Inject constructor(
         )
     }
 
-    fun generateWrappedData(year: Int): List<WrappedInfo> {
-        val resultDAO = jdbi.open().attach<PuzzleResultDAO>()
+    fun generateWrappedData(year: Int): List<WrappedInfo> = jdbi.open().use { handle ->
+        val resultDAO = handle.attach<PuzzleResultDAO>()
         val yearStartInstant = LocalDate.ofYearDay(year, 1)
             .atStartOfDay(ZoneId.systemDefault())
             .toInstant()
