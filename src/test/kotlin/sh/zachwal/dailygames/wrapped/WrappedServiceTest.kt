@@ -13,6 +13,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
+import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
@@ -297,5 +298,112 @@ class WrappedServiceTest {
             Game.WORLDLE, 4.7,
             Game.GEOCIRCLES, 7.5,
         )
+    }
+
+    @Test
+    fun `calculates player's rank per game by total points`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(score = 1),
+            result.copy(userId = 2, score = 1),
+            result.copy(game = Game.GEOCIRCLES, score = 5, resultInfo = GeocirclesInfo),
+            result.copy(userId = 2, game = Game.GEOCIRCLES, score = 10, resultInfo = GeocirclesInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.ranksPerGameTotal).containsAtLeast(
+            Game.WORLDLE, 1,
+            Game.GEOCIRCLES, 2
+        )
+
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.ranksPerGameTotal).containsAtLeast(
+            Game.WORLDLE, 2,
+            Game.GEOCIRCLES, 1
+        )
+    }
+
+    @Test
+    fun `calculates player's rank per game by average points`() {
+        // player one's total is 200, average is 2
+        val playerOneWorldle = List(100) {
+            result
+        }
+        // player two's total is 60, average is 6
+        val playerTwoWorldle = List(10) {
+            result.copy(userId = 2, score = 1)
+        }
+
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns
+            playerOneWorldle
+                .plus(playerTwoWorldle)
+                .stream()
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.ranksPerGameAverage).containsAtLeast(
+            Game.WORLDLE, 2
+        )
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.ranksPerGameAverage).containsAtLeast(
+            Game.WORLDLE, 1
+        )
+    }
+
+    @Test
+    fun `user ranks do not include games where the user played less than 10 games`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.ranksPerGameAverage).doesNotContainKey(Game.WORLDLE)
+    }
+
+    @Test
+    fun `calculate a user's best game (highest rank by average)`() {
+        val results = listOf(
+            // user 3 is third at Worldle
+            result.copy(userId = 1, game = Game.WORLDLE, score = 1),
+            result.copy(userId = 2, game = Game.WORLDLE, score = 2),
+            result.copy(userId = 3, game = Game.WORLDLE, score = 3),
+            // user 3 is third at Geocircles
+            result.copy(userId = 1, game = Game.GEOCIRCLES, score = 10, resultInfo = GeocirclesInfo),
+            result.copy(userId = 2, game = Game.GEOCIRCLES, score = 7, resultInfo = GeocirclesInfo),
+            result.copy(userId = 3, game = Game.GEOCIRCLES, score = 5, resultInfo = GeocirclesInfo),
+            // user 3 is second at Top5
+            result.copy(userId = 1, game = Game.TOP5, score = 10, resultInfo = Top5Info(5, 5, false)),
+            result.copy(userId = 2, game = Game.TOP5, score = 5, resultInfo = Top5Info(5, 5, false)),
+            result.copy(userId = 3, game = Game.TOP5, score = 9, resultInfo = Top5Info(5, 5, false)),
+        )
+
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns
+            // repeat 10 times to exceed minimum cutoff
+            List(10) { results }
+                .flatten()
+                .stream()
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userThree = wrappedData.single { it.userId == 3L }
+        assertThat(userThree.bestGame).isEqualTo(Game.TOP5)
+        assertThat(userThree.ranksPerGameAverage[Game.TOP5]).isEqualTo(2)
+    }
+
+    @Test
+    fun `best game is null if user does not qualify for any game`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.bestGame).isNull()
     }
 }
