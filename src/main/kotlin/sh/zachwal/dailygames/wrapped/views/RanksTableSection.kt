@@ -51,7 +51,7 @@ data class RanksTableSection(
 
 data class RanksTableRowView(
     val game: Game,
-    val stat: Int,
+    val statText: String,
     val rank: Int,
 ) : HTMLView<TBODY>() {
 
@@ -65,7 +65,7 @@ data class RanksTableRowView(
     override fun TBODY.render() {
         tr {
             th(scope = ThScope.row) { +"${game.emoji()} ${game.displayName()}" }
-            td { +"$stat" }
+            td { +statText }
             td { +rankText }
         }
     }
