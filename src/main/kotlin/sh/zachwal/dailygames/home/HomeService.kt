@@ -1,5 +1,6 @@
 package sh.zachwal.dailygames.home
 
+import java.time.Clock
 import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -16,19 +17,21 @@ import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 import sh.zachwal.dailygames.home.views.WrappedLinkView
+import sh.zachwal.dailygames.users.UserPreferencesService
 
 @Singleton
 class HomeService @Inject constructor(
     private val resultService: ResultService,
+    private val userPreferencesService: UserPreferencesService,
     private val shareLineMapper: ShareLineMapper,
     private val pointsCalculator: PointCalculator,
     private val navViewFactory: NavViewFactory,
     private val gameDAO: GameDAO,
+    private val clock: Clock,
 ) {
     private val newGameDuration = Duration.ofDays(3)
 
     fun homeView(user: User): HomeView {
-
         val navView = navViewFactory.navView(
             username = user.username,
             currentActiveNavItem = NavItem.HOME,
