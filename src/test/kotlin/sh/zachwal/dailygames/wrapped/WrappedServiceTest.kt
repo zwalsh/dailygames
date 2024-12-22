@@ -354,6 +354,18 @@ class WrappedServiceTest {
     }
 
     @Test
+    fun `user ranks do not include games where the user played less than 10 games`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.ranksPerGameAverage).doesNotContainKey(Game.WORLDLE)
+    }
+
+    @Test
     fun `calculate a user's best game (highest rank by average)`() {
         val results = listOf(
             // user 3 is third at Worldle
@@ -381,5 +393,17 @@ class WrappedServiceTest {
         val userThree = wrappedData.single { it.userId == 3L }
         assertThat(userThree.bestGame).isEqualTo(Game.TOP5)
         assertThat(userThree.ranksPerGameAverage[Game.TOP5]).isEqualTo(2)
+    }
+
+    @Test
+    fun `best game is null if user does not qualify for any game`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.bestGame).isNull()
     }
 }
