@@ -124,7 +124,7 @@ class WrappedService @Inject constructor(
                     val rows = ranks.entries.map { (game, rank) ->
                         RanksTableRowView(
                             game = game,
-                            stat = wrappedInfo.pointsByGame[game] ?: 0,
+                            statText = (wrappedInfo.pointsByGame[game] ?: 0).toString(),
                             rank = rank,
                         )
                     }
@@ -139,7 +139,7 @@ class WrappedService @Inject constructor(
                     val rows = ranks.entries.map { (game, rank) ->
                         RanksTableRowView(
                             game = game,
-                            stat = wrappedInfo.averagesByGame[game]?.toInt() ?: 0,
+                            statText = (wrappedInfo.averagesByGame[game] ?: 0.0).toString(),
                             rank = rank,
                         )
                     }
