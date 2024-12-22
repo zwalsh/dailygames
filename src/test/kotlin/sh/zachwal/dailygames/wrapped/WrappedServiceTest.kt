@@ -223,6 +223,24 @@ class WrappedServiceTest {
     }
 
     @Test
+    fun `ranks users by total minutes`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.MINUTES)),
+            result,
+            result.copy(userId = 2, instantSubmitted = Instant.now().minus(2, ChronoUnit.MINUTES)),
+            result.copy(userId = 2),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.totalMinutesRank).isEqualTo(2)
+
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.totalMinutesRank).isEqualTo(1)
+    }
+
+    @Test
     fun `calculates most played game`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
             result,

@@ -83,7 +83,7 @@ class WrappedService @Inject constructor(
                 ),
                 StatSection(
                     topText = "That's number...",
-                    stat = 3,
+                    stat = wrappedInfo.totalMinutesRank,
                     bottomText = "... of all players!",
                 ),
                 TextSection(
@@ -152,6 +152,7 @@ class WrappedService @Inject constructor(
 
         val usersRankedByGames = userIds.sortedByDescending { totalGamesPlayed[it] }
         val usersRankedByPoints = userIds.sortedByDescending { pointsByGame[it]?.values?.sum() ?: 0 }
+        val usersRankedByTotalMinutes = userIds.sortedByDescending { totalTimePlayed[it]?.toMinutes() ?: 0 }
         val favoriteGameByUser = gamesPlayedByGame.mapValues { (_, gameCounts) ->
             // Take each user's most-played game, or a random one if they haven't played any
             gameCounts.maxByOrNull { (_, count) -> count }?.key ?: Game.values().first()
@@ -182,6 +183,7 @@ class WrappedService @Inject constructor(
                 gamesPlayedByGame = gamesPlayedByGame[it] ?: emptyMap(),
                 pointsByGame = pointsByGame[it] ?: emptyMap(),
                 totalMinutes = totalTimePlayed[it]?.toMinutes()?.toInt() ?: 0,
+                totalMinutesRank = usersRankedByTotalMinutes.indexOf(it) + 1,
                 averagesByGame = averagesByUser[it] ?: emptyMap(),
             )
         }
