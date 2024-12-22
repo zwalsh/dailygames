@@ -20,6 +20,7 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import sh.zachwal.dailygames.leaderboard.MINIMUM_GAMES_FOR_AVERAGE
 
 @Singleton
 class WrappedService @Inject constructor(
@@ -170,21 +171,38 @@ class WrappedService @Inject constructor(
                 }
             }
         }
+        
+        val usersRankedByTotal = Game.values().associateWith { game ->
+            userIds.sortedByDescending { pointsByGame[it]?.get(game) ?: 0 }
+        }
+        val usersRankedByAverage = Game.values().associateWith { game ->
+            userIds
+                .filter { userId -> (gamesPlayedByGame[userId]?.get(game) ?: 0) >= MINIMUM_GAMES_FOR_AVERAGE }
+                .sortedByDescending { userId -> averagesByUser[userId]?.get(game) ?: 0.0 }
+        }
 
-        return userIds.map {
+        return userIds.map {  userId ->
+            val gamesPlayedByUser = gamesPlayedByGame[userId]?.keys ?: emptySet()
+            val userRanksByGameTotal = gamesPlayedByUser
+                .associateWith { game -> usersRankedByTotal[game]!!.indexOf(userId) + 1 }
+            val userRanksByGameAverage = gamesPlayedByUser
+                .associateWith { game -> usersRankedByAverage[game]!!.indexOf(userId) + 1 }
+            
             WrappedInfo(
                 id = 0,
-                userId = it,
-                totalGamesPlayed = totalGamesPlayed[it] ?: 0,
-                totalGamesRank = usersRankedByGames.indexOf(it) + 1,
-                totalPoints = pointsByGame[it]?.values?.sum() ?: 0,
-                totalPointsRank = usersRankedByPoints.indexOf(it) + 1,
-                favoriteGame = favoriteGameByUser.getValue(it),
-                gamesPlayedByGame = gamesPlayedByGame[it] ?: emptyMap(),
-                pointsByGame = pointsByGame[it] ?: emptyMap(),
-                totalMinutes = totalTimePlayed[it]?.toMinutes()?.toInt() ?: 0,
-                totalMinutesRank = usersRankedByTotalMinutes.indexOf(it) + 1,
-                averagesByGame = averagesByUser[it] ?: emptyMap(),
+                userId = userId,
+                totalGamesPlayed = totalGamesPlayed[userId] ?: 0,
+                totalGamesRank = usersRankedByGames.indexOf(userId) + 1,
+                totalPoints = pointsByGame[userId]?.values?.sum() ?: 0,
+                totalPointsRank = usersRankedByPoints.indexOf(userId) + 1,
+                favoriteGame = favoriteGameByUser.getValue(userId),
+                gamesPlayedByGame = gamesPlayedByGame[userId] ?: emptyMap(),
+                pointsByGame = pointsByGame[userId] ?: emptyMap(),
+                totalMinutes = totalTimePlayed[userId]?.toMinutes()?.toInt() ?: 0,
+                totalMinutesRank = usersRankedByTotalMinutes.indexOf(userId) + 1,
+                averagesByGame = averagesByUser[userId] ?: emptyMap(),
+                ranksPerGameTotal = userRanksByGameTotal,
+                ranksPerGameAverage = userRanksByGameAverage,
             )
         }
     }

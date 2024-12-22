@@ -298,4 +298,57 @@ class WrappedServiceTest {
             Game.GEOCIRCLES, 7.5,
         )
     }
+
+    @Test
+    fun `calculates player's rank per game by total points`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(score = 1),
+            result.copy(userId = 2, score = 1),
+            result.copy(game = Game.GEOCIRCLES, score = 5, resultInfo = GeocirclesInfo),
+            result.copy(userId = 2, game = Game.GEOCIRCLES, score = 10, resultInfo = GeocirclesInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.ranksPerGameTotal).containsAtLeast(
+            Game.WORLDLE, 1,
+            Game.GEOCIRCLES, 2
+        )
+
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.ranksPerGameTotal).containsAtLeast(
+            Game.WORLDLE, 2,
+            Game.GEOCIRCLES, 1
+        )
+    }
+
+    @Test
+    fun `calculates player's rank per game by average points`() {
+        // player one's total is 200, average is 2
+        val playerOneWorldle = List(100) {
+            result
+        }
+        // player two's total is 60, average is 6
+        val playerTwoWorldle = List(10) {
+            result.copy(userId = 2, score = 1)
+        }
+
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns
+            playerOneWorldle
+                .plus(playerTwoWorldle)
+                .stream()
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.ranksPerGameAverage).containsAtLeast(
+            Game.WORLDLE, 2
+        )
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.ranksPerGameAverage).containsAtLeast(
+            Game.WORLDLE, 1
+        )
+    }
 }
