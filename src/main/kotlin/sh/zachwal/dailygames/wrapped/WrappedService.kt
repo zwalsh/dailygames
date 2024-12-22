@@ -35,6 +35,10 @@ class WrappedService @Inject constructor(
         val userName = userService.getUsernameCached(userId)
             ?: throw RuntimeException("Could not find this Wrapped.")
 
+        val favoriteGame = wrappedInfo.favoriteGame
+        val favoriteGameText = "${favoriteGame.emoji()}${favoriteGame.displayName()}${favoriteGame.emoji()}"
+        val favoriteGamePlayCount = wrappedInfo.gamesPlayedByGame[favoriteGame]
+
         return WrappedView(
             name = userName,
             year = year,
@@ -64,8 +68,8 @@ class WrappedService @Inject constructor(
                 // Favorite game
                 TextSection(
                     topText = "Your favorite game was...",
-                    middleText = "${Game.WORLDLE.emoji()}Worldle${Game.WORLDLE.emoji()}",
-                    bottomText = "...you played it 123 times!",
+                    middleText = favoriteGameText,
+                    bottomText = "...you played it $favoriteGamePlayCount times!",
                 ),
                 TextSection(
                     topText = "Your best day was...",
@@ -148,6 +152,10 @@ class WrappedService @Inject constructor(
 
         val usersRankedByGames = userIds.sortedByDescending { totalGamesPlayed[it] }
         val usersRankedByPoints = userIds.sortedByDescending { pointsByGame[it]?.values?.sum() ?: 0 }
+        val favoriteGameByUser = gamesPlayedByGame.mapValues { (_, gameCounts) ->
+            // Take each user's most-played game, or a random one if they haven't played any
+            gameCounts.maxByOrNull { (_, count) -> count }?.key ?: Game.values().first()
+        }
 
         return userIds.map {
             WrappedInfo(
@@ -157,6 +165,7 @@ class WrappedService @Inject constructor(
                 totalGamesRank = usersRankedByGames.indexOf(it) + 1,
                 totalPoints = pointsByGame[it]?.values?.sum() ?: 0,
                 totalPointsRank = usersRankedByPoints.indexOf(it) + 1,
+                favoriteGame = favoriteGameByUser.getValue(it),
                 gamesPlayedByGame = gamesPlayedByGame[it] ?: emptyMap(),
                 pointsByGame = pointsByGame[it] ?: emptyMap(),
                 totalMinutes = totalTimePlayed[it]?.toMinutes()?.toInt() ?: 0,

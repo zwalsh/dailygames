@@ -17,6 +17,7 @@ import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
+import sh.zachwal.dailygames.users.UserService
 
 class WrappedServiceTest {
 
@@ -40,9 +41,11 @@ class WrappedServiceTest {
         }
     }
 
+    private val userService = mockk<UserService>()
     private val service = WrappedService(
         jdbi = jdbi,
         calculator = PointCalculator(),
+        userService = userService,
     )
 
     @Test
@@ -217,5 +220,45 @@ class WrappedServiceTest {
 
         val userOne = wrappedData.single { it.userId == 1L }
         assertThat(userOne.totalMinutes).isEqualTo(2)
+    }
+
+    @Test
+    fun `calculates most played game`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(),
+            result.copy(),
+            result.copy(game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(game = Game.PINPOINT, resultInfo = PinpointInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.favoriteGame).isEqualTo(Game.WORLDLE)
+    }
+
+    @Test
+    fun `calculates each user's most played game`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(userId = 2),
+            result.copy(userId = 3),
+            result.copy(userId = 2, game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(userId = 2, game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(userId = 3, game = Game.PINPOINT, resultInfo = PinpointInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.favoriteGame).isEqualTo(Game.WORLDLE)
+
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.favoriteGame).isEqualTo(Game.GEOCIRCLES)
+
+        val userThree = wrappedData.single { it.userId == 3L }
+        assertThat(userThree.favoriteGame).isAnyOf(Game.WORLDLE, Game.GEOCIRCLES, Game.PINPOINT)
     }
 }
