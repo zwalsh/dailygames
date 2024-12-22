@@ -157,6 +157,19 @@ class WrappedService @Inject constructor(
             gameCounts.maxByOrNull { (_, count) -> count }?.key ?: Game.values().first()
         }
 
+        val averagesByUser = userIds.associateWith { userId ->
+            Game.values().associateWith { game ->
+                val gamesPlayed = gamesPlayedByGame[userId]?.get(game) ?: 0
+                val points = pointsByGame[userId]?.get(game) ?: 0
+                if (gamesPlayed == 0) {
+                    0.0
+                } else {
+                    // round to 1 decimal place
+                    Math.round(10.0 * points / gamesPlayed) / 10.0
+                }
+            }
+        }
+
         return userIds.map {
             WrappedInfo(
                 id = 0,
@@ -169,6 +182,7 @@ class WrappedService @Inject constructor(
                 gamesPlayedByGame = gamesPlayedByGame[it] ?: emptyMap(),
                 pointsByGame = pointsByGame[it] ?: emptyMap(),
                 totalMinutes = totalTimePlayed[it]?.toMinutes()?.toInt() ?: 0,
+                averagesByGame = averagesByUser[it] ?: emptyMap(),
             )
         }
     }

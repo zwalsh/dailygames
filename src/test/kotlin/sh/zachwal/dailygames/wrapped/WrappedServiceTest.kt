@@ -261,4 +261,23 @@ class WrappedServiceTest {
         val userThree = wrappedData.single { it.userId == 3L }
         assertThat(userThree.favoriteGame).isAnyOf(Game.WORLDLE, Game.GEOCIRCLES, Game.PINPOINT)
     }
+
+    @Test
+    fun `calculates averages by game rounded to one decimal`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(score = 1),
+            result.copy(score = 1),
+            result.copy(game = Game.GEOCIRCLES, score = 5, resultInfo = GeocirclesInfo),
+            result.copy(game = Game.GEOCIRCLES, score = 10, resultInfo = GeocirclesInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.averagesByGame).containsAtLeast(
+            Game.WORLDLE, 4.7,
+            Game.GEOCIRCLES, 7.5,
+        )
+    }
 }

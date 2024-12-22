@@ -18,4 +18,5 @@ data class WrappedInfo constructor(
     val gamesPlayedByGame: Map<Game, Int>,
     val pointsByGame: Map<Game, Int>,
     val totalMinutes: Int,
+    val averagesByGame: Map<Game, Double>,
 )
