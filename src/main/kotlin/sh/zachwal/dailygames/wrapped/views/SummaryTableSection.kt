@@ -1,6 +1,5 @@
 package sh.zachwal.dailygames.wrapped.views
 
-import java.time.format.DateTimeFormatter
 import kotlinx.html.DIV
 import kotlinx.html.ThScope
 import kotlinx.html.h1
@@ -10,7 +9,7 @@ import kotlinx.html.td
 import kotlinx.html.th
 import kotlinx.html.tr
 import sh.zachwal.dailygames.db.jdbi.WrappedInfo
-import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import java.time.format.DateTimeFormatter
 
 private val bestDayFormatter = DateTimeFormatter.ofPattern("M/d/yy")
 
@@ -20,7 +19,7 @@ data class SummaryTableSection(
     height = "", // Don't force view height = 90
 ) {
 
-    private val rankString = when(wrappedInfo.totalPointsRank) {
+    private val rankString = when (wrappedInfo.totalPointsRank) {
         1 -> "\uD83E\uDD47"
         2 -> "\uD83E\uDD48"
         3 -> "\uD83E\uDD49"
