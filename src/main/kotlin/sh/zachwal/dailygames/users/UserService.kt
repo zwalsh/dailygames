@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.UserDAO
 import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import sh.zachwal.dailygames.db.jdbi.User
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 class UserService @Inject constructor(
@@ -62,7 +63,7 @@ class UserService @Inject constructor(
     fun list(): List<User> = userDAO.listUsers()
 
     // TODO use a real cache library, maybe
-    private val userNameCache = mutableMapOf<Long, String?>()
+    private val userNameCache = ConcurrentHashMap<Long, String?>()
 
     fun getUsernameCached(userId: Long): String? {
         return userNameCache.computeIfAbsent(userId) { getUser(it)?.username }
