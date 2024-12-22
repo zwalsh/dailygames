@@ -20,10 +20,21 @@ class WrappedController @Inject constructor(
 ) {
 
     internal fun Routing.wrapped() {
+        approvedUserRoute("/wrapped/{year}") {
+            get {
+                val year = call.parameters.getOrFail("year").toInt()
+                val userId = currentUser(call, userService).id
+
+                call.respondHtml {
+                    wrappedService.wrappedView(year, userId).renderIn(this)
+                }
+            }
+        }
+
         approvedUserRoute("/wrapped/{year}/{userId}") {
             get {
                 val year = call.parameters.getOrFail("year").toInt()
-                val userId = call.parameters["userId"]?.toLongOrNull() ?: currentUser(call, userService).id
+                val userId = call.parameters.getOrFail("userId").toLong()
 
                 call.respondHtml {
                     wrappedService.wrappedView(year, userId).renderIn(this)
