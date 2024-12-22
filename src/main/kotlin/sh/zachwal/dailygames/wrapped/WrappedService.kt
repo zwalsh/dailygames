@@ -121,12 +121,15 @@ class WrappedService @Inject constructor(
                     f = "f"
                 ),
                 wrappedInfo.ranksPerGameTotal.let { ranks ->
-                    val rows = ranks.entries.map { (game, rank) ->
-                        RanksTableRowView(
-                            game = game,
-                            statText = (wrappedInfo.pointsByGame[game] ?: 0).toString(),
-                            rank = rank,
-                        )
+                    // Use Game.values() to get consistent ordering
+                    val rows = Game.values().mapNotNull { game ->
+                        ranks[game]?.let { rank ->
+                            RanksTableRowView(
+                                game = game,
+                                statText = (wrappedInfo.pointsByGame[game] ?: 0).toString(),
+                                rank = rank,
+                            )
+                        }
                     }
                     RanksTableSection(
                         title = "Totals",
@@ -136,12 +139,15 @@ class WrappedService @Inject constructor(
                     )
                 },
                 wrappedInfo.ranksPerGameAverage.let { ranks ->
-                    val rows = ranks.entries.map { (game, rank) ->
-                        RanksTableRowView(
-                            game = game,
-                            statText = (wrappedInfo.averagesByGame[game] ?: 0.0).toString(),
-                            rank = rank,
-                        )
+                    // Use Game.values() to get consistent ordering
+                    val rows = Game.values().mapNotNull { game ->
+                        ranks[game]?.let { rank ->
+                            RanksTableRowView(
+                                game = game,
+                                statText = (wrappedInfo.averagesByGame[game] ?: 0.0).toString(),
+                                rank = rank,
+                            )
+                        }
                     }
                     RanksTableSection(
                         title = "Averages",
