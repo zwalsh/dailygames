@@ -15,8 +15,10 @@ import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
+import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
 
@@ -43,10 +45,14 @@ class WrappedServiceTest {
     }
 
     private val userService = mockk<UserService>()
+    private val userPreferencesService = mockk<UserPreferencesService> {
+        every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
+    }
     private val service = WrappedService(
         jdbi = jdbi,
         calculator = PointCalculator(),
         userService = userService,
+        userPreferencesService = userPreferencesService,
     )
 
     @Test
@@ -192,6 +198,48 @@ class WrappedServiceTest {
 
         val userThree = wrappedData.single { it.userId == 3L }
         assertThat(userThree.totalPointsRank).isEqualTo(3)
+    }
+
+    @Test
+    fun `calculates a user's best day`() {
+        val yesterday = Instant.now().minus(1, ChronoUnit.DAYS)
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(score = 1),
+            result.copy(score = 1),
+            result.copy(score = 1, instantSubmitted = yesterday),
+            result.copy(score = 1, instantSubmitted = yesterday),
+            result.copy(score = 1, instantSubmitted = yesterday),
+            result.copy(score = 1, instantSubmitted = yesterday),
+            result.copy(score = 1, instantSubmitted = yesterday),
+            result.copy(score = 1, instantSubmitted = yesterday),
+            result.copy(score = 1, instantSubmitted = yesterday),
+            result.copy(score = 1, instantSubmitted = yesterday),
+            result.copy(score = 1, instantSubmitted = yesterday),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.bestDay).isEqualTo(yesterday.atZone(ZoneId.of("America/New_York")).toLocalDate())
+        assertThat(userOne.bestDayPoints).isEqualTo(54)
+    }
+
+    @Test
+    fun `uses a user's local timezone`() {
+        val todayMidnightPT = Instant.ofEpochSecond(1734854400)
+        every { userPreferencesService.getTimeZone(1L) } returns ZoneId.of("America/Los_Angeles")
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(instantSubmitted = todayMidnightPT.minus(4, ChronoUnit.HOURS)), // yesterday ET, PT
+            result.copy(instantSubmitted = todayMidnightPT.minus(2, ChronoUnit.HOURS)), // today ET, yesterday PT
+            result.copy(instantSubmitted = todayMidnightPT.minus(1, ChronoUnit.HOURS)), // today ET, yesterday PT
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+        val userOne = wrappedData.single { it.userId == 1L }
+        // yesterday local date
+        val yesterday = todayMidnightPT.minusSeconds(1).atZone(ZoneId.of("America/Los_Angeles")).toLocalDate()
+        assertThat(userOne.bestDay).isEqualTo(yesterday)
     }
 
     @Test
