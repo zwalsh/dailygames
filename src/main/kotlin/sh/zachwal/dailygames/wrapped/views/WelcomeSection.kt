@@ -8,7 +8,8 @@ import kotlinx.html.h3
 data class WelcomeSection(
     val year: Int,
     val name: String,
-) : WrappedSection() {
+    val wrappedIndex: Int,
+) : WrappedSection(wrappedIndex = wrappedIndex) {
     override fun DIV.content() {
         h1 {
             +year.toString()

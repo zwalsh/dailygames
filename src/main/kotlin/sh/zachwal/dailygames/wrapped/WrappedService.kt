@@ -47,31 +47,41 @@ class WrappedService @Inject constructor(
 
         logger.info("Generating Wrapped for $userName in $year using $wrappedInfo")
 
+        var wrappedIndex = 1
+
         return WrappedView(
             name = userName,
             year = year,
             sections = listOfNotNull(
-                WelcomeSection(year, userName),
+                WelcomeSection(
+                    year,
+                    userName,
+                    wrappedIndex++
+                ),
                 StatSection(
                     topText = "You played...",
                     stat = wrappedInfo.totalGamesPlayed,
                     bottomText = "...games this year.",
+                    wrappedIndex++
                 ),
                 StatSection(
                     topText = "That ranks...",
                     stat = wrappedInfo.totalGamesRank,
                     bottomText = "...across all players!",
+                    wrappedIndex++
                 ),
                 // points scored
                 StatSection(
                     topText = "You scored...",
                     stat = wrappedInfo.totalPoints,
                     bottomText = "...points this year.",
+                    wrappedIndex++
                 ),
                 StatSection(
                     topText = "That ranks...",
                     stat = wrappedInfo.totalPointsRank,
                     bottomText = "...overall!",
+                    wrappedIndex++
                 ),
                 wrappedInfo.favoriteGame.let {
                     val favoriteGameText = "${it.emoji()}${it.displayName()}${it.emoji()}"
@@ -80,6 +90,7 @@ class WrappedService @Inject constructor(
                         topText = "Your favorite game was...",
                         middleText = favoriteGameText,
                         bottomText = "...you played it $favoriteGamePlayCount times!",
+                        wrappedIndex = wrappedIndex++
                     )
                 },
                 wrappedInfo.bestDay?.let {
@@ -87,17 +98,20 @@ class WrappedService @Inject constructor(
                         topText = "Your best day was...",
                         middleText = it.format(bestDayFormatter),
                         bottomText = "...when you scored ${wrappedInfo.bestDayPoints} points!",
+                        wrappedIndex = wrappedIndex++
                     )
                 },
                 StatSection(
                     topText = "You played Daily Games for...",
                     stat = wrappedInfo.totalMinutes,
                     bottomText = "...minutes this year.",
+                    wrappedIndex = wrappedIndex++
                 ),
                 StatSection(
                     topText = "That's number...",
                     stat = wrappedInfo.totalMinutesRank,
                     bottomText = "... of all players!",
+                    wrappedIndex = wrappedIndex++
                 ),
                 wrappedInfo.bestGame?.let {
                     val bestGameText = "${it.emoji()}${it.displayName()}${it.emoji()}"
@@ -105,6 +119,7 @@ class WrappedService @Inject constructor(
                         topText = "Your best game was...",
                         middleText = bestGameText,
                         bottomText = "",
+                        wrappedIndex = wrappedIndex++
                     )
                 },
                 wrappedInfo.bestGame?.let {
@@ -114,11 +129,13 @@ class WrappedService @Inject constructor(
                         topText = "Your average ${it.displayName()} score was...",
                         middleText = bestGameAverage.toString(),
                         bottomText = "...which ranks #$bestGameRank!",
-                        fontSizeOverride = "35vw;"
+                        fontSizeOverride = "35vw;",
+                        wrappedIndex = wrappedIndex++
                     )
                 },
                 SummaryTableSection(
-                    wrappedInfo = wrappedInfo
+                    wrappedInfo = wrappedInfo,
+                    wrappedIndex = wrappedIndex++,
                 ),
                 wrappedInfo.ranksPerGameTotal.let { ranks ->
                     // Use Game.values() to get consistent ordering
@@ -135,7 +152,8 @@ class WrappedService @Inject constructor(
                         title = "Totals",
                         heading = "Points",
                         subHeading = null,
-                        rows = rows
+                        rows = rows,
+                        wrappedIndex = wrappedIndex++,
                     )
                 },
                 wrappedInfo.ranksPerGameAverage.let { ranks ->
@@ -153,7 +171,8 @@ class WrappedService @Inject constructor(
                         title = "Averages",
                         heading = "Average",
                         subHeading = "(min $MINIMUM_GAMES_FOR_AVERAGE games)",
-                        rows = rows
+                        rows = rows,
+                        wrappedIndex = wrappedIndex++,
                     )
                 },
             )

@@ -9,7 +9,8 @@ data class StatSection(
     val topText: String,
     val stat: Int,
     val bottomText: String,
-) : WrappedSection() {
+    val wrappedIndex: Int,
+) : WrappedSection(wrappedIndex = wrappedIndex) {
     override fun DIV.content() {
         h3(classes = "top-text") {
             +topText
