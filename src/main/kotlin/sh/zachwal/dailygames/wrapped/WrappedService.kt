@@ -1,12 +1,5 @@
 package sh.zachwal.dailygames.wrapped
 
-import java.time.Duration
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
-import javax.inject.Inject
-import javax.inject.Singleton
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
@@ -20,6 +13,13 @@ import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
 import sh.zachwal.dailygames.wrapped.views.TextSection
 import sh.zachwal.dailygames.wrapped.views.WelcomeSection
 import sh.zachwal.dailygames.wrapped.views.WrappedView
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class WrappedService @Inject constructor(
