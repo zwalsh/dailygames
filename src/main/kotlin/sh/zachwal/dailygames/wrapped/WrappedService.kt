@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import sh.zachwal.dailygames.wrapped.views.RanksTableRowView
 
 @Singleton
 class WrappedService @Inject constructor(
@@ -119,12 +120,34 @@ class WrappedService @Inject constructor(
                 SummaryTableSection(
                     f = "f"
                 ),
-                RanksTableSection(
-                    title = "Totals",
-                ),
-                RanksTableSection(
-                    title = "Averages",
-                ),
+                wrappedInfo.ranksPerGameTotal.let { ranks ->
+                    val rows = ranks.entries.map { (game, rank) ->
+                        RanksTableRowView(
+                            game = game,
+                            stat = wrappedInfo.pointsByGame[game] ?: 0,
+                            rank = rank,
+                        )
+                    }
+                    RanksTableSection(
+                        title = "Totals",
+                        heading = "Points",
+                        rows = rows
+                    )
+                },
+                wrappedInfo.ranksPerGameAverage.let { ranks ->
+                    val rows = ranks.entries.map { (game, rank) ->
+                        RanksTableRowView(
+                            game = game,
+                            stat = wrappedInfo.averagesByGame[game]?.toInt() ?: 0,
+                            rank = rank,
+                        )
+                    }
+                    RanksTableSection(
+                        title = "Averages",
+                        heading = "Average",
+                        rows = rows
+                    )
+                },
             )
         )
     }
