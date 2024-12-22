@@ -20,7 +20,7 @@ data class WrappedShareView(
                     attributes["data-year"] = year.toString()
                     attributes["data-username"] = username
 
-                    i(classes = "bi bi-box-arrow-up ms-2")
+                    i(classes = "bi bi-box-arrow-up me-2")
                     strong {
                         +"Share"
                     }
