@@ -9,6 +9,7 @@ import io.ktor.util.getOrFail
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.roles.adminRoute
+import sh.zachwal.dailygames.roles.approvedUserRoute
 import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
 
@@ -33,7 +34,7 @@ class WrappedController @Inject constructor(
             }
         }
 
-        adminRoute("/wrapped/{year}") {
+        approvedUserRoute("/wrapped/{year}") {
             get {
                 val year = call.parameters.getOrFail("year").toInt()
                 val user = currentUser(call, userService)
@@ -45,7 +46,7 @@ class WrappedController @Inject constructor(
             }
         }
 
-        adminRoute("/wrapped/{year}/{userName}") {
+        approvedUserRoute("/wrapped/{year}/{userName}") {
             get {
                 val year = call.parameters.getOrFail("year").toInt()
                 val username = call.parameters.getOrFail("userName")

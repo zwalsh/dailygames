@@ -13,13 +13,19 @@ import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
+import sh.zachwal.dailygames.users.UserPreferencesService
+import java.time.Clock
 import java.time.Instant
+import java.time.ZoneId
 
 class HomeServiceTest {
 
     private val resultService = mockk<ResultService> {
         every { resultFeed(any()) } returns emptyList()
         every { resultsForUserToday(any()) } returns emptyList()
+    }
+    private val userPreferencesService = mockk<UserPreferencesService> {
+        every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
     }
     private val shareLineMapper = ShareLineMapper(
         pointCalculator = PointCalculator()
@@ -31,13 +37,18 @@ class HomeServiceTest {
     private val gameDAO = mockk<GameDAO> {
         every { listGamesCreatedAfter(any()) } returns emptyList()
     }
+    private val clock = mockk<Clock> {
+        every { instant() } returns Instant.now()
+    }
 
     private val homeService = HomeService(
         resultService = resultService,
+        userPreferencesService = userPreferencesService,
         shareLineMapper = shareLineMapper,
         pointsCalculator = PointCalculator(),
         gameDAO = gameDAO,
-        navViewFactory = navViewFactory
+        navViewFactory = navViewFactory,
+        clock = clock,
     )
 
     private val worldleResult = PuzzleResult(
@@ -139,5 +150,36 @@ class HomeServiceTest {
 
         assertThat(gameLinkViews.find { it.game == Game.WORLDLE }!!.isNew).isTrue()
         assertThat(gameLinkViews.find { it.game == Game.TRAVLE }!!.isNew).isTrue()
+    }
+
+    @Test
+    fun `in middle of year, homeView() does not include wrapped link`() {
+        every { clock.instant() } returns Instant.parse("2022-06-01T00:00:00Z")
+
+        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+
+        assertThat(view.wrappedLinkView).isNull()
+    }
+
+    @Test
+    fun `in first 7 days of year, homeView() includes wrapped link for last year`() {
+        every { clock.instant() } returns Instant.parse("2022-01-07T00:00:00Z")
+
+        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+
+        assertThat(view.wrappedLinkView).isNotNull()
+        assertThat(view.wrappedLinkView!!.year).isEqualTo(2021)
+    }
+
+    @Test
+    fun `first 7 days of year is relative to user's timezone`() {
+        // 1/8/25 at 1am ET is still 1/7 in PT
+        every { clock.instant() } returns Instant.ofEpochSecond(1736316000)
+        every { userPreferencesService.getTimeZone(any()) } returns ZoneId.of("America/Los_Angeles")
+
+        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+
+        assertThat(view.wrappedLinkView).isNotNull()
+        assertThat(view.wrappedLinkView!!.year).isEqualTo(2024)
     }
 }

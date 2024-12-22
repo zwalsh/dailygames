@@ -19,6 +19,7 @@ const val SHARE_TEXT_ID = "shareTextId"
 data class HomeView(
     val resultFeed: List<ResultFeedItemView>,
     val shareTextModalView: ShareTextModalView?,
+    val wrappedLinkView: WrappedLinkView?,
     val gameListView: GameListView,
     val nav: NavView,
 ) : HTMLView<HTML>() {
@@ -38,6 +39,8 @@ data class HomeView(
             nav.renderIn(this)
             shareTextModalView?.renderIn(this)
             div(classes = "container") {
+                wrappedLinkView?.renderIn(this@div)
+
                 div(classes = "row") {
                     div(classes = "col") {
                         div(classes = "card mx-3") {
