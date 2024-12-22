@@ -19,7 +19,7 @@ data class WrappedInfo constructor(
     val pointsByGame: Map<Game, Int>,
     val totalMinutes: Int,
     val totalMinutesRank: Int,
-    val bestGame: Game?,  // Can be null if the user does not qualify in any game
+    val bestGame: Game?, // Can be null if the user does not qualify in any game
     val averagesByGame: Map<Game, Double>,
     val ranksPerGameTotal: Map<Game, Int>,
     val ranksPerGameAverage: Map<Game, Int>,

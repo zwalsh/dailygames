@@ -13,12 +13,12 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
+import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
-import sh.zachwal.dailygames.results.resultinfo.Top5Info
 
 class WrappedServiceTest {
 
@@ -337,9 +337,9 @@ class WrappedServiceTest {
         }
 
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns
-                playerOneWorldle
-                    .plus(playerTwoWorldle)
-                    .stream()
+            playerOneWorldle
+                .plus(playerTwoWorldle)
+                .stream()
 
         val wrappedData = service.generateWrappedData(2024)
 
@@ -383,10 +383,10 @@ class WrappedServiceTest {
         )
 
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns
-                // repeat 10 times to exceed minimum cutoff
-                List(10) { results }
-                    .flatten()
-                    .stream()
+            // repeat 10 times to exceed minimum cutoff
+            List(10) { results }
+                .flatten()
+                .stream()
 
         val wrappedData = service.generateWrappedData(2024)
 

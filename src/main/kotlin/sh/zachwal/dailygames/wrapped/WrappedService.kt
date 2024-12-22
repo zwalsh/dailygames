@@ -2,9 +2,11 @@ package sh.zachwal.dailygames.wrapped
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
+import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.jdbi.WrappedInfo
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.leaderboard.MINIMUM_GAMES_FOR_AVERAGE
 import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.wrapped.views.RanksTableSection
@@ -20,8 +22,6 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import org.slf4j.LoggerFactory
-import sh.zachwal.dailygames.leaderboard.MINIMUM_GAMES_FOR_AVERAGE
 
 @Singleton
 class WrappedService @Inject constructor(
@@ -189,7 +189,7 @@ class WrappedService @Inject constructor(
                 }
             }
         }
-        
+
         val usersRankedByTotal = Game.values().associateWith { game ->
             userIds.sortedByDescending { pointsByGame[it]?.get(game) ?: 0 }
         }
@@ -199,7 +199,7 @@ class WrappedService @Inject constructor(
                 .sortedByDescending { userId -> averagesByUser[userId]?.get(game) ?: 0.0 }
         }
 
-        return userIds.map {  userId ->
+        return userIds.map { userId ->
             val gamesPlayedByUser = gamesPlayedByGame[userId]?.keys ?: emptySet()
             val userRanksByGameTotal = gamesPlayedByUser
                 .associateWith { game -> usersRankedByTotal[game]!!.indexOf(userId) + 1 }
