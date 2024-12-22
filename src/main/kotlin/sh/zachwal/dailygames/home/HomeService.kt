@@ -14,6 +14,7 @@ import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import java.time.Duration
 import java.time.Instant
+import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
 import sh.zachwal.dailygames.home.views.WrappedLinkView
@@ -37,10 +38,20 @@ class HomeService @Inject constructor(
             currentActiveNavItem = NavItem.HOME,
         )
 
+        val userTimeZone = userPreferencesService.getTimeZone(user.id)
+        val localDate = clock.instant().atZone(userTimeZone).toLocalDate()
+
+        val wrappedLinkView = if (localDate.dayOfYear <= 7) {
+            // Wrapped is for last year
+            WrappedLinkView(localDate.year - 1)
+        } else {
+            null
+        }
+
         return HomeView(
             resultFeed = resultService.resultFeed(user.id),
             shareTextModalView = shareTextModalView(user),
-            wrappedLinkView = WrappedLinkView(2024),
+            wrappedLinkView = wrappedLinkView,
             gameListView = gameListView(),
             nav = navView,
         )

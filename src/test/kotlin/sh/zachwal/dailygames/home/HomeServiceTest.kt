@@ -174,7 +174,7 @@ class HomeServiceTest {
     @Test
     fun `first 7 days of year is relative to user's timezone`() {
         // 1/8/25 at 1am ET is still 1/7 in PT
-        every { clock.instant() } returns Instant.ofEpochMilli(1736316000)
+        every { clock.instant() } returns Instant.ofEpochSecond(1736316000)
         every { userPreferencesService.getTimeZone(any()) } returns ZoneId.of("America/Los_Angeles")
 
         val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
