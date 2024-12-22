@@ -228,6 +228,7 @@ class WrappedServiceTest {
     @Test
     fun `uses a user's local timezone`() {
         val todayMidnightPT = Instant.ofEpochSecond(1734854400)
+        every { userPreferencesService.getTimeZone(1L) } returns ZoneId.of("America/Los_Angeles")
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
             result.copy(instantSubmitted = todayMidnightPT.minus(4, ChronoUnit.HOURS)), // yesterday ET, PT
             result.copy(instantSubmitted = todayMidnightPT.minus(2, ChronoUnit.HOURS)), // today ET, yesterday PT
