@@ -150,6 +150,7 @@ class WrappedService @Inject constructor(
         val pointsByGame = mutableMapOf<Long, MutableMap<Game, Int>>()
         val previousGameInstant = mutableMapOf<Long, Instant>()
         val totalTimePlayed = mutableMapOf<Long, Duration>()
+        val pointsByDay = mutableMapOf<Long, MutableMap<LocalDate, Int>>()
 
         // Iterate over the result stream and accumulate the data needed to create the WrappedInfo objects
         allResults.peek {
@@ -167,6 +168,13 @@ class WrappedService @Inject constructor(
                     totalTimePlayed.merge(it.userId, difference, Duration::plus)
                 }
             }
+        }.peek {
+            pointsByDay.getOrPut(it.userId) { mutableMapOf() }
+                .merge(
+                    it.instantSubmitted.atZone(ZoneId.systemDefault()).toLocalDate(),
+                    calculator.calculatePoints(it),
+                    Int::plus
+                )
         }.forEach {
             totalGamesPlayed.merge(it.userId, 1, Int::plus)
         }
@@ -211,6 +219,10 @@ class WrappedService @Inject constructor(
             val bestGame = userRanksByGameAverage
                 .minByOrNull { (_, rank) -> rank }
                 ?.key
+            val bestDay = pointsByDay[userId]
+                ?.maxByOrNull { (_, points) -> points }
+                ?.key
+            val bestDayPoints = pointsByDay[userId]?.get(bestDay) ?: 0
 
             WrappedInfo(
                 id = 0,
@@ -221,8 +233,8 @@ class WrappedService @Inject constructor(
                 totalPointsRank = usersRankedByPoints.indexOf(userId) + 1,
                 favoriteGame = favoriteGameByUser.getValue(userId),
                 gamesPlayedByGame = gamesPlayedByGame[userId] ?: emptyMap(),
-                bestDay = null,
-                bestDayPoints = 0,
+                bestDay = bestDay,
+                bestDayPoints = bestDayPoints,
                 totalMinutes = totalTimePlayed[userId]?.toMinutes()?.toInt() ?: 0,
                 totalMinutesRank = usersRankedByTotalMinutes.indexOf(userId) + 1,
                 bestGame = bestGame,
