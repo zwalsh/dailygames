@@ -15,6 +15,7 @@ import java.time.Duration
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import sh.zachwal.dailygames.home.views.WrappedLinkView
 
 @Singleton
 class HomeService @Inject constructor(
@@ -36,6 +37,7 @@ class HomeService @Inject constructor(
         return HomeView(
             resultFeed = resultService.resultFeed(user.id),
             shareTextModalView = shareTextModalView(user),
+            wrappedLinkView = WrappedLinkView(2024),
             gameListView = gameListView(),
             nav = navView,
         )
