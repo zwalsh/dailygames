@@ -4,18 +4,21 @@ import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
+import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.WrappedInfo
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.leaderboard.MINIMUM_GAMES_FOR_AVERAGE
 import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.wrapped.views.GuestWelcomeSection
 import sh.zachwal.dailygames.wrapped.views.RanksTableRowView
 import sh.zachwal.dailygames.wrapped.views.RanksTableSection
 import sh.zachwal.dailygames.wrapped.views.StatSection
 import sh.zachwal.dailygames.wrapped.views.SummaryTableSection
 import sh.zachwal.dailygames.wrapped.views.TextSection
 import sh.zachwal.dailygames.wrapped.views.WelcomeSection
+import sh.zachwal.dailygames.wrapped.views.WrappedShareView
 import sh.zachwal.dailygames.wrapped.views.WrappedView
 import java.time.Duration
 import java.time.Instant
@@ -25,9 +28,6 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import sh.zachwal.dailygames.db.jdbi.User
-import sh.zachwal.dailygames.wrapped.views.GuestWelcomeSection
-import sh.zachwal.dailygames.wrapped.views.WrappedShareView
 
 @Singleton
 class WrappedService @Inject constructor(
@@ -44,7 +44,7 @@ class WrappedService @Inject constructor(
     fun guestWrappedView(year: Int, username: String): WrappedView {
         val wrappedData = generateWrappedData(year)
         val userId = userService.getUser(username)?.id
-            ?: throw RuntimeException("Could not find this Wrapped for user=${username}.")
+            ?: throw RuntimeException("Could not find this Wrapped for user=$username.")
 
         val wrappedInfo = wrappedData.firstOrNull { it.userId == userId }
             ?: throw RuntimeException("Could not find this Wrapped.")

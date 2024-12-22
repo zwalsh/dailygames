@@ -24,7 +24,7 @@ class WrappedController @Inject constructor(
             get {
                 val year = call.parameters.getOrFail("year").toInt()
                 val username = call.parameters.getOrFail("userName")
-                val user = userService.getUser(username) ?: throw RuntimeException("User=${username} not found")
+                val user = userService.getUser(username) ?: throw RuntimeException("User=$username not found")
                 val wrappedView = wrappedService.wrappedView(year, user)
 
                 call.respondHtml {
