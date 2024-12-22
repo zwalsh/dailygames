@@ -4,6 +4,7 @@ import kotlinx.html.DIV
 import kotlinx.html.TBODY
 import kotlinx.html.ThScope
 import kotlinx.html.h1
+import kotlinx.html.h6
 import kotlinx.html.table
 import kotlinx.html.tbody
 import kotlinx.html.td
@@ -16,12 +17,18 @@ import sh.zachwal.dailygames.shared_html.HTMLView
 data class RanksTableSection(
     val title: String,
     val heading: String,
+    val subHeading: String?,
     val rows: List<RanksTableRowView>
 ) : WrappedSection(
     height = "", // Don't force view height = 90
 ) {
     override fun DIV.content() {
         h1 { +title }
+        subHeading?.let {
+            h6(classes = "text-secondary fst-italic") {
+                +it
+            }
+        }
 
         table(classes = "table") {
             thead {

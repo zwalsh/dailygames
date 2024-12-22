@@ -131,6 +131,7 @@ class WrappedService @Inject constructor(
                     RanksTableSection(
                         title = "Totals",
                         heading = "Points",
+                        subHeading = null,
                         rows = rows
                     )
                 },
@@ -145,6 +146,7 @@ class WrappedService @Inject constructor(
                     RanksTableSection(
                         title = "Averages",
                         heading = "Average",
+                        subHeading = "(min $MINIMUM_GAMES_FOR_AVERAGE games)",
                         rows = rows
                     )
                 },
