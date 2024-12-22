@@ -18,9 +18,11 @@ data class RanksTableSection(
     val title: String,
     val heading: String,
     val subHeading: String?,
-    val rows: List<RanksTableRowView>
+    val rows: List<RanksTableRowView>,
+    val wrappedIndex: Int,
 ) : WrappedSection(
     height = "", // Don't force view height = 90
+    wrappedIndex = wrappedIndex,
 ) {
     override fun DIV.content() {
         h1 { +title }

@@ -11,7 +11,8 @@ data class TextSection(
     val middleText: String,
     val bottomText: String,
     val fontSizeOverride: String? = null,
-) : WrappedSection() {
+    val wrappedIndex: Int,
+) : WrappedSection(wrappedIndex = wrappedIndex) {
     override fun DIV.content() {
         h3(classes = "top-text") {
             +topText

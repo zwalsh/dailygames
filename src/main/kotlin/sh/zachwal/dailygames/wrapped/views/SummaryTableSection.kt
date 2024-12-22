@@ -15,8 +15,10 @@ private val bestDayFormatter = DateTimeFormatter.ofPattern("M/d/yy")
 
 data class SummaryTableSection(
     val wrappedInfo: WrappedInfo,
+    val wrappedIndex: Int,
 ) : WrappedSection(
     height = "", // Don't force view height = 90
+    wrappedIndex = wrappedIndex,
 ) {
 
     private val rankString = when (wrappedInfo.totalPointsRank) {

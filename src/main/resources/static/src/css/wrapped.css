@@ -1,9 +1,6 @@
-body, html {
-  scroll-snap-type: y mandatory;
-}
-
-.snapChild {
-  scroll-snap-align: start;
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+  color: inherit;
+  text-decoration: inherit;
 }
 
 .vh-90 {
