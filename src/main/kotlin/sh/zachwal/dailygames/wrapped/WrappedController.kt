@@ -46,15 +46,16 @@ class WrappedController @Inject constructor(
             }
         }
 
-        approvedUserRoute("/wrapped/{year}/{userName}") {
-            get {
-                val year = call.parameters.getOrFail("year").toInt()
-                val username = call.parameters.getOrFail("userName")
-                val wrappedView = wrappedService.guestWrappedView(year, username)
+        // Open so that link previews look nice in iOS
+        // TODO -- have login redirects include destination page & meta tags for that page
+        // see https://developer.apple.com/library/archive/technotes/tn2444/_index.html
+        get("/wrapped/{year}/{userName}") {
+            val year = call.parameters.getOrFail("year").toInt()
+            val username = call.parameters.getOrFail("userName")
+            val wrappedView = wrappedService.guestWrappedView(year, username)
 
-                call.respondHtml {
-                    wrappedView.renderIn(this)
-                }
+            call.respondHtml {
+                wrappedView.renderIn(this)
             }
         }
     }
