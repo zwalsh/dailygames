@@ -6,9 +6,9 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.TextStyle
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import java.util.concurrent.TimeUnit
 
 @Singleton
 class UserPreferencesService @Inject constructor(
