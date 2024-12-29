@@ -460,15 +460,15 @@ class WrappedServiceTest {
     fun `calculates a user's longest streak`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
             result,
-            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(2, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(3, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(1, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(2, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(3, ChronoUnit.DAYS)),
             // gap
-            result.copy(instantSubmitted = Instant.now().minus(5, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(6, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(7, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(8, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(9, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(5, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(6, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(7, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(8, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(9, ChronoUnit.DAYS)),
         )
 
         val wrappedData = service.generateWrappedData(2024)
@@ -482,14 +482,14 @@ class WrappedServiceTest {
     fun `calculates longest streak even if different games are interleaved`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
             result,
-            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
-            result.copy(instantSubmitted = Instant.now().minus(2, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(2, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
-            result.copy(instantSubmitted = Instant.now().minus(3, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(3, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
-            result.copy(instantSubmitted = Instant.now().minus(4, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(4, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(instantSubmitted = Instant.now().plus(1, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(1, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(instantSubmitted = Instant.now().plus(2, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(2, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(instantSubmitted = Instant.now().plus(3, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(3, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(instantSubmitted = Instant.now().plus(4, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(4, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
         )
 
         val wrappedData = service.generateWrappedData(2024)
@@ -503,25 +503,25 @@ class WrappedServiceTest {
     fun `calculates longest streak for multiple users`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
             result,
-            result.copy(instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(2, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(3, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(1, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(2, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(3, ChronoUnit.DAYS)),
             // gap
-            result.copy(instantSubmitted = Instant.now().minus(5, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(6, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(7, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(8, ChronoUnit.DAYS)),
-            result.copy(instantSubmitted = Instant.now().minus(9, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(5, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(6, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(7, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(8, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(9, ChronoUnit.DAYS)),
             result.copy(userId = 2),
-            result.copy(userId = 2, instantSubmitted = Instant.now().minus(1, ChronoUnit.DAYS)),
-            result.copy(userId = 2, instantSubmitted = Instant.now().minus(2, ChronoUnit.DAYS)),
-            result.copy(userId = 2, instantSubmitted = Instant.now().minus(3, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(1, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(2, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(3, ChronoUnit.DAYS)),
             // gap
-            result.copy(userId = 2, instantSubmitted = Instant.now().minus(5, ChronoUnit.DAYS)),
-            result.copy(userId = 2, instantSubmitted = Instant.now().minus(6, ChronoUnit.DAYS)),
-            result.copy(userId = 2, instantSubmitted = Instant.now().minus(7, ChronoUnit.DAYS)),
-            result.copy(userId = 2, instantSubmitted = Instant.now().minus(8, ChronoUnit.DAYS)),
-            result.copy(userId = 2, instantSubmitted = Instant.now().minus(9, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(5, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(6, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(7, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(8, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(9, ChronoUnit.DAYS)),
         )
 
         val wrappedData = service.generateWrappedData(2024)

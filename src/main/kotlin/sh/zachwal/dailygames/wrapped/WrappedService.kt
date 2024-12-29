@@ -264,9 +264,9 @@ class WrappedService @Inject constructor(
         val totalTimePlayed = mutableMapOf<Long, Duration>()
         val pointsByDay = mutableMapOf<Long, MutableMap<LocalDate, Int>>()
 
-        val longestStreak = mutableMapOf<Long, MutableMap<Game, Int>>()
-        val currentStreak = mutableMapOf<Long, MutableMap<Game, Int>>()
-        val currentStreakDate = mutableMapOf<Long, MutableMap<Game, LocalDate>>()
+        val longestStreakByGame = mutableMapOf<Long, MutableMap<Game, Int>>()
+        val currentStreakByGame = mutableMapOf<Long, MutableMap<Game, Int>>()
+        val currentStreakDateByGame = mutableMapOf<Long, MutableMap<Game, LocalDate>>()
 
         // Iterate over the result stream and accumulate the data needed to create the WrappedInfo objects
         allResults.peek {
@@ -292,6 +292,25 @@ class WrappedService @Inject constructor(
                     calculator.calculatePoints(it),
                     Int::plus
                 )
+        }.peek {
+            val timeZone = userPreferencesService.getTimeZoneCached(it.userId)
+            val date = it.instantSubmitted.atZone(timeZone).toLocalDate()
+
+            val previousStreak = currentStreakByGame.getOrPut(it.userId) { mutableMapOf() }[it.game] ?: 0
+            val previousDate = currentStreakDateByGame.getOrPut(it.userId) { mutableMapOf() }[it.game]
+
+            if (previousDate != null && previousDate.plusDays(1) == date) {
+                currentStreakByGame[it.userId]!![it.game] = previousStreak + 1
+            } else {
+                currentStreakByGame[it.userId]!![it.game] = 1
+            }
+
+            currentStreakDateByGame[it.userId]!![it.game] = date
+
+            val longest = longestStreakByGame.getOrPut(it.userId) { mutableMapOf() }[it.game] ?: 0
+            if (currentStreakByGame[it.userId]!![it.game]!! > longest) {
+                longestStreakByGame[it.userId]!![it.game] = currentStreakByGame[it.userId]!![it.game]!!
+            }
         }.forEach {
             totalGamesPlayed.merge(it.userId, 1, Int::plus)
         }
@@ -340,6 +359,10 @@ class WrappedService @Inject constructor(
                 ?.maxByOrNull { (_, points) -> points }
                 ?.key
             val bestDayPoints = pointsByDay[userId]?.get(bestDay) ?: 0
+            val longestStreakGame = longestStreakByGame[userId]
+                ?.maxByOrNull { (_, streak) -> streak }
+                ?.key
+            val longestStreak = longestStreakByGame[userId]?.get(longestStreakGame) ?: 0
 
             WrappedInfo(
                 id = 0,
@@ -356,8 +379,8 @@ class WrappedService @Inject constructor(
                 totalMinutesRank = usersRankedByTotalMinutes.indexOf(userId) + 1,
                 bestGame = bestGame,
                 pointsByGame = pointsByGame[userId] ?: emptyMap(),
-                longestStreak = 0,
-                longestStreakGame = null,
+                longestStreak = longestStreak,
+                longestStreakGame = longestStreakGame,
                 ranksPerGameTotal = userRanksByGameTotal,
                 averagesByGame = averagesByUser[userId] ?: emptyMap(),
                 ranksPerGameAverage = userRanksByGameAverage,
