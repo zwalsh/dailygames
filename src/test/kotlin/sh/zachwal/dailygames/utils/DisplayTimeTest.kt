@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit
 class DisplayTimeTest {
 
     private val userPreferencesService = mockk<UserPreferencesService> {
-        every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
+        every { getTimeZoneCached(any()) } returns ZoneId.of("America/New_York")
     }
     private val service = DisplayTimeService(userPreferencesService)
 
@@ -96,7 +96,7 @@ class DisplayTimeTest {
         val now = elevenFiftyNineEastern.plus(2, ChronoUnit.MINUTES)
 
         val pacificTime = ZoneId.of("America/Los_Angeles")
-        every { userPreferencesService.getTimeZone(1L) } returns pacificTime
+        every { userPreferencesService.getTimeZoneCached(1L) } returns pacificTime
 
         assertThat(service.displayTime(elevenFiftyNineEastern, 1L, now)).isEqualTo("2m ago")
     }
@@ -107,7 +107,7 @@ class DisplayTimeTest {
         val todayNoonPacific = yesterdayNoonPacific.plus(1, ChronoUnit.DAYS)
 
         val pacificTime = ZoneId.of("America/Los_Angeles")
-        every { userPreferencesService.getTimeZone(1L) } returns pacificTime
+        every { userPreferencesService.getTimeZoneCached(1L) } returns pacificTime
         assertThat(
             service.displayTime(
                 yesterdayNoonPacific,
@@ -122,7 +122,7 @@ class DisplayTimeTest {
         val augustFirst = Instant.ofEpochSecond(1722528000)
         val now = augustFirst.plus(30, ChronoUnit.DAYS)
         val pacificTime = ZoneId.of("America/Los_Angeles")
-        every { userPreferencesService.getTimeZone(1L) } returns pacificTime
+        every { userPreferencesService.getTimeZoneCached(1L) } returns pacificTime
 
         assertThat(service.displayTime(augustFirst, 1L, now = now)).isEqualTo("Thu Aug 1 at 9:00AM PT")
     }

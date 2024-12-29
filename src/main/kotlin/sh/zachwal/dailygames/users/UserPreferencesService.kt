@@ -1,5 +1,6 @@
 package sh.zachwal.dailygames.users
 
+import com.google.common.cache.CacheBuilder
 import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -7,6 +8,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import java.util.concurrent.TimeUnit
 
 @Singleton
 class UserPreferencesService @Inject constructor(
@@ -17,6 +19,17 @@ class UserPreferencesService @Inject constructor(
         return userPreferencesDAO.getByUserId(userId)?.let {
             ZoneId.of(it.timeZone)
         } ?: ZoneId.of("America/New_York")
+    }
+
+    private val timeZoneCache = CacheBuilder.newBuilder()
+        .maximumSize(1000)
+        .expireAfterWrite(1, TimeUnit.MINUTES)
+        .build<Long, ZoneId>()
+
+    fun getTimeZoneCached(userId: Long): ZoneId {
+        return timeZoneCache.get(userId) {
+            getTimeZone(userId)
+        }
     }
 
     fun setTimeZone(userId: Long, zoneId: ZoneId) {

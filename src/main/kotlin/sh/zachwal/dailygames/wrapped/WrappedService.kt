@@ -263,8 +263,6 @@ class WrappedService @Inject constructor(
         val previousGameInstant = mutableMapOf<Long, Instant>()
         val totalTimePlayed = mutableMapOf<Long, Duration>()
         val pointsByDay = mutableMapOf<Long, MutableMap<LocalDate, Int>>()
-        // local cache of time zone
-        val userTimeZones = mutableMapOf<Long, ZoneId>()
 
         // Iterate over the result stream and accumulate the data needed to create the WrappedInfo objects
         allResults.peek {
@@ -283,9 +281,7 @@ class WrappedService @Inject constructor(
                 }
             }
         }.peek {
-            val timeZone = userTimeZones.getOrPut(it.userId) {
-                userPreferencesService.getTimeZone(it.userId)
-            }
+            val timeZone = userPreferencesService.getTimeZoneCached(it.userId)
             pointsByDay.getOrPut(it.userId) { mutableMapOf() }
                 .merge(
                     it.instantSubmitted.atZone(timeZone).toLocalDate(),
