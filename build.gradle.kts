@@ -68,6 +68,9 @@ dependencies {
     // Jackson
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
 
+    // Caching
+    implementation("com.google.guava:guava:33.4.0-jre")
+
     // Use the Kotlin test library.
     testImplementation(kotlin("test"))
 
