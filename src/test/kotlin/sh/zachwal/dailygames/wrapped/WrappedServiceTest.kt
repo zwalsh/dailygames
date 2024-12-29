@@ -8,6 +8,7 @@ import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
+import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.leaderboard.PointCalculator
@@ -453,5 +454,39 @@ class WrappedServiceTest {
 
         val userOne = wrappedData.single { it.userId == 1L }
         assertThat(userOne.bestGame).isNull()
+    }
+
+    @Test
+    fun `caches wrapped data for one user`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result
+        )
+
+        val currentUser = User(1, "name", "password")
+        service.wrappedView(2024, currentUser)
+        service.wrappedView(2024, currentUser)
+
+        verify(exactly = 1) {
+            resultDAO.allResultsBetweenStream(any(), any())
+        }
+    }
+
+    @Test
+    fun `caches wrapped data for two users in one year`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(userId = 2),
+        )
+
+        val userOne = User(1, "name", "password")
+        val userTwo = User(2, "name", "password")
+        service.wrappedView(2024, userOne)
+        service.wrappedView(2024, userTwo)
+        service.wrappedView(2024, userOne)
+        service.wrappedView(2024, userTwo)
+
+        verify(exactly = 1) {
+            resultDAO.allResultsBetweenStream(any(), any())
+        }
     }
 }
