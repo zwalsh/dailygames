@@ -1,5 +1,6 @@
 package sh.zachwal.dailygames.users
 
+import com.google.common.cache.CacheBuilder
 import io.ktor.util.error
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException
 import org.mindrot.jbcrypt.BCrypt
@@ -7,7 +8,8 @@ import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.db.dao.UserDAO
 import sh.zachwal.dailygames.db.dao.UserPreferencesDAO
 import sh.zachwal.dailygames.db.jdbi.User
-import java.util.concurrent.ConcurrentHashMap
+import sh.zachwal.dailygames.utils.orNull
+import java.util.Optional
 import javax.inject.Inject
 
 class UserService @Inject constructor(
@@ -62,11 +64,18 @@ class UserService @Inject constructor(
 
     fun list(): List<User> = userDAO.listUsers()
 
-    // TODO use a real cache library, maybe
-    private val userNameCache = ConcurrentHashMap<Long, String?>()
+    private val userNameCache = CacheBuilder.newBuilder()
+        .maximumSize(1000)
+        .build<Long, Optional<String>>()
 
     fun getUsernameCached(userId: Long): String? {
-        return userNameCache.computeIfAbsent(userId) { getUser(it)?.username }
+        return userNameCache.get(userId) {
+            userDAO
+                .getById(userId)
+                ?.username
+                ?.let { Optional.of(it) }
+                ?: Optional.empty()
+        }.orNull()
     }
 
     fun setPassword(user: User, newPassword: String) {
@@ -74,7 +83,12 @@ class UserService @Inject constructor(
         userDAO.updatePassword(user.id, newHash)
     }
 
-    fun userChangePassword(user: User, currentPassword: String, newPassword: String, repeatNewPassword: String): ChangePasswordResult {
+    fun userChangePassword(
+        user: User,
+        currentPassword: String,
+        newPassword: String,
+        repeatNewPassword: String
+    ): ChangePasswordResult {
         if (newPassword != repeatNewPassword) {
             return ChangePasswordFailure("Passwords do not match")
         }

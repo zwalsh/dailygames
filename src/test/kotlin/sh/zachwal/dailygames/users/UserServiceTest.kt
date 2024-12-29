@@ -78,4 +78,17 @@ class UserServiceTest(
         val updatedUser = userService.checkUser("zach", "newPassword")
         assertThat(updatedUser).isNotNull()
     }
+
+    @Test
+    fun `getUsernameCached gets result`() {
+        val user = fixtures.zach
+        val username = userService.getUsernameCached(user.id)
+        assertThat(username).isEqualTo(user.username)
+    }
+
+    @Test
+    fun `getUsernameCached handles missing user`() {
+        val username = userService.getUsernameCached(0)
+        assertThat(username).isNull()
+    }
 }
