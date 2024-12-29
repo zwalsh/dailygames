@@ -264,6 +264,10 @@ class WrappedService @Inject constructor(
         val totalTimePlayed = mutableMapOf<Long, Duration>()
         val pointsByDay = mutableMapOf<Long, MutableMap<LocalDate, Int>>()
 
+        val longestStreak = mutableMapOf<Long, MutableMap<Game, Int>>()
+        val currentStreak = mutableMapOf<Long, MutableMap<Game, Int>>()
+        val currentStreakDate = mutableMapOf<Long, MutableMap<Game, LocalDate>>()
+
         // Iterate over the result stream and accumulate the data needed to create the WrappedInfo objects
         allResults.peek {
             userIds.add(it.userId)
@@ -352,6 +356,8 @@ class WrappedService @Inject constructor(
                 totalMinutesRank = usersRankedByTotalMinutes.indexOf(userId) + 1,
                 bestGame = bestGame,
                 pointsByGame = pointsByGame[userId] ?: emptyMap(),
+                longestStreak = 0,
+                longestStreakGame = null,
                 ranksPerGameTotal = userRanksByGameTotal,
                 averagesByGame = averagesByUser[userId] ?: emptyMap(),
                 ranksPerGameAverage = userRanksByGameAverage,
