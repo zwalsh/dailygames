@@ -16,7 +16,7 @@ class DisplayTimeService @Inject constructor(
     private val userPreferencesService: UserPreferencesService,
 ) {
     fun displayTime(time: Instant, userId: Long, now: Instant = Instant.now()): String {
-        val userTimeZone = userPreferencesService.getTimeZone(userId)
+        val userTimeZone = userPreferencesService.getTimeZoneCached(userId)
         val nowDate = LocalDate.ofInstant(now, userTimeZone)
 
         val date = LocalDate.ofInstant(time, userTimeZone)
@@ -41,7 +41,7 @@ class DisplayTimeService @Inject constructor(
     }
 
     fun longDisplayTime(time: Instant, userId: Long): String {
-        val userTimeZone = userPreferencesService.getTimeZone(userId)
+        val userTimeZone = userPreferencesService.getTimeZoneCached(userId)
         val shortTimeZone = userTimeZone.getDisplayName(TextStyle.SHORT, Locale.US)
 
         val format = SimpleDateFormat("EEE MMM d 'at' h:mma '$shortTimeZone'")

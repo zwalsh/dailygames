@@ -58,4 +58,15 @@ class UserPreferencesServiceTest {
 
         assertThat(possibleTimeZones[ZoneId.of("America/New_York")]).contains("Eastern Time - New York")
     }
+
+    @Test
+    fun `getTimeZoneCached caches time zone`() {
+        every { userPreferencesDAO.getByUserId(1) } returns UserPreferences(1, 1, "America/Los_Angeles")
+        userPreferencesService.getTimeZoneCached(1)
+        userPreferencesService.getTimeZoneCached(1)
+
+        verify(exactly = 1) {
+            userPreferencesDAO.getByUserId(1)
+        }
+    }
 }
