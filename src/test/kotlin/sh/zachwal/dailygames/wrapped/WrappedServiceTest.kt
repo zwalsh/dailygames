@@ -457,6 +457,85 @@ class WrappedServiceTest {
     }
 
     @Test
+    fun `calculates a user's longest streak`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(instantSubmitted = Instant.now().plus(1, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(2, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(3, ChronoUnit.DAYS)),
+            // gap
+            result.copy(instantSubmitted = Instant.now().plus(5, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(6, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(7, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(8, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(9, ChronoUnit.DAYS)),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.longestStreak).isEqualTo(5)
+        assertThat(userOne.longestStreakGame).isEqualTo(Game.WORLDLE)
+    }
+
+    @Test
+    fun `calculates longest streak even if different games are interleaved`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(instantSubmitted = Instant.now().plus(1, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(1, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(instantSubmitted = Instant.now().plus(2, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(2, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(instantSubmitted = Instant.now().plus(3, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(3, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+            result.copy(instantSubmitted = Instant.now().plus(4, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(4, ChronoUnit.DAYS), game = Game.GEOCIRCLES, resultInfo = GeocirclesInfo),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.longestStreak).isEqualTo(5)
+        assertThat(userOne.longestStreakGame).isEqualTo(Game.WORLDLE)
+    }
+
+    @Test
+    fun `calculates longest streak for multiple users`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result,
+            result.copy(instantSubmitted = Instant.now().plus(1, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(2, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(3, ChronoUnit.DAYS)),
+            // gap
+            result.copy(instantSubmitted = Instant.now().plus(5, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(6, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(7, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(8, ChronoUnit.DAYS)),
+            result.copy(instantSubmitted = Instant.now().plus(9, ChronoUnit.DAYS)),
+            result.copy(userId = 2),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(1, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(2, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(3, ChronoUnit.DAYS)),
+            // gap
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(5, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(6, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(7, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(8, ChronoUnit.DAYS)),
+            result.copy(userId = 2, instantSubmitted = Instant.now().plus(9, ChronoUnit.DAYS)),
+        )
+
+        val wrappedData = service.generateWrappedData(2024)
+
+        val userOne = wrappedData.single { it.userId == 1L }
+        assertThat(userOne.longestStreak).isEqualTo(5)
+        assertThat(userOne.longestStreakGame).isEqualTo(Game.WORLDLE)
+
+        val userTwo = wrappedData.single { it.userId == 2L }
+        assertThat(userTwo.longestStreak).isEqualTo(5)
+        assertThat(userTwo.longestStreakGame).isEqualTo(Game.WORLDLE)
+    }
+
+    @Test
     fun `caches wrapped data for one user`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
             result
