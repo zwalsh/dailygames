@@ -40,6 +40,10 @@ data class SummaryTableSection(
         "${game.emoji()} ${game.displayName()} - #${wrappedInfo.ranksPerGameAverage[game]}"
     }
 
+    private val longestStreakString = wrappedInfo.longestStreakGame?.let { game ->
+        "${game.emoji()} ${game.displayName()} - ${wrappedInfo.longestStreak} days"
+    }
+
     override fun DIV.content() {
         h1 { +"Summary" }
 
@@ -75,6 +79,12 @@ data class SummaryTableSection(
                     tr {
                         th(scope = ThScope.row) { +"Best Game" }
                         td { +bestGameString }
+                    }
+                }
+                longestStreakString?.let {
+                    tr {
+                        th(scope = ThScope.row) { +"Longest Streak" }
+                        td { +longestStreakString }
                     }
                 }
             }

@@ -185,6 +185,14 @@ class WrappedService @Inject constructor(
                         wrappedIndex = wrappedIndex++
                     )
                 },
+                wrappedInfo.longestStreakGame?.let {
+                    StatSection(
+                        topText = "Your longest streak was...",
+                        stat = wrappedInfo.longestStreak,
+                        bottomText = "...you played ${it.displayName()} ${wrappedInfo.longestStreak} days in a row!",
+                        wrappedIndex = wrappedIndex++
+                    )
+                },
                 SummaryTableSection(
                     wrappedInfo = wrappedInfo,
                     wrappedIndex = wrappedIndex++,
