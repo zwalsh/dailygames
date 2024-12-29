@@ -69,9 +69,24 @@ function addWebShare() {
    });
 }
 
+// Override the height on each element so it's no longer based on vh
+// This way if the viewport height changes (like when you scroll), the height of the element won't change
+// Without this, the height of the elements change and the page jumps around
+function setElementHeights() {
+    const elements = Array.from(document.getElementsByClassName('vh-90'));
+    const initialHeight = window.innerHeight * 0.9;
+
+    for (const e of elements) {
+        e.style.height = initialHeight + 'px';
+        e.classList.remove('vh-90');
+    }
+}
+
 window.onload = function () {
     const counters = document.querySelectorAll('.animate');
     counters.forEach(counter => runOnFirstAppearance(counter, animate));
 
     addWebShare();
+
+    setElementHeights();
 };
