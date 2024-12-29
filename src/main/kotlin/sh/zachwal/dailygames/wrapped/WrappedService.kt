@@ -1,5 +1,8 @@
 package sh.zachwal.dailygames.wrapped
 
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import org.slf4j.LoggerFactory
@@ -28,6 +31,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import java.util.concurrent.TimeUnit
 
 @Singleton
 class WrappedService @Inject constructor(
@@ -41,13 +45,37 @@ class WrappedService @Inject constructor(
 
     private val bestDayFormatter = DateTimeFormatter.ofPattern("MMMM d")
 
+    private val wrappedCache: LoadingCache<Pair<Int, Long>, WrappedInfo> = CacheBuilder.newBuilder()
+        .maximumSize(1000)
+        .expireAfterWrite(1, TimeUnit.HOURS)
+        .build(object : CacheLoader<Pair<Int, Long>, WrappedInfo>() {
+            override fun load(key: Pair<Int, Long>): WrappedInfo {
+                return loadWrappedInfo(key)
+            }
+        })
+
+    // In a synchronized block, load the WrappedInfo from the cache or generate the entire list of WrappedInfo objects
+    // This way, only one thread can work on a cache-miss at a time, and each thread will check the cache again
+    // to see if another thread has already generated the WrappedInfo object.
+    private fun loadWrappedInfo(key: Pair<Int, Long>): WrappedInfo = synchronized(this) {
+        wrappedCache.getIfPresent(key)?.let {
+            return it
+        }
+
+        val wrappedData = generateWrappedData(key.first)
+        wrappedData.forEach {
+            wrappedCache.put(key.first to it.userId, it)
+        }
+
+        return wrappedCache.getIfPresent(key)
+            ?: throw RuntimeException("Could not find this Wrapped.")
+    }
+
     fun guestWrappedView(year: Int, username: String): WrappedView {
-        val wrappedData = generateWrappedData(year)
         val userId = userService.getUser(username)?.id
             ?: throw RuntimeException("Could not find this Wrapped for user=$username.")
 
-        val wrappedInfo = wrappedData.firstOrNull { it.userId == userId }
-            ?: throw RuntimeException("Could not find this Wrapped.")
+        val wrappedInfo = wrappedCache.get(year to userId)
 
         logger.info("Generating guest Wrapped for $username in $year using $wrappedInfo")
 
@@ -66,13 +94,8 @@ class WrappedService @Inject constructor(
     }
 
     fun wrappedView(year: Int, currentUser: User): WrappedView {
-        val wrappedData = generateWrappedData(year)
-        val userId = currentUser.id
-
-        val wrappedInfo = wrappedData.firstOrNull { it.userId == userId }
-            ?: throw RuntimeException("Could not find this Wrapped.")
-        val userName = userService.getUsernameCached(userId)
-            ?: throw RuntimeException("Could not find this Wrapped.")
+        val wrappedInfo = wrappedCache.get(year to currentUser.id)
+        val userName = currentUser.username
 
         logger.info("Generating Wrapped for $userName in $year using $wrappedInfo")
 
