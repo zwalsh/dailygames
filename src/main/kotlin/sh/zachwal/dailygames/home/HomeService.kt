@@ -19,6 +19,12 @@ import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Hide these games from the list
+val hiddenGames = setOf(
+    // Pinpoint is not currently working & no one plays it anyway
+    Game.PINPOINT
+)
+
 @Singleton
 class HomeService @Inject constructor(
     private val resultService: ResultService,
@@ -60,12 +66,14 @@ class HomeService @Inject constructor(
         val newGames = gameDAO.listGamesCreatedAfter(Instant.now().minus(newGameDuration))
         // List the new games first
         val games = newGames + Game.values().filter { it !in newGames }
-        val gameLinkViews = games.map { game ->
-            GameLinkView(
-                game = game,
-                isNew = game in newGames,
-            )
-        }
+        val gameLinkViews = games
+            .filter { it !in hiddenGames }
+            .map { game ->
+                GameLinkView(
+                    game = game,
+                    isNew = game in newGames,
+                )
+            }
         return GameListView(gameLinkViews)
     }
 
