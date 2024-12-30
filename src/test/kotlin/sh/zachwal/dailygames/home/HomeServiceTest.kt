@@ -119,11 +119,13 @@ class HomeServiceTest {
     }
 
     @Test
-    fun `returns GameListView with all Games`() {
+    fun `returns GameListView with all Games except hidden ones`() {
         val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
 
-        assertThat(view.gameListView.games).hasSize(Game.values().size)
-        assertThat(view.gameListView.games.map { it.game }).containsExactly(*Game.values())
+        val expectedSize = Game.values().size - hiddenGames.size
+        assertThat(view.gameListView.games).hasSize(expectedSize)
+        val expectedElements = Game.values().toSet() - hiddenGames
+        assertThat(view.gameListView.games.map { it.game }).containsExactlyElementsIn(expectedElements)
     }
 
     @Test
