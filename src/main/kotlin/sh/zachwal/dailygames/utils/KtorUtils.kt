@@ -26,7 +26,7 @@ fun ApplicationCall.extractGameFromPathParams(): Game? {
 // Copied from internal implementation in `CallLogging`
 fun defaultFormat(call: ApplicationCall): String =
     when (val status = call.response.status() ?: "Unhandled") {
-        HttpStatusCode.Found -> "${status}: ${call.request.toLogString()} -> ${call.response.headers[HttpHeaders.Location]}"
-        "Unhandled" -> "${status}: ${call.request.toLogString()}"
-        else -> "${status}: ${call.request.toLogString()}"
+        HttpStatusCode.Found -> "$status: ${call.request.toLogString()} -> ${call.response.headers[HttpHeaders.Location]}"
+        "Unhandled" -> "$status: ${call.request.toLogString()}"
+        else -> "$status: ${call.request.toLogString()}"
     }
