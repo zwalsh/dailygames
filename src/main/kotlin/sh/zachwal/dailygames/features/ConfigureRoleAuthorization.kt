@@ -8,7 +8,7 @@ import sh.zachwal.dailygames.users.UserService
 
 fun configureRoleAuthorization(roleBasedAuthorizer: RoleBasedAuthorizer, application: Application, userService: UserService, roleService: RoleService) {
     roleBasedAuthorizer.validate { roles, session ->
-        application.log.info("Checking $roles for session ${session.user}")
+        application.log.debug("Checking {} for session {}", roles, session.user)
         val user = userService.getUser(session.user)
         user?.let { roleService.firstRoleOrNull(user, roles) }
     }

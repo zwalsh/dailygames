@@ -14,14 +14,18 @@ import io.ktor.features.XForwardedHeaderSupport
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
 import io.ktor.jackson.jackson
+import io.ktor.request.path
 import io.ktor.routing.routing
 import io.ktor.sessions.Sessions
 import io.ktor.sessions.cookie
+import io.ktor.sessions.get
+import io.ktor.sessions.sessions
 import org.slf4j.event.Level
 import sh.zachwal.dailygames.auth.configureFormAuth
 import sh.zachwal.dailygames.auth.configureSessionAuth
 import sh.zachwal.dailygames.config.AppConfig
 import sh.zachwal.dailygames.controller.createControllers
+import sh.zachwal.dailygames.features.MDCFeature
 import sh.zachwal.dailygames.features.configureRoleAuthorization
 import sh.zachwal.dailygames.features.configureStatusPages
 import sh.zachwal.dailygames.guice.ApplicationModule
@@ -37,6 +41,7 @@ import sh.zachwal.dailygames.session.SessionCleanupTask
 import sh.zachwal.dailygames.session.USER_SESSION
 import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
 import sh.zachwal.dailygames.users.UserService
+import sh.zachwal.dailygames.utils.defaultFormat
 import kotlin.collections.set
 import kotlin.time.ExperimentalTime
 
@@ -65,6 +70,16 @@ fun Application.module(testing: Boolean = false) {
 
     install(CallLogging) {
         level = Level.INFO
+        filter { call ->
+            call.request.path().startsWith("/static").not()
+        }
+        format { call ->
+            // Horrible hack to also include the user in the CallLogging log output
+            // See why this is difficult here:
+            // https://github.com/ktorio/ktor/issues/1414
+            val user = call.sessions.get<UserSessionPrincipal>()?.user ?: "anonymous"
+            "[user=$user] ${defaultFormat(call)}"
+        }
     }
     install(DefaultHeaders)
 
@@ -101,6 +116,14 @@ fun Application.module(testing: Boolean = false) {
 
     install(StatusPages) {
         configureStatusPages()
+    }
+
+    install(MDCFeature) {
+        mdcProvider = { call ->
+            mapOf(
+                "user" to (call.sessions.get<UserSessionPrincipal>()?.user ?: "anonymous"),
+            )
+        }
     }
 
     createControllers(injector)
