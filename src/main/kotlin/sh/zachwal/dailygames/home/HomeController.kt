@@ -9,7 +9,6 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.util.getOrFail
-import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.auth.userOrNull
 import sh.zachwal.dailygames.controller.Controller
@@ -29,11 +28,8 @@ class HomeController @Inject constructor(
     private val resultService: ResultService,
 ) {
 
-    private val logger = LoggerFactory.getLogger(HomeController::class.java)
-
     internal fun Routing.home() {
         get("/") {
-            logger.info("Hit home page.")
             val user = userOrNull(call, userService)
             val view = user?.let { homeService.homeView(user) } ?: HeroView
 

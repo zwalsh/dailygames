@@ -18,7 +18,7 @@ class DbSessionStorage @Inject constructor(private val sessionDAO: SessionDAO) :
     private val logger = LoggerFactory.getLogger(DbSessionStorage::class.java)
 
     override suspend fun invalidate(id: String) {
-        logger.info("Clearing $id")
+        logger.debug("Clearing {}", id)
         withContext(Dispatchers.IO) {
             sessionDAO.deleteSession(id)
         }
@@ -26,7 +26,7 @@ class DbSessionStorage @Inject constructor(private val sessionDAO: SessionDAO) :
 
     @ExperimentalIoApi
     override suspend fun <R> read(id: String, consumer: suspend (ByteReadChannel) -> R): R {
-        logger.info("Reading $id")
+        logger.debug("Reading {}", id)
         return withContext(Dispatchers.IO) {
             val bytes = sessionDAO.getById(id)?.data
                 ?: throw NoSuchElementException("No session with id $id")
@@ -35,7 +35,7 @@ class DbSessionStorage @Inject constructor(private val sessionDAO: SessionDAO) :
     }
 
     override suspend fun write(id: String, provider: suspend (ByteWriteChannel) -> Unit) {
-        logger.info("Writing $id")
+        logger.debug("Writing {}", id)
         withContext(Dispatchers.IO) {
             val bytes = writer {
                 provider(channel)

@@ -63,13 +63,21 @@ class ResultService @Inject constructor(
                 score = parsedResult.score,
                 shareText = parsedResult.shareTextNoLink,
                 resultInfo = parsedResult.resultInfo,
-            )
+            ).also {
+                logger.info(
+                    "User {} submitted result for {} #{}",
+                    user.username, it.game.displayName(), it.puzzleNumber
+                )
+            }
         } catch (e: UnableToExecuteStatementException) {
             if (e.cause is PSQLException && (e.cause as PSQLException).message?.contains("duplicate key value violates unique constraint") == true) {
                 logger.info("User ${user.id} tried to submit a duplicate result for ${game.displayName()} #${parsedResult.puzzleNumber}")
                 throw ConflictingPuzzleResultException(puzzle = puzzle, userId = user.id)
             } else {
-                logger.error("Error inserting result for ${game.displayName()} #${parsedResult.puzzleNumber} for user ${user.username}", e)
+                logger.error(
+                    "Error inserting result for ${game.displayName()} #${parsedResult.puzzleNumber} for user ${user.username}",
+                    e
+                )
                 throw e
             }
         }
