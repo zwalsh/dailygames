@@ -14,6 +14,7 @@ import io.ktor.features.XForwardedHeaderSupport
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
 import io.ktor.jackson.jackson
+import io.ktor.request.path
 import io.ktor.routing.routing
 import io.ktor.sessions.Sessions
 import io.ktor.sessions.cookie
@@ -65,6 +66,9 @@ fun Application.module(testing: Boolean = false) {
 
     install(CallLogging) {
         level = Level.INFO
+        filter { call ->
+            call.request.path().startsWith("/static").not()
+        }
     }
     install(DefaultHeaders)
 
