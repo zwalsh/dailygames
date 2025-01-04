@@ -23,6 +23,8 @@ import sh.zachwal.dailygames.roles.RoleService
 import sh.zachwal.dailygames.roles.adminRoute
 import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
+import sh.zachwal.dailygames.admin.views.AdminStreakPageView
+import sh.zachwal.dailygames.home.StreakService
 
 const val USERNAME_FORM_PARAM = "username"
 const val NEW_PASSWORD_FORM_PARAM = "newPassword"
@@ -33,6 +35,7 @@ class AdminController @Inject constructor(
     private val roleService: RoleService,
     private val adminService: AdminService,
     private val navViewFactory: NavViewFactory,
+    private val streakService: StreakService,
 ) {
 
     private fun sortedUsers(users: List<User>, roles: Map<User, List<Role>>): List<User> {
@@ -119,6 +122,22 @@ class AdminController @Inject constructor(
                 val newPassword = params.getOrFail(NEW_PASSWORD_FORM_PARAM)
 
                 val view = adminService.resetUserPassword(username, newPassword)
+                call.respondHtml {
+                    view.renderIn(this)
+                }
+            }
+        }
+    }
+
+    internal fun Routing.streaks() {
+        adminRoute("/admin/streaks") {
+            get {
+                val userStreaks = userService.list().associateWith {
+                    streakService.streakForUser(it.id)
+                }
+                val currentUser = currentUser(call, userService)
+                val navView = navViewFactory.navView(currentUser.username, NavItem.PROFILE)
+                val view = AdminStreakPageView(userStreaks, navView)
                 call.respondHtml {
                     view.renderIn(this)
                 }
