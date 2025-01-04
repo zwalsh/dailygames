@@ -1,7 +1,5 @@
 package sh.zachwal.dailygames.home
 
-import javax.inject.Inject
-import javax.inject.Singleton
 import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -16,6 +14,8 @@ import sh.zachwal.dailygames.users.UserPreferencesService
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
+import javax.inject.Inject
+import javax.inject.Singleton
 
 // Hide these games from the list
 val hiddenGames = setOf(

@@ -1,11 +1,11 @@
 package sh.zachwal.dailygames.home
 
-import javax.inject.Inject
-import javax.inject.Singleton
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.home.views.ShareTextModalView
 import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.results.ResultService
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class ShareTextService @Inject constructor(
