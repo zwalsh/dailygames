@@ -104,6 +104,11 @@
       "include": {
         "file": "21_add_framed.json"
       }
+    },
+    {
+      "include": {
+        "file": "22_add_user_instant_index.json"
+      }
     }
   ]
 }

@@ -1,0 +1,37 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "22",
+        "author": "zach",
+        "changes": [
+          {
+            "dropIndex": {
+              "indexName": "result_user_idx",
+              "tableName": "result"
+            }
+          },
+          {
+            "createIndex": {
+              "indexName": "result_user_instant_idx",
+              "tableName": "result",
+              "unique": false,
+              "columns": [
+                {
+                  "column": {
+                    "name": "user_id"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_submitted"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
