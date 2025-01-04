@@ -8,12 +8,14 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.util.getOrFail
 import sh.zachwal.dailygames.admin.views.AdminPageView
+import sh.zachwal.dailygames.admin.views.AdminStreakPageView
 import sh.zachwal.dailygames.admin.views.ResetUserPasswordView
 import sh.zachwal.dailygames.admin.views.UserListView
 import sh.zachwal.dailygames.admin.views.UserRowView
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.db.jdbi.User
+import sh.zachwal.dailygames.home.StreakService
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.roles.Role
@@ -23,8 +25,6 @@ import sh.zachwal.dailygames.roles.RoleService
 import sh.zachwal.dailygames.roles.adminRoute
 import sh.zachwal.dailygames.users.UserService
 import javax.inject.Inject
-import sh.zachwal.dailygames.admin.views.AdminStreakPageView
-import sh.zachwal.dailygames.home.StreakService
 
 const val USERNAME_FORM_PARAM = "username"
 const val NEW_PASSWORD_FORM_PARAM = "newPassword"
