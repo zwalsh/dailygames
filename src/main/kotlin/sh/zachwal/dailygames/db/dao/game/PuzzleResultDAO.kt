@@ -112,4 +112,14 @@ interface PuzzleResultDAO {
         """
     )
     fun findResults(userId: Long, puzzle: Puzzle): List<PuzzleResult>
+
+    @SqlQuery(
+        """
+            SELECT * 
+            FROM result
+            WHERE user_id = :userId
+            ORDER BY instant_submitted DESC
+        """
+    )
+    fun resultsForUserSortedStream(userId: Long): Stream<PuzzleResult>
 }
