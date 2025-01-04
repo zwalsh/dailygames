@@ -42,6 +42,11 @@ data class AdminPageView constructor(
                         }
                     }
                     li {
+                        a(href = "/admin/streaks") {
+                            +"Streaks"
+                        }
+                    }
+                    li {
                         a(href = "/admin/reset-password") {
                             +"Reset User Password"
                         }

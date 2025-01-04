@@ -8,7 +8,7 @@ import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
-import sh.zachwal.dailygames.leaderboard.PointCalculator
+import sh.zachwal.dailygames.home.views.ShareTextModalView
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
@@ -27,9 +27,9 @@ class HomeServiceTest {
     private val userPreferencesService = mockk<UserPreferencesService> {
         every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
     }
-    private val shareLineMapper = ShareLineMapper(
-        pointCalculator = PointCalculator()
-    )
+    private val shareTextService = mockk<ShareTextService>() {
+        every { shareTextModalView(any()) } returns null
+    }
     private val navViewFactory = mockk<NavViewFactory> {
         every { navView(any(), any()) } returns mockk()
     }
@@ -44,8 +44,7 @@ class HomeServiceTest {
     private val homeService = HomeService(
         resultService = resultService,
         userPreferencesService = userPreferencesService,
-        shareLineMapper = shareLineMapper,
-        pointsCalculator = PointCalculator(),
+        shareTextService = shareTextService,
         gameDAO = gameDAO,
         navViewFactory = navViewFactory,
         clock = clock,
@@ -82,29 +81,14 @@ class HomeServiceTest {
     )
 
     @Test
-    fun `includes ShareTextModalView with a line per result plus points line`() {
+    fun `includes ShareTextModalView `() {
         val user = User(id = 1L, username = "zach", hashedPassword = "123abc==")
 
-        every { resultService.resultsForUserToday(user) } returns listOf(worldleResult, travleResult)
+        every { shareTextService.shareTextModalView(user) } returns ShareTextModalView(emptyList())
 
         val view = homeService.homeView(user)
 
-        assertThat(view.shareTextModalView!!.shareTextLines).hasSize(3)
-        assertThat(view.shareTextModalView!!.shareTextLines.take(2)).containsExactly(
-            shareLineMapper.mapToShareLine(worldleResult),
-            shareLineMapper.mapToShareLine(travleResult),
-        )
-    }
-
-    @Test
-    fun `ShareTextModal includes line for points`() {
-        val user = User(id = 1L, username = "zach", hashedPassword = "123abc==")
-
-        every { resultService.resultsForUserToday(user) } returns listOf(worldleResult, travleResult)
-
-        val view = homeService.homeView(user)
-
-        assertThat(view.shareTextModalView!!.shareTextLines).contains("Points: 3/12")
+        assertThat(view.shareTextModalView).isNotNull()
     }
 
     @Test

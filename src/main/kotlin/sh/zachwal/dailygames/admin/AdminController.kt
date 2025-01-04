@@ -8,12 +8,14 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.util.getOrFail
 import sh.zachwal.dailygames.admin.views.AdminPageView
+import sh.zachwal.dailygames.admin.views.AdminStreakPageView
 import sh.zachwal.dailygames.admin.views.ResetUserPasswordView
 import sh.zachwal.dailygames.admin.views.UserListView
 import sh.zachwal.dailygames.admin.views.UserRowView
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.db.jdbi.User
+import sh.zachwal.dailygames.home.StreakService
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.roles.Role
@@ -33,6 +35,7 @@ class AdminController @Inject constructor(
     private val roleService: RoleService,
     private val adminService: AdminService,
     private val navViewFactory: NavViewFactory,
+    private val streakService: StreakService,
 ) {
 
     private fun sortedUsers(users: List<User>, roles: Map<User, List<Role>>): List<User> {
@@ -119,6 +122,22 @@ class AdminController @Inject constructor(
                 val newPassword = params.getOrFail(NEW_PASSWORD_FORM_PARAM)
 
                 val view = adminService.resetUserPassword(username, newPassword)
+                call.respondHtml {
+                    view.renderIn(this)
+                }
+            }
+        }
+    }
+
+    internal fun Routing.streaks() {
+        adminRoute("/admin/streaks") {
+            get {
+                val userStreaks = userService.list().associateWith {
+                    streakService.streakForUser(it.id)
+                }
+                val currentUser = currentUser(call, userService)
+                val navView = navViewFactory.navView(currentUser.username, NavItem.PROFILE)
+                val view = AdminStreakPageView(userStreaks, navView)
                 call.respondHtml {
                     view.renderIn(this)
                 }

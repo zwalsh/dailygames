@@ -4,11 +4,9 @@ import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.home.views.HomeView
-import sh.zachwal.dailygames.home.views.ShareTextModalView
 import sh.zachwal.dailygames.home.views.WrappedLinkView
 import sh.zachwal.dailygames.home.views.gamelinks.GameLinkView
 import sh.zachwal.dailygames.home.views.gamelinks.GameListView
-import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
@@ -29,8 +27,7 @@ val hiddenGames = setOf(
 class HomeService @Inject constructor(
     private val resultService: ResultService,
     private val userPreferencesService: UserPreferencesService,
-    private val shareLineMapper: ShareLineMapper,
-    private val pointsCalculator: PointCalculator,
+    private val shareTextService: ShareTextService,
     private val navViewFactory: NavViewFactory,
     private val gameDAO: GameDAO,
     private val clock: Clock,
@@ -55,7 +52,7 @@ class HomeService @Inject constructor(
 
         return HomeView(
             resultFeed = resultService.resultFeed(user.id),
-            shareTextModalView = shareTextModalView(user),
+            shareTextModalView = shareTextService.shareTextModalView(user),
             wrappedLinkView = wrappedLinkView,
             gameListView = gameListView(),
             nav = navView,
@@ -75,22 +72,5 @@ class HomeService @Inject constructor(
                 )
             }
         return GameListView(gameLinkViews)
-    }
-
-    private fun shareTextModalView(user: User): ShareTextModalView? {
-        val results = resultService.resultsForUserToday(user)
-        if (results.isEmpty()) {
-            return null
-        }
-
-        val shareTextLines = results
-            .map(shareLineMapper::mapToShareLine)
-
-        val points = results.sumOf { pointsCalculator.calculatePoints(it) }
-        val maxPoints = results.sumOf { pointsCalculator.maxPoints(it) }
-
-        val pointsLine = "Points: $points/$maxPoints"
-
-        return ShareTextModalView(shareTextLines + pointsLine)
     }
 }

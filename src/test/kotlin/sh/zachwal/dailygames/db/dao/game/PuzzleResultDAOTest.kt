@@ -306,6 +306,44 @@ class PuzzleResultDAOTest(
         assertThat(results).hasSize(2)
     }
 
+    @Test
+    fun `resultsForUserSortedStream() returns results for one user in descending order of submission`() {
+        val resultOne = insertResult()
+        val resultTwo = insertResult(puzzle = fixtures.flagle123Puzzle)
+
+        val results = resultDAO.resultsForUserSortedStream(fixtures.zach.id).toList()
+
+        assertThat(results)
+            .containsExactly(resultTwo, resultOne)
+            .inOrder()
+    }
+
+    @Test
+    fun `resultsForUserSortedStream() returns results for one user across games`() {
+        val worldle124 = puzzleDAO.insertPuzzle(Puzzle(Game.WORLDLE, 124, null))
+
+        val resultOne = insertResult()
+        val resultTwo = insertResult(puzzle = fixtures.flagle123Puzzle)
+        val resultThree = insertResult(puzzle = worldle124)
+
+        val results = resultDAO.resultsForUserSortedStream(fixtures.zach.id).toList()
+
+        assertThat(results)
+            .containsExactly(resultThree, resultTwo, resultOne)
+            .inOrder()
+    }
+
+    @Test
+    fun `resultsForUserSortedStream() returns results for only one user`() {
+        val resultOne = insertResult()
+        val resultTwo = insertResult(userId = fixtures.jackie.id)
+
+        val results = resultDAO.resultsForUserSortedStream(fixtures.zach.id).toList()
+
+        assertThat(results).containsExactly(resultOne)
+        assertThat(results).doesNotContain(resultTwo)
+    }
+
     private fun insertResult(
         userId: Long = fixtures.zach.id,
         puzzle: Puzzle = fixtures.worldle123Puzzle,
