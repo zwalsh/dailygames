@@ -2,8 +2,12 @@ package sh.zachwal.dailygames.chat
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
+import sh.zachwal.dailygames.answers.AnswerService
+import sh.zachwal.dailygames.chat.views.AnswerView
 import sh.zachwal.dailygames.chat.views.ChatItemView
+import sh.zachwal.dailygames.chat.views.ChatNav
 import sh.zachwal.dailygames.chat.views.ChatView
+import sh.zachwal.dailygames.chat.views.HiddenAnswerView
 import sh.zachwal.dailygames.chat.views.HiddenChatItemView
 import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
@@ -11,6 +15,8 @@ import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.nav.NavItem
+import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.users.UserService
@@ -25,6 +31,7 @@ class ChatViewService @Inject constructor(
     private val resultService: ResultService,
     private val userService: UserService,
     private val displayTimeService: DisplayTimeService,
+    private val answerService: AnswerService,
     private val navViewFactory: NavViewFactory,
     private val puzzleDAO: PuzzleDAO,
     private val chatDAO: ChatDAO,
@@ -62,13 +69,13 @@ class ChatViewService @Inject constructor(
 
         val chatFeedItems = (resultItems + chatItems).sortedBy { it.instantSubmitted }
 
-        val previousPuzzle = puzzleDAO.previousPuzzle(game, puzzleNumber)
-        val nextPuzzle = puzzleDAO.nextPuzzle(game, puzzleNumber)
-
-        val prevLink = previousPuzzle?.chatLink()
-        val nextLink = nextPuzzle?.chatLink()
-
         val updateTimeString = "Updated ${displayTimeService.longDisplayTime(clock.instant(), currentUser.id)}"
+
+        val navView = chatNav(
+            username = currentUser.username,
+            hasUserSubmittedResult = hasUserSubmittedResult,
+            puzzle = Puzzle(game, puzzleNumber, date = null)
+        )
 
         return ChatView(
             username = currentUser.username,
@@ -76,10 +83,36 @@ class ChatViewService @Inject constructor(
             puzzleNumber = puzzleNumber,
             updateTimeString = updateTimeString,
             chatFeedItems = chatFeedItems,
+            isCommentDisabled = !hasUserSubmittedResult,
+            navView = navView,
+        )
+    }
+
+    private fun chatNav(username: String, hasUserSubmittedResult: Boolean, puzzle: Puzzle): NavView {
+        val previousPuzzle = puzzleDAO.previousPuzzle(puzzle.game, puzzle.number)
+        val nextPuzzle = puzzleDAO.nextPuzzle(puzzle.game, puzzle.number)
+
+        val prevLink = previousPuzzle?.chatLink()
+        val nextLink = nextPuzzle?.chatLink()
+
+        val answerView = answerService.answerForPuzzle(puzzle)?.let { answerText ->
+            AnswerView(answerText)
+        }
+        val chatNav = ChatNav(
             prevLink = prevLink,
             nextLink = nextLink,
-            isCommentDisabled = !hasUserSubmittedResult,
-            navViewFactory = navViewFactory,
+            puzzle = puzzle,
+            answerView = answerView?.takeIf {
+                hasUserSubmittedResult && username == "zach"
+            },
+            hiddenAnswerView = HiddenAnswerView.takeIf {
+                answerView != null && !hasUserSubmittedResult && username == "zach"
+            },
+        )
+        return navViewFactory.navView(
+            username = username,
+            currentActiveNavItem = NavItem.CHAT,
+            insideNavItem = chatNav,
         )
     }
 

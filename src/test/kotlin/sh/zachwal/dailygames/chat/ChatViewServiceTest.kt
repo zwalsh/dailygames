@@ -7,7 +7,9 @@ import io.mockk.verify
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import org.junit.jupiter.api.Test
+import sh.zachwal.dailygames.answers.AnswerService
 import sh.zachwal.dailygames.chat.views.ChatItemView
+import sh.zachwal.dailygames.chat.views.ChatNav
 import sh.zachwal.dailygames.chat.views.HiddenChatItemView
 import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
@@ -29,15 +31,29 @@ import java.util.stream.Stream
 
 class ChatViewServiceTest {
 
+    private val testUser = User(
+        id = 1L,
+        username = "test",
+        hashedPassword = "hashedPassword",
+    )
+    private val zach = User(
+        id = 2L,
+        username = "zach",
+        hashedPassword = "hashedPassword",
+    )
+
     private val resultService = mockk<ResultService> {
         every { allResultsForPuzzle(any()) } returns emptyList()
     }
-    private val userService = mockk<UserService>()
+    private val userService = mockk<UserService> {
+        every { getUsernameCached(testUser.id) } returns "test"
+        every { getUsernameCached(zach.id) } returns "zach"
+    }
     private val displayTimeService = mockk<DisplayTimeService> {
         every { displayTime(any(), any(), any()) } returns "Just now"
         every { longDisplayTime(any(), any()) } returns "Long time ago"
     }
-    private val navViewFactory = mockk<NavViewFactory>(relaxed = true)
+    private val navViewFactory = NavViewFactory(mockk<ChatService>(relaxed = true))
     private val puzzleDAO = mockk<PuzzleDAO> {
         every { previousPuzzle(any(), any()) } returns null
         every { nextPuzzle(any(), any()) } returns null
@@ -52,20 +68,19 @@ class ChatViewServiceTest {
         }
     }
     private val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
+    private val answerService = mockk<AnswerService> {
+        every { answerForPuzzle(any()) } returns null
+    }
     private val chatService = ChatViewService(
         jdbi = jdbi,
         resultService = resultService,
         userService = userService,
         displayTimeService = displayTimeService,
+        answerService = answerService,
         navViewFactory = navViewFactory,
         puzzleDAO = puzzleDAO,
         chatDAO = chatDAO,
         clock = clock,
-    )
-    private val testUser = User(
-        id = 1L,
-        username = "test",
-        hashedPassword = "hashedPassword",
     )
 
     @Test
@@ -154,7 +169,8 @@ class ChatViewServiceTest {
 
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 3)
 
-        assertThat(chatView.prevLink).isEqualTo("/game/worldle/puzzle/1")
+        val chatNav = chatView.navView.insideNavItem as ChatNav
+        assertThat(chatNav.prevLink).isEqualTo("/game/worldle/puzzle/1")
     }
 
     @Test
@@ -162,8 +178,9 @@ class ChatViewServiceTest {
         every { puzzleDAO.nextPuzzle(Game.WORLDLE, 3) } returns Puzzle(Game.WORLDLE, 10, null)
 
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 3)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
 
-        assertThat(chatView.nextLink).isEqualTo("/game/worldle/puzzle/10")
+        assertThat(chatNav.nextLink).isEqualTo("/game/worldle/puzzle/10")
     }
 
     @Test
@@ -171,8 +188,9 @@ class ChatViewServiceTest {
         every { puzzleDAO.previousPuzzle(any(), any()) } returns null
 
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 1)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
 
-        assertThat(chatView.prevLink).isNull()
+        assertThat(chatNav.prevLink).isNull()
     }
 
     @Test
@@ -295,5 +313,90 @@ class ChatViewServiceTest {
         chatService.chatView(testUser, Game.WORLDLE, 123)
 
         verify { displayTimeService.longDisplayTime(clock.instant(), testUser.id) }
+    }
+
+    @Test
+    fun `renders AnswerView when one is returned by AnswerService and user has submitted a result`() {
+        val answer = "answer"
+        every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns answer
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(
+            worldleResult.copy(userId = zach.id)
+        )
+
+        val chatView = chatService.chatView(zach, Game.WORLDLE, 123)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
+
+        assertThat(chatNav.answerView?.answerText).isEqualTo(answer)
+    }
+
+    @Test
+    fun `hides AnswerView for other users currently`() {
+        val answer = "answer"
+        every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns answer
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(
+            worldleResult.copy(userId = testUser.id)
+        )
+
+        val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
+
+        assertThat(chatNav.answerView).isNull()
+    }
+
+    @Test
+    fun `hides AnswerView when user has not played`() {
+        every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns "answer"
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns emptyList()
+
+        val chatView = chatService.chatView(zach, Game.WORLDLE, 123)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
+
+        assertThat(chatNav.answerView).isNull()
+    }
+
+    @Test
+    fun `hides AnswerView when no answer is returned`() {
+        every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns null
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(
+            worldleResult.copy(userId = zach.id)
+        )
+
+        val chatView = chatService.chatView(zach, Game.WORLDLE, 123)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
+
+        assertThat(chatNav.answerView).isNull()
+    }
+
+    @Test
+    fun `displays HiddenAnswerView for zach when answer exists but user has not played`() {
+        every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns "answer"
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns emptyList()
+
+        val chatView = chatService.chatView(zach, Game.WORLDLE, 123)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
+
+        assertThat(chatNav.hiddenAnswerView).isNotNull()
+    }
+
+    @Test
+    fun `hides HiddenAnswerView for zach when answer does not exist`() {
+        every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns null
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns emptyList()
+
+        val chatView = chatService.chatView(zach, Game.WORLDLE, 123)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
+
+        assertThat(chatNav.hiddenAnswerView).isNull()
+    }
+
+    @Test
+    fun `hides HiddenAnswerView currently for other users even when answer exists and user has not played`() {
+        every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns "answer"
+        every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns emptyList()
+
+        val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
+
+        assertThat(chatNav.hiddenAnswerView).isNull()
     }
 }
