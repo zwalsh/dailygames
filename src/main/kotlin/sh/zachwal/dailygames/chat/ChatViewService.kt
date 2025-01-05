@@ -97,6 +97,7 @@ class ChatViewService @Inject constructor(
             prevLink = prevLink,
             nextLink = nextLink,
             puzzle = puzzle,
+            answerView = null,
         )
         return navViewFactory.navView(
             username = username,
