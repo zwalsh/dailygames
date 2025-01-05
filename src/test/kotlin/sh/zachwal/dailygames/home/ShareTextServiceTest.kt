@@ -19,7 +19,7 @@ class ShareTextServiceTest {
         pointCalculator = PointCalculator()
     )
     private val streakService = mockk<StreakService> {
-        every { streakForUser(any()) } returns 1
+        every { streakForUser(any()) } returns 3
     }
 
     private val worldleResult = PuzzleResult(
@@ -55,7 +55,6 @@ class ShareTextServiceTest {
         every { resultsForUserToday(user) } returns listOf(worldleResult, travleResult)
     }
 
-
     private val service = ShareTextService(
         resultService = resultService,
         shareLineMapper = shareLineMapper,
@@ -82,15 +81,16 @@ class ShareTextServiceTest {
     }
 
     @Test
-    fun `when streak is greater than 0, includes a line for streak`() {
+    fun `when streak is greater than or equal to STREAK_THRESHOLD, includes a line for streak`() {
+        every { streakService.streakForUser(any()) } returns STREAK_THRESHOLD
         val view = service.shareTextModalView(user)!!
 
-        assertThat(view.shareTextLines).contains("Streak: \uD83D\uDD251")
+        assertThat(view.shareTextLines).contains("Streak: $STREAK_THRESHOLD\uD83D\uDD25")
     }
 
     @Test
-    fun `when streak is 0, does not include a streak line`() {
-        every { streakService.streakForUser(any()) } returns 0
+    fun `when streak is less than STREAK_THRESHOLD, does not include a streak line`() {
+        every { streakService.streakForUser(any()) } returns STREAK_THRESHOLD - 1
 
         val view = service.shareTextModalView(user)!!
 
