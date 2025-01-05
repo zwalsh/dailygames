@@ -1,16 +1,19 @@
 package sh.zachwal.dailygames.answers
 
+import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AnswerService @Inject constructor() {
+class AnswerService @Inject constructor(
+    private val tradleAnswerService: TradleAnswerService,
+) {
 
     fun answerForPuzzle(puzzle: Puzzle): String? {
-        // TODO currently hardcoded to Albania for UI testing
-        // Should switch on the game and delegate to a specific implementation
-        // May decide to query db or hit a committed file etc.
-        return "Albania - \uD83C\uDDE6\uD83C\uDDF1"
+        return when (puzzle.game) {
+            Game.TRADLE -> tradleAnswerService.answerForPuzzle(puzzle)
+            else -> null
+        }
     }
 }
