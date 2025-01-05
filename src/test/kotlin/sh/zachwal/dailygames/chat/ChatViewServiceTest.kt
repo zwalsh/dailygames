@@ -9,6 +9,7 @@ import org.jdbi.v3.sqlobject.kotlin.attach
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.answers.AnswerService
 import sh.zachwal.dailygames.chat.views.ChatItemView
+import sh.zachwal.dailygames.chat.views.ChatNav
 import sh.zachwal.dailygames.chat.views.HiddenChatItemView
 import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
@@ -38,7 +39,7 @@ class ChatViewServiceTest {
         every { displayTime(any(), any(), any()) } returns "Just now"
         every { longDisplayTime(any(), any()) } returns "Long time ago"
     }
-    private val navViewFactory = mockk<NavViewFactory>(relaxed = true)
+    private val navViewFactory = NavViewFactory(mockk<ChatService>(relaxed = true))
     private val puzzleDAO = mockk<PuzzleDAO> {
         every { previousPuzzle(any(), any()) } returns null
         every { nextPuzzle(any(), any()) } returns null
@@ -159,7 +160,8 @@ class ChatViewServiceTest {
 
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 3)
 
-        assertThat(chatView.prevLink).isEqualTo("/game/worldle/puzzle/1")
+        val chatNav = chatView.navView.insideNavItem as ChatNav
+        assertThat(chatNav.prevLink).isEqualTo("/game/worldle/puzzle/1")
     }
 
     @Test
@@ -167,8 +169,9 @@ class ChatViewServiceTest {
         every { puzzleDAO.nextPuzzle(Game.WORLDLE, 3) } returns Puzzle(Game.WORLDLE, 10, null)
 
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 3)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
 
-        assertThat(chatView.nextLink).isEqualTo("/game/worldle/puzzle/10")
+        assertThat(chatNav.nextLink).isEqualTo("/game/worldle/puzzle/10")
     }
 
     @Test
@@ -176,8 +179,9 @@ class ChatViewServiceTest {
         every { puzzleDAO.previousPuzzle(any(), any()) } returns null
 
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 1)
+        val chatNav = chatView.navView.insideNavItem as ChatNav
 
-        assertThat(chatView.prevLink).isNull()
+        assertThat(chatNav.prevLink).isNull()
     }
 
     @Test

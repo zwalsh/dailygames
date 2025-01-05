@@ -19,6 +19,9 @@ import java.time.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
 import sh.zachwal.dailygames.answers.AnswerService
+import sh.zachwal.dailygames.chat.views.ChatNav
+import sh.zachwal.dailygames.nav.NavItem
+import sh.zachwal.dailygames.nav.NavView
 
 @Singleton
 class ChatViewService @Inject constructor(
@@ -64,13 +67,13 @@ class ChatViewService @Inject constructor(
 
         val chatFeedItems = (resultItems + chatItems).sortedBy { it.instantSubmitted }
 
-        val previousPuzzle = puzzleDAO.previousPuzzle(game, puzzleNumber)
-        val nextPuzzle = puzzleDAO.nextPuzzle(game, puzzleNumber)
-
-        val prevLink = previousPuzzle?.chatLink()
-        val nextLink = nextPuzzle?.chatLink()
-
         val updateTimeString = "Updated ${displayTimeService.longDisplayTime(clock.instant(), currentUser.id)}"
+
+        val navView = chatNav(
+            username = currentUser.username,
+            hasUserSubmittedResult = hasUserSubmittedResult,
+            puzzle = Puzzle(game, puzzleNumber, date = null)
+        )
 
         return ChatView(
             username = currentUser.username,
@@ -78,10 +81,27 @@ class ChatViewService @Inject constructor(
             puzzleNumber = puzzleNumber,
             updateTimeString = updateTimeString,
             chatFeedItems = chatFeedItems,
+            isCommentDisabled = !hasUserSubmittedResult,
+            navView = navView,
+        )
+    }
+
+    private fun chatNav(username: String, hasUserSubmittedResult: Boolean, puzzle: Puzzle): NavView {
+        val previousPuzzle = puzzleDAO.previousPuzzle(puzzle.game, puzzle.number)
+        val nextPuzzle = puzzleDAO.nextPuzzle(puzzle.game, puzzle.number)
+
+        val prevLink = previousPuzzle?.chatLink()
+        val nextLink = nextPuzzle?.chatLink()
+
+        val chatNav = ChatNav(
             prevLink = prevLink,
             nextLink = nextLink,
-            isCommentDisabled = !hasUserSubmittedResult,
-            navViewFactory = navViewFactory,
+            puzzle = puzzle,
+        )
+        return navViewFactory.navView(
+            username = username,
+            currentActiveNavItem = NavItem.CHAT,
+            insideNavItem = chatNav,
         )
     }
 
