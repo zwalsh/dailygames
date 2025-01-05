@@ -13,6 +13,7 @@ data class ChatNav constructor(
     val nextLink: String? = null,
     val puzzle: Puzzle,
     val answerView: AnswerView?,
+    val hiddenAnswerView: HiddenAnswerView?,
 ) : HTMLView<HEADER>() {
     override fun HEADER.render() {
         div(classes = "row mx-4 py-2 border-top") {
@@ -30,6 +31,7 @@ data class ChatNav constructor(
                     }
                 }
                 answerView?.renderIn(this)
+                hiddenAnswerView?.renderIn(this)
             }
             div(classes = "col-1 d-flex align-items-center") {
                 nextLink?.let { href ->
