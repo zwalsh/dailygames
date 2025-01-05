@@ -7,6 +7,7 @@ import io.mockk.verify
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
 import org.junit.jupiter.api.Test
+import sh.zachwal.dailygames.answers.AnswerService
 import sh.zachwal.dailygames.chat.views.ChatItemView
 import sh.zachwal.dailygames.chat.views.HiddenChatItemView
 import sh.zachwal.dailygames.chat.views.ResultItemView
@@ -52,11 +53,15 @@ class ChatViewServiceTest {
         }
     }
     private val clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
+    private val answerService = mockk<AnswerService> {
+        every { answerForPuzzle(any()) } returns null
+    }
     private val chatService = ChatViewService(
         jdbi = jdbi,
         resultService = resultService,
         userService = userService,
         displayTimeService = displayTimeService,
+        answerService = answerService,
         navViewFactory = navViewFactory,
         puzzleDAO = puzzleDAO,
         chatDAO = chatDAO,

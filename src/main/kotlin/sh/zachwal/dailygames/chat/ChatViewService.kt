@@ -18,6 +18,7 @@ import sh.zachwal.dailygames.utils.DisplayTimeService
 import java.time.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
+import sh.zachwal.dailygames.answers.AnswerService
 
 @Singleton
 class ChatViewService @Inject constructor(
@@ -25,6 +26,7 @@ class ChatViewService @Inject constructor(
     private val resultService: ResultService,
     private val userService: UserService,
     private val displayTimeService: DisplayTimeService,
+    private val answerService: AnswerService,
     private val navViewFactory: NavViewFactory,
     private val puzzleDAO: PuzzleDAO,
     private val chatDAO: ChatDAO,
