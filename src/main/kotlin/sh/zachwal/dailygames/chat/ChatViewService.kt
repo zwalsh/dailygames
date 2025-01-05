@@ -19,6 +19,7 @@ import java.time.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
 import sh.zachwal.dailygames.answers.AnswerService
+import sh.zachwal.dailygames.chat.views.AnswerView
 import sh.zachwal.dailygames.chat.views.ChatNav
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavView
@@ -93,11 +94,14 @@ class ChatViewService @Inject constructor(
         val prevLink = previousPuzzle?.chatLink()
         val nextLink = nextPuzzle?.chatLink()
 
+        val answerView =  answerService.answerForPuzzle(puzzle)?.let { answerText ->
+            AnswerView(answerText)
+        }
         val chatNav = ChatNav(
             prevLink = prevLink,
             nextLink = nextLink,
             puzzle = puzzle,
-            answerView = null,
+            answerView = answerView,
         )
         return navViewFactory.navView(
             username = username,

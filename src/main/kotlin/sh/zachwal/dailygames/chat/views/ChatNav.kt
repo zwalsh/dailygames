@@ -29,9 +29,7 @@ data class ChatNav constructor(
                         +"${puzzle.game.displayName()} #${puzzle.number}"
                     }
                 }
-                div(classes = "row") {
-                    answerView?.renderIn(this)
-                }
+                answerView?.renderIn(this)
             }
             div(classes = "col-1 d-flex align-items-center") {
                 nextLink?.let { href ->
