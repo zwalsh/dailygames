@@ -12,6 +12,7 @@ class ShareTextService @Inject constructor(
     private val resultService: ResultService,
     private val shareLineMapper: ShareLineMapper,
     private val pointCalculator: PointCalculator,
+    private val streakService: StreakService,
 ) {
 
     fun shareTextModalView(user: User): ShareTextModalView? {
