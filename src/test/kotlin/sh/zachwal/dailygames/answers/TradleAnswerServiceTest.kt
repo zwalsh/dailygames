@@ -24,6 +24,6 @@ class TradleAnswerServiceTest {
             date = null,
         )
         val answer = service.answerForPuzzle(puzzle)
-        assertThat(answer).isEqualTo("Ghana")
+        assertThat(answer).isEqualTo("Ghana \uD83C\uDDEC\uD83C\uDDED")
     }
 }

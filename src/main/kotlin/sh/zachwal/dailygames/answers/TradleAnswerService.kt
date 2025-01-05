@@ -52,8 +52,10 @@ class TradleAnswerService @Inject constructor() : GameAnswerService(Game.TRADLE)
     private val tradleStartDate = LocalDate.of(2022, 3, 6)
 
     override fun answer(puzzle: Puzzle): String? {
-        return answerForDate(dateForPuzzleNumber(puzzle.number))
-            ?.displayCountry
+        val answerLocale = answerForDate(dateForPuzzleNumber(puzzle.number))
+        val displayName = answerLocale?.displayCountry
+        val emoji = answerLocale?.flagEmoji()
+        return "$displayName $emoji"
     }
 
     private fun dateForPuzzleNumber(puzzleNumber: Int): LocalDate {
