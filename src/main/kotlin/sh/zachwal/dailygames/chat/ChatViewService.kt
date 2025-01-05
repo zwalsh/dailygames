@@ -2,8 +2,12 @@ package sh.zachwal.dailygames.chat
 
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.sqlobject.kotlin.attach
+import sh.zachwal.dailygames.answers.AnswerService
+import sh.zachwal.dailygames.chat.views.AnswerView
 import sh.zachwal.dailygames.chat.views.ChatItemView
+import sh.zachwal.dailygames.chat.views.ChatNav
 import sh.zachwal.dailygames.chat.views.ChatView
+import sh.zachwal.dailygames.chat.views.HiddenAnswerView
 import sh.zachwal.dailygames.chat.views.HiddenChatItemView
 import sh.zachwal.dailygames.chat.views.ResultItemView
 import sh.zachwal.dailygames.db.dao.ChatDAO
@@ -11,6 +15,8 @@ import sh.zachwal.dailygames.db.dao.game.PuzzleDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.nav.NavItem
+import sh.zachwal.dailygames.nav.NavView
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.users.UserService
@@ -18,12 +24,6 @@ import sh.zachwal.dailygames.utils.DisplayTimeService
 import java.time.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
-import sh.zachwal.dailygames.answers.AnswerService
-import sh.zachwal.dailygames.chat.views.AnswerView
-import sh.zachwal.dailygames.chat.views.ChatNav
-import sh.zachwal.dailygames.chat.views.HiddenAnswerView
-import sh.zachwal.dailygames.nav.NavItem
-import sh.zachwal.dailygames.nav.NavView
 
 @Singleton
 class ChatViewService @Inject constructor(
