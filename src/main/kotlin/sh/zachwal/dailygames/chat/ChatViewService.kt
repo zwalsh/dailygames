@@ -104,10 +104,10 @@ class ChatViewService @Inject constructor(
             nextLink = nextLink,
             puzzle = puzzle,
             answerView = answerView?.takeIf {
-                hasUserSubmittedResult && username == "zach"
+                hasUserSubmittedResult
             },
             hiddenAnswerView = HiddenAnswerView.takeIf {
-                answerView != null && !hasUserSubmittedResult && username == "zach"
+                answerView != null && !hasUserSubmittedResult
             },
         )
         return navViewFactory.navView(

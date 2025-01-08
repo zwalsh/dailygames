@@ -331,7 +331,7 @@ class ChatViewServiceTest {
     }
 
     @Test
-    fun `hides AnswerView for other users currently`() {
+    fun `shows AnswerView for other users`() {
         val answer = "answer"
         every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns answer
         every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(
@@ -341,7 +341,8 @@ class ChatViewServiceTest {
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
         val chatNav = chatView.navView.insideNavItem as ChatNav
 
-        assertThat(chatNav.answerView).isNull()
+        assertThat(chatNav.answerView).isNotNull()
+        assertThat(chatNav.answerView!!.answerText).isEqualTo(answer)
     }
 
     @Test
@@ -391,13 +392,13 @@ class ChatViewServiceTest {
     }
 
     @Test
-    fun `hides HiddenAnswerView currently for other users even when answer exists and user has not played`() {
+    fun `shows HiddenAnswerView for other users even when answer exists and user has not played`() {
         every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns "answer"
         every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns emptyList()
 
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
         val chatNav = chatView.navView.insideNavItem as ChatNav
 
-        assertThat(chatNav.hiddenAnswerView).isNull()
+        assertThat(chatNav.hiddenAnswerView).isNotNull()
     }
 }
