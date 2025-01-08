@@ -1,11 +1,11 @@
 package sh.zachwal.dailygames.answers
 
-import javax.inject.Inject
-import javax.inject.Singleton
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import java.time.LocalDate
 import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class FlagleAnswerService @Inject constructor() : GameAnswerService(Game.FLAGLE) {

@@ -21,9 +21,9 @@ import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
+import java.time.Clock
 import javax.inject.Inject
 import javax.inject.Singleton
-import java.time.Clock
 
 @Singleton
 class ChatViewService @Inject constructor(

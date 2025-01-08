@@ -6,7 +6,6 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import java.time.LocalDate
 
-
 class FlagleAnswerServiceTest {
 
     private val service = FlagleAnswerService()
