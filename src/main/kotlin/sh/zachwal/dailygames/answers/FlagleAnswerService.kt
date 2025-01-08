@@ -8,9 +8,9 @@ import java.time.LocalDate
 import java.util.Locale
 
 @Singleton
-class WorldleAnswerService @Inject constructor() : GameAnswerService(Game.WORLDLE) {
+class FlagleAnswerService @Inject constructor() : GameAnswerService(Game.FLAGLE) {
 
-    private val worldleAnswers: Map<LocalDate, Locale> = javaClass.getResource("/worldle.csv")
+    private val flagleAnswers: Map<LocalDate, Locale> = javaClass.getResource("/flagle.csv")
         ?.readText()
         ?.split("\n")
         ?.filter { it.contains(",") }
@@ -19,11 +19,11 @@ class WorldleAnswerService @Inject constructor() : GameAnswerService(Game.WORLDL
             val (date, country) = line.split(",")
             LocalDate.parse(date) to Locale("", country.uppercase().trim())
         }
-        ?: throw IllegalStateException("Could not load worldle answers")
+        ?: throw IllegalStateException("Could not load flagle answers")
 
     override fun answer(puzzle: Puzzle): String? {
-        return puzzle.date // Worldle Puzzles include the date
-            ?.let { worldleAnswers[it] }
+        return puzzle.date // Flagle Puzzles include the date
+            ?.let { flagleAnswers[it] }
             ?.let { "${it.displayCountry} ${it.flagEmoji()}" }
     }
 }
