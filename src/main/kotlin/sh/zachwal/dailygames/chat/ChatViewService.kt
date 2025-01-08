@@ -39,7 +39,8 @@ class ChatViewService @Inject constructor(
 ) {
 
     fun chatView(currentUser: User, game: Game, puzzleNumber: Int): ChatView {
-        val results = resultService.allResultsForPuzzle(Puzzle(game, puzzleNumber, date = null))
+        val puzzle = puzzleDAO.getPuzzle(game, puzzleNumber) ?: throw IllegalArgumentException("Puzzle not found")
+        val results = resultService.allResultsForPuzzle(puzzle)
         val resultItems = results.map {
             ResultItemView(
                 username = userService.getUsernameCached(it.userId) ?: "Unknown",
@@ -49,7 +50,7 @@ class ChatViewService @Inject constructor(
             )
         }
         val hasUserSubmittedResult = results.any { it.userId == currentUser.id }
-        val chats = chatDAO.chatsForPuzzleDescending(Puzzle(game, puzzleNumber, date = null))
+        val chats = chatDAO.chatsForPuzzleDescending(puzzle)
         val chatItems = chats.map {
             if (hasUserSubmittedResult) {
                 ChatItemView(
@@ -74,7 +75,7 @@ class ChatViewService @Inject constructor(
         val navView = chatNav(
             username = currentUser.username,
             hasUserSubmittedResult = hasUserSubmittedResult,
-            puzzle = Puzzle(game, puzzleNumber, date = null)
+            puzzle = puzzle
         )
 
         return ChatView(

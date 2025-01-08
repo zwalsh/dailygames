@@ -55,6 +55,7 @@ class ChatViewServiceTest {
     }
     private val navViewFactory = NavViewFactory(mockk<ChatService>(relaxed = true))
     private val puzzleDAO = mockk<PuzzleDAO> {
+        every { getPuzzle(any(), any()) } answers { Puzzle(firstArg(), secondArg(), null) }
         every { previousPuzzle(any(), any()) } returns null
         every { nextPuzzle(any(), any()) } returns null
         every { latestPuzzlePerGame() } returns emptyList()
