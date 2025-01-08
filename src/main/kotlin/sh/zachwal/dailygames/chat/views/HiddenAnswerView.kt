@@ -13,8 +13,8 @@ object HiddenAnswerView : HTMLView<DIV>() {
                 h6(classes = "bg-secondary border border-bg-secondary rounded text-center d-inline-block p-2 mb-0") {
                     attributes["data-bs-toggle"] = "tooltip"
                     attributes["data-bs-title"] = "Submit a solution to see the answer!"
-                    i(classes = "bi bi-eye-slash-fill text-body-tertiary fs-6 me-2")
                     +"Answer"
+                    i(classes = "bi bi-eye-slash-fill text-body-tertiary fs-6 ms-2")
                 }
             }
         }
