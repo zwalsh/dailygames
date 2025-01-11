@@ -31,7 +31,7 @@ enum class Game {
             PINPOINT -> "\uD83D\uDCCC"
             GEOCIRCLES -> "\uD83D\uDFE2"
             FRAMED -> "\uD83C\uDFA5"
-            GEOGRID -> "\uD83D\uDDFA"
+            GEOGRID -> "\uD83C\uDF10"
         }
     }
 
