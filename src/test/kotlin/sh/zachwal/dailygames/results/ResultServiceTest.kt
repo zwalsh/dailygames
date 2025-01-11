@@ -263,7 +263,6 @@ class ResultServiceTest(
             ✅ ✅ ✅
             ✅ ✅ ✅
             ✅ ✅ ✅
-
             Score: 123.3
             Rank: 3,618 / 11,718
             """.trimIndent()
