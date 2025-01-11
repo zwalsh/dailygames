@@ -26,6 +26,7 @@ class ShareTextParser {
             pinpointRegex.matches(shareText) -> Game.PINPOINT
             geocirclesRegex.matches(shareText) -> Game.GEOCIRCLES
             framedRegex.matches(shareText) -> Game.FRAMED
+            shareText.contains("geogridgame") -> Game.GEOGRID
             else -> null
         }
     }
