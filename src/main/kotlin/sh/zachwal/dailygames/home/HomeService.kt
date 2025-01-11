@@ -14,13 +14,13 @@ import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.users.UserPreferencesService
-import javax.inject.Inject
-import javax.inject.Singleton
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
 // Hide these games from the list
 val hiddenGames = setOf(
