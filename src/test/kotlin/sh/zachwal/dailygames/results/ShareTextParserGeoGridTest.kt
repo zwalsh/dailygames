@@ -90,35 +90,66 @@ class ShareTextParserGeoGridTest {
         assertThat(info.numCorrect).isEqualTo(9)
     }
 
-//    @Test
-//    fun `extracts framed`() {
-//        val info = parser.extractFramedInfo(FRAMED_PERFECT)
-//        assertThat(info.puzzleNumber).isEqualTo(990)
-//        assertThat(info.score).isEqualTo(1)
-//        assertThat(info.shareTextNoLink).isEqualTo("Framed #990\n🎥 🟩 ⬛ ⬛ ⬛ ⬛ ⬛")
-//    }
-//
-//    @Test
-//    fun `extracts framed 0 points`() {
-//        val info = parser.extractFramedInfo(FRAMED_ZERO)
-//        assertThat(info.score).isEqualTo(7) // Total miss becomes score of 7
-//    }
-//
-//    @Test
-//    fun `extracts framed 4 points`() {
-//        val info = parser.extractFramedInfo(FRAMED_FOUR)
-//        assertThat(info.score).isEqualTo(4)
-//    }
-//
-//    @Test
-//    fun `extracts framed 6 points`() {
-//        val info = parser.extractFramedInfo(FRAMED_SIX)
-//        assertThat(info.score).isEqualTo(6)
-//    }
-//
-//    @Test
-//    fun `sets correct game info`() {
-//        val info = parser.extractFramedInfo(FRAMED_PERFECT)
-//        assertThat(info.resultInfo).isEqualTo(FramedInfo)
-//    }
+    @Test
+    fun `extracts geogrid zero`() {
+        val result = parser.extractGeoGridInfo(GEOGRID_ZERO)
+        assertThat(result.score).isEqualTo(0)
+        assertThat(result.shareTextNoLink).isEqualTo(
+            """
+                ❌ ❌ ❌
+                ❌ ❌ ❌
+                ❌ ❌ ❌
+
+                Score: 900
+                Rank: 10,188 / 11,737
+            """.trimIndent()
+        )
+        val info = result.info<GeoGridInfo>()
+        assertThat(info.score).isEqualTo(900.0)
+        assertThat(info.rank).isEqualTo(10188)
+        assertThat(info.rankOutOf).isEqualTo(11737)
+        assertThat(info.numCorrect).isEqualTo(0)
+    }
+
+    @Test
+    fun `extracts geogrid six`() {
+        val result = parser.extractGeoGridInfo(GEOGRID_SIX)
+        assertThat(result.score).isEqualTo(6)
+        assertThat(result.shareTextNoLink).isEqualTo(
+            """
+                ✅ ✅ ✅
+                ❌ ❌ ✅
+                ✅ ✅ ❌
+
+                Score: 382.7
+                Rank: 9,311 / 11,761
+            """.trimIndent()
+        )
+        val info = result.info<GeoGridInfo>()
+        assertThat(info.score).isEqualTo(382.7)
+        assertThat(info.rank).isEqualTo(9311)
+        assertThat(info.rankOutOf).isEqualTo(11761)
+        assertThat(info.numCorrect).isEqualTo(6)
+    }
+
+    @Test
+    fun `extracts geogrid infinite`() {
+        val result = parser.extractGeoGridInfo(GEOGRID_INFINITE)
+        assertThat(result.score).isEqualTo(9)
+        assertThat(result.shareTextNoLink).isEqualTo(
+            """
+                ✅ ✅ ✅
+                ✅ ✅ ✅
+                ✅ ✅ ✅
+
+                Score: 88.9
+                Rank: 1,521 / 11,795
+            """.trimIndent()
+        )
+        val info = result.info<GeoGridInfo>()
+        assertThat(info.score).isEqualTo(88.9)
+        assertThat(info.rank).isEqualTo(1521)
+        assertThat(info.rankOutOf).isEqualTo(11795)
+        assertThat(info.numCorrect).isEqualTo(9)
+    }
 }
