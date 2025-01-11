@@ -25,6 +25,7 @@ class ShareLineMapper @Inject constructor(
             Game.TOP5 -> result.toTop5ShareLine()
             Game.WORLDLE -> result.toWorldleShareLine()
             Game.TRAVLE -> result.toTravleShareLine()
+            Game.GEOGRID -> TODO()
         }
     }
 
