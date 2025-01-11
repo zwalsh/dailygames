@@ -436,7 +436,10 @@ class ResultServiceTest(
         resultService.createResult(fixtures.jackie, TOP5)
         resultService.createResult(fixtures.jackie, FLAGLE)
 
-        val counts = resultService.resultCountByGame(since = Instant.now().minusSeconds(10))
+        val counts = resultService.resultCountByGame(
+            since = Instant.now().minusSeconds(10),
+            excludeUserId = fixtures.zach.id
+        )
 
         assertThat(counts).containsExactly(
             Game.TOP5, 1,

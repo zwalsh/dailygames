@@ -46,7 +46,8 @@ class HomeService @Inject constructor(
             object : CacheLoader<Any, Map<Game, Int>>() {
                 override fun load(key: Any): Map<Game, Int> {
                     return resultService.resultCountByGame(
-                        since = Instant.now().minus(30, ChronoUnit.DAYS)
+                        since = Instant.now().minus(30, ChronoUnit.DAYS),
+                        excludeUserId = 1, // Exclude my user in prod since I play the most
                     )
                 }
             }

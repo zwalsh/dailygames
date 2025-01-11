@@ -138,10 +138,10 @@ class ResultService @Inject constructor(
         return resultDAO.resultsForUserInTimeRange(user.id, startOfToday, endOfToday)
     }
 
-    fun resultCountByGame(since: Instant): Map<Game, Int> {
+    fun resultCountByGame(since: Instant, excludeUserId: Long): Map<Game, Int> {
         return resultDAO.countByGameSinceExcludingUser(
             since = since,
-            userId = 1, // Exclude my user since I play the most
+            userId = excludeUserId,
         )
     }
 }

@@ -23,7 +23,7 @@ class HomeServiceTest {
     private val resultService = mockk<ResultService> {
         every { resultFeed(any()) } returns emptyList()
         every { resultsForUserToday(any()) } returns emptyList()
-        every { resultCountByGame(any()) } returns emptyMap()
+        every { resultCountByGame(any(), any()) } returns emptyMap()
     }
     private val userPreferencesService = mockk<UserPreferencesService> {
         every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
@@ -172,7 +172,7 @@ class HomeServiceTest {
 
     @Test
     fun `sorts games by play count`() {
-        every { resultService.resultCountByGame(any()) } returns mapOf(
+        every { resultService.resultCountByGame(any(), any()) } returns mapOf(
             Game.WORLDLE to 5,
             Game.TRAVLE to 3,
             Game.TOP5 to 1,
@@ -193,7 +193,7 @@ class HomeServiceTest {
 
     @Test
     fun `caches result count`() {
-        every { resultService.resultCountByGame(any()) } returns
+        every { resultService.resultCountByGame(any(), any()) } returns
             mapOf(Game.WORLDLE to 10) andThen
             mapOf(Game.TRAVLE to 10)
 
