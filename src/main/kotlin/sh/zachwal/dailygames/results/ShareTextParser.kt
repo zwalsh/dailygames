@@ -226,23 +226,36 @@ class ShareTextParser {
     }
 
     fun extractGeoGridInfo(shareText: String): ParsedResult {
-        val puzzleNumber = shareText.substringAfter("Board #").substringBefore("\n").toInt()
-        val score = shareText.substringAfter("Score: ").substringBefore("\n").toDouble()
+        val puzzleNumber = shareText
+            .substringAfter("Board #")
+            .substringBefore("\n")
+            .trim()
+            .toInt()
+        val score = shareText
+            .substringAfter("Score: ")
+            .substringBefore("\n")
+            .trim()
+            .toDouble()
         val rank = shareText
             .substringAfter("Rank: ")
             .substringBefore(" /")
             .replace(",", "")
+            .trim()
             .toInt()
         val rankOutOf = shareText
             .substringAfter(" / ")
             .substringBefore("\n")
             .replace(",", "")
+            .trim()
             .toInt()
         val shareTextNoLink = shareText
             .substringBefore("https://")
-            .replace(Regex("Board #\\d+\n"), "")
-            .replace(Regex(".Game Summary.\n"), "")
-            .trim()
+            .lines()
+            .filter { it.isNotBlank() }
+            .filter { "Board" !in it }
+            .filter { "Game Summary" !in it }
+            .joinToString("\n")
+
         val numCorrect = shareText.count { it == '✅' }
 
         return ParsedResult(

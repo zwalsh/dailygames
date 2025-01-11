@@ -78,7 +78,6 @@ class ShareTextParserGeoGridTest {
                 ✅ ✅ ✅
                 ✅ ✅ ✅
                 ✅ ✅ ✅
-
                 Score: 123.3
                 Rank: 3,618 / 11,718
             """.trimIndent()
@@ -99,7 +98,6 @@ class ShareTextParserGeoGridTest {
                 ❌ ❌ ❌
                 ❌ ❌ ❌
                 ❌ ❌ ❌
-
                 Score: 900
                 Rank: 10,188 / 11,737
             """.trimIndent()
@@ -120,7 +118,6 @@ class ShareTextParserGeoGridTest {
                 ✅ ✅ ✅
                 ❌ ❌ ✅
                 ✅ ✅ ❌
-
                 Score: 382.7
                 Rank: 9,311 / 11,761
             """.trimIndent()
@@ -141,7 +138,6 @@ class ShareTextParserGeoGridTest {
                 ✅ ✅ ✅
                 ✅ ✅ ✅
                 ✅ ✅ ✅
-
                 Score: 88.9
                 Rank: 1,521 / 11,795
             """.trimIndent()
