@@ -20,11 +20,10 @@ class PointCalculator {
             Game.FRAMED -> maxPoints(result) + 1 - score
 
             Game.TOP5,
-            Game.GEOCIRCLES -> score
+            Game.GEOCIRCLES,
+            Game.GEOGRID -> score
 
             Game.TRAVLE -> (result.info<TravleInfo>()).calculatePoints(score)
-
-            Game.GEOGRID -> TODO()
         }
     }
 
@@ -42,7 +41,7 @@ class PointCalculator {
 
             Game.TRAVLE -> (result.info<TravleInfo>()).maxPoints(score)
 
-            Game.GEOGRID -> TODO()
+            Game.GEOGRID -> 9
         }
     }
 
