@@ -76,19 +76,19 @@
       }
     },
     {
-        "include": {
-            "file": "16_create_geocircles_result.json"
-        }
+      "include": {
+        "file": "16_create_geocircles_result.json"
+      }
     },
     {
-        "include": {
-            "file": "17_create_result.json"
-        }
+      "include": {
+        "file": "17_create_result.json"
+      }
     },
     {
-        "include": {
-            "file": "18_add_unique_index.json"
-        }
+      "include": {
+        "file": "18_add_unique_index.json"
+      }
     },
     {
       "include": {
@@ -108,6 +108,11 @@
     {
       "include": {
         "file": "22_add_user_instant_index.json"
+      }
+    },
+    {
+      "include": {
+        "file": "23_add_geogrid.json"
       }
     }
   ]
