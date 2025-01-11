@@ -44,14 +44,14 @@ class LeaderboardService @Inject constructor(
             Game.TRADLE,
             Game.FLAGLE,
             Game.FRAMED -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
+
             Game.PINPOINT -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/5 = 4 points.")
+            Game.GEOGRID -> BasicScoreHintView("Scoring: 1 point per correct guess. e.g. 8/9 = 8 points.")
 
             Game.TOP5 -> BasicScoreHintView("Scoring: One point per correct guess. One point per life left if all 5 answers guessed correctly.")
             Game.GEOCIRCLES -> BasicScoreHintView("Scoring: 1 point for each green circle, 1 point for each life left.")
 
             Game.TRAVLE -> TravleScoreHintView()
-
-            Game.GEOGRID -> TODO()
         }
         val navView = navViewFactory.navView(
             username = currentUser.username,
