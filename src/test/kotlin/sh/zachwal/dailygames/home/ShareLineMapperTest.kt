@@ -410,7 +410,7 @@ class ShareLineMapperTest {
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("${Game.GEOGRID.emoji()} GeoGrid #123 0/9 (900.0)")
     }
-    
+
     @Test
     fun `maps geogrid line 8 of 9`() {
         val result = geoGridResult.copy(
@@ -424,7 +424,7 @@ class ShareLineMapperTest {
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("${Game.GEOGRID.emoji()} GeoGrid #123 8/9 (200.5)")
     }
-    
+
     @Test
     fun `keeps max one decimal point of geogrid score`() {
         val result = geoGridResult.copy(
