@@ -1,6 +1,8 @@
 package sh.zachwal.dailygames.db.dao.game
 
 import org.jdbi.v3.json.Json
+import org.jdbi.v3.sqlobject.config.KeyColumn
+import org.jdbi.v3.sqlobject.config.ValueColumn
 import org.jdbi.v3.sqlobject.customizer.BindBean
 import org.jdbi.v3.sqlobject.statement.SqlQuery
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -122,4 +124,18 @@ interface PuzzleResultDAO {
         """
     )
     fun resultsForUserSortedStream(userId: Long): Stream<PuzzleResult>
+
+    @SqlQuery(
+        """
+            SELECT game, count(*) 
+            FROM result
+            WHERE user_id != :userId
+            AND instant_submitted >= :since
+            GROUP BY game
+            ORDER BY count DESC
+        """
+    )
+    @KeyColumn("game")
+    @ValueColumn("count")
+    fun countByGameSinceExcludingUser(since: Instant, userId: Long): Map<Game, Int>
 }
