@@ -16,5 +16,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = Top5Info::class, name = "top5"),
     JsonSubTypes.Type(value = TravleInfo::class, name = "travle"),
     JsonSubTypes.Type(value = WorldleInfo::class, name = "worldle"),
+    JsonSubTypes.Type(value = FramedInfo::class, name = "framed"),
+    JsonSubTypes.Type(value = GeoGridInfo::class, name = "geogrid"),
 )
 sealed class ResultInfo

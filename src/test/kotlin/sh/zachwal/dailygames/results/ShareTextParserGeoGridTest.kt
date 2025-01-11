@@ -3,7 +3,7 @@ package sh.zachwal.dailygames.results
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
-import sh.zachwal.dailygames.results.resultinfo.FramedInfo
+import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 
 const val GEOGRID_PERFECT = """
 ✅ ✅ ✅
@@ -66,6 +66,28 @@ class ShareTextParserGeoGridTest {
         assertThat(parser.identifyGame(GEOGRID_ZERO)).isEqualTo(Game.GEOGRID)
         assertThat(parser.identifyGame(GEOGRID_SIX)).isEqualTo(Game.GEOGRID)
         assertThat(parser.identifyGame(GEOGRID_INFINITE)).isEqualTo(Game.GEOGRID)
+    }
+
+    @Test
+    fun `extracts geogrid perfect`() {
+        val result = parser.extractGeoGridInfo(GEOGRID_PERFECT)
+        assertThat(result.puzzleNumber).isEqualTo(280)
+        assertThat(result.score).isEqualTo(9)
+        assertThat(result.shareTextNoLink).isEqualTo(
+            """
+                ✅ ✅ ✅
+                ✅ ✅ ✅
+                ✅ ✅ ✅
+
+                Score: 123.3
+                Rank: 3,618 / 11,718
+            """.trimIndent()
+        )
+        val info = result.info<GeoGridInfo>()
+        assertThat(info.score).isEqualTo(123.3)
+        assertThat(info.rank).isEqualTo(3618)
+        assertThat(info.rankOutOf).isEqualTo(11718)
+        assertThat(info.numCorrect).isEqualTo(9)
     }
 
 //    @Test

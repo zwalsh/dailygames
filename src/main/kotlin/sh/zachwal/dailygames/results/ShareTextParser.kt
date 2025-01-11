@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
+import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.ParsedResult
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
@@ -221,6 +222,41 @@ class ShareTextParser {
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
             resultInfo = FramedInfo
+        )
+    }
+
+    fun extractGeoGridInfo(shareText: String): ParsedResult {
+        val puzzleNumber = shareText.substringAfter("Board #").substringBefore("\n").toInt()
+        val score = shareText.substringAfter("Score: ").substringBefore("\n").toDouble()
+        val rank = shareText
+            .substringAfter("Rank: ")
+            .substringBefore(" /")
+            .replace(",", "")
+            .toInt()
+        val rankOutOf = shareText
+            .substringAfter(" / ")
+            .substringBefore("\n")
+            .replace(",", "")
+            .toInt()
+        val shareTextNoLink = shareText
+            .substringBefore("https://")
+            .replace(Regex("Board #\\d+\n"), "")
+            .replace(Regex(".Game Summary.\n"), "")
+            .trim()
+        val numCorrect = shareText.count { it == '✅' }
+
+        return ParsedResult(
+            puzzleNumber = puzzleNumber,
+            game = Game.GEOGRID,
+            date = null,
+            score = numCorrect,
+            shareTextNoLink = shareTextNoLink,
+            resultInfo = GeoGridInfo(
+                score = score,
+                rank = rank,
+                rankOutOf = rankOutOf,
+                numCorrect = numCorrect
+            )
         )
     }
 }
