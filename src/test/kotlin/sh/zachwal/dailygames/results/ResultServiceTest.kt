@@ -251,6 +251,26 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `can create a GeoGrid result`() {
+        val result = resultService.createResult(fixtures.zach, GEOGRID_PERFECT)
+
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.GEOGRID)
+        assertThat(result.puzzleNumber).isEqualTo(280)
+        assertThat(result.score).isEqualTo(9)
+        assertThat(result.shareText).isEqualTo(
+            """
+            ✅ ✅ ✅
+            ✅ ✅ ✅
+            ✅ ✅ ✅
+
+            Score: 123.3
+            Rank: 3,618 / 11,718
+            """.trimIndent()
+        )
+    }
+
+    @Test
     fun `submitting a result twice throws a helpful error`() {
         resultService.createResult(fixtures.zach, worldle934)
 
