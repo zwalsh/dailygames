@@ -1,5 +1,8 @@
 package sh.zachwal.dailygames.home
 
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
 import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
@@ -11,11 +14,13 @@ import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.users.UserPreferencesService
+import javax.inject.Inject
+import javax.inject.Singleton
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
-import javax.inject.Inject
-import javax.inject.Singleton
+import java.time.temporal.ChronoUnit
+import java.util.concurrent.TimeUnit
 
 // Hide these games from the list
 val hiddenGames = setOf(
@@ -33,6 +38,19 @@ class HomeService @Inject constructor(
     private val clock: Clock,
 ) {
     private val newGameDuration = Duration.ofDays(3)
+
+    private val gameCountKey = "key"
+    private val resultCountCache: LoadingCache<Any, Map<Game, Int>> = CacheBuilder.newBuilder()
+        .expireAfterWrite(1, TimeUnit.DAYS)
+        .build(
+            object : CacheLoader<Any, Map<Game, Int>>() {
+                override fun load(key: Any): Map<Game, Int> {
+                    return resultService.resultCountByGame(
+                        since = Instant.now().minus(30, ChronoUnit.DAYS)
+                    )
+                }
+            }
+        )
 
     fun homeView(user: User): HomeView {
         val navView = navViewFactory.navView(
@@ -60,9 +78,14 @@ class HomeService @Inject constructor(
     }
 
     private fun gameListView(): GameListView {
-        val newGames = gameDAO.listGamesCreatedAfter(Instant.now().minus(newGameDuration))
         // List the new games first
-        val games = newGames + Game.values().filter { it !in newGames }
+        val newGames = gameDAO.listGamesCreatedAfter(Instant.now().minus(newGameDuration))
+        val otherGames = Game.values()
+            .filter { it !in newGames }
+
+        val resultCountByGame = resultCountCache[gameCountKey]
+        val games = newGames + otherGames.sortedByDescending { resultCountByGame[it] ?: 0 }
+
         val gameLinkViews = games
             .filter { it !in hiddenGames }
             .map { game ->
