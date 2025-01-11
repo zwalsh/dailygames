@@ -7,6 +7,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
+import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
@@ -377,5 +378,62 @@ class ShareLineMapperTest {
         val shareLine = mapper.mapToShareLine(failResult)
 
         assertThat(shareLine).isEqualTo("${Game.FRAMED.emoji()} Framed #123 X/6")
+    }
+
+    private val geoGridResult = worldleResult.copy(
+        game = Game.GEOGRID,
+        score = 9,
+        resultInfo = GeoGridInfo(
+            score = 123.4,
+            rank = 123,
+            rankOutOf = 5555,
+            numCorrect = 9,
+        ),
+    )
+
+    @Test
+    fun `maps geogrid line`() {
+        val shareLine = mapper.mapToShareLine(geoGridResult)
+        assertThat(shareLine).isEqualTo("${Game.GEOGRID.emoji()} GeoGrid #123 9/9 (123.4)")
+    }
+
+    @Test
+    fun `maps geogrid line zero`() {
+        val result = geoGridResult.copy(
+            score = 0,
+            resultInfo = geoGridResult.info<GeoGridInfo>().copy(
+                numCorrect = 0,
+                score = 900.0,
+            )
+        )
+
+        val shareLine = mapper.mapToShareLine(result)
+        assertThat(shareLine).isEqualTo("${Game.GEOGRID.emoji()} GeoGrid #123 0/9 (900.0)")
+    }
+
+    @Test
+    fun `maps geogrid line 8 of 9`() {
+        val result = geoGridResult.copy(
+            score = 8,
+            resultInfo = geoGridResult.info<GeoGridInfo>().copy(
+                numCorrect = 8,
+                score = 200.5,
+            )
+        )
+
+        val shareLine = mapper.mapToShareLine(result)
+        assertThat(shareLine).isEqualTo("${Game.GEOGRID.emoji()} GeoGrid #123 8/9 (200.5)")
+    }
+
+    @Test
+    fun `keeps max one decimal point of geogrid score`() {
+        val result = geoGridResult.copy(
+            resultInfo = geoGridResult.info<GeoGridInfo>().copy(
+                score = 200.55,
+            )
+        )
+
+        val shareLine = mapper.mapToShareLine(result)
+        assertThat(shareLine).endsWith("(200.6)")
     }
 }

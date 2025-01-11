@@ -6,6 +6,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
+import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
@@ -105,6 +106,22 @@ class PointCalculatorTest {
         assertThat(calculator.calculatePoints(framedResult)).isEqualTo(3)
     }
 
+    private val geoGridResult = worldleResult.copy(
+        game = Game.GEOGRID,
+        score = 9,
+        resultInfo = GeoGridInfo(
+            score = 123.3,
+            rank = 3618,
+            rankOutOf = 11718,
+            numCorrect = 9,
+        ),
+    )
+
+    @Test
+    fun `returns score directly for geogrid`() {
+        assertThat(calculator.calculatePoints(geoGridResult)).isEqualTo(9)
+    }
+
     @Test
     fun `returns 0 for framed result with 7 incorrect guesses`() {
         val result = framedResult.copy(score = 7)
@@ -120,5 +137,6 @@ class PointCalculatorTest {
         assertThat(calculator.maxPoints(pinpointResult)).isEqualTo(5)
         assertThat(calculator.maxPoints(geocirclesResult)).isEqualTo(10)
         assertThat(calculator.maxPoints(framedResult)).isEqualTo(6)
+        assertThat(calculator.maxPoints(geoGridResult)).isEqualTo(9)
     }
 }

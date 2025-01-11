@@ -10,11 +10,13 @@ enum class Game {
     FLAGLE,
     PINPOINT,
     GEOCIRCLES,
-    FRAMED;
+    FRAMED,
+    GEOGRID;
 
     fun displayName(): String {
         return when (this) {
             TOP5 -> "Top 5"
+            GEOGRID -> "GeoGrid"
             else -> this.name.toSentenceCase()
         }
     }
@@ -29,6 +31,7 @@ enum class Game {
             PINPOINT -> "\uD83D\uDCCC"
             GEOCIRCLES -> "\uD83D\uDFE2"
             FRAMED -> "\uD83C\uDFA5"
+            GEOGRID -> "\uD83C\uDF10"
         }
     }
 
@@ -42,6 +45,7 @@ enum class Game {
             PINPOINT -> this.emoji()
             GEOCIRCLES -> "\uD83C\uDFAF"
             FRAMED -> "\uD83C\uDF7F"
+            GEOGRID -> "✅"
         }
     }
 
@@ -55,6 +59,7 @@ enum class Game {
             PINPOINT -> "https://www.linkedin.com/games/pinpoint/"
             GEOCIRCLES -> "https://geocircles.io/"
             FRAMED -> "https://framed.wtf/"
+            GEOGRID -> "https://www.geogridgame.com/"
         }
     }
 }

@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.home
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.leaderboard.PointCalculator
+import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
@@ -25,6 +26,7 @@ class ShareLineMapper @Inject constructor(
             Game.TOP5 -> result.toTop5ShareLine()
             Game.WORLDLE -> result.toWorldleShareLine()
             Game.TRAVLE -> result.toTravleShareLine()
+            Game.GEOGRID -> result.toGeoGridShareLine()
         }
     }
 
@@ -99,5 +101,10 @@ class ShareLineMapper @Inject constructor(
         }
 
         return withPerfect
+    }
+
+    private fun PuzzleResult.toGeoGridShareLine(): String {
+        val formattedScore = String.format("%.1f", info<GeoGridInfo>().score)
+        return "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/9 ($formattedScore)"
     }
 }

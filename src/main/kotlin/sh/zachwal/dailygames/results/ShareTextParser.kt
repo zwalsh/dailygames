@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
+import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.ParsedResult
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
@@ -26,6 +27,7 @@ class ShareTextParser {
             pinpointRegex.matches(shareText) -> Game.PINPOINT
             geocirclesRegex.matches(shareText) -> Game.GEOCIRCLES
             framedRegex.matches(shareText) -> Game.FRAMED
+            shareText.contains("geogridgame") -> Game.GEOGRID
             else -> null
         }
     }
@@ -220,6 +222,54 @@ class ShareTextParser {
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
             resultInfo = FramedInfo
+        )
+    }
+
+    fun extractGeoGridInfo(shareText: String): ParsedResult {
+        val puzzleNumber = shareText
+            .substringAfter("Board #")
+            .substringBefore("\n")
+            .trim()
+            .toInt()
+        val score = shareText
+            .substringAfter("Score: ")
+            .substringBefore("\n")
+            .trim()
+            .toDouble()
+        val rank = shareText
+            .substringAfter("Rank: ")
+            .substringBefore(" /")
+            .replace(",", "")
+            .trim()
+            .toInt()
+        val rankOutOf = shareText
+            .substringAfter(" / ")
+            .substringBefore("\n")
+            .replace(",", "")
+            .trim()
+            .toInt()
+        val shareTextNoLink = shareText
+            .substringBefore("https://")
+            .lines()
+            .filter { it.isNotBlank() }
+            .filter { "Board" !in it }
+            .filter { "Game Summary" !in it }
+            .joinToString("\n")
+
+        val numCorrect = shareText.count { it == '✅' }
+
+        return ParsedResult(
+            puzzleNumber = puzzleNumber,
+            game = Game.GEOGRID,
+            date = null,
+            score = numCorrect,
+            shareTextNoLink = shareTextNoLink,
+            resultInfo = GeoGridInfo(
+                score = score,
+                rank = rank,
+                rankOutOf = rankOutOf,
+                numCorrect = numCorrect
+            )
         )
     }
 }
