@@ -429,4 +429,21 @@ class ResultServiceTest(
         assertThat(top5Info.numCorrect).isEqualTo(3)
         assertThat(top5Info.isPerfect).isFalse()
     }
+
+    @Test
+    fun `returns recent game counts excluding user id 1`() {
+        resultService.createResult(fixtures.zach, TOP5)
+        resultService.createResult(fixtures.jackie, TOP5)
+        resultService.createResult(fixtures.jackie, FLAGLE)
+
+        val counts = resultService.resultCountByGame(
+            since = Instant.now().minusSeconds(10),
+            excludeUserId = fixtures.zach.id
+        )
+
+        assertThat(counts).containsExactly(
+            Game.TOP5, 1,
+            Game.FLAGLE, 1,
+        )
+    }
 }

@@ -23,6 +23,7 @@ class HomeServiceTest {
     private val resultService = mockk<ResultService> {
         every { resultFeed(any()) } returns emptyList()
         every { resultsForUserToday(any()) } returns emptyList()
+        every { resultCountByGame(any(), any()) } returns emptyMap()
     }
     private val userPreferencesService = mockk<UserPreferencesService> {
         every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
@@ -167,5 +168,38 @@ class HomeServiceTest {
 
         assertThat(view.wrappedLinkView).isNotNull()
         assertThat(view.wrappedLinkView!!.year).isEqualTo(2024)
+    }
+
+    @Test
+    fun `sorts games by play count`() {
+        every { resultService.resultCountByGame(any(), any()) } returns mapOf(
+            Game.WORLDLE to 5,
+            Game.TRAVLE to 3,
+            Game.TOP5 to 1,
+        )
+        val otherGames = Game.values().toSet() - setOf(Game.WORLDLE, Game.TRAVLE, Game.TOP5) - hiddenGames
+
+        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+        val games = view.gameListView.games.map { it.game }
+
+        assertThat(games)
+            .containsExactly(
+                Game.WORLDLE,
+                Game.TRAVLE,
+                Game.TOP5,
+                *otherGames.toTypedArray(),
+            ).inOrder()
+    }
+
+    @Test
+    fun `caches result count`() {
+        every { resultService.resultCountByGame(any(), any()) } returns
+            mapOf(Game.WORLDLE to 10) andThen
+            mapOf(Game.TRAVLE to 10)
+
+        homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+
+        assertThat(view.gameListView.games.first().game).isEqualTo(Game.WORLDLE)
     }
 }

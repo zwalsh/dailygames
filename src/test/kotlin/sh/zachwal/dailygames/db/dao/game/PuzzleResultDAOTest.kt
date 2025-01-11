@@ -344,6 +344,58 @@ class PuzzleResultDAOTest(
         assertThat(results).doesNotContain(resultTwo)
     }
 
+    @Test
+    fun `countByGameSinceExcludingUser() counts all results since the given time`() {
+        insertResult()
+        val time = insertResult(userId = fixtures.jackie.id).instantSubmitted
+        insertResult(puzzle = fixtures.flagle123Puzzle)
+
+        val count = resultDAO.countByGameSinceExcludingUser(
+            since = time,
+            userId = -1,
+        )
+
+        assertThat(count).hasSize(2)
+        assertThat(count[Game.WORLDLE]).isEqualTo(1)
+        assertThat(count[Game.FLAGLE]).isEqualTo(1)
+    }
+
+    @Test
+    fun `countByGameSinceExcludingUser() excludes results for the given user`() {
+        insertResult()
+        insertResult(userId = fixtures.jackie.id).instantSubmitted
+        insertResult(puzzle = fixtures.flagle123Puzzle)
+
+        val count = resultDAO.countByGameSinceExcludingUser(
+            since = Instant.now().minusSeconds(10),
+            userId = fixtures.jackie.id,
+        )
+
+        assertThat(count).hasSize(2)
+        assertThat(count[Game.WORLDLE]).isEqualTo(1)
+        assertThat(count[Game.FLAGLE]).isEqualTo(1)
+    }
+
+    @Test
+    fun `countByGameSinceExcludingUser() can count across all games`() {
+        Game.values().forEach { game ->
+            (1..10).forEach { puzzleNumber ->
+                val puzzle = puzzleDAO.insertPuzzle(Puzzle(game, puzzleNumber, null))
+                insertResult(puzzle = puzzle)
+            }
+        }
+
+        val count = resultDAO.countByGameSinceExcludingUser(
+            since = Instant.now().minusSeconds(10),
+            userId = -1,
+        )
+
+        assertThat(count).hasSize(Game.values().size)
+        Game.values().forEach {
+            assertThat(count[it]).isEqualTo(10)
+        }
+    }
+
     private fun insertResult(
         userId: Long = fixtures.zach.id,
         puzzle: Puzzle = fixtures.worldle123Puzzle,
