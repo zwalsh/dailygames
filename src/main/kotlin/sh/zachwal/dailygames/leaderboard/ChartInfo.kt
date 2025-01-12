@@ -12,5 +12,5 @@ data class LeaderboardData constructor(
     val thirtyDaysPoints: ChartInfo,
     val thirtyDaysGames: ChartInfo,
     val thirtyDaysAverage: ChartInfo,
-    val allTimeHistogram: ChartInfo,
+    val pointsHistogram: ChartInfo,
 )

@@ -93,7 +93,7 @@ function renderCharts(response) {
     buildLeaderboardChart(response.thirtyDaysGames.labels, response.thirtyDaysGames.dataPoints, 'Games Played', 'thirty-days-games');
     buildLeaderboardChart(response.thirtyDaysAverage.labels, response.thirtyDaysAverage.dataPoints, 'Average Score', 'thirty-days-average');
 
-    buildHistogramChart(response.allTimeHistogram.labels, response.allTimeHistogram.dataPoints, 'Percentage', 'all-time-histogram');
+    buildHistogramChart(response.pointsHistogram.labels, response.pointsHistogram.dataPoints, 'Percentage', 'points-histogram');
 }
 
 

@@ -89,7 +89,7 @@ class LeaderboardService @Inject constructor(
         thirtyDaysPoints = chartInfo(pointsPerUser.thirtyDays) { it.totalPoints.toDouble() },
         thirtyDaysGames = chartInfo(pointsPerUser.thirtyDays) { it.games.toDouble() },
         thirtyDaysAverage = chartInfo(pointsPerUser.thirtyDays.filterValues { it.games >= minimumGamesForAverage }) { it.averagePoints() },
-        allTimeHistogram = ChartInfo(
+        pointsHistogram = ChartInfo(
             labels = (6 downTo 0).map { it.toString() },
             dataPoints = listOf(
                 11.3,

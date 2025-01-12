@@ -58,7 +58,7 @@ data class GameLeaderboardView(
                 }
                 SectionHeaderView("Points Distribution").renderIn(this)
                 div(classes = "row") {
-                    ChartView("all-time-histogram", "Points Distribution").renderIn(this)
+                    ChartView("points-histogram", "Points Distribution").renderIn(this)
                 }
             }
             script {
