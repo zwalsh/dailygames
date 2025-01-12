@@ -56,6 +56,10 @@ data class GameLeaderboardView(
                     ChartView("all-time-games", "Games Played").renderIn(this)
                     ChartView("all-time-average", "Average Points (Min $MINIMUM_GAMES_FOR_AVERAGE Games)").renderIn(this)
                 }
+                SectionHeaderView("Average Points").renderIn(this)
+                div(classes = "row") {
+                    ChartView("average-points-histogram", "Average Points").renderIn(this)
+                }
             }
             script {
                 src = "/static/src/js/leaderboard.js"
