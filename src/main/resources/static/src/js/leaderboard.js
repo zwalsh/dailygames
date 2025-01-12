@@ -61,7 +61,14 @@ function buildHistogramChart(dataLabels, dataValues, datasetLabel, elementId) {
             plugins: {
                 legend: {
                     display: false
-                }
+                },
+                tooltip: {
+                   callbacks: {
+                     label: function(context) {
+                        return context.parsed.y + '%';
+                     }
+                   }
+                 }
             },
             aspectRatio: 1.25,
             scales: {
@@ -93,7 +100,7 @@ function renderCharts(response) {
     buildLeaderboardChart(response.thirtyDaysGames.labels, response.thirtyDaysGames.dataPoints, 'Games Played', 'thirty-days-games');
     buildLeaderboardChart(response.thirtyDaysAverage.labels, response.thirtyDaysAverage.dataPoints, 'Average Score', 'thirty-days-average');
 
-    buildHistogramChart(response.pointsHistogram.labels, response.pointsHistogram.dataPoints, 'Percentage', 'points-histogram');
+    buildHistogramChart(response.pointsHistogram.labels, response.pointsHistogram.dataPoints, '', 'points-histogram');
 }
 
 
