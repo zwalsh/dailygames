@@ -44,17 +44,21 @@ data class GameLeaderboardView(
                     }
                 }
                 scoreHintView.renderIn(this)
+                SectionHeaderView("Past 30 Days").renderIn(this)
+                div(classes = "row") {
+                    ChartView("thirty-days-points", "Total Points").renderIn(this)
+                    ChartView("thirty-days-games", "Games Played").renderIn(this)
+                    ChartView("thirty-days-average", "Average Points (Min $MINIMUM_GAMES_FOR_AVERAGE Games)").renderIn(this)
+                }
                 SectionHeaderView("All Time").renderIn(this)
                 div(classes = "row") {
                     ChartView("all-time-points", "Total Points").renderIn(this)
                     ChartView("all-time-games", "Games Played").renderIn(this)
                     ChartView("all-time-average", "Average Points (Min $MINIMUM_GAMES_FOR_AVERAGE Games)").renderIn(this)
                 }
-                SectionHeaderView("Past 30 Days").renderIn(this)
+                SectionHeaderView("Points Distribution").renderIn(this)
                 div(classes = "row") {
-                    ChartView("thirty-days-points", "Total Points").renderIn(this)
-                    ChartView("thirty-days-games", "Games Played").renderIn(this)
-                    ChartView("thirty-days-average", "Average Points (Min $MINIMUM_GAMES_FOR_AVERAGE Games)").renderIn(this)
+                    ChartView("points-histogram", "Points Distribution").renderIn(this)
                 }
             }
             script {

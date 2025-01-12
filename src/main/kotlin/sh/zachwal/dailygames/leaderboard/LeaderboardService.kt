@@ -65,52 +65,71 @@ class LeaderboardService @Inject constructor(
     }
 
     fun overallLeaderboardData(): LeaderboardData {
-        val overallPointsPerUser = Game.values().map { game ->
-            totalPointsPerUserOnGame(game)
-        }.fold(PointsPerUser(emptyMap(), emptyMap())) { acc, pointsPerUser ->
+        val overallPointsData = Game.values().map { game ->
+            pointsDataForGame(game)
+        }.fold(PointsData(emptyMap(), emptyMap(), emptyMap())) { acc, pointsPerUser ->
             acc.merge(pointsPerUser)
         }
 
-        return leaderboardData(overallPointsPerUser)
+        return leaderboardData(overallPointsData)
     }
 
     fun gameLeaderboardData(game: Game): LeaderboardData {
-        val pointsPerUser = totalPointsPerUserOnGame(game)
+        val pointsPerUser = pointsDataForGame(game)
 
         return leaderboardData(pointsPerUser)
     }
 
     private fun leaderboardData(
-        pointsPerUser: PointsPerUser
+        pointsData: PointsData
     ) = LeaderboardData(
-        allTimePoints = chartInfo(pointsPerUser.allTime) { it.totalPoints.toDouble() },
-        allTimeGames = chartInfo(pointsPerUser.allTime) { it.games.toDouble() },
-        allTimeAverage = chartInfo(pointsPerUser.allTime.filterValues { it.games >= minimumGamesForAverage }) { it.averagePoints() },
-        thirtyDaysPoints = chartInfo(pointsPerUser.thirtyDays) { it.totalPoints.toDouble() },
-        thirtyDaysGames = chartInfo(pointsPerUser.thirtyDays) { it.games.toDouble() },
-        thirtyDaysAverage = chartInfo(pointsPerUser.thirtyDays.filterValues { it.games >= minimumGamesForAverage }) { it.averagePoints() },
+        allTimePoints = chartInfo(pointsData.allTimePerUser) { it.totalPoints.toDouble() },
+        allTimeGames = chartInfo(pointsData.allTimePerUser) { it.games.toDouble() },
+        allTimeAverage = chartInfo(pointsData.allTimePerUser.filterValues { it.games >= minimumGamesForAverage }) { it.averagePoints() },
+        thirtyDaysPoints = chartInfo(pointsData.thirtyDaysPerUser) { it.totalPoints.toDouble() },
+        thirtyDaysGames = chartInfo(pointsData.thirtyDaysPerUser) { it.games.toDouble() },
+        thirtyDaysAverage = chartInfo(pointsData.thirtyDaysPerUser.filterValues { it.games >= minimumGamesForAverage }) { it.averagePoints() },
+        pointsHistogram = histogramChartInfo(pointsData.pointsHistogram),
     )
 
-    private fun totalPointsPerUserOnGame(game: Game): PointsPerUser {
+    private fun pointsDataForGame(game: Game): PointsData {
         val allTimeTotalsPerUser = mutableMapOf<Long, TotalPoints>()
         val thirtyDaysTotalsPerUser = mutableMapOf<Long, TotalPoints>()
+        val gameCountByPoints = mutableMapOf<Int, Int>()
         jdbi.open().use { handle ->
             val dao = handle.attach<PuzzleResultDAO>()
             dao.allResultsForGameStream(game).forEach { result ->
-                val totalPoints = TotalPoints(1, pointCalculator.calculatePoints(result))
+                val points = pointCalculator.calculatePoints(result)
+                val totalPoints = TotalPoints(1, points)
                 allTimeTotalsPerUser.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 if (result.instantSubmitted.isAfter(Instant.now().minus(30, ChronoUnit.DAYS))) {
                     thirtyDaysTotalsPerUser.merge(result.userId, totalPoints, TotalPoints::addPerformance)
                 }
+                gameCountByPoints.merge(points, 1, Int::plus)
             }
         }
-        return PointsPerUser(allTimeTotalsPerUser, thirtyDaysTotalsPerUser)
+        return PointsData(
+            allTimePerUser = allTimeTotalsPerUser,
+            thirtyDaysPerUser = thirtyDaysTotalsPerUser,
+            pointsHistogram = gameCountByPoints,
+        )
     }
 
     private fun chartInfo(scores: Map<Long, TotalPoints>, selector: (TotalPoints) -> Double): ChartInfo {
         val sortedScores = scores.entries.sortedByDescending { selector(it.value) }.take(5)
         val labels = sortedScores.map { userService.getUser(it.key)?.username ?: "Unknown" }
         val dataPoints = sortedScores.map { selector(it.value) }
+        return ChartInfo(labels, dataPoints)
+    }
+
+    private fun histogramChartInfo(scores: Map<Int, Int>): ChartInfo {
+        val totalGamesPlayed = scores.values.sum()
+        val sortedDataPoints = scores.entries.sortedByDescending { it.key }
+        val labels = sortedDataPoints.map { it.key.toString() }
+        val dataPoints = sortedDataPoints
+            .map { it.value.toDouble() / totalGamesPlayed } // calculate percentage
+            .map { it * 100 } // convert to percentage
+            .map { String.format("%.1f", it).toDouble() } // round to 1 decimal place
         return ChartInfo(labels, dataPoints)
     }
 }
@@ -125,27 +144,33 @@ data class TotalPoints(val games: Int, val totalPoints: Int) {
     }
 }
 
-data class PointsPerUser(
-    val allTime: Map<Long, TotalPoints>,
-    val thirtyDays: Map<Long, TotalPoints>,
+data class PointsData constructor(
+    val allTimePerUser: Map<Long, TotalPoints>,
+    val thirtyDaysPerUser: Map<Long, TotalPoints>,
+    val pointsHistogram: Map<Int, Int>,
 ) {
-    fun merge(other: PointsPerUser): PointsPerUser {
-        val newAllTime = (allTime.keys + other.allTime.keys).associateWith { userId ->
-            allTime
+    fun merge(other: PointsData): PointsData {
+        val newAllTime = (allTimePerUser.keys + other.allTimePerUser.keys).associateWith { userId ->
+            allTimePerUser
                 .getOrDefault(userId, TotalPoints(0, 0))
                 .addPerformance(
-                    other.allTime.getOrDefault(userId, TotalPoints(0, 0))
+                    other.allTimePerUser.getOrDefault(userId, TotalPoints(0, 0))
                 )
         }
-        val newThirtyDays = (thirtyDays.keys + other.thirtyDays.keys).associateWith { userId ->
-            thirtyDays
+        val newThirtyDays = (thirtyDaysPerUser.keys + other.thirtyDaysPerUser.keys).associateWith { userId ->
+            thirtyDaysPerUser
                 .getOrDefault(userId, TotalPoints(0, 0))
-                .addPerformance(other.thirtyDays.getOrDefault(userId, TotalPoints(0, 0)))
+                .addPerformance(other.thirtyDaysPerUser.getOrDefault(userId, TotalPoints(0, 0)))
         }
 
-        return PointsPerUser(
-            allTime = newAllTime,
-            thirtyDays = newThirtyDays,
+        val newHistogram = (pointsHistogram.keys + other.pointsHistogram.keys).associateWith { points ->
+            pointsHistogram.getOrDefault(points, 0) + other.pointsHistogram.getOrDefault(points, 0)
+        }
+
+        return PointsData(
+            allTimePerUser = newAllTime,
+            thirtyDaysPerUser = newThirtyDays,
+            pointsHistogram = newHistogram,
         )
     }
 }

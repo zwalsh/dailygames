@@ -380,4 +380,25 @@ class LeaderboardServiceTest {
         assertThat(leaderboardData.allTimeAverage.labels).containsExactly(zachUser.username)
         assertThat(leaderboardData.thirtyDaysAverage.labels).containsExactly(zachUser.username)
     }
+
+    @Test
+    fun `pointsHistogram includes percentage of games at each point value in correct order and format`() {
+        every { resultDAO.allResultsForGameStream(Game.GEOCIRCLES) } returns Stream.of(
+            result.copy(score = 1),
+            result.copy(score = 1),
+            result.copy(score = 1),
+            result.copy(score = 2),
+            result.copy(score = 2),
+            result.copy(score = 3),
+        )
+
+        val leaderboardData = leaderboardService.gameLeaderboardData(Game.GEOCIRCLES)
+
+        assertThat(leaderboardData.pointsHistogram.labels)
+            .containsExactly("3", "2", "1")
+            .inOrder()
+        assertThat(leaderboardData.pointsHistogram.dataPoints)
+            .containsExactly(16.7, 33.3, 50.0)
+            .inOrder()
+    }
 }
