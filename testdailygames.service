@@ -7,7 +7,7 @@ Wants=nginx.service
 ExecStart=/home/testdailygames/releases/current/dailygames/bin/dailygames
 User=testdailygames
 Group=testdailygames
-EnvironmentFile=/home/testdailygames/testdailygames.env
+EnvironmentFile=/home/testdailygames/dailygames.env
 
 [Install]
 WantedBy=multi-user.target
