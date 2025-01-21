@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily Games Backup Service
+After=postgresql.service
+
+[Service]
+ExecStart=/home/dailygames/backup/backup.sh
+User=dailygames
+Group=dailygames
+EnvironmentFile=/home/dailygames/dailygames.env
