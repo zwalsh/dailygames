@@ -50,6 +50,7 @@ data class ChatSubmitFormView(
                     }
                     button(classes = "btn btn-primary ${if (isCommentDisabled) "disabled" else ""}") {
                         id = "submit-button"
+                        attributes["data-umami-event"] = "Submit Comment"
                         type = ButtonType.submit
                         SpinnerView.renderIn(this)
                         +"Comment"

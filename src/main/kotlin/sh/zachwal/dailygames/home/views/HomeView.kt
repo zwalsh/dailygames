@@ -24,7 +24,7 @@ data class HomeView(
     val nav: NavView,
 ) : HTMLView<HTML>() {
 
-    val gameSubmitFormView = GameSubmitFormView(
+    private val gameSubmitFormView = GameSubmitFormView(
         includeShareButton = shareTextModalView != null
     )
 
