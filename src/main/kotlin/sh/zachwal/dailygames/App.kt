@@ -24,6 +24,8 @@ import org.slf4j.event.Level
 import sh.zachwal.dailygames.auth.configureFormAuth
 import sh.zachwal.dailygames.auth.configureSessionAuth
 import sh.zachwal.dailygames.config.AppConfig
+import sh.zachwal.dailygames.config.initSentry
+import sh.zachwal.dailygames.config.initUmami
 import sh.zachwal.dailygames.controller.createControllers
 import sh.zachwal.dailygames.features.MDCFeature
 import sh.zachwal.dailygames.features.configureRoleAuthorization
@@ -34,8 +36,6 @@ import sh.zachwal.dailygames.guice.HikariModule
 import sh.zachwal.dailygames.guice.JdbiModule
 import sh.zachwal.dailygames.roles.RoleAuthorization
 import sh.zachwal.dailygames.roles.RoleService
-import sh.zachwal.dailygames.config.initSentry
-import sh.zachwal.dailygames.config.initUmami
 import sh.zachwal.dailygames.session.DbSessionStorage
 import sh.zachwal.dailygames.session.SESSION_MAX_DURATION
 import sh.zachwal.dailygames.session.SessionCleanupTask
