@@ -25,6 +25,8 @@ data class GameLinkView(
                 if (isNew) {
                     NewBadgeView.renderIn(this)
                 }
+                attributes["data-umami-event"] = "Game Link"
+                attributes["data-umami-event-game"] = game.displayName()
             }
         }
     }
