@@ -17,13 +17,15 @@ isn't configured via environment variables) is configured in
 Requires a `dailygames.env` environment file in the user's home directory (loaded by systemd). That
 `.env` file must specify the following environment variables:
 
-| Variable           | Value                                                                                        |
-|--------------------|----------------------------------------------------------------------------------------------|
-| ENV                | The name of the current environment. Controls header configuration, HTTPS usage, etc.        |
-| PORT               | The port that the server should start on.                                                    |
-| HOST               | The hostname at which the server is reachable.                                               | 
-| WS_PROTOCOL        | `ws` or `wss` -- which protocol to use to connect to this server for a WebSocket connection. |
-| DB_USER            | The user with which to connect to Postgres.                                                  |
-| DB_PASSWORD        | The password with which to connect to Postgres.                                              |
-| SENTRY_KOTLIN_DSN  | The Sentry DSN to send Kotlin exceptions to.                                                 | 
-| SENTRY_JS_DSN      | The Sentry DSN to send Javascript exceptions to.                                             | 
+| Variable          | Value                                                                                        |
+|-------------------|----------------------------------------------------------------------------------------------|
+| ENV               | The name of the current environment. Controls header configuration, HTTPS usage, etc.        |
+| PORT              | The port that the server should start on.                                                    |
+| HOST              | The hostname at which the server is reachable.                                               | 
+| WS_PROTOCOL       | `ws` or `wss` -- which protocol to use to connect to this server for a WebSocket connection. |
+| DB_USER           | The user with which to connect to Postgres.                                                  |
+| DB_PASSWORD       | The password with which to connect to Postgres.                                              |
+| SENTRY_KOTLIN_DSN | The Sentry DSN to send Kotlin exceptions to.                                                 | 
+| SENTRY_JS_DSN     | The Sentry DSN to send Javascript exceptions to.                                             |
+| UMAMI_URL         | The URL of the Umami host to send analytics to.                                              |
+| UMAMI_WEBSITE_ID  | The website id of this deploy of Daily Games configured in Umami.                            |

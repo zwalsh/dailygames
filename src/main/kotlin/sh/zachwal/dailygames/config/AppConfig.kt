@@ -8,7 +8,8 @@ data class AppConfig(
     val dbNameOverride: String?,
     val dbUserOverride: String?,
     val dbPasswordOverride: String?,
-    val sentryConfig: SentryConfig
+    val sentryConfig: SentryConfig,
+    val umamiConfig: UmamiConfig,
 ) {
     constructor(config: ApplicationConfig) : this(
         env = config.property("ktor.deployment.environment").getString(),
@@ -20,5 +21,9 @@ data class AppConfig(
             kotlinDsn = config.property("ktor.sentry.kotlinDsn").getString(),
             jsDsn = config.property("ktor.sentry.jsDsn").getString(),
         ),
+        umamiConfig = UmamiConfig(
+            umamiUrl = config.property("ktor.umami.url").getString(),
+            websiteId = config.property("ktor.umami.websiteId").getString(),
+        )
     )
 }
