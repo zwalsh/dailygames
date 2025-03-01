@@ -39,6 +39,7 @@ data class GameSubmitFormView(
                 }
                 button(classes = "btn btn-success") {
                     id = "submit-button"
+                    attributes["data-umami-event"] = "Submit Game"
                     SpinnerView.renderIn(this)
                     +"Submit"
                 }
