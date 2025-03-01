@@ -18,6 +18,8 @@ data class GameLinkView(
     override fun DIV.render() {
         div(classes = "col") {
             a(href = game.href(), classes = "btn btn-secondary position-relative", target = "_blank") {
+                attributes["data-umami-event"] = "Game Link"
+                attributes["data-umami-event-game"] = game.displayName()
                 role = "button"
                 style = "white-space: nowrap;"
                 +"${game.emoji()} ${game.displayName()}"
@@ -25,8 +27,6 @@ data class GameLinkView(
                 if (isNew) {
                     NewBadgeView.renderIn(this)
                 }
-                attributes["data-umami-event"] = "Game Link"
-                attributes["data-umami-event-game"] = game.displayName()
             }
         }
     }
