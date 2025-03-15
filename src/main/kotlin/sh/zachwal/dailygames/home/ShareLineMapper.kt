@@ -20,15 +20,14 @@ class ShareLineMapper @Inject constructor(
             Game.FLAGLE,
             Game.TRADLE,
             Game.FRAMED,
-            Game.PINPOINT -> result.toStandardShareLine()
+            Game.PINPOINT,
+            Game.BANDLE -> result.toStandardShareLine()
 
             Game.GEOCIRCLES -> result.toGeocirclesShareLine()
             Game.TOP5 -> result.toTop5ShareLine()
             Game.WORLDLE -> result.toWorldleShareLine()
             Game.TRAVLE -> result.toTravleShareLine()
             Game.GEOGRID -> result.toGeoGridShareLine()
-
-            Game.BANDLE -> TODO()
         }
     }
 
@@ -107,6 +106,11 @@ class ShareLineMapper @Inject constructor(
 
     private fun PuzzleResult.toGeoGridShareLine(): String {
         val formattedScore = String.format("%.1f", info<GeoGridInfo>().score)
-        return "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/9 ($formattedScore)"
+        val start = "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/9 ($formattedScore)"
+        return if (score == 9) {
+            "$start ${game.perfectEmoji()}"
+        } else {
+            start
+        }
     }
 }

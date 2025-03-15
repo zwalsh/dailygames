@@ -394,7 +394,7 @@ class ShareLineMapperTest {
     @Test
     fun `maps geogrid line`() {
         val shareLine = mapper.mapToShareLine(geoGridResult)
-        assertThat(shareLine).isEqualTo("${Game.GEOGRID.emoji()} GeoGrid #123 9/9 (123.4)")
+        assertThat(shareLine).isEqualTo("${Game.GEOGRID.emoji()} GeoGrid #123 9/9 (123.4) ${Game.GEOGRID.perfectEmoji()}")
     }
 
     @Test
@@ -434,6 +434,6 @@ class ShareLineMapperTest {
         )
 
         val shareLine = mapper.mapToShareLine(result)
-        assertThat(shareLine).endsWith("(200.6)")
+        assertThat(shareLine).contains("(200.6)")
     }
 }
