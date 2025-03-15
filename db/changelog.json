@@ -114,6 +114,11 @@
       "include": {
         "file": "23_add_geogrid.json"
       }
+    },
+    {
+      "include": {
+        "file": "24_add_bandle.json"
+      }
     }
   ]
 }
