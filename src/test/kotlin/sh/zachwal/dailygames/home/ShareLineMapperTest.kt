@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.leaderboard.PointCalculator
+import sh.zachwal.dailygames.results.resultinfo.BandleInfo
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
@@ -435,5 +436,30 @@ class ShareLineMapperTest {
 
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).contains("(200.6)")
+    }
+
+    private val bandleResult = worldleResult.copy(
+        game = Game.BANDLE,
+        score = 1,
+        resultInfo = BandleInfo(
+            numSkips = 0,
+            numCorrectBand = 0,
+            numIncorrect = 0,
+        ),
+    )
+
+    @Test
+    fun `maps Bandle line`() {
+        val shareLine = mapper.mapToShareLine(bandleResult)
+        assertThat(shareLine).isEqualTo("${Game.BANDLE.emoji()} Bandle #123 1/6 ${Game.BANDLE.perfectEmoji()}")
+    }
+
+    @Test
+    fun `maps Bandle line zero`() {
+        val result = bandleResult.copy(
+            score = 7,
+        )
+        val shareLine = mapper.mapToShareLine(result)
+        assertThat(shareLine).isEqualTo("${Game.BANDLE.emoji()} Bandle #123 X/6")
     }
 }
