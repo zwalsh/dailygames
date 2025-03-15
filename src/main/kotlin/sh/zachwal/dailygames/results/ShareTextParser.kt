@@ -28,6 +28,7 @@ class ShareTextParser {
             geocirclesRegex.matches(shareText) -> Game.GEOCIRCLES
             framedRegex.matches(shareText) -> Game.FRAMED
             shareText.contains("geogridgame") -> Game.GEOGRID
+            shareText.trim().startsWith("Bandle") -> Game.BANDLE
             else -> null
         }
     }
