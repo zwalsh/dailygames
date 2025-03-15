@@ -94,6 +94,7 @@ class ResultService @Inject constructor(
             Game.GEOCIRCLES -> shareTextParser.extractGeocirclesInfo(shareText)
             Game.FRAMED -> shareTextParser.extractFramedInfo(shareText)
             Game.GEOGRID -> shareTextParser.extractGeoGridInfo(shareText)
+            Game.BANDLE -> TODO()
         }
     }
 

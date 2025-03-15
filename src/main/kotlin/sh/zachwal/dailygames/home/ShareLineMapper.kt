@@ -27,6 +27,8 @@ class ShareLineMapper @Inject constructor(
             Game.WORLDLE -> result.toWorldleShareLine()
             Game.TRAVLE -> result.toTravleShareLine()
             Game.GEOGRID -> result.toGeoGridShareLine()
+
+            Game.BANDLE -> TODO()
         }
     }
 

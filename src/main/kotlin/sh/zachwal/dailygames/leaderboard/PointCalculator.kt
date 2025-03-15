@@ -24,6 +24,8 @@ class PointCalculator {
             Game.GEOGRID -> score
 
             Game.TRAVLE -> (result.info<TravleInfo>()).calculatePoints(score)
+
+            Game.BANDLE -> TODO()
         }
     }
 
@@ -42,6 +44,8 @@ class PointCalculator {
             Game.TRAVLE -> (result.info<TravleInfo>()).maxPoints(score)
 
             Game.GEOGRID -> 9
+
+            Game.BANDLE -> TODO()
         }
     }
 
