@@ -17,7 +17,8 @@ class PointCalculator {
             Game.TRADLE,
             Game.FLAGLE,
             Game.PINPOINT,
-            Game.FRAMED -> maxPoints(result) + 1 - score
+            Game.FRAMED,
+            Game.BANDLE -> maxPoints(result) + 1 - score
 
             Game.TOP5,
             Game.GEOCIRCLES,
@@ -32,7 +33,8 @@ class PointCalculator {
             Game.WORLDLE,
             Game.TRADLE,
             Game.FLAGLE,
-            Game.FRAMED -> 6
+            Game.FRAMED,
+            Game.BANDLE -> 6
 
             Game.PINPOINT -> 5
 

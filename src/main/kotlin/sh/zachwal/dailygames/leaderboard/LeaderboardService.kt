@@ -43,7 +43,8 @@ class LeaderboardService @Inject constructor(
             Game.WORLDLE,
             Game.TRADLE,
             Game.FLAGLE,
-            Game.FRAMED -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
+            Game.FRAMED,
+            Game.BANDLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
 
             Game.PINPOINT -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/5 = 4 points.")
             Game.GEOGRID -> BasicScoreHintView("Scoring: 1 point per correct guess. e.g. 8/9 = 8 points.")
