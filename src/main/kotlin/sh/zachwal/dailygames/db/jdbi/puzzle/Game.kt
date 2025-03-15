@@ -33,7 +33,7 @@ enum class Game {
             GEOCIRCLES -> "\uD83D\uDFE2"
             FRAMED -> "\uD83C\uDFA5"
             GEOGRID -> "\uD83C\uDF10"
-            BANDLE -> TODO()
+            BANDLE -> "\uD83C\uDFB8"
         }
     }
 
@@ -48,7 +48,7 @@ enum class Game {
             GEOCIRCLES -> "\uD83C\uDFAF"
             FRAMED -> "\uD83C\uDF7F"
             GEOGRID -> "✅"
-            BANDLE -> TODO()
+            BANDLE -> "\uD83C\uDFB5"
         }
     }
 
@@ -63,7 +63,7 @@ enum class Game {
             GEOCIRCLES -> "https://geocircles.io/"
             FRAMED -> "https://framed.wtf/"
             GEOGRID -> "https://www.geogridgame.com/"
-            BANDLE -> TODO()
+            BANDLE -> "https://bandle.app/"
         }
     }
 }
