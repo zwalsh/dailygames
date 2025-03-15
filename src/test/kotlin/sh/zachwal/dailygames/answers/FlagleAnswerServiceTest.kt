@@ -78,6 +78,6 @@ class FlagleAnswerServiceTest {
     }
 
     private fun url(date: LocalDate): String {
-        return "https://teuteuf-dashboard-assets.pages.dev/data/flagle/games/${date.year}/${date}.json"
+        return "https://teuteuf-dashboard-assets.pages.dev/data/flagle/games/${date.year}/$date.json"
     }
 }
