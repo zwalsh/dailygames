@@ -1,6 +1,7 @@
 package sh.zachwal.dailygames.results
 
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.results.resultinfo.BandleInfo
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
@@ -88,7 +89,7 @@ class ShareTextParser {
         val puzzleNumber = puzzleNumberRegex.find(shareText)?.groupValues?.get(1)
             ?: throw IllegalArgumentException("Puzzle number not found")
         val score = scoreRegex.find(shareText)?.groupValues?.get(1)?.toInt()
-            // Use the number away times negative one as the score if the result is a Did Not Finish
+        // Use the number away times negative one as the score if the result is a Did Not Finish
             ?: numAwayRegex.find(shareText)?.groupValues?.get(1)?.toInt()?.times(-1)
             ?: throw IllegalArgumentException("Score not found")
         val numGuesses = guessEmojiRegex.findAll(shareText).count()
@@ -270,6 +271,38 @@ class ShareTextParser {
                 rank = rank,
                 rankOutOf = rankOutOf,
                 numCorrect = numCorrect
+            )
+        )
+    }
+
+    private val skipRegex = Regex("⬛")
+    private val correctBandRegex = Regex("\uD83D\uDFE8")
+    private val incorrectRegex = Regex("\uD83D\uDFE5")
+    fun extractBandleInfo(shareText: String): ParsedResult {
+        val puzzleNumber = shareText
+            .substringAfter("Bandle #")
+            .substringBefore(" ")
+            .trim()
+            .toInt()
+
+        val scoreText = shareText
+            .trim()
+            .lines()
+            .first()
+            .substringBefore("/")
+            .substringAfterLast(" ")
+        val score = if (scoreText == "x") 7 else scoreText.toInt()
+
+        return ParsedResult(
+            puzzleNumber = puzzleNumber,
+            game = Game.BANDLE,
+            date = null,
+            score = score,
+            shareTextNoLink = shareText.substringBefore("Found").trim(),
+            resultInfo = BandleInfo(
+                numSkips = skipRegex.findAll(shareText).count(),
+                numCorrectBand = correctBandRegex.findAll(shareText).count(),
+                numIncorrect = incorrectRegex.findAll(shareText).count(),
             )
         )
     }
