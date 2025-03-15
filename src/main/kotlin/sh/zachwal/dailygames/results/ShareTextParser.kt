@@ -89,7 +89,7 @@ class ShareTextParser {
         val puzzleNumber = puzzleNumberRegex.find(shareText)?.groupValues?.get(1)
             ?: throw IllegalArgumentException("Puzzle number not found")
         val score = scoreRegex.find(shareText)?.groupValues?.get(1)?.toInt()
-        // Use the number away times negative one as the score if the result is a Did Not Finish
+            // Use the number away times negative one as the score if the result is a Did Not Finish
             ?: numAwayRegex.find(shareText)?.groupValues?.get(1)?.toInt()?.times(-1)
             ?: throw IllegalArgumentException("Score not found")
         val numGuesses = guessEmojiRegex.findAll(shareText).count()

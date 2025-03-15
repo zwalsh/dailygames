@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.resultinfo.BandleInfo
-import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 
 const val BANDLE_PERFECT = """
 Bandle #941 1/6
