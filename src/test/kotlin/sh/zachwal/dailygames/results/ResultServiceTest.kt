@@ -270,6 +270,22 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `can create a Bandle result`() {
+        val result = resultService.createResult(fixtures.zach, BANDLE_PERFECT)
+
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.BANDLE)
+        assertThat(result.puzzleNumber).isEqualTo(941)
+        assertThat(result.score).isEqualTo(1)
+        assertThat(result.shareText).isEqualTo(
+            """
+            Bandle #941 1/6
+            🟩⬜⬜⬜⬜⬜
+            """.trimIndent()
+        )
+    }
+
+    @Test
     fun `submitting a result twice throws a helpful error`() {
         resultService.createResult(fixtures.zach, worldle934)
 
