@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
+import sh.zachwal.dailygames.results.resultinfo.BandleInfo
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
@@ -56,6 +57,21 @@ class PointCalculatorTest {
     @Test
     fun `returns 7 minus score for tradle result`() {
         assertThat(calculator.calculatePoints(tradleResult)).isEqualTo(0)
+    }
+
+    private val bandleResult = worldleResult.copy(
+        game = Game.BANDLE,
+        score = 5,
+        resultInfo = BandleInfo(
+            numSkips = 0,
+            numCorrectBand = 1,
+            numIncorrect = 3
+        ),
+    )
+
+    @Test
+    fun `returns 7 minus score for bandle result`() {
+        assertThat(calculator.calculatePoints(bandleResult)).isEqualTo(2)
     }
 
     private val top5Result = worldleResult.copy(
@@ -138,5 +154,6 @@ class PointCalculatorTest {
         assertThat(calculator.maxPoints(geocirclesResult)).isEqualTo(10)
         assertThat(calculator.maxPoints(framedResult)).isEqualTo(6)
         assertThat(calculator.maxPoints(geoGridResult)).isEqualTo(9)
+        assertThat(calculator.maxPoints(bandleResult)).isEqualTo(6)
     }
 }
