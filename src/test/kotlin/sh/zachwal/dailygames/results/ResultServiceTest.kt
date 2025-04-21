@@ -286,6 +286,25 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `can create a Bracket City result`() {
+        val result = resultService.createResult(fixtures.zach, BRACKET_CITY_KINGMAKER)
+
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.BRACKET_CITY)
+        assertThat(result.puzzleNumber).isEqualTo(20250420)
+        assertThat(result.score).isEqualTo(100)
+        assertThat(result.shareText).isEqualTo(
+            """
+            Rank: 👑 (Kingmaker)
+            ❌ Wrong guesses: 0
+            
+            Total Score: 100.0
+            🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
+            """.trimIndent()
+        )
+    }
+
+    @Test
     fun `submitting a result twice throws a helpful error`() {
         resultService.createResult(fixtures.zach, worldle934)
 
