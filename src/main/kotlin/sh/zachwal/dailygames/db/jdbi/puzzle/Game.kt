@@ -19,6 +19,7 @@ enum class Game {
         return when (this) {
             TOP5 -> "Top 5"
             GEOGRID -> "GeoGrid"
+            BRACKET_CITY -> "Bracket City"
             else -> this.name.toSentenceCase()
         }
     }
