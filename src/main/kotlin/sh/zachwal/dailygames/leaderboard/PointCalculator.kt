@@ -25,6 +25,9 @@ class PointCalculator {
             Game.GEOGRID -> score
 
             Game.TRAVLE -> (result.info<TravleInfo>()).calculatePoints(score)
+
+            // Bracket City is out of 100. Divide by 10 and round down.
+            Game.BRACKET_CITY -> score / 10
         }
     }
 
@@ -39,7 +42,8 @@ class PointCalculator {
             Game.PINPOINT -> 5
 
             Game.TOP5,
-            Game.GEOCIRCLES -> 10
+            Game.GEOCIRCLES,
+            Game.BRACKET_CITY -> 10
 
             Game.TRAVLE -> (result.info<TravleInfo>()).maxPoints(score)
 

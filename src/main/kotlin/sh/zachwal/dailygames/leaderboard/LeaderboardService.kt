@@ -53,6 +53,8 @@ class LeaderboardService @Inject constructor(
             Game.GEOCIRCLES -> BasicScoreHintView("Scoring: 1 point for each green circle, 1 point for each life left.")
 
             Game.TRAVLE -> TravleScoreHintView()
+
+            Game.BRACKET_CITY -> BasicScoreHintView("Scoring: Bracket City score divided by 10 and rounded down. e.g. 99.0 = 9 points.")
         }
         val navView = navViewFactory.navView(
             username = currentUser.username,

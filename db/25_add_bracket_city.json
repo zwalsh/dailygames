@@ -1,0 +1,31 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "25",
+        "author": "zach",
+        "changes": [
+          {
+            "insert": {
+              "tableName": "game",
+              "columns": [
+                {
+                  "column": {
+                    "name": "name",
+                    "value": "BRACKET_CITY"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "instant_created",
+                    "valueComputed": "now()"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

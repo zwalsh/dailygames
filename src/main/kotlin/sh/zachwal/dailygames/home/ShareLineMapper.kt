@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.home
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.leaderboard.PointCalculator
+import sh.zachwal.dailygames.results.resultinfo.BracketCityInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
@@ -28,6 +29,7 @@ class ShareLineMapper @Inject constructor(
             Game.WORLDLE -> result.toWorldleShareLine()
             Game.TRAVLE -> result.toTravleShareLine()
             Game.GEOGRID -> result.toGeoGridShareLine()
+            Game.BRACKET_CITY -> result.toBracketCityShareLine()
         }
     }
 
@@ -112,5 +114,10 @@ class ShareLineMapper @Inject constructor(
         } else {
             start
         }
+    }
+
+    private fun PuzzleResult.toBracketCityShareLine(): String = with(info<BracketCityInfo>()) {
+        val gameDate = puzzleDate?.let { " ${it.monthValue}/${it.dayOfMonth}" } ?: ""
+        return "${game.emoji()} ${game.displayName()}$gameDate $score.0 $rankEmoji"
     }
 }
