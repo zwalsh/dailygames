@@ -12,7 +12,8 @@ enum class Game {
     GEOCIRCLES,
     FRAMED,
     GEOGRID,
-    BANDLE;
+    BANDLE,
+    BRACKET_CITY;
 
     fun displayName(): String {
         return when (this) {
@@ -34,6 +35,7 @@ enum class Game {
             FRAMED -> "\uD83C\uDFA5"
             GEOGRID -> "\uD83C\uDF10"
             BANDLE -> "\uD83C\uDFB8"
+            BRACKET_CITY -> TODO()
         }
     }
 
@@ -49,6 +51,7 @@ enum class Game {
             FRAMED -> "\uD83C\uDF7F"
             GEOGRID -> "✅"
             BANDLE -> "\uD83C\uDFB5"
+            BRACKET_CITY -> TODO()
         }
     }
 
@@ -64,6 +67,7 @@ enum class Game {
             FRAMED -> "https://framed.wtf/"
             GEOGRID -> "https://www.geogridgame.com/"
             BANDLE -> "https://bandle.app/"
+            BRACKET_CITY -> "https://www.theatlantic.com/games/bracket-city/"
         }
     }
 }
