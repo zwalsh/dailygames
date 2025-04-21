@@ -35,7 +35,7 @@ enum class Game {
             FRAMED -> "\uD83C\uDFA5"
             GEOGRID -> "\uD83C\uDF10"
             BANDLE -> "\uD83C\uDFB8"
-            BRACKET_CITY -> TODO()
+            BRACKET_CITY -> "\uD83C\uDFD9\uFE0F"
         }
     }
 
@@ -51,7 +51,7 @@ enum class Game {
             FRAMED -> "\uD83C\uDF7F"
             GEOGRID -> "✅"
             BANDLE -> "\uD83C\uDFB5"
-            BRACKET_CITY -> TODO()
+            BRACKET_CITY -> "\uD83D\uDC51"
         }
     }
 
