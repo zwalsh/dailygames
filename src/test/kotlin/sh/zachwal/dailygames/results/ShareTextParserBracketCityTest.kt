@@ -76,8 +76,6 @@ Total Score: 100.0
 🟪🟪🟪🟪🟪🟪🟪🟪🟪🟪
 """
 
-
-
 class ShareTextParserBracketCityTest {
     private val parser = ShareTextParser()
 
@@ -160,7 +158,7 @@ class ShareTextParserBracketCityTest {
 
         Total Score: 100.0
         🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-    """.trimIndent()
+        """.trimIndent()
 
         val example2 = """
         [Bracket City]
@@ -175,7 +173,7 @@ class ShareTextParserBracketCityTest {
         
         Total Score: 100.0
         🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-    """.trimIndent()
+        """.trimIndent()
 
         val parsedExample1 = parser.extractBracketCityInfo(example1)
         assertThat(parsedExample1.date).isEqualTo(LocalDate.of(2023, 3, 15))

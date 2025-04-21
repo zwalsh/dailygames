@@ -145,7 +145,6 @@ class PointCalculatorTest {
         assertThat(calculator.calculatePoints(result)).isEqualTo(0)
     }
 
-
     private val bracketCityResult = worldleResult.copy(
         game = Game.BRACKET_CITY,
         resultInfo = BracketCityInfo(

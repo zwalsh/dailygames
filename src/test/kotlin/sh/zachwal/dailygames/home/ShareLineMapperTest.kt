@@ -470,13 +470,13 @@ class ShareLineMapperTest {
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("${Game.BANDLE.emoji()} Bandle #123 X/6")
     }
-    
+
     private val bracketCityResult = worldleResult.copy(
         game = Game.BRACKET_CITY,
         puzzleNumber = 20250420,
         puzzleDate = LocalDate.of(2025, 4, 20),
     )
-    
+
     @Test
     fun `maps Bracket City Power Broker`() {
         val result = bracketCityResult.copy(
@@ -487,7 +487,7 @@ class ShareLineMapperTest {
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("🏙️ Bracket City 4/20 98.0 \uD83D\uDCBC")
     }
-    
+
     @Test
     fun `maps Bracket City Chief of Police`() {
         val result = bracketCityResult.copy(
@@ -498,7 +498,7 @@ class ShareLineMapperTest {
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("🏙️ Bracket City 4/20 69.0 \uD83D\uDC6E")
     }
-    
+
     @Test
     fun `maps Bracket City Kingmaker`() {
         val result = bracketCityResult.copy(
@@ -509,7 +509,7 @@ class ShareLineMapperTest {
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("🏙️ Bracket City 4/20 100.0 \uD83D\uDC51")
     }
-    
+
     @Test
     fun `maps Bracket City Tourist`() {
         val result = bracketCityResult.copy(
@@ -520,7 +520,7 @@ class ShareLineMapperTest {
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("🏙️ Bracket City 4/20 0.0 \uD83D\uDCF8")
     }
-    
+
     @Test
     fun `maps Bracket City Puppet Master`() {
         val result = bracketCityResult.copy(
