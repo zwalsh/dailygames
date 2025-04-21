@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.BandleInfo
+import sh.zachwal.dailygames.results.resultinfo.BracketCityInfo
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
@@ -142,6 +143,38 @@ class PointCalculatorTest {
     fun `returns 0 for framed result with 7 incorrect guesses`() {
         val result = framedResult.copy(score = 7)
         assertThat(calculator.calculatePoints(result)).isEqualTo(0)
+    }
+
+
+    private val bracketCityResult = worldleResult.copy(
+        game = Game.BRACKET_CITY,
+        resultInfo = BracketCityInfo(
+            rank = "Power Broker",
+            rankEmoji = "💼",
+            wrongGuesses = 1,
+            peeks = 0,
+            answersRevealed = 0,
+            totalScore = 98.0,
+            grid = ""
+        )
+    )
+
+    @Test
+    fun `calculates points for bracket city by dividing score by 10 and rounding down`() {
+        val result100 = bracketCityResult.copy(score = 100)
+        assertThat(calculator.calculatePoints(result100)).isEqualTo(10)
+
+        val result99 = bracketCityResult.copy(score = 99)
+        assertThat(calculator.calculatePoints(result99)).isEqualTo(9)
+
+        val result90 = bracketCityResult.copy(score = 90)
+        assertThat(calculator.calculatePoints(result90)).isEqualTo(9)
+
+        val result89 = bracketCityResult.copy(score = 89)
+        assertThat(calculator.calculatePoints(result89)).isEqualTo(8)
+
+        val result0 = bracketCityResult.copy(score = 0)
+        assertThat(calculator.calculatePoints(result0)).isEqualTo(0)
     }
 
     @Test
