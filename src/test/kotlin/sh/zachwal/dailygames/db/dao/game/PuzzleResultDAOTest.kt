@@ -18,6 +18,7 @@ import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.ResultInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
 import java.time.Instant
+import java.time.LocalDate
 import kotlin.streams.toList
 
 @ExtendWith(DatabaseExtension::class)
@@ -51,6 +52,15 @@ class PuzzleResultDAOTest(
         assertThat(result.resultInfo).isInstanceOf(WorldleInfo::class.java)
         val worldleInfo = result.info<WorldleInfo>()
         assertThat(worldleInfo).isEqualTo(expectedWorldleInfo)
+    }
+
+    @Test
+    fun `inserting a result copies the puzzle date to the result`() {
+        val puzzleWithDate = puzzleDAO.insertPuzzle(Puzzle(Game.WORLDLE, 555, LocalDate.of(2024, 2, 11)))
+
+        val result = insertResult(puzzle = puzzleWithDate)
+
+        assertThat(result.puzzleDate).isEqualTo(LocalDate.of(2024, 2, 11))
     }
 
     @Test

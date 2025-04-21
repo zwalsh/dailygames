@@ -17,9 +17,9 @@ interface PuzzleResultDAO {
     @SqlQuery(
         """
             INSERT INTO result
-            (user_id, game, puzzle_number, instant_submitted, score, share_text, result_info)
+            (user_id, game, puzzle_date, puzzle_number, instant_submitted, score, share_text, result_info)
             VALUES
-            (:userId, :puzzle.game, :puzzle.number, now(), :score, :shareText, :resultInfo)
+            (:userId, :puzzle.game, :puzzle.date, :puzzle.number, now(), :score, :shareText, :resultInfo)
             RETURNING *
         """
     )
