@@ -92,7 +92,7 @@ class ShareTextParser {
         val puzzleNumber = puzzleNumberRegex.find(shareText)?.groupValues?.get(1)
             ?: throw IllegalArgumentException("Puzzle number not found")
         val score = scoreRegex.find(shareText)?.groupValues?.get(1)?.toInt()
-            // Use the number away times negative one as the score if the result is a Did Not Finish
+        // Use the number away times negative one as the score if the result is a Did Not Finish
             ?: numAwayRegex.find(shareText)?.groupValues?.get(1)?.toInt()?.times(-1)
             ?: throw IllegalArgumentException("Score not found")
         val numGuesses = guessEmojiRegex.findAll(shareText).count()
@@ -321,7 +321,7 @@ class ShareTextParser {
         val peeksRegex = Regex("""👀 Peeks: (\d+)""")
         val answersRevealedRegex = Regex("""🛟 Answers Revealed: (\d+)""")
         val totalScoreRegex = Regex("""Total Score: ([\d.]+)""")
-        val gridRegex = Regex("""\n([⬜🟩🟨🟥🟧🟦]+)(?:\n|$)""")
+        val gridRegex = Regex("""\n([⬜🟩🟨🟥🟧🟦🟪]+)(?:\n|$)""")
 
         val rankMatch = rankRegex.find(shareText)
         val wrongGuessesMatch = wrongGuessesRegex.find(shareText)
@@ -356,8 +356,8 @@ class ShareTextParser {
             game = Game.BRACKET_CITY,
             date = date,
             score = totalScore.toInt(), // Use total score as the score
-            shareTextNoLink = shareText.substringBefore("https://").trim(),
-            resultInfo = bracketCityInfo
+            shareTextNoLink = shareText.substringAfter("https://www.theatlantic.com/games/bracket-city/").trim(),
+            resultInfo = bracketCityInfo,
         )
     }
 }
