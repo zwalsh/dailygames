@@ -106,14 +106,18 @@ class HomeService @Inject constructor(
         return GameListView(gameLinkViews)
     }
 
-    private fun dailyLeaderboardView(userId: Long): DailyLeaderboardView {
+    private fun dailyLeaderboardView(userId: Long): DailyLeaderboardView? {
         val topScorers = leaderboardService.dailyLeaderboard(userId)
             .map { (userId, score) ->
                 val username = userService.getUsernameCached(userId) ?: "Unknown"
                 username to score
             }
-        return DailyLeaderboardView(
-            dailyPerformances = topScorers,
-        )
+        return if (topScorers.isNotEmpty())  {
+            DailyLeaderboardView(
+                dailyPerformances = topScorers,
+            )
+        } else {
+            null
+        }
     }
 }

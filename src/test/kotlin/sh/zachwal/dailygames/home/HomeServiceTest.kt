@@ -205,4 +205,13 @@ class HomeServiceTest {
             )
         )
     }
+
+    @Test
+    fun `does not include daily leaderboard if there are no scorers yet`() {
+        every { leaderboardService.dailyLeaderboard(any()) } returns emptyMap()
+
+        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+
+        assertThat(view.dailyLeaderboardView).isNull()
+    }
 }
