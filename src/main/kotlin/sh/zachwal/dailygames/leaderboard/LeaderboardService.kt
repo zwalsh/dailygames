@@ -13,11 +13,11 @@ import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 const val MINIMUM_GAMES_FOR_AVERAGE = 10
 

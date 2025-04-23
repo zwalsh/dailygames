@@ -24,8 +24,6 @@ import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import java.util.SortedMap
-import java.util.TreeMap
 
 // Hide these games from the list
 val hiddenGames = setOf(
@@ -112,7 +110,7 @@ class HomeService @Inject constructor(
                 val username = userService.getUsernameCached(userId) ?: "Unknown"
                 username to score
             }
-        return if (topScorers.isNotEmpty())  {
+        return if (topScorers.isNotEmpty()) {
             DailyLeaderboardView(
                 dailyPerformances = topScorers,
             )
