@@ -2,7 +2,7 @@ package sh.zachwal.dailygames.home.views
 
 import kotlinx.html.DIV
 import kotlinx.html.div
-import kotlinx.html.h3
+import kotlinx.html.h1
 import kotlinx.html.table
 import kotlinx.html.tbody
 import kotlinx.html.td
@@ -16,7 +16,7 @@ data class DailyLeaderboardView(
     override fun DIV.render() {
         div(classes = "card mx-3 h-100") {
             div(classes = "card-body bg-secondary-subtle") {
-                h3(classes = "card-title text-center") {
+                h1(classes = "card-title text-center") {
                     +"Daily Leaderboard"
                 }
                 table(classes = "table") {
