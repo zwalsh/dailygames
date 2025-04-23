@@ -11,18 +11,20 @@ import sh.zachwal.dailygames.leaderboard.views.LeaderboardView
 import sh.zachwal.dailygames.leaderboard.views.TravleScoreHintView
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
+import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 const val MINIMUM_GAMES_FOR_AVERAGE = 10
 
 @Singleton
 class LeaderboardService @Inject constructor(
     private val userService: UserService,
+    private val userPreferencesService: UserPreferencesService,
     private val jdbi: Jdbi,
     private val pointCalculator: PointCalculator,
     private val navViewFactory: NavViewFactory,
@@ -134,6 +136,34 @@ class LeaderboardService @Inject constructor(
             .map { it * 100 } // convert to percentage
             .map { String.format("%.1f", it).toDouble() } // round to 1 decimal place
         return ChartInfo(labels, dataPoints)
+    }
+
+    /**
+     * Returns today's top five scorers by points across all games.
+     *
+     * "Today" is based on the given user's timezone.
+     */
+    fun dailyLeaderboard(userId: Long): Map<Long, Int> {
+        val userTimeZone = userPreferencesService.getTimeZoneCached(userId)
+        val startOfToday = Instant.now().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
+        val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)
+
+        return jdbi.open().use { handle ->
+            val dao = handle.attach<PuzzleResultDAO>()
+            val pointsByUser = mutableMapOf<Long, Int>()
+
+            dao.allResultsBetweenStream(startOfToday, endOfToday)
+                .forEach { result ->
+                    val points = pointCalculator.calculatePoints(result)
+                    pointsByUser[result.userId] = pointsByUser.getOrDefault(result.userId, 0) + points
+                }
+
+            pointsByUser
+                .entries
+                .sortedByDescending { it.value }
+                .take(5)
+                .associate { it.key to it.value }
+        }
     }
 }
 
