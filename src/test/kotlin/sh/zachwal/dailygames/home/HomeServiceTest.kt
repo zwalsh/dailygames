@@ -195,7 +195,7 @@ class HomeServiceTest {
         val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
 
         assertThat(view.dailyLeaderboardView).isNotNull()
-        assertThat(view.dailyLeaderboardView.dailyPerformances).isEqualTo(
+        assertThat(view.dailyLeaderboardView?.dailyPerformances).isEqualTo(
             listOf(
                 "zach" to 40,
                 "zach2" to 39,
