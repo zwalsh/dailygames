@@ -42,7 +42,7 @@ data class HomeView(
             div(classes = "container") {
                 wrappedLinkView?.renderIn(this@div)
                 div(classes = "row justify-content-center") {
-                    div(classes = "col-12 order-1 col-md-8 order-md-2") {
+                    div(classes = "col-12 order-1 col-md-8 order-md-2 py-2") {
                         div(classes = "card mx-3 h-100") {
                             div(classes = "card-body bg-secondary-subtle") {
                                 h1(classes = "card-title text-center") {
@@ -53,7 +53,7 @@ data class HomeView(
                         }
                     }
                     dailyLeaderboardView?.let { v ->
-                        div(classes = "col-12 order-3 col-md-4 order-md-1") {
+                        div(classes = "col-12 order-3 col-md-4 order-md-1 py-2") {
                             v.renderIn(this)
                         }
                     }

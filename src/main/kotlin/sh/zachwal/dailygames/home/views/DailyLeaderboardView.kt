@@ -14,7 +14,7 @@ data class DailyLeaderboardView(
     val dailyPerformances: List<Pair<String, Int>>
 ) : HTMLView<DIV>() {
     override fun DIV.render() {
-        div(classes = "card mx-3 my-1 h-100") {
+        div(classes = "card mx-3 h-100") {
             div(classes = "card-body bg-secondary-subtle") {
                 h3(classes = "card-title text-center") {
                     +"Daily Leaderboard"
