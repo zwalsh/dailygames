@@ -9,10 +9,9 @@ import kotlinx.html.td
 import kotlinx.html.th
 import kotlinx.html.tr
 import sh.zachwal.dailygames.shared_html.HTMLView
-import java.util.SortedMap
 
 data class DailyLeaderboardView(
-    val dailyPerformances: SortedMap<String, Int>
+    val dailyPerformances: List<Pair<String, Int>>
 ) : HTMLView<DIV>() {
     override fun DIV.render() {
         div(classes = "card mx-3 my-1") {
@@ -22,10 +21,14 @@ data class DailyLeaderboardView(
                 }
                 table(classes = "table") {
                     tbody {
-                        dailyPerformances.entries.forEach { (user, score) ->
+                        dailyPerformances.forEach { (user, score) ->
                             tr {
                                 th { +user }
                                 td { +score.toString() }
+                            }
+                        }
+                        repeat(5 - dailyPerformances.size) {
+                            tr {
                             }
                         }
                     }

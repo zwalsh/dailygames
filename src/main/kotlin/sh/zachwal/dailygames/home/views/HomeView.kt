@@ -20,15 +20,7 @@ data class HomeView(
     val resultFeed: List<ResultFeedItemView>,
     val shareTextModalView: ShareTextModalView?,
     val wrappedLinkView: WrappedLinkView?,
-    val dailyLeaderboardView: DailyLeaderboardView = DailyLeaderboardView(
-        sortedMapOf(
-            "DerkNasty" to 46,
-            "Owen" to 42,
-            "Zach" to 40,
-            "jackiewalsh" to 40,
-            "Matt" to 27,
-        )
-    ),
+    val dailyLeaderboardView: DailyLeaderboardView,
     val gameListView: GameListView,
     val nav: NavView,
 ) : HTMLView<HTML>() {

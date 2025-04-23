@@ -139,7 +139,7 @@ class LeaderboardService @Inject constructor(
     }
 
     /**
-     * Returns today's top five scorers by points across all games.
+     * Returns today's top five scorers by points across all games, sorted by score.
      *
      * "Today" is based on the given user's timezone.
      */
