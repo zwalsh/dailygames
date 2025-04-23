@@ -20,6 +20,7 @@ data class HomeView(
     val resultFeed: List<ResultFeedItemView>,
     val shareTextModalView: ShareTextModalView?,
     val wrappedLinkView: WrappedLinkView?,
+    val dailyLeaderboardView: DailyLeaderboardView?,
     val gameListView: GameListView,
     val nav: NavView,
 ) : HTMLView<HTML>() {
@@ -40,10 +41,9 @@ data class HomeView(
             shareTextModalView?.renderIn(this)
             div(classes = "container") {
                 wrappedLinkView?.renderIn(this@div)
-
-                div(classes = "row") {
-                    div(classes = "col") {
-                        div(classes = "card mx-3") {
+                div(classes = "row justify-content-center") {
+                    div(classes = "col-12 order-1 col-md-8 order-md-2 py-2") {
+                        div(classes = "card mx-3 h-100") {
                             div(classes = "card-body bg-secondary-subtle") {
                                 h1(classes = "card-title text-center") {
                                     +"Submit Game"
@@ -52,9 +52,15 @@ data class HomeView(
                             }
                         }
                     }
+                    dailyLeaderboardView?.let { v ->
+                        div(classes = "col-12 order-3 col-md-4 order-md-1 py-2") {
+                            v.renderIn(this)
+                        }
+                    }
+                    div(classes = "col-12 order-2 order-md-3") {
+                        gameListView.renderIn(this)
+                    }
                 }
-
-                gameListView.renderIn(this)
 
                 div(classes = "row border-top") {
                     div(classes = "col") {

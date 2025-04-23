@@ -14,8 +14,10 @@ import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
+import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import java.time.Instant
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
 import kotlin.test.Test
@@ -42,6 +44,9 @@ class LeaderboardServiceTest {
         every { getUser(5) } returns mikMapUser
         every { getUser(6) } returns zachUser
     }
+    private val userPreferencesService: UserPreferencesService = mockk {
+        every { getTimeZoneCached(any()) } returns ZoneId.of("America/New_York")
+    }
     private val navViewFactory = mockk<NavViewFactory>(relaxed = true)
     private val jdbi = mockk<Jdbi> {
         every { open() } returns mockk(relaxed = true) {
@@ -50,6 +55,7 @@ class LeaderboardServiceTest {
     }
     private val leaderboardService = LeaderboardService(
         userService = userService,
+        userPreferencesService = userPreferencesService,
         jdbi = jdbi,
         pointCalculator = PointCalculator(),
         navViewFactory = navViewFactory,
@@ -342,6 +348,7 @@ class LeaderboardServiceTest {
     fun `average requires minimum ten games for per-game, all time and thirty days`() {
         val leaderboardService = LeaderboardService(
             userService = userService,
+            userPreferencesService = userPreferencesService,
             jdbi = jdbi,
             pointCalculator = PointCalculator(),
             navViewFactory = navViewFactory,
@@ -362,6 +369,7 @@ class LeaderboardServiceTest {
     fun `average requires minimum ten games for overall, all time and thirty days`() {
         val leaderboardService = LeaderboardService(
             userService = userService,
+            userPreferencesService = userPreferencesService,
             jdbi = jdbi,
             pointCalculator = PointCalculator(),
             navViewFactory = navViewFactory,
@@ -400,5 +408,74 @@ class LeaderboardServiceTest {
         assertThat(leaderboardData.pointsHistogram.dataPoints)
             .containsExactly(16.7, 33.3, 50.0)
             .inOrder()
+    }
+
+    @Test
+    fun `dailyLeaderboard returns single user with correct points`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(userId = testUser.id, score = 5)
+        )
+
+        val leaderboard = leaderboardService.dailyLeaderboard(testUser.id)
+
+        assertThat(leaderboard).containsEntry(testUser.id, 5)
+    }
+
+    @Test
+    fun `dailyLeaderboard aggregates multiple results for one user`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(userId = testUser.id, score = 5),
+            result.copy(userId = testUser.id, score = 10)
+        )
+
+        val leaderboard = leaderboardService.dailyLeaderboard(testUser.id)
+
+        assertThat(leaderboard).containsEntry(testUser.id, 15)
+    }
+
+    @Test
+    fun `dailyLeaderboard returns top 5 users when more than 5 users exist`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(userId = testUser.id, score = 10),
+            result.copy(userId = derekUser.id, score = 9),
+            result.copy(userId = jackieUser.id, score = 8),
+            result.copy(userId = chatGPTUser.id, score = 7),
+            result.copy(userId = mikMapUser.id, score = 6),
+            result.copy(userId = zachUser.id, score = 5)
+        )
+
+        val leaderboard = leaderboardService.dailyLeaderboard(testUser.id)
+
+        assertThat(leaderboard).containsExactly(
+            testUser.id, 10,
+            derekUser.id, 9,
+            jackieUser.id, 8,
+            chatGPTUser.id, 7,
+            mikMapUser.id, 6
+        )
+        assertThat(leaderboard).doesNotContainKey(zachUser.id)
+    }
+
+    @Test
+    fun `dailyLeaderboard handles tied scores correctly`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(userId = testUser.id, score = 10),
+            result.copy(userId = derekUser.id, score = 10),
+            result.copy(userId = jackieUser.id, score = 8),
+            result.copy(userId = chatGPTUser.id, score = 7),
+            result.copy(userId = mikMapUser.id, score = 6),
+            result.copy(userId = zachUser.id, score = 5)
+        )
+
+        val leaderboard = leaderboardService.dailyLeaderboard(testUser.id)
+
+        assertThat(leaderboard).containsExactly(
+            testUser.id, 10,
+            derekUser.id, 10,
+            jackieUser.id, 8,
+            chatGPTUser.id, 7,
+            mikMapUser.id, 6
+        )
+        assertThat(leaderboard).doesNotContainKey(zachUser.id)
     }
 }
