@@ -10,7 +10,7 @@ data class GameListView(
     override fun DIV.render() {
         div(classes = "row overflow-auto flex-nowrap py-3 my-1") {
             games.forEach { game ->
-                game.renderIn(this@div)
+                game.renderIn(this)
             }
         }
     }

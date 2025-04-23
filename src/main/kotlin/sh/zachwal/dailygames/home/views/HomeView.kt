@@ -20,6 +20,15 @@ data class HomeView(
     val resultFeed: List<ResultFeedItemView>,
     val shareTextModalView: ShareTextModalView?,
     val wrappedLinkView: WrappedLinkView?,
+    val dailyLeaderboardView: DailyLeaderboardView = DailyLeaderboardView(
+        sortedMapOf(
+            "DerkNasty" to 46,
+            "Owen" to 42,
+            "Zach" to 40,
+            "jackiewalsh" to 40,
+            "Matt" to 27,
+        )
+    ),
     val gameListView: GameListView,
     val nav: NavView,
 ) : HTMLView<HTML>() {
@@ -40,10 +49,9 @@ data class HomeView(
             shareTextModalView?.renderIn(this)
             div(classes = "container") {
                 wrappedLinkView?.renderIn(this@div)
-
                 div(classes = "row") {
-                    div(classes = "col") {
-                        div(classes = "card mx-3") {
+                    div(classes = "col-12 order-1 col-md-8 order-md-2") {
+                        div(classes = "card mx-3 h-100") {
                             div(classes = "card-body bg-secondary-subtle") {
                                 h1(classes = "card-title text-center") {
                                     +"Submit Game"
@@ -52,9 +60,13 @@ data class HomeView(
                             }
                         }
                     }
+                    div(classes = "col-12 order-3 col-md-4 order-md-1") {
+                        dailyLeaderboardView.renderIn(this)
+                    }
+                    div(classes = "col-12 order-2 order-md-3") {
+                        gameListView.renderIn(this)
+                    }
                 }
-
-                gameListView.renderIn(this)
 
                 div(classes = "row border-top") {
                     div(classes = "col") {
