@@ -140,6 +140,19 @@ class ResultService @Inject constructor(
         return resultDAO.resultsForUserInTimeRange(user.id, startOfToday, endOfToday)
     }
 
+    fun anyResultsToday(user: User): Boolean {
+        val userTimeZone = userPreferencesService.getTimeZone(user.id)
+        val startOfToday = clock.instant().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
+        val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)
+
+        return jdbi.open().use { handle ->
+            val resultDAO = handle.attach<PuzzleResultDAO>()
+            resultDAO.allResultsBetweenStream(startOfToday, endOfToday)
+                .findAny()
+                .isPresent
+        }
+    }
+
     fun resultCountByGame(since: Instant, excludeUserId: Long): Map<Game, Int> {
         return resultDAO.countByGameSinceExcludingUser(
             since = since,
