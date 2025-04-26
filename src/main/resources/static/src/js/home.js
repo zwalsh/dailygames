@@ -26,10 +26,18 @@ function disableSubmitButton() {
     $('#submit-spinner').removeClass('d-none');
 }
 
+function renderDailyLeaderboard() {
+    $.ajax('/leaderboard/daily/data').done(function (response) {
+        buildLeaderboardChart(response.labels, response.dataPoints, 'Points', 'daily-leaderboard');
+    });
+}
+
 window.onload = function () {
     if (window.location.href.indexOf("showModal") != -1) {
        popModal();
     }
     $('#share-text-button').click(popModal);
     $('#submit-button').click(disableSubmitButton);
+
+    renderDailyLeaderboard();
 }

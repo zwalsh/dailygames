@@ -140,11 +140,6 @@ class LeaderboardService @Inject constructor(
         return ChartInfo(labels, dataPoints)
     }
 
-    /**
-     * Returns today's top five scorers by points across all games, sorted by score.
-     *
-     * "Today" is based on the given user's timezone.
-     */
     fun dailyLeaderboard(userId: Long): Map<Long, Int> {
         val userTimeZone = userPreferencesService.getTimeZoneCached(userId)
         val startOfToday = Instant.now().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
@@ -168,6 +163,11 @@ class LeaderboardService @Inject constructor(
         }
     }
 
+    /**
+     * Returns today's top five scorers by points across all games, sorted by score as a ChartInfo object.
+     *
+     * "Today" is based on the given user's timezone.
+     */
     fun dailyLeaderboardData(userId: Long): ChartInfo {
         val userTimeZone = userPreferencesService.getTimeZoneCached(userId)
         val startOfToday = Instant.now().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
