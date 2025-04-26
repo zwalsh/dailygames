@@ -55,7 +55,6 @@ class LeaderboardController @Inject constructor(
     fun Routing.gameLeaderboardData() {
         approvedUserRoute("/leaderboard/{game}/data") {
             get {
-                val currentUser = currentUser(call, userService)
                 val game = call.extractGameFromPathParams() ?: run {
                     call.respond(HttpStatusCode.NotFound)
                     return@get
@@ -70,6 +69,15 @@ class LeaderboardController @Inject constructor(
         approvedUserRoute("/leaderboard/data") {
             get {
                 call.respond(HttpStatusCode.OK, leaderboardService.overallLeaderboardData())
+            }
+        }
+    }
+
+    fun Routing.dailyLeaderboardData() {
+        approvedUserRoute("/leaderboard/daily/data") {
+            get {
+                val currentUser = currentUser(call, userService)
+                call.respond(HttpStatusCode.OK, leaderboardService.dailyLeaderboardData(currentUser.id))
             }
         }
     }

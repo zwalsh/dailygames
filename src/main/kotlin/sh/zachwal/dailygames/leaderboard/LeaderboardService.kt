@@ -167,6 +167,31 @@ class LeaderboardService @Inject constructor(
                 .associate { it.key to it.value }
         }
     }
+
+    fun dailyLeaderboardData(userId: Long): ChartInfo {
+        val userTimeZone = userPreferencesService.getTimeZoneCached(userId)
+        val startOfToday = Instant.now().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
+        val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)
+
+        return jdbi.open().use { handle ->
+            val dao = handle.attach<PuzzleResultDAO>()
+            val pointsByUser = mutableMapOf<Long, Int>()
+
+            dao.allResultsBetweenStream(startOfToday, endOfToday)
+                .forEach { result ->
+                    val points = pointCalculator.calculatePoints(result)
+                    pointsByUser[result.userId] = pointsByUser.getOrDefault(result.userId, 0) + points
+                }
+
+            val sortedDataPoints = pointsByUser
+                .entries
+                .sortedByDescending { it.value }
+                .take(5)
+            val labels = sortedDataPoints.map { userService.getUsernameCached(it.key) ?: "Unknown" }
+            val dataPoints = sortedDataPoints.map { it.value.toDouble() }
+            ChartInfo(labels, dataPoints)
+        }
+    }
 }
 
 data class TotalPoints(val games: Int, val totalPoints: Int) {

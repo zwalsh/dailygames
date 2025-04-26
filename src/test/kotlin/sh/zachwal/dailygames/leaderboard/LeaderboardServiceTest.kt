@@ -478,4 +478,89 @@ class LeaderboardServiceTest {
         )
         assertThat(leaderboard).doesNotContainKey(zachUser.id)
     }
+
+    @Test
+    fun `dailyLeaderboardData returns single user with correct points`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(userId = testUser.id, score = 5)
+        )
+        every { userService.getUsernameCached(testUser.id) } returns testUser.username
+
+        val chartInfo = leaderboardService.dailyLeaderboardData(testUser.id)
+
+        assertThat(chartInfo.labels).containsExactly(testUser.username)
+        assertThat(chartInfo.dataPoints).containsExactly(5.0)
+    }
+
+    @Test
+    fun `dailyLeaderboardData aggregates multiple results for one user`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(userId = testUser.id, score = 5),
+            result.copy(userId = testUser.id, score = 10)
+        )
+        every { userService.getUsernameCached(testUser.id) } returns testUser.username
+
+        val chartInfo = leaderboardService.dailyLeaderboardData(testUser.id)
+
+        assertThat(chartInfo.labels).containsExactly(testUser.username)
+        assertThat(chartInfo.dataPoints).containsExactly(15.0)
+    }
+
+    @Test
+    fun `dailyLeaderboardData returns top 5 users when more than 5 users exist`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(userId = testUser.id, score = 10),
+            result.copy(userId = derekUser.id, score = 9),
+            result.copy(userId = jackieUser.id, score = 8),
+            result.copy(userId = chatGPTUser.id, score = 7),
+            result.copy(userId = mikMapUser.id, score = 6),
+            result.copy(userId = zachUser.id, score = 5)
+        )
+        every { userService.getUsernameCached(testUser.id) } returns testUser.username
+        every { userService.getUsernameCached(derekUser.id) } returns derekUser.username
+        every { userService.getUsernameCached(jackieUser.id) } returns jackieUser.username
+        every { userService.getUsernameCached(chatGPTUser.id) } returns chatGPTUser.username
+        every { userService.getUsernameCached(mikMapUser.id) } returns mikMapUser.username
+        every { userService.getUsernameCached(zachUser.id) } returns zachUser.username
+
+        val chartInfo = leaderboardService.dailyLeaderboardData(testUser.id)
+
+        assertThat(chartInfo.labels).containsExactly(
+            testUser.username,
+            derekUser.username,
+            jackieUser.username,
+            chatGPTUser.username,
+            mikMapUser.username
+        )
+        assertThat(chartInfo.dataPoints).containsExactly(10.0, 9.0, 8.0, 7.0, 6.0)
+    }
+
+    @Test
+    fun `dailyLeaderboardData handles tied scores correctly`() {
+        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
+            result.copy(userId = testUser.id, score = 10),
+            result.copy(userId = derekUser.id, score = 10),
+            result.copy(userId = jackieUser.id, score = 8),
+            result.copy(userId = chatGPTUser.id, score = 7),
+            result.copy(userId = mikMapUser.id, score = 6),
+            result.copy(userId = zachUser.id, score = 5)
+        )
+        every { userService.getUsernameCached(testUser.id) } returns testUser.username
+        every { userService.getUsernameCached(derekUser.id) } returns derekUser.username
+        every { userService.getUsernameCached(jackieUser.id) } returns jackieUser.username
+        every { userService.getUsernameCached(chatGPTUser.id) } returns chatGPTUser.username
+        every { userService.getUsernameCached(mikMapUser.id) } returns mikMapUser.username
+        every { userService.getUsernameCached(zachUser.id) } returns zachUser.username
+
+        val chartInfo = leaderboardService.dailyLeaderboardData(testUser.id)
+
+        assertThat(chartInfo.labels).containsExactly(
+            testUser.username,
+            derekUser.username,
+            jackieUser.username,
+            chatGPTUser.username,
+            mikMapUser.username
+        )
+        assertThat(chartInfo.dataPoints).containsExactly(10.0, 10.0, 8.0, 7.0, 6.0)
+    }
 }
