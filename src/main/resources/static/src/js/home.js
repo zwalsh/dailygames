@@ -27,6 +27,11 @@ function disableSubmitButton() {
 }
 
 function renderDailyLeaderboard() {
+    if (!document.getElementById('daily-leaderboard')) {
+        // We don't render the daily leaderboard if there are no results for today yet.
+        return;
+    }
+
     $.ajax('/leaderboard/daily/data').done(function (response) {
         buildLeaderboardChart(response.labels, response.dataPoints, 'Points', 'daily-leaderboard');
     });
