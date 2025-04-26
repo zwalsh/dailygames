@@ -58,6 +58,7 @@ data class LeaderboardView(
                 }
             }
             script {
+                type = "module"
                 src = "/static/src/js/leaderboard.js"
             }
         }

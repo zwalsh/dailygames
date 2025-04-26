@@ -78,7 +78,7 @@ class HomeService @Inject constructor(
             resultFeed = resultService.resultFeed(user.id),
             shareTextModalView = shareTextService.shareTextModalView(user),
             wrappedLinkView = wrappedLinkView,
-            dailyLeaderboardView = dailyLeaderboardView(user.id),
+            dailyLeaderboardView = dailyLeaderboardView(user),
             gameListView = gameListView(),
             nav = navView,
         )
@@ -104,16 +104,9 @@ class HomeService @Inject constructor(
         return GameListView(gameLinkViews)
     }
 
-    private fun dailyLeaderboardView(userId: Long): DailyLeaderboardView? {
-        val topScorers = leaderboardService.dailyLeaderboard(userId)
-            .map { (userId, score) ->
-                val username = userService.getUsernameCached(userId) ?: "Unknown"
-                username to score
-            }
-        return if (topScorers.isNotEmpty()) {
-            DailyLeaderboardView(
-                dailyPerformances = topScorers,
-            )
+    private fun dailyLeaderboardView(user: User): DailyLeaderboardView? {
+        return if (resultService.resultsForUserToday(user).isNotEmpty()) {
+            DailyLeaderboardView
         } else {
             null
         }

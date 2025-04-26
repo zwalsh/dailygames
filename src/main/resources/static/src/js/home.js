@@ -1,3 +1,5 @@
+import { buildLeaderboardChart } from './leaderboard/charts.js';
+
 
 // See https://getbootstrap.com/docs/5.3/components/tooltips/#overview
 function enableTooltips() {

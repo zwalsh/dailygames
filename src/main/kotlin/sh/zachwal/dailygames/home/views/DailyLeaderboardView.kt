@@ -1,33 +1,21 @@
 package sh.zachwal.dailygames.home.views
 
 import kotlinx.html.DIV
+import kotlinx.html.canvas
 import kotlinx.html.div
 import kotlinx.html.h1
-import kotlinx.html.table
-import kotlinx.html.tbody
-import kotlinx.html.td
-import kotlinx.html.th
-import kotlinx.html.tr
+import kotlinx.html.id
 import sh.zachwal.dailygames.shared_html.HTMLView
 
-data class DailyLeaderboardView(
-    val dailyPerformances: List<Pair<String, Int>>
-) : HTMLView<DIV>() {
+object DailyLeaderboardView : HTMLView<DIV>() {
     override fun DIV.render() {
         div(classes = "card mx-3 h-100") {
             div(classes = "card-body bg-secondary-subtle") {
                 h1(classes = "card-title text-center") {
                     +"Daily Leaderboard"
                 }
-                table(classes = "table") {
-                    tbody {
-                        dailyPerformances.forEach { (user, score) ->
-                            tr {
-                                th { +user }
-                                td { +score.toString() }
-                            }
-                        }
-                    }
+                canvas {
+                    id = "daily-leaderboard"
                 }
             }
         }

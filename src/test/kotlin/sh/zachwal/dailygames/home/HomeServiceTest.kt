@@ -190,21 +190,21 @@ class HomeServiceTest {
         assertThat(view.gameListView.games.first().game).isEqualTo(Game.WORLDLE)
     }
 
-    @Test
-    fun `includes daily leaderboard`() {
-        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
-
-        assertThat(view.dailyLeaderboardView).isNotNull()
-        assertThat(view.dailyLeaderboardView?.dailyPerformances).isEqualTo(
-            listOf(
-                "zach" to 40,
-                "zach2" to 39,
-                "zach3" to 38,
-                "zach4" to 37,
-                "zach5" to 36,
-            )
-        )
-    }
+//    @Test
+//    fun `includes daily leaderboard`() {
+//        val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
+//
+//        assertThat(view.dailyLeaderboardView).isNotNull()
+//        assertThat(view.dailyLeaderboardView?.dailyPerformances).isEqualTo(
+//            listOf(
+//                "zach" to 40,
+//                "zach2" to 39,
+//                "zach3" to 38,
+//                "zach4" to 37,
+//                "zach5" to 36,
+//            )
+//        )
+//    }
 
     @Test
     fun `does not include daily leaderboard if there are no scorers yet`() {

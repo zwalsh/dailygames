@@ -33,6 +33,9 @@ data class HomeView(
         head {
             title("Daily Games")
             headSetup()
+            script {
+                src = "https://cdn.jsdelivr.net/npm/chart.js"
+            }
             jquery()
         }
         body {
@@ -76,6 +79,7 @@ data class HomeView(
                 }
             }
             script {
+                type = "module"
                 src = "/static/src/js/home.js"
             }
         }
