@@ -5,6 +5,8 @@ import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.leaderboard.responses.ChartInfo
+import sh.zachwal.dailygames.leaderboard.responses.LeaderboardData
 import sh.zachwal.dailygames.leaderboard.views.BasicScoreHintView
 import sh.zachwal.dailygames.leaderboard.views.GameLeaderboardView
 import sh.zachwal.dailygames.leaderboard.views.LeaderboardView
@@ -139,11 +141,11 @@ class LeaderboardService @Inject constructor(
     }
 
     /**
-     * Returns today's top five scorers by points across all games, sorted by score.
+     * Returns today's top five scorers by points across all games, sorted by score as a ChartInfo object.
      *
      * "Today" is based on the given user's timezone.
      */
-    fun dailyLeaderboard(userId: Long): Map<Long, Int> {
+    fun dailyLeaderboardData(userId: Long): ChartInfo {
         val userTimeZone = userPreferencesService.getTimeZoneCached(userId)
         val startOfToday = Instant.now().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
         val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)
@@ -158,11 +160,13 @@ class LeaderboardService @Inject constructor(
                     pointsByUser[result.userId] = pointsByUser.getOrDefault(result.userId, 0) + points
                 }
 
-            pointsByUser
+            val sortedDataPoints = pointsByUser
                 .entries
                 .sortedByDescending { it.value }
                 .take(5)
-                .associate { it.key to it.value }
+            val labels = sortedDataPoints.map { userService.getUsernameCached(it.key) ?: "Unknown" }
+            val dataPoints = sortedDataPoints.map { it.value.toDouble() }
+            ChartInfo(labels, dataPoints)
         }
     }
 }

@@ -11,12 +11,10 @@ import sh.zachwal.dailygames.home.views.HomeView
 import sh.zachwal.dailygames.home.views.WrappedLinkView
 import sh.zachwal.dailygames.home.views.gamelinks.GameLinkView
 import sh.zachwal.dailygames.home.views.gamelinks.GameListView
-import sh.zachwal.dailygames.leaderboard.LeaderboardService
 import sh.zachwal.dailygames.nav.NavItem
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.users.UserPreferencesService
-import sh.zachwal.dailygames.users.UserService
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
@@ -35,8 +33,6 @@ val hiddenGames = setOf(
 class HomeService @Inject constructor(
     private val resultService: ResultService,
     private val userPreferencesService: UserPreferencesService,
-    private val userService: UserService,
-    private val leaderboardService: LeaderboardService,
     private val shareTextService: ShareTextService,
     private val navViewFactory: NavViewFactory,
     private val gameDAO: GameDAO,
@@ -78,7 +74,7 @@ class HomeService @Inject constructor(
             resultFeed = resultService.resultFeed(user.id),
             shareTextModalView = shareTextService.shareTextModalView(user),
             wrappedLinkView = wrappedLinkView,
-            dailyLeaderboardView = dailyLeaderboardView(user.id),
+            dailyLeaderboardView = dailyLeaderboardView(user),
             gameListView = gameListView(),
             nav = navView,
         )
@@ -104,16 +100,9 @@ class HomeService @Inject constructor(
         return GameListView(gameLinkViews)
     }
 
-    private fun dailyLeaderboardView(userId: Long): DailyLeaderboardView? {
-        val topScorers = leaderboardService.dailyLeaderboard(userId)
-            .map { (userId, score) ->
-                val username = userService.getUsernameCached(userId) ?: "Unknown"
-                username to score
-            }
-        return if (topScorers.isNotEmpty()) {
-            DailyLeaderboardView(
-                dailyPerformances = topScorers,
-            )
+    private fun dailyLeaderboardView(user: User): DailyLeaderboardView? {
+        return if (resultService.anyResultsToday(user)) {
+            DailyLeaderboardView
         } else {
             null
         }

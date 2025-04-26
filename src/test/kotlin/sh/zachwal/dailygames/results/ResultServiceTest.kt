@@ -445,6 +445,71 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `anyResultsToday returns true when results exist for today`() {
+        val user = fixtures.zach
+        val startOfToday = clock.instant().atZone(ZoneId.of("America/New_York")).truncatedTo(ChronoUnit.DAYS).toInstant()
+
+        puzzleDAO.insertPuzzle(Puzzle(Game.WORLDLE, 554, null))
+        resultDAO.insertResultWithInstantSubmitted(
+            userId = user.id,
+            puzzle = Puzzle(Game.WORLDLE, 554, null),
+            score = 10,
+            shareText = "Test",
+            resultInfo = WorldleInfo(
+                percentage = 100,
+            ),
+            instantSubmitted = startOfToday.plusSeconds(3600)
+        )
+
+        val hasResults = resultService.anyResultsToday(user)
+
+        assertThat(hasResults).isTrue()
+    }
+
+    @Test
+    fun `anyResultsToday returns false when no results exist for today`() {
+        val user = fixtures.zach
+        val hasResults = resultService.anyResultsToday(user)
+
+        assertThat(hasResults).isFalse()
+    }
+
+    @Test
+    fun `anyResultsToday ignores results outside of user's timezone boundaries`() {
+        val user = fixtures.zach
+        val startOfToday = clock.instant().atZone(ZoneId.of("America/New_York")).truncatedTo(ChronoUnit.DAYS).toInstant()
+        val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)
+
+        puzzleDAO.insertPuzzle(Puzzle(Game.WORLDLE, 456, null))
+        resultDAO.insertResultWithInstantSubmitted(
+            userId = user.id,
+            puzzle = Puzzle(Game.WORLDLE, 456, null),
+            score = 10,
+            shareText = "Test",
+            resultInfo = WorldleInfo(
+                percentage = 100,
+            ),
+            instantSubmitted = startOfToday.minusSeconds(3600)
+        )
+
+        puzzleDAO.insertPuzzle(Puzzle(Game.WORLDLE, 798, null))
+        resultDAO.insertResultWithInstantSubmitted(
+            userId = user.id,
+            puzzle = Puzzle(Game.WORLDLE, 798, null),
+            score = 15,
+            shareText = "Test",
+            resultInfo = WorldleInfo(
+                percentage = 100,
+            ),
+            instantSubmitted = endOfToday.plusSeconds(3600)
+        )
+
+        val hasResults = resultService.anyResultsToday(user)
+
+        assertThat(hasResults).isFalse()
+    }
+
+    @Test
     fun `inserts results in the new result table`() {
         resultService.createResult(fixtures.zach, TOP5)
 

@@ -8,11 +8,9 @@ import sh.zachwal.dailygames.db.dao.game.GameDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.home.views.ShareTextModalView
-import sh.zachwal.dailygames.leaderboard.LeaderboardService
 import sh.zachwal.dailygames.nav.NavViewFactory
 import sh.zachwal.dailygames.results.ResultService
 import sh.zachwal.dailygames.users.UserPreferencesService
-import sh.zachwal.dailygames.users.UserService
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
@@ -23,25 +21,10 @@ class HomeServiceTest {
         every { resultFeed(any()) } returns emptyList()
         every { resultsForUserToday(any()) } returns emptyList()
         every { resultCountByGame(any(), any()) } returns emptyMap()
+        every { anyResultsToday(any()) } returns true
     }
     private val userPreferencesService = mockk<UserPreferencesService> {
         every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
-    }
-    private val userService = mockk<UserService> {
-        every { getUsernameCached(1L) } returns "zach"
-        every { getUsernameCached(2L) } returns "zach2"
-        every { getUsernameCached(3L) } returns "zach3"
-        every { getUsernameCached(4L) } returns "zach4"
-        every { getUsernameCached(5L) } returns "zach5"
-    }
-    private val leaderboardService = mockk<LeaderboardService> {
-        every { dailyLeaderboard(any()) } returns mapOf(
-            1L to 40,
-            2L to 39,
-            3L to 38,
-            4L to 37,
-            5L to 36,
-        )
     }
     private val shareTextService = mockk<ShareTextService>() {
         every { shareTextModalView(any()) } returns null
@@ -60,8 +43,6 @@ class HomeServiceTest {
     private val homeService = HomeService(
         resultService = resultService,
         userPreferencesService = userPreferencesService,
-        userService = userService,
-        leaderboardService = leaderboardService,
         shareTextService = shareTextService,
         gameDAO = gameDAO,
         navViewFactory = navViewFactory,
@@ -192,23 +173,16 @@ class HomeServiceTest {
 
     @Test
     fun `includes daily leaderboard`() {
+        every { resultService.anyResultsToday(any()) } returns true
+
         val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
 
         assertThat(view.dailyLeaderboardView).isNotNull()
-        assertThat(view.dailyLeaderboardView?.dailyPerformances).isEqualTo(
-            listOf(
-                "zach" to 40,
-                "zach2" to 39,
-                "zach3" to 38,
-                "zach4" to 37,
-                "zach5" to 36,
-            )
-        )
     }
 
     @Test
     fun `does not include daily leaderboard if there are no scorers yet`() {
-        every { leaderboardService.dailyLeaderboard(any()) } returns emptyMap()
+        every { resultService.anyResultsToday(any()) } returns false
 
         val view = homeService.homeView(User(id = 1L, username = "zach", hashedPassword = "123abc=="))
 

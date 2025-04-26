@@ -1,3 +1,5 @@
+import { buildLeaderboardChart } from './leaderboard/charts.js';
+
 
 // See https://getbootstrap.com/docs/5.3/components/tooltips/#overview
 function enableTooltips() {
@@ -24,10 +26,23 @@ function disableSubmitButton() {
     $('#submit-spinner').removeClass('d-none');
 }
 
+function renderDailyLeaderboard() {
+    if (!document.getElementById('daily-leaderboard')) {
+        // We don't render the daily leaderboard if there are no results for today yet.
+        return;
+    }
+
+    $.ajax('/leaderboard/daily/data').done(function (response) {
+        buildLeaderboardChart(response.labels, response.dataPoints, 'Points', 'daily-leaderboard');
+    });
+}
+
 window.onload = function () {
     if (window.location.href.indexOf("showModal") != -1) {
        popModal();
     }
     $('#share-text-button').click(popModal);
     $('#submit-button').click(disableSubmitButton);
+
+    renderDailyLeaderboard();
 }

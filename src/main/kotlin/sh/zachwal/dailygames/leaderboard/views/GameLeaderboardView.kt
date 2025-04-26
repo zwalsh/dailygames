@@ -62,6 +62,7 @@ data class GameLeaderboardView(
                 }
             }
             script {
+                type = "module"
                 src = "/static/src/js/leaderboard.js"
             }
         }

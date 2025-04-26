@@ -411,30 +411,21 @@ class LeaderboardServiceTest {
     }
 
     @Test
-    fun `dailyLeaderboard returns single user with correct points`() {
-        every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
-            result.copy(userId = testUser.id, score = 5)
-        )
-
-        val leaderboard = leaderboardService.dailyLeaderboard(testUser.id)
-
-        assertThat(leaderboard).containsEntry(testUser.id, 5)
-    }
-
-    @Test
-    fun `dailyLeaderboard aggregates multiple results for one user`() {
+    fun `dailyLeaderboardData aggregates multiple results for one user`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
             result.copy(userId = testUser.id, score = 5),
             result.copy(userId = testUser.id, score = 10)
         )
+        every { userService.getUsernameCached(testUser.id) } returns testUser.username
 
-        val leaderboard = leaderboardService.dailyLeaderboard(testUser.id)
+        val chartInfo = leaderboardService.dailyLeaderboardData(testUser.id)
 
-        assertThat(leaderboard).containsEntry(testUser.id, 15)
+        assertThat(chartInfo.labels).containsExactly(testUser.username)
+        assertThat(chartInfo.dataPoints).containsExactly(15.0)
     }
 
     @Test
-    fun `dailyLeaderboard returns top 5 users when more than 5 users exist`() {
+    fun `dailyLeaderboardData returns top 5 users when more than 5 users exist`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
             result.copy(userId = testUser.id, score = 10),
             result.copy(userId = derekUser.id, score = 9),
@@ -443,21 +434,27 @@ class LeaderboardServiceTest {
             result.copy(userId = mikMapUser.id, score = 6),
             result.copy(userId = zachUser.id, score = 5)
         )
+        every { userService.getUsernameCached(testUser.id) } returns testUser.username
+        every { userService.getUsernameCached(derekUser.id) } returns derekUser.username
+        every { userService.getUsernameCached(jackieUser.id) } returns jackieUser.username
+        every { userService.getUsernameCached(chatGPTUser.id) } returns chatGPTUser.username
+        every { userService.getUsernameCached(mikMapUser.id) } returns mikMapUser.username
+        every { userService.getUsernameCached(zachUser.id) } returns zachUser.username
 
-        val leaderboard = leaderboardService.dailyLeaderboard(testUser.id)
+        val chartInfo = leaderboardService.dailyLeaderboardData(testUser.id)
 
-        assertThat(leaderboard).containsExactly(
-            testUser.id, 10,
-            derekUser.id, 9,
-            jackieUser.id, 8,
-            chatGPTUser.id, 7,
-            mikMapUser.id, 6
+        assertThat(chartInfo.labels).containsExactly(
+            testUser.username,
+            derekUser.username,
+            jackieUser.username,
+            chatGPTUser.username,
+            mikMapUser.username
         )
-        assertThat(leaderboard).doesNotContainKey(zachUser.id)
+        assertThat(chartInfo.dataPoints).containsExactly(10.0, 9.0, 8.0, 7.0, 6.0)
     }
 
     @Test
-    fun `dailyLeaderboard handles tied scores correctly`() {
+    fun `dailyLeaderboardData handles tied scores correctly`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
             result.copy(userId = testUser.id, score = 10),
             result.copy(userId = derekUser.id, score = 10),
@@ -466,16 +463,22 @@ class LeaderboardServiceTest {
             result.copy(userId = mikMapUser.id, score = 6),
             result.copy(userId = zachUser.id, score = 5)
         )
+        every { userService.getUsernameCached(testUser.id) } returns testUser.username
+        every { userService.getUsernameCached(derekUser.id) } returns derekUser.username
+        every { userService.getUsernameCached(jackieUser.id) } returns jackieUser.username
+        every { userService.getUsernameCached(chatGPTUser.id) } returns chatGPTUser.username
+        every { userService.getUsernameCached(mikMapUser.id) } returns mikMapUser.username
+        every { userService.getUsernameCached(zachUser.id) } returns zachUser.username
 
-        val leaderboard = leaderboardService.dailyLeaderboard(testUser.id)
+        val chartInfo = leaderboardService.dailyLeaderboardData(testUser.id)
 
-        assertThat(leaderboard).containsExactly(
-            testUser.id, 10,
-            derekUser.id, 10,
-            jackieUser.id, 8,
-            chatGPTUser.id, 7,
-            mikMapUser.id, 6
+        assertThat(chartInfo.labels).containsExactly(
+            testUser.username,
+            derekUser.username,
+            jackieUser.username,
+            chatGPTUser.username,
+            mikMapUser.username
         )
-        assertThat(leaderboard).doesNotContainKey(zachUser.id)
+        assertThat(chartInfo.dataPoints).containsExactly(10.0, 10.0, 8.0, 7.0, 6.0)
     }
 }
