@@ -5,6 +5,8 @@ import org.jdbi.v3.sqlobject.kotlin.attach
 import sh.zachwal.dailygames.db.dao.game.PuzzleResultDAO
 import sh.zachwal.dailygames.db.jdbi.User
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
+import sh.zachwal.dailygames.leaderboard.responses.ChartInfo
+import sh.zachwal.dailygames.leaderboard.responses.LeaderboardData
 import sh.zachwal.dailygames.leaderboard.views.BasicScoreHintView
 import sh.zachwal.dailygames.leaderboard.views.GameLeaderboardView
 import sh.zachwal.dailygames.leaderboard.views.LeaderboardView
