@@ -140,29 +140,6 @@ class LeaderboardService @Inject constructor(
         return ChartInfo(labels, dataPoints)
     }
 
-    fun dailyLeaderboard(userId: Long): Map<Long, Int> {
-        val userTimeZone = userPreferencesService.getTimeZoneCached(userId)
-        val startOfToday = Instant.now().atZone(userTimeZone).truncatedTo(ChronoUnit.DAYS).toInstant()
-        val endOfToday = startOfToday.plus(1, ChronoUnit.DAYS)
-
-        return jdbi.open().use { handle ->
-            val dao = handle.attach<PuzzleResultDAO>()
-            val pointsByUser = mutableMapOf<Long, Int>()
-
-            dao.allResultsBetweenStream(startOfToday, endOfToday)
-                .forEach { result ->
-                    val points = pointCalculator.calculatePoints(result)
-                    pointsByUser[result.userId] = pointsByUser.getOrDefault(result.userId, 0) + points
-                }
-
-            pointsByUser
-                .entries
-                .sortedByDescending { it.value }
-                .take(5)
-                .associate { it.key to it.value }
-        }
-    }
-
     /**
      * Returns today's top five scorers by points across all games, sorted by score as a ChartInfo object.
      *
