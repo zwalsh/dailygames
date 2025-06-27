@@ -7,6 +7,7 @@ import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
+import sh.zachwal.dailygames.results.resultinfo.EnhancedGeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.ParsedResult
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
@@ -190,22 +191,94 @@ class ShareTextParser {
 
     val geocirclesRegex = Regex(
         """
-            \s*Geocircles #(?<puzzleNumber>\d+)[\s\S]*
+            \s*Geocircles (?:Board )?#(?<puzzleNumber>\d+)[\s\S]*
         """.trimIndent()
     )
     val greenCircleOrHeartRegex = Regex("(\uD83D\uDFE2|❤\uFE0F)")
+    val rocketEmojiRegex = Regex("🚀")
     fun extractGeocirclesInfo(shareText: String): ParsedResult {
         val match =
             geocirclesRegex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Geocircles share")
         val (puzzleNumber) = match.destructured
-        val score = greenCircleOrHeartRegex.findAll(shareText).count()
+        
+        // Check if this is the new format by looking for "Score:" pattern
+        val isNewFormat = shareText.contains("Score:")
+        
+        if (isNewFormat) {
+            return extractNewFormatGeocirclesInfo(shareText, puzzleNumber.toInt())
+        } else {
+            // Old format - count green circles/hearts
+            val score = greenCircleOrHeartRegex.findAll(shareText).count()
+            return ParsedResult(
+                puzzleNumber = puzzleNumber.toInt(),
+                game = Game.GEOCIRCLES,
+                date = null,
+                score = score,
+                shareTextNoLink = shareText.substringBefore("https://").trim(),
+                resultInfo = GeocirclesInfo
+            )
+        }
+    }
+    
+    private fun extractNewFormatGeocirclesInfo(shareText: String, puzzleNumber: Int): ParsedResult {
+        // Extract grid (lines with emoji patterns)
+        val gridLines = shareText.lines().filter { line ->
+            line.contains("❌") || line.contains("🟩")
+        }
+        val grid = gridLines.joinToString("\n")
+        
+        // Extract numeric score
+        val scoreRegex = Regex("Score: ([\\d.]+)")
+        val scoreMatch = scoreRegex.find(shareText)
+        val numericScore = scoreMatch?.groupValues?.get(1)?.toDoubleOrNull()
+        val score = numericScore?.toInt() ?: 0
+        
+        // Extract rank
+        val rankRegex = Regex("Rank: ([\\d,]+/[\\d,]+)")
+        val rankMatch = rankRegex.find(shareText)
+        val rank = rankMatch?.groupValues?.get(1)
+        
+        // Extract performance description (line after rank that's not infinity mode)
+        val lines = shareText.lines()
+        var performanceDescription: String? = null
+        for (i in lines.indices) {
+            if (lines[i].startsWith("Rank:") && i + 1 < lines.size) {
+                val nextLine = lines[i + 1].trim()
+                if (!nextLine.startsWith("♾️") && nextLine.isNotEmpty()) {
+                    performanceDescription = nextLine
+                    break
+                }
+            }
+        }
+        
+        // Extract board number (from puzzle number for new format)
+        val boardNumber = puzzleNumber
+        
+        // Extract infinity mode status
+        val infinityModeRegex = Regex("♾️ Mode: (On|Off)")
+        val infinityModeMatch = infinityModeRegex.find(shareText)
+        val infinityModeOff = infinityModeMatch?.groupValues?.get(1) == "Off"
+        
+        // Count rocket emojis
+        val rocketCount = rocketEmojiRegex.findAll(shareText).count()
+        
+        val geocirclesInfo = EnhancedGeocirclesInfo(
+            grid = grid,
+            numericScore = numericScore,
+            rank = rank,
+            performanceDescription = performanceDescription,
+            boardNumber = boardNumber,
+            infinityModeOff = infinityModeOff,
+            rocketCount = rocketCount
+        )
+        
         return ParsedResult(
-            puzzleNumber = puzzleNumber.toInt(),
+            puzzleNumber = puzzleNumber,
             game = Game.GEOCIRCLES,
             date = null,
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            resultInfo = GeocirclesInfo
+            resultInfo = geocirclesInfo
         )
     }
 
