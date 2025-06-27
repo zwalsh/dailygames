@@ -57,6 +57,42 @@ https://geogridgame.com
 @geogridgame
 """
 
+const val GEOGRID_NEW_FORMAT = """
+Geocircles Board #447
+❌🟩🟩
+🟩🟩❌
+❌🟩❌
+Score: 460.8
+Rank: 4,287/5,102
+Peak Performance 🚀 | ★★★
+♾️ Mode: Off
+https://geocircles.io/447
+"""
+
+const val GEOGRID_NEW_FORMAT_WITH_ROCKETS = """
+Geocircles Board #448
+🟩🟩🟩
+🟩🟩🟩
+🟩🟩🟩
+Score: 892.5
+Rank: 1,204/8,391
+Elite Among Mortals 🎖️ 🚀🚀
+♾️ Mode: Off
+https://geocircles.io/448
+"""
+
+const val GEOGRID_NEW_FORMAT_INFINITY_ON = """
+Geocircles Board #449
+❌❌🟩
+🟩❌🟩
+🟩🟩❌
+Score: 234.1
+Rank: 6,789/9,012
+Getting Warmer 🔥
+♾️ Mode: On
+https://geocircles.io/449
+"""
+
 class ShareTextParserGeoGridTest {
     private val parser = ShareTextParser()
 
@@ -66,6 +102,9 @@ class ShareTextParserGeoGridTest {
         assertThat(parser.identifyGame(GEOGRID_ZERO)).isEqualTo(Game.GEOGRID)
         assertThat(parser.identifyGame(GEOGRID_SIX)).isEqualTo(Game.GEOGRID)
         assertThat(parser.identifyGame(GEOGRID_INFINITE)).isEqualTo(Game.GEOGRID)
+        assertThat(parser.identifyGame(GEOGRID_NEW_FORMAT)).isEqualTo(Game.GEOGRID)
+        assertThat(parser.identifyGame(GEOGRID_NEW_FORMAT_WITH_ROCKETS)).isEqualTo(Game.GEOGRID)
+        assertThat(parser.identifyGame(GEOGRID_NEW_FORMAT_INFINITY_ON)).isEqualTo(Game.GEOGRID)
     }
 
     @Test
@@ -147,5 +186,53 @@ class ShareTextParserGeoGridTest {
         assertThat(info.rank).isEqualTo(1521)
         assertThat(info.rankOutOf).isEqualTo(11795)
         assertThat(info.numCorrect).isEqualTo(9)
+    }
+
+    @Test
+    fun `extracts new format geogrid with basic data`() {
+        val result = parser.extractGeoGridInfo(GEOGRID_NEW_FORMAT)
+        assertThat(result.puzzleNumber).isEqualTo(447)
+        assertThat(result.score).isEqualTo(5) // Count of 🟩 emojis
+        assertThat(result.shareTextNoLink).isEqualTo("""
+            ❌🟩🟩
+            🟩🟩❌
+            ❌🟩❌
+            Score: 460.8
+            Rank: 4,287/5,102
+            Peak Performance 🚀 | ★★★
+            ♾️ Mode: Off
+        """.trimIndent())
+        
+        val info = result.info<GeoGridInfo>()
+        assertThat(info.score).isEqualTo(460.8)
+        assertThat(info.rank).isEqualTo(4287)
+        assertThat(info.rankOutOf).isEqualTo(5102)
+        assertThat(info.numCorrect).isEqualTo(5)
+        assertThat(info.grid).isEqualTo("❌🟩🟩\n🟩🟩❌\n❌🟩❌")
+        assertThat(info.performanceDescription).isEqualTo("Peak Performance 🚀 | ★★★")
+        assertThat(info.infinityModeOff).isEqualTo(true)
+        assertThat(info.rocketCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `extracts new format geogrid with rocket count`() {
+        val result = parser.extractGeoGridInfo(GEOGRID_NEW_FORMAT_WITH_ROCKETS)
+        assertThat(result.puzzleNumber).isEqualTo(448)
+        assertThat(result.score).isEqualTo(9) // Count of 🟩 emojis
+        
+        val info = result.info<GeoGridInfo>()
+        assertThat(info.rocketCount).isEqualTo(2)
+        assertThat(info.performanceDescription).isEqualTo("Elite Among Mortals 🎖️ 🚀🚀")
+    }
+
+    @Test 
+    fun `extracts new format geogrid with infinity mode on`() {
+        val result = parser.extractGeoGridInfo(GEOGRID_NEW_FORMAT_INFINITY_ON)
+        assertThat(result.puzzleNumber).isEqualTo(449)
+        assertThat(result.score).isEqualTo(5) // Count of 🟩 emojis
+        
+        val info = result.info<GeoGridInfo>()
+        assertThat(info.infinityModeOff).isEqualTo(false)
+        assertThat(info.performanceDescription).isEqualTo("Getting Warmer 🔥")
     }
 }
