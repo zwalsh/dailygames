@@ -59,9 +59,9 @@ enum class Game {
     fun href(): String {
         return when (this) {
             WORLDLE -> "https://worldle.teuteuf.fr/"
-            TRADLE -> "https://games.oec.world/en/tradle/"
+            TRADLE -> "https://oec.world/en/games/tradle"
             TRAVLE -> "https://travle.earth/"
-            TOP5 -> "https://top5-game.com/"
+            TOP5 -> "https://topfivetrivia.com/"
             FLAGLE -> "https://www.flagle.io/"
             PINPOINT -> "https://www.linkedin.com/games/pinpoint/"
             GEOCIRCLES -> "https://geocircles.io/"

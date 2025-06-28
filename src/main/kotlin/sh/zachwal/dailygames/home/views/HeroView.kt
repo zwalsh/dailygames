@@ -33,9 +33,9 @@ object HeroView : HTMLView<HTML>() {
                                 +"Track & share your performance in daily games like "
                                 a(href = "https://worldle.teuteuf.fr/") { +"Worldle" }
                                 +", "
-                                a(href = "https://games.oec.world/en/tradle/") { +"Tradle" }
+                                a(href = "https://oec.world/en/games/tradle") { +"Tradle" }
                                 +", "
-                                a(href = "https://top5-game.com/") { +"Top 5" }
+                                a(href = "https://topfivetrivia.com/") { +"Top 5" }
                                 +", and more."
                             }
                             div(classes = "d-grid gap-2 d-sm-flex justify-content-sm-center px-5") {
