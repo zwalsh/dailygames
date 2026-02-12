@@ -62,8 +62,8 @@ dependencies {
     // passwords
     implementation("org.mindrot:jbcrypt:0.4")
 
-    // DI
-    implementation("com.google.inject:guice:4.2.3")
+    // DI (6.0.0 supports both javax & jakarta, has Java 17 support)
+    implementation("com.google.inject:guice:6.0.0")
 
     // Jackson
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
