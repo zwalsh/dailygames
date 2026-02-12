@@ -1,22 +1,21 @@
 package sh.zachwal.dailygames.users
 
-import io.ktor.application.call
-import io.ktor.auth.UserIdPrincipal
-import io.ktor.auth.authenticate
-import io.ktor.auth.principal
-import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.receiveParameters
-import io.ktor.response.respond
-import io.ktor.response.respondRedirect
-import io.ktor.routing.Routing
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.route
-import io.ktor.sessions.clear
-import io.ktor.sessions.get
-import io.ktor.sessions.sessions
-import io.ktor.util.getOrFail
+import io.ktor.server.application.call
+import io.ktor.server.auth.UserIdPrincipal
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.principal
+import io.ktor.server.html.respondHtml
+import io.ktor.server.request.receiveParameters
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondRedirect
+import io.ktor.server.routing.Routing
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.route
+import io.ktor.server.sessions.clear
+import io.ktor.server.sessions.get
+import io.ktor.server.sessions.sessions
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.nav.NavItem
@@ -148,8 +147,10 @@ class UserController @Inject constructor(
             post {
                 val params = call.receiveParameters()
                 val user = userService.createUser(
-                    params.getOrFail("username"),
-                    params.getOrFail("password")
+                    params["username"]
+                        ?: throw IllegalArgumentException("Missing required parameter: username"),
+                    params["password"]
+                        ?: throw IllegalArgumentException("Missing required parameter: password")
                 )
 
                 if (user != null) {
@@ -175,9 +176,12 @@ class UserController @Inject constructor(
             post {
                 val user = currentUser(call, userService)
                 val params = call.receiveParameters()
-                val currentPassword = params.getOrFail(CURRENT_PASSWORD_FORM_PARAM)
-                val newPassword = params.getOrFail(NEW_PASSWORD_FORM_PARAM)
-                val repeatNewPassword = params.getOrFail(REPEAT_NEW_PASSWORD_FORM_PARAM)
+                val currentPassword = params[CURRENT_PASSWORD_FORM_PARAM]
+                    ?: throw IllegalArgumentException("Missing required parameter: $CURRENT_PASSWORD_FORM_PARAM")
+                val newPassword = params[NEW_PASSWORD_FORM_PARAM]
+                    ?: throw IllegalArgumentException("Missing required parameter: $NEW_PASSWORD_FORM_PARAM")
+                val repeatNewPassword = params[REPEAT_NEW_PASSWORD_FORM_PARAM]
+                    ?: throw IllegalArgumentException("Missing required parameter: $REPEAT_NEW_PASSWORD_FORM_PARAM")
 
                 val changePasswordResult = userService.userChangePassword(user, currentPassword, newPassword, repeatNewPassword)
 
@@ -201,7 +205,8 @@ class UserController @Inject constructor(
             post {
                 val user = currentUser(call, userService)
                 val params = call.receiveParameters()
-                val timeZone = params.getOrFail(TIME_ZONE_FORM_PARAM)
+                val timeZone = params[TIME_ZONE_FORM_PARAM]
+                    ?: throw IllegalArgumentException("Missing required parameter: $TIME_ZONE_FORM_PARAM")
                 val zoneId = try {
                     ZoneId.of(timeZone)
                 } catch (e: ZoneRulesException) {

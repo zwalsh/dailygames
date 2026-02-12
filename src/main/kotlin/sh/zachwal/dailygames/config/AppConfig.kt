@@ -1,6 +1,6 @@
 package sh.zachwal.dailygames.config
 
-import io.ktor.config.ApplicationConfig
+import io.ktor.server.config.ApplicationConfig
 
 data class AppConfig(
     val env: String,

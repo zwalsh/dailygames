@@ -1,7 +1,7 @@
 package sh.zachwal.dailygames.controller
 
-import io.ktor.routing.Routing
-import io.ktor.routing.routing
+import io.ktor.server.routing.Routing
+import io.ktor.server.routing.routing
 import kotlin.annotation.AnnotationTarget.CLASS
 
 /**

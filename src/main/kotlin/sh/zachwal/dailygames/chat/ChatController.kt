@@ -1,14 +1,13 @@
 package sh.zachwal.dailygames.chat
 
-import io.ktor.application.call
-import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.receiveParameters
-import io.ktor.response.respond
-import io.ktor.routing.Routing
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.util.getOrFail
+import io.ktor.server.application.call
+import io.ktor.server.html.respondHtml
+import io.ktor.server.request.receiveParameters
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Routing
+import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import org.slf4j.LoggerFactory
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
@@ -87,7 +86,8 @@ class ChatController @Inject constructor(
                     return@post
                 }
                 val parameters = call.receiveParameters()
-                val chatText = parameters.getOrFail(CHAT_TEXT_ID)
+                val chatText = parameters[CHAT_TEXT_ID]
+                    ?: throw IllegalArgumentException("Missing required parameter: $CHAT_TEXT_ID")
 
                 if (chatText.length > 500) {
                     call.respond(HttpStatusCode.BadRequest, "Comment is too long, must be 500 characters or less.")

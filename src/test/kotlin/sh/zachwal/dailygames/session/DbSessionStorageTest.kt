@@ -1,12 +1,7 @@
 package sh.zachwal.dailygames.session
 
 import com.google.common.truth.Truth.assertThat
-import io.ktor.util.toByteArray
-import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.ByteWriteChannel
-import io.ktor.utils.io.core.ExperimentalIoApi
 import io.mockk.Runs
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -46,18 +41,12 @@ class DbSessionStorageTest {
         verify { sessionDao.deleteSession(sessionId) }
     }
 
-    @ExperimentalIoApi
     @Test
-    fun `read calls consumer with bytes from session dao`() {
-        val slot = slot<ByteReadChannel>()
-        val consumer: suspend (ByteReadChannel) -> Session = mockk()
-        coEvery { consumer(capture(slot)) } returns session
-
+    fun `read returns data from session dao`() {
         runBlocking {
-            val returnedSession = storage.read(sessionId, consumer)
+            val result = storage.read(sessionId)
 
-            assertEquals(String(data), String(slot.captured.toByteArray()))
-            assertEquals(session, returnedSession)
+            assertEquals(String(data), result)
         }
     }
 
@@ -65,17 +54,13 @@ class DbSessionStorageTest {
     fun write() {
         val slot = slot<Session>()
         every { sessionDao.createOrUpdateSession(capture(slot)) } just Runs
-        val provider: suspend (ByteWriteChannel) -> Unit = {
-            it.write { byteBuffer ->
-                byteBuffer.put(data)
-            }
-        }
+        val dataString = String(data)
 
         runBlocking {
-            storage.write(sessionId, provider)
+            storage.write(sessionId, dataString)
             val capturedSession = slot.captured
             assertEquals(sessionId, capturedSession.id)
-            assertEquals(String(data), String(capturedSession.data))
+            assertEquals(dataString, String(capturedSession.data))
             assertThat(capturedSession.expiration.epochSecond.toDouble())
                 .isWithin(1.0)
                 .of(expiration.plus(1, ChronoUnit.HOURS).epochSecond.toDouble())
