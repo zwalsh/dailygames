@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.roles
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.ApplicationCallPipeline
+import io.ktor.server.application.BaseApplicationPlugin
 import io.ktor.server.application.call
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondRedirect
@@ -65,7 +66,7 @@ class RoleAuthorization internal constructor(config: Configuration) {
         }
     }
 
-    companion object Plugin : io.ktor.server.application.BaseApplicationPlugin<ApplicationCallPipeline, RoleBasedAuthorizer, RoleAuthorization> {
+    companion object Plugin : BaseApplicationPlugin<ApplicationCallPipeline, RoleBasedAuthorizer, RoleAuthorization> {
         val authorizationPhase = PipelinePhase("authorization")
 
         override val key: AttributeKey<RoleAuthorization> = AttributeKey("RoleAuthorization")

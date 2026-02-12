@@ -2,6 +2,7 @@ package sh.zachwal.dailygames.features
 
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.ApplicationCallPipeline
+import io.ktor.server.application.BaseApplicationPlugin
 import io.ktor.server.application.call
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.PipelinePhase
@@ -13,7 +14,7 @@ class MDCFeature(private val mdcProvider: (ApplicationCall) -> Map<String, Strin
         var mdcProvider: (ApplicationCall) -> Map<String, String> = { emptyMap() }
     }
 
-    companion object Plugin : io.ktor.server.application.BaseApplicationPlugin<ApplicationCallPipeline, Configuration, MDCFeature> {
+    companion object Plugin : BaseApplicationPlugin<ApplicationCallPipeline, Configuration, MDCFeature> {
         override val key = AttributeKey<MDCFeature>("MDCFeature")
 
         override fun install(pipeline: ApplicationCallPipeline, configure: Configuration.() -> Unit): MDCFeature {
