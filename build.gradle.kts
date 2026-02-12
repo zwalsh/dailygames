@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlinVersion = "1.5.32" // keep in sync with plugin version
+val kotlinVersion = "1.6.21" // keep in sync with plugin version
 val ktorVersion = "1.6.7"
 val logbackVersion = "1.2.5"
 val jdbiVersion = "3.14.4"
 
 plugins {
-    kotlin("jvm") version "1.5.32"
+    kotlin("jvm") version "1.6.21"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     application
 }
@@ -37,7 +37,7 @@ dependencies {
     implementation("io.ktor:ktor-jackson:$ktorVersion")
 
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
-    implementation("org.jetbrains.kotlin-wrappers:kotlin-css-jvm:1.0.0-pre.265-kotlin-1.5.31")
+    implementation("org.jetbrains.kotlin-wrappers:kotlin-css-jvm:1.0.0-pre.332-kotlin-1.6.21")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
@@ -62,8 +62,8 @@ dependencies {
     // passwords
     implementation("org.mindrot:jbcrypt:0.4")
 
-    // DI
-    implementation("com.google.inject:guice:4.2.3")
+    // DI (6.0.0 supports both javax & jakarta, has Java 17 support)
+    implementation("com.google.inject:guice:6.0.0")
 
     // Jackson
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
@@ -95,12 +95,18 @@ application {
 
 tasks.withType(KotlinCompile::class.java).all {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
 tasks.test {
     useJUnitPlatform()
+    // MockK 1.12.3 requires these JVM args to work with Java 17's stronger encapsulation.
+    // Alternative: upgrade to Kotlin 1.8+ and Ktor 2.x to use MockK 1.13+
+    jvmArgs(
+        "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED",
+        "--add-opens", "java.base/java.util=ALL-UNNAMED"
+    )
 }
 
 subprojects {
