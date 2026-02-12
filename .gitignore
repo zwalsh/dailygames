@@ -2,6 +2,7 @@
 
 .idea/
 
+.java-version
 
 # Created by https://www.toptal.com/developers/gitignore/api/kotlin,gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=kotlin,gradle
