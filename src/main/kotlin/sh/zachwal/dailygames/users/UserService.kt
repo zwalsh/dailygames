@@ -1,7 +1,6 @@
 package sh.zachwal.dailygames.users
 
 import com.google.common.cache.CacheBuilder
-import io.ktor.util.error
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException
 import org.mindrot.jbcrypt.BCrypt
 import org.slf4j.LoggerFactory
@@ -51,7 +50,7 @@ class UserService @Inject constructor(
         val user = try {
             userDAO.createUser(username, hash)
         } catch (e: UnableToExecuteStatementException) {
-            logger.error(e)
+            logger.error("Failed to create user $username", e)
             null
         }
 

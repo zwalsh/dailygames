@@ -1,7 +1,7 @@
 package sh.zachwal.dailygames.session
 
-import io.ktor.application.ApplicationCall
-import io.ktor.sessions.sessions
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.sessions.sessions
 import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
 import java.time.Duration
 import java.time.Instant

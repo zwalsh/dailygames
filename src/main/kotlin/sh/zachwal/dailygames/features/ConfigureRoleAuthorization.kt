@@ -1,7 +1,7 @@
 package sh.zachwal.dailygames.features
 
-import io.ktor.application.Application
-import io.ktor.application.log
+import io.ktor.server.application.Application
+import io.ktor.server.application.log
 import sh.zachwal.dailygames.roles.RoleAuthorization.RoleBasedAuthorizer
 import sh.zachwal.dailygames.roles.RoleService
 import sh.zachwal.dailygames.users.UserService

@@ -1,11 +1,10 @@
 package sh.zachwal.dailygames.wrapped
 
-import io.ktor.application.call
-import io.ktor.html.respondHtml
-import io.ktor.response.respond
-import io.ktor.routing.Routing
-import io.ktor.routing.get
-import io.ktor.util.getOrFail
+import io.ktor.server.application.call
+import io.ktor.server.html.respondHtml
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Routing
+import io.ktor.server.routing.get
 import sh.zachwal.dailygames.auth.currentUser
 import sh.zachwal.dailygames.controller.Controller
 import sh.zachwal.dailygames.roles.adminRoute
@@ -23,8 +22,12 @@ class WrappedController @Inject constructor(
 
         adminRoute("/wrapped/{year}/as/{userName}") {
             get {
-                val year = call.parameters.getOrFail("year").toInt()
-                val username = call.parameters.getOrFail("userName")
+                val year = (
+                    call.parameters["year"]
+                        ?: throw IllegalArgumentException("Missing required parameter: year")
+                    ).toInt()
+                val username = call.parameters["userName"]
+                    ?: throw IllegalArgumentException("Missing required parameter: userName")
                 val user = userService.getUser(username) ?: throw RuntimeException("User=$username not found")
                 val wrappedView = wrappedService.wrappedView(year, user)
 
@@ -36,7 +39,10 @@ class WrappedController @Inject constructor(
 
         approvedUserRoute("/wrapped/{year}") {
             get {
-                val year = call.parameters.getOrFail("year").toInt()
+                val year = (
+                    call.parameters["year"]
+                        ?: throw IllegalArgumentException("Missing required parameter: year")
+                    ).toInt()
                 val user = currentUser(call, userService)
                 val wrappedView = wrappedService.wrappedView(year, user)
 
@@ -50,8 +56,12 @@ class WrappedController @Inject constructor(
         // TODO -- have login redirects include destination page & meta tags for that page
         // see https://developer.apple.com/library/archive/technotes/tn2444/_index.html
         get("/wrapped/{year}/{userName}") {
-            val year = call.parameters.getOrFail("year").toInt()
-            val username = call.parameters.getOrFail("userName")
+            val year = (
+                call.parameters["year"]
+                    ?: throw IllegalArgumentException("Missing required parameter: year")
+                ).toInt()
+            val username = call.parameters["userName"]
+                ?: throw IllegalArgumentException("Missing required parameter: userName")
             val wrappedView = wrappedService.guestWrappedView(year, username)
 
             call.respondHtml {

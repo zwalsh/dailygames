@@ -1,11 +1,6 @@
 package sh.zachwal.dailygames.session
 
-import io.ktor.sessions.SessionStorage
-import io.ktor.util.toByteArray
-import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.ByteWriteChannel
-import io.ktor.utils.io.core.ExperimentalIoApi
-import io.ktor.utils.io.writer
+import io.ktor.server.sessions.SessionStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
@@ -24,23 +19,20 @@ class DbSessionStorage @Inject constructor(private val sessionDAO: SessionDAO) :
         }
     }
 
-    @ExperimentalIoApi
-    override suspend fun <R> read(id: String, consumer: suspend (ByteReadChannel) -> R): R {
+    override suspend fun read(id: String): String {
         logger.debug("Reading {}", id)
         return withContext(Dispatchers.IO) {
             val bytes = sessionDAO.getById(id)?.data
                 ?: throw NoSuchElementException("No session with id $id")
-            consumer(ByteReadChannel(bytes))
+            bytes.decodeToString()
         }
     }
 
-    override suspend fun write(id: String, provider: suspend (ByteWriteChannel) -> Unit) {
+    override suspend fun write(id: String, value: String) {
         logger.debug("Writing {}", id)
         withContext(Dispatchers.IO) {
-            val bytes = writer {
-                provider(channel)
-            }.channel
-            sessionDAO.createOrUpdateSession(Session(id, bytes.toByteArray(), Instant.now().plus(SESSION_MAX_DURATION)))
+            val bytes = value.encodeToByteArray()
+            sessionDAO.createOrUpdateSession(Session(id, bytes, Instant.now().plus(SESSION_MAX_DURATION)))
         }
     }
 }

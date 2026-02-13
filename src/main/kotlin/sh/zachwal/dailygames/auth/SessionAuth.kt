@@ -1,9 +1,9 @@
 package sh.zachwal.dailygames.auth
 
-import io.ktor.application.call
-import io.ktor.auth.Authentication
-import io.ktor.auth.session
-import io.ktor.response.respondRedirect
+import io.ktor.server.application.call
+import io.ktor.server.auth.AuthenticationConfig
+import io.ktor.server.auth.session
+import io.ktor.server.response.respondRedirect
 import io.sentry.Sentry
 import io.sentry.protocol.User
 import org.slf4j.LoggerFactory
@@ -11,7 +11,7 @@ import sh.zachwal.dailygames.session.principals.UserSessionPrincipal
 
 private val logger = LoggerFactory.getLogger("SessionAuth")
 
-fun Authentication.Configuration.configureSessionAuth() {
+fun AuthenticationConfig.configureSessionAuth() {
     session<UserSessionPrincipal> {
         challenge {
             call.respondRedirect("/login")
