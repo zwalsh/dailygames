@@ -11,7 +11,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 
 fun ApplicationRequest.remote(): String {
     val clientHost = origin.remoteHost
-    val clientPort = origin.port
+    val clientPort = origin.serverPort
     return "$clientHost:$clientPort"
 }
 
