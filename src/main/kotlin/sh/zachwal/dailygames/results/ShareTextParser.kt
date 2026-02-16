@@ -28,6 +28,7 @@ class ShareTextParser {
             top5Regex.matches(shareText) -> Game.TOP5
             flagleRegex.matches(shareText) -> Game.FLAGLE
             pinpointRegex.matches(shareText) -> Game.PINPOINT
+            shareText.contains("Geocircles Board #") -> Game.GEOGRID
             geocirclesRegex.matches(shareText) -> Game.GEOCIRCLES
             framedRegex.matches(shareText) -> Game.FRAMED
             shareText.contains("geogridgame") -> Game.GEOGRID
@@ -241,28 +242,107 @@ class ShareTextParser {
             .substringBefore("\n")
             .trim()
             .toDouble()
-        val rank = shareText
-            .substringAfter("Rank: ")
-            .substringBefore(" /")
-            .replace(",", "")
-            .trim()
-            .toInt()
-        val rankOutOf = shareText
-            .substringAfter(" / ")
-            .substringBefore("\n")
-            .replace(",", "")
-            .trim()
-            .toInt()
-        val shareTextNoLink = shareText
-            .substringBefore("https://")
-            .lines()
-            .filter { it.isNotBlank() }
-            .filter { "Board" !in it }
-            .filter { "Game Summary" !in it }
-            .joinToString("\n")
+            
+        // Detect new format by checking for "Geocircles Board #" or new emoji patterns
+        val isNewFormat = shareText.contains("Geocircles Board #") || 
+            shareText.contains("🟩") || shareText.contains("geocircles.io")
+        
+        val (rank, rankOutOf) = if (isNewFormat) {
+            // New format: "Rank: 4,287/5,102"
+            val rankStr = shareText
+                .substringAfter("Rank: ")
+                .substringBefore("\n")
+                .trim()
+            val parts = rankStr.split("/")
+            val rank = parts[0].replace(",", "").trim().toInt()
+            val rankOutOf = parts[1].replace(",", "").trim().toInt()
+            Pair(rank, rankOutOf)
+        } else {
+            // Old format: "Rank: 3,618 / 11,718"
+            val rank = shareText
+                .substringAfter("Rank: ")
+                .substringBefore(" /")
+                .replace(",", "")
+                .trim()
+                .toInt()
+            val rankOutOf = shareText
+                .substringAfter(" / ")
+                .substringBefore("\n")
+                .replace(",", "")
+                .trim()
+                .toInt()
+            Pair(rank, rankOutOf)
+        }
+        
+        val shareTextNoLink = if (isNewFormat) {
+            shareText
+                .substringBefore("https://")
+                .lines()
+                .filter { it.isNotBlank() }
+                .filter { !it.startsWith("Geocircles Board #") }
+                .joinToString("\n")
+        } else {
+            shareText
+                .substringBefore("https://")
+                .lines()
+                .filter { it.isNotBlank() }
+                .filter { "Board" !in it }
+                .filter { "Game Summary" !in it }
+                .joinToString("\n")
+        }
 
-        val numCorrect = shareText.count { it == '✅' }
-
+        if (isNewFormat) {
+            return extractNewFormatGeoGridInfo(shareText, puzzleNumber, score, rank, rankOutOf, shareTextNoLink)
+        } else {
+            // Old format processing
+            val numCorrect = shareText.count { it == '✅' }
+            return ParsedResult(
+                puzzleNumber = puzzleNumber,
+                game = Game.GEOGRID,
+                date = null,
+                score = numCorrect,
+                shareTextNoLink = shareTextNoLink,
+                resultInfo = GeoGridInfo(
+                    score = score,
+                    rank = rank,
+                    rankOutOf = rankOutOf,
+                    numCorrect = numCorrect
+                )
+            )
+        }
+    }
+    
+    private fun extractNewFormatGeoGridInfo(shareText: String, puzzleNumber: Int, score: Double, rank: Int, rankOutOf: Int, shareTextNoLink: String): ParsedResult {
+        // Extract grid (lines with emoji patterns)
+        val gridLines = shareText.lines().filter { line ->
+            line.contains("❌") || line.contains("🟩")
+        }
+        val grid = gridLines.joinToString("\n")
+        
+        // Count correct answers using new emoji pattern
+        val numCorrect = "🟩".toRegex().findAll(shareText).count()
+        
+        // Extract performance description (line after rank that's not infinity mode)
+        val lines = shareText.lines()
+        var performanceDescription: String? = null
+        for (i in lines.indices) {
+            if (lines[i].startsWith("Rank:") && i + 1 < lines.size) {
+                val nextLine = lines[i + 1].trim()
+                if (!nextLine.startsWith("♾️") && nextLine.isNotEmpty()) {
+                    performanceDescription = nextLine
+                    break
+                }
+            }
+        }
+        
+        // Extract infinity mode status
+        val infinityModeRegex = Regex("♾️ Mode: (On|Off)")
+        val infinityModeMatch = infinityModeRegex.find(shareText)
+        val infinityModeOff = infinityModeMatch?.groupValues?.get(1) == "Off"
+        
+        // Count rocket emojis
+        val rocketCount = "🚀".toRegex().findAll(shareText).count()
+        
         return ParsedResult(
             puzzleNumber = puzzleNumber,
             game = Game.GEOGRID,
@@ -273,7 +353,11 @@ class ShareTextParser {
                 score = score,
                 rank = rank,
                 rankOutOf = rankOutOf,
-                numCorrect = numCorrect
+                numCorrect = numCorrect,
+                grid = grid,
+                performanceDescription = performanceDescription,
+                infinityModeOff = infinityModeOff,
+                rocketCount = rocketCount
             )
         )
     }
