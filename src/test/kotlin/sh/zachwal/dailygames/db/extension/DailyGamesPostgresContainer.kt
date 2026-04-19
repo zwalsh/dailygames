@@ -6,7 +6,7 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 class DailyGamesPostgresContainer :
-    PostgreSQLContainer<DailyGamesPostgresContainer>(DockerImageName.parse("postgres:12.18")) {
+    PostgreSQLContainer<DailyGamesPostgresContainer>(DockerImageName.parse("postgres:17")) {
     fun jdbcConnection(): Connection {
         return DriverManager.getConnection(
             jdbcUrl,

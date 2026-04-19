@@ -57,7 +57,7 @@ dependencies {
 
     // database
     implementation("com.zaxxer:HikariCP:3.4.5")
-    implementation("org.postgresql:postgresql:42.1.4")
+    implementation("org.postgresql:postgresql:42.7.10")
     implementation("org.jdbi:jdbi3-core")
     implementation("org.jdbi:jdbi3-kotlin")
     implementation("org.jdbi:jdbi3-postgres")

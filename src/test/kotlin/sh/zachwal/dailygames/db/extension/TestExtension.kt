@@ -15,7 +15,7 @@ class TestExtension {
         val resultSet = stmt.executeQuery(query)
         resultSet.next()
         val result = resultSet.getString(1)
-        assertThat(result).contains("12.18")
+        assertThat(result).contains("17")
     }
 
     @Test
@@ -48,6 +48,6 @@ class TestExtension {
                 .mapTo(String::class.java)
                 .single()
         }
-        assertThat(version).contains("12.18")
+        assertThat(version).contains("17")
     }
 }
