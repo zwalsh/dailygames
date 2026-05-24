@@ -10,7 +10,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 
 class Fixtures(
-    jdbi: Jdbi
+    jdbi: Jdbi,
 ) {
     private val userDAO: UserDAO = jdbi.onDemand()
 

@@ -26,7 +26,7 @@ class HomeServiceTest {
     private val userPreferencesService = mockk<UserPreferencesService> {
         every { getTimeZone(any()) } returns ZoneId.of("America/New_York")
     }
-    private val shareTextService = mockk<ShareTextService>() {
+    private val shareTextService = mockk<ShareTextService> {
         every { shareTextModalView(any()) } returns null
     }
     private val navViewFactory = mockk<NavViewFactory> {

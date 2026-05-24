@@ -1,0 +1,21 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+ktlint_code_style = intellij_idea
+# Rules that changed behavior in ktlint 1.x (via plugin 12.x) vs 0.x (plugin 10.x).
+# Disabled to preserve existing code style during Gradle upgrade.
+ktlint_standard_trailing-comma-on-call-site = disabled
+ktlint_standard_trailing-comma-on-declaration-site = disabled
+ktlint_standard_discouraged-comment-location = disabled
+ktlint_standard_package-name = disabled
+ktlint_standard_no-empty-first-line-in-method-block = disabled
+ktlint_standard_argument-list-wrapping = disabled
+ktlint_standard_filename = disabled

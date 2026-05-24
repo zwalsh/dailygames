@@ -6,5 +6,5 @@ data class User(
     val id: Long,
     val username: String,
     @ColumnName("hash")
-    val hashedPassword: String
+    val hashedPassword: String,
 )

@@ -8,13 +8,13 @@ import javax.inject.Singleton
 
 @Singleton
 class NavViewFactory @Inject constructor(
-    private val chatService: ChatService
+    private val chatService: ChatService,
 ) {
 
     fun navView(
         username: String,
         currentActiveNavItem: NavItem,
-        insideNavItem: HTMLView<HEADER>? = null
+        insideNavItem: HTMLView<HEADER>? = null,
     ): NavView {
         val currentChatCounts = chatService.currentChatCounts()
 

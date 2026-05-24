@@ -36,7 +36,7 @@ data class LoginView(private val failed: Boolean) : HTMLView<HTML>() {
                                     label { +"Username" }
                                     textInput(
                                         name = "username",
-                                        classes = "form-control"
+                                        classes = "form-control",
                                     ) {
                                         placeholder = "user"
                                     }
@@ -45,7 +45,7 @@ data class LoginView(private val failed: Boolean) : HTMLView<HTML>() {
                                     label { +"Password" }
                                     passwordInput(
                                         name = "password",
-                                        classes = "form-control"
+                                        classes = "form-control",
                                     ) {
                                         placeholder = "password"
                                     }

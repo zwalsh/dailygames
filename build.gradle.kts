@@ -1,13 +1,13 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-val kotlinVersion = "1.8.22" // keep in sync with plugin version
+val kotlinVersion = "2.1.21" // keep in sync with plugin version
 val ktorVersion = "2.2.4"
 val logbackVersion = "1.2.5"
 val jdbiVersion = "3.14.4"
 
 plugins {
-    kotlin("jvm") version "1.8.22"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
+    kotlin("jvm") version "2.1.21"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     application
 }
 
@@ -98,9 +98,9 @@ application {
     mainClass.set("sh.zachwal.dailygames.AppKt")
 }
 
-tasks.withType(KotlinCompile::class.java).all {
-    kotlinOptions {
-        jvmTarget = "17"
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 

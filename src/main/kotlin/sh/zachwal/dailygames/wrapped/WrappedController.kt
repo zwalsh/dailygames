@@ -19,7 +19,6 @@ class WrappedController @Inject constructor(
 ) {
 
     internal fun Routing.wrapped() {
-
         adminRoute("/wrapped/{year}/as/{userName}") {
             get {
                 val year = (

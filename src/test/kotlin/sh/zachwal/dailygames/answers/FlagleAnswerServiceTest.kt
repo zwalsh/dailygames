@@ -63,7 +63,7 @@ class FlagleAnswerServiceTest {
             java.net.http.HttpRequest.newBuilder()
                 .uri(java.net.URI.create(url))
                 .build(),
-            java.net.http.HttpResponse.BodyHandlers.ofString()
+            java.net.http.HttpResponse.BodyHandlers.ofString(),
         )
 
         return if (response.statusCode() == 200) {

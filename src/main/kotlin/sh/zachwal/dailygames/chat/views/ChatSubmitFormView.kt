@@ -18,7 +18,7 @@ import sh.zachwal.dailygames.shared_html.view.SpinnerView
 data class ChatSubmitFormView(
     val game: Game,
     val puzzleNumber: Int,
-    val isCommentDisabled: Boolean
+    val isCommentDisabled: Boolean,
 ) : HTMLView<DIV>() {
     override fun DIV.render() {
         form(method = post, action = "${chatLink(game, puzzleNumber)}/comment") {

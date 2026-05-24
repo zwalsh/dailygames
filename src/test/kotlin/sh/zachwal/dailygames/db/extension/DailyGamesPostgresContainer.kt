@@ -11,7 +11,7 @@ class DailyGamesPostgresContainer :
         return DriverManager.getConnection(
             jdbcUrl,
             USERNAME,
-            PASSWORD
+            PASSWORD,
         )
     }
 }

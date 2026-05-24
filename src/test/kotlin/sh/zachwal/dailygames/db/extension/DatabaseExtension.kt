@@ -52,7 +52,7 @@ class DatabaseExtension : ParameterResolver, BeforeEachCallback, AfterEachCallba
             .getOrComputeIfAbsent(
                 POSTGRES_CONTAINER_KEY,
                 { createPostgresContainer() },
-                DailyGamesPostgresContainer::class.java
+                DailyGamesPostgresContainer::class.java,
             )
     }
 
@@ -74,7 +74,7 @@ class DatabaseExtension : ParameterResolver, BeforeEachCallback, AfterEachCallba
         val liquibase = Liquibase(
             "changelog.json",
             DirectoryResourceAccessor(Path("db")),
-            database
+            database,
         )
 
         liquibase.dropAll()
@@ -118,7 +118,7 @@ class DatabaseExtension : ParameterResolver, BeforeEachCallback, AfterEachCallba
             .getOrComputeIfAbsent(
                 JDBI_KEY,
                 { createJdbiInstance(context) },
-                Jdbi::class.java
+                Jdbi::class.java,
             )
     }
 
@@ -142,7 +142,7 @@ class DatabaseExtension : ParameterResolver, BeforeEachCallback, AfterEachCallba
             .getOrComputeIfAbsent(
                 FIXTURES_KEY,
                 { createFixturesInstance(context) },
-                Fixtures::class.java
+                Fixtures::class.java,
             )
     }
 

@@ -16,7 +16,7 @@ interface SessionDAO {
         """
         insert into public.session (id, data, expiration) values (:id, :data, :expiration)
         on conflict (id) do update set data = excluded.data, expiration = excluded.expiration
-    """
+    """,
     )
     fun createOrUpdateSession(@BindBean session: Session)
 

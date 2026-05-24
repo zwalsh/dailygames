@@ -20,7 +20,6 @@ class TimeZoneFormView(
     val timeZonesToNames: Map<ZoneId, String>,
 ) : HTMLView<DIV>() {
     override fun DIV.render() {
-
         card(cardHeader = "Set Time Zone", cardHeaderClasses = "text-center") {
             form(method = post, action = POST_TIME_ZONE_ROUTE) {
                 div(classes = "mb-3") {

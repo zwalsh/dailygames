@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 class UserPreferencesService @Inject constructor(
-    private val userPreferencesDAO: UserPreferencesDAO
+    private val userPreferencesDAO: UserPreferencesDAO,
 ) {
 
     fun getTimeZone(userId: Long): ZoneId {

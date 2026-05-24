@@ -10,7 +10,7 @@ interface UserPreferencesDAO {
             INSERT INTO public.user_preferences (user_id)
             VALUES (:userId)
             RETURNING *
-        """
+        """,
     )
     fun createDefaultPreferences(userId: Long): UserPreferences
 
@@ -18,7 +18,7 @@ interface UserPreferencesDAO {
         """
             SELECT * FROM public.user_preferences
             WHERE user_id = :userId
-        """
+        """,
     )
     fun getByUserId(userId: Long): UserPreferences?
 
@@ -27,7 +27,7 @@ interface UserPreferencesDAO {
             UPDATE public.user_preferences
             SET time_zone = :timeZone
             WHERE user_id = :userId
-        """
+        """,
     )
     fun updateTimeZone(userId: Long, timeZone: String)
 }

@@ -26,19 +26,24 @@ class DeserializeStoredPuzzleResultInfoTest {
         @JvmStatic
         fun arguments(): List<Arguments> = listOf(
             Arguments.of(
-                "{\"type\":\"worldle\",\"percentage\":100}", WorldleInfo(percentage = 100)
+                "{\"type\":\"worldle\",\"percentage\":100}",
+                WorldleInfo(percentage = 100),
             ),
             Arguments.of(
-                "{\"type\":\"pinpoint\"}", PinpointInfo
+                "{\"type\":\"pinpoint\"}",
+                PinpointInfo,
             ),
             Arguments.of(
-                "{\"type\":\"geocircles\"}", GeocirclesInfo
+                "{\"type\":\"geocircles\"}",
+                GeocirclesInfo,
             ),
             Arguments.of(
-                "{\"type\":\"tradle\"}", TradleInfo
+                "{\"type\":\"tradle\"}",
+                TradleInfo,
             ),
             Arguments.of(
-                "{\"type\":\"flagle\"}", FlagleInfo
+                "{\"type\":\"flagle\"}",
+                FlagleInfo,
             ),
             Arguments.of(
                 "{\"type\":\"travle\",\"numGuesses\":6,\"numIncorrect\":0,\"numPerfect\":5,\"numHints\":0}",
@@ -47,7 +52,7 @@ class DeserializeStoredPuzzleResultInfoTest {
                     numIncorrect = 0,
                     numPerfect = 5,
                     numHints = 0,
-                )
+                ),
             ),
             Arguments.of(
                 "{\"type\":\"top5\",\"numGuesses\":5,\"numCorrect\":5,\"isPerfect\":true}",
@@ -55,7 +60,7 @@ class DeserializeStoredPuzzleResultInfoTest {
                     numGuesses = 5,
                     numCorrect = 5,
                     isPerfect = true,
-                )
+                ),
             ),
         )
     }

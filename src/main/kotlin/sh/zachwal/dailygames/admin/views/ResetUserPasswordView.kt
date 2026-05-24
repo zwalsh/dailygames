@@ -54,14 +54,14 @@ class ResetUserPasswordView(
                                     label { +"Username" }
                                     textInput(
                                         name = USERNAME_FORM_PARAM,
-                                        classes = "form-control"
+                                        classes = "form-control",
                                     )
                                 }
                                 div(classes = "mb-3") {
                                     label { +"New Password" }
                                     passwordInput(
                                         name = NEW_PASSWORD_FORM_PARAM,
-                                        classes = "form-control"
+                                        classes = "form-control",
                                     )
                                 }
                                 submitInput(classes = "btn btn-primary") {

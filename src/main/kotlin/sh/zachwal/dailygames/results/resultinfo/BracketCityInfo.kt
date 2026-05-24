@@ -7,5 +7,5 @@ data class BracketCityInfo(
     val peeks: Int = 0,
     val answersRevealed: Int = 0,
     val totalScore: Double,
-    val grid: String
+    val grid: String,
 ) : ResultInfo()

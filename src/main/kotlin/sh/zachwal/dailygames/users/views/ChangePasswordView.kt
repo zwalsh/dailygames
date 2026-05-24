@@ -19,7 +19,7 @@ import sh.zachwal.dailygames.users.NEW_PASSWORD_FORM_PARAM
 import sh.zachwal.dailygames.users.REPEAT_NEW_PASSWORD_FORM_PARAM
 
 class ChangePasswordView(
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 ) : HTMLView<HTML>() {
     override fun HTML.render() {
         head {
@@ -45,21 +45,21 @@ class ChangePasswordView(
                                     label { +"Current Password" }
                                     passwordInput(
                                         name = CURRENT_PASSWORD_FORM_PARAM,
-                                        classes = "form-control"
+                                        classes = "form-control",
                                     )
                                 }
                                 div(classes = "mb-3") {
                                     label { +"New Password" }
                                     passwordInput(
                                         name = NEW_PASSWORD_FORM_PARAM,
-                                        classes = "form-control"
+                                        classes = "form-control",
                                     )
                                 }
                                 div(classes = "mb-3") {
                                     label { +"Repeat New Password" }
                                     passwordInput(
                                         name = REPEAT_NEW_PASSWORD_FORM_PARAM,
-                                        classes = "form-control"
+                                        classes = "form-control",
                                     )
                                 }
                                 submitInput(classes = "btn btn-primary") {

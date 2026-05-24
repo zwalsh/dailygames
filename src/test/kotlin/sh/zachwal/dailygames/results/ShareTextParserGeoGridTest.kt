@@ -80,7 +80,7 @@ class ShareTextParserGeoGridTest {
                 ✅ ✅ ✅
                 Score: 123.3
                 Rank: 3,618 / 11,718
-            """.trimIndent()
+            """.trimIndent(),
         )
         val info = result.info<GeoGridInfo>()
         assertThat(info.score).isEqualTo(123.3)
@@ -100,7 +100,7 @@ class ShareTextParserGeoGridTest {
                 ❌ ❌ ❌
                 Score: 900
                 Rank: 10,188 / 11,737
-            """.trimIndent()
+            """.trimIndent(),
         )
         val info = result.info<GeoGridInfo>()
         assertThat(info.score).isEqualTo(900.0)
@@ -120,7 +120,7 @@ class ShareTextParserGeoGridTest {
                 ✅ ✅ ❌
                 Score: 382.7
                 Rank: 9,311 / 11,761
-            """.trimIndent()
+            """.trimIndent(),
         )
         val info = result.info<GeoGridInfo>()
         assertThat(info.score).isEqualTo(382.7)
@@ -140,7 +140,7 @@ class ShareTextParserGeoGridTest {
                 ✅ ✅ ✅
                 Score: 88.9
                 Rank: 1,521 / 11,795
-            """.trimIndent()
+            """.trimIndent(),
         )
         val info = result.info<GeoGridInfo>()
         assertThat(info.score).isEqualTo(88.9)

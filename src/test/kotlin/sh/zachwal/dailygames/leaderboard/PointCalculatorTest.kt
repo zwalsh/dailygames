@@ -29,7 +29,7 @@ class PointCalculatorTest {
         score = 5,
         shareText = "",
         resultInfo = WorldleInfo(
-            percentage = 100
+            percentage = 100,
         ),
     )
 
@@ -41,7 +41,7 @@ class PointCalculatorTest {
     private val flagleResult = worldleResult.copy(
         game = Game.FLAGLE,
         score = 6,
-        resultInfo = FlagleInfo
+        resultInfo = FlagleInfo,
     )
 
     @Test
@@ -66,7 +66,7 @@ class PointCalculatorTest {
         resultInfo = BandleInfo(
             numSkips = 0,
             numCorrectBand = 1,
-            numIncorrect = 3
+            numIncorrect = 3,
         ),
     )
 
@@ -154,8 +154,8 @@ class PointCalculatorTest {
             peeks = 0,
             answersRevealed = 0,
             totalScore = 98.0,
-            grid = ""
-        )
+            grid = "",
+        ),
     )
 
     @Test

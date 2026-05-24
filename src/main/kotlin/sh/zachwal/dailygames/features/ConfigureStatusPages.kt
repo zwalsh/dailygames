@@ -21,7 +21,6 @@ import sh.zachwal.dailygames.shared_html.headSetup
 private val logger = LoggerFactory.getLogger("StatusPage")
 
 fun StatusPagesConfig.configureStatusPages() {
-
     exception<Exception> { call, cause ->
         logger.error("Unhandled error", cause)
         call.respondHtml(HttpStatusCode.InternalServerError) {

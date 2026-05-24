@@ -35,7 +35,7 @@ object RegisterView : HTMLView<HTML>() {
                                     label { +"Username" }
                                     textInput(
                                         name = "username",
-                                        classes = "form-control"
+                                        classes = "form-control",
                                     ) {
                                         placeholder = "user"
                                     }
@@ -44,7 +44,7 @@ object RegisterView : HTMLView<HTML>() {
                                     label { +"Password" }
                                     passwordInput(
                                         name = "password",
-                                        classes = "form-control"
+                                        classes = "form-control",
                                     ) {
                                         placeholder = "password"
                                     }

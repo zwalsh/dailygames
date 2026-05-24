@@ -24,6 +24,6 @@ data class AppConfig(
         umamiConfig = UmamiConfig(
             umamiUrl = config.property("ktor.umami.url").getString(),
             websiteId = config.property("ktor.umami.websiteId").getString(),
-        )
+        ),
     )
 }

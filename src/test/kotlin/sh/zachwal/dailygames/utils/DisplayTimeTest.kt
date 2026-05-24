@@ -113,7 +113,7 @@ class DisplayTimeTest {
                 yesterdayNoonPacific,
                 1L,
                 now = todayNoonPacific,
-            )
+            ),
         ).isEqualTo("Yesterday at 12:00PM PT")
     }
 

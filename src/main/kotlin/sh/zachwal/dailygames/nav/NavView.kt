@@ -18,7 +18,7 @@ enum class NavItem {
 
 data class NavView constructor(
     val navItems: List<HTMLView<UL>>,
-    val insideNavItem: HTMLView<HEADER>? = null
+    val insideNavItem: HTMLView<HEADER>? = null,
 ) : HTMLView<BODY>() {
 
     constructor(
@@ -31,7 +31,7 @@ data class NavView constructor(
                 href = "/",
                 icon = "bi-house-door-fill",
                 isActive = currentActiveNavItem == NavItem.HOME,
-                text = "Home"
+                text = "Home",
             ),
             ChatNavItemView(
                 isActive = currentActiveNavItem == NavItem.CHAT,
@@ -44,10 +44,10 @@ data class NavView constructor(
                 href = "/profile",
                 icon = "bi-person-circle",
                 isActive = currentActiveNavItem == NavItem.PROFILE,
-                text = "Profile"
-            )
+                text = "Profile",
+            ),
         ),
-        insideNavItem
+        insideNavItem,
     )
 
     override fun BODY.render() {

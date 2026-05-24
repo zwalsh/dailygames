@@ -56,7 +56,7 @@ private val tradle890 = """
 @ExtendWith(DatabaseExtension::class)
 class ResultServiceTest(
     jdbi: Jdbi,
-    private val fixtures: Fixtures
+    private val fixtures: Fixtures,
 ) {
 
     private val puzzleDAO = jdbi.onDemand<PuzzleDAO>()
@@ -106,7 +106,7 @@ class ResultServiceTest(
             🟩🟩🟩🟩🟨⬅️
             🟩🟩🟩🟩🟨↗️
             🟩🟩🟩🟩🟩🎉
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         assertThat(result.resultInfo).isInstanceOf(WorldleInfo::class.java)
@@ -132,7 +132,7 @@ class ResultServiceTest(
             🟩🟩🟩🟩🟨
             🟩🟩🟩🟩🟨
             🟩🟩🟩🟩🟨
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -148,7 +148,7 @@ class ResultServiceTest(
             """
             #travle #606 +2 (1 hint)
             ✅✅🟩🟧🟧✅
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
@@ -172,7 +172,7 @@ class ResultServiceTest(
             """
             Top 5 #171
             ⬜🟧🟨⬜⬜🟩⬜⬜
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
@@ -196,7 +196,7 @@ class ResultServiceTest(
             #Flagle #905 (14.08.2024) X/6
             🟥🟥🟥
             🟥🟥🟥
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -212,7 +212,7 @@ class ResultServiceTest(
             """
             Pinpoint #126
             🤔 🤔 📌 ⬜ ⬜ (3/5)
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -229,7 +229,7 @@ class ResultServiceTest(
             Geocircles #55
             🟢🟢🟢🟢🟢
             ❤️❤️❤️❤️❤️
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -245,7 +245,7 @@ class ResultServiceTest(
             """
             Framed #990
             🎥 🟥 🟥 🟥 🟩 ⬛ ⬛
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(result.info<FramedInfo>()).isEqualTo(FramedInfo)
     }
@@ -265,7 +265,7 @@ class ResultServiceTest(
             ✅ ✅ ✅
             Score: 123.3
             Rank: 3,618 / 11,718
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -281,7 +281,7 @@ class ResultServiceTest(
             """
             Bandle #941 1/6
             🟩⬜⬜⬜⬜⬜
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -300,7 +300,7 @@ class ResultServiceTest(
             
             Total Score: 100.0
             🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -360,7 +360,7 @@ class ResultServiceTest(
             #Worldle #935 (12.08.2024) 2/6 (100%)
             🟩🟩🟩🟩🟨⬅️
             🟩🟩🟩🟩🟩🎉
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         val feedTitles = resultService.resultFeed(1L).map { it.resultTitle }
@@ -414,7 +414,7 @@ class ResultServiceTest(
             #Worldle #934 (12.08.2024) 2/6 (100%)
             🟩🟩🟩🟩🟨⬅️
             🟩🟩🟩🟩🟩🎉
-            """.trimIndent()
+            """.trimIndent(),
         )
         val differentPuzzleResult = resultService.createResult(fixtures.zach, tradle890)
 
@@ -458,7 +458,7 @@ class ResultServiceTest(
             resultInfo = WorldleInfo(
                 percentage = 100,
             ),
-            instantSubmitted = startOfToday.plusSeconds(3600)
+            instantSubmitted = startOfToday.plusSeconds(3600),
         )
 
         val hasResults = resultService.anyResultsToday(user)
@@ -489,7 +489,7 @@ class ResultServiceTest(
             resultInfo = WorldleInfo(
                 percentage = 100,
             ),
-            instantSubmitted = startOfToday.minusSeconds(3600)
+            instantSubmitted = startOfToday.minusSeconds(3600),
         )
 
         puzzleDAO.insertPuzzle(Puzzle(Game.WORLDLE, 798, null))
@@ -501,7 +501,7 @@ class ResultServiceTest(
             resultInfo = WorldleInfo(
                 percentage = 100,
             ),
-            instantSubmitted = endOfToday.plusSeconds(3600)
+            instantSubmitted = endOfToday.plusSeconds(3600),
         )
 
         val hasResults = resultService.anyResultsToday(user)
@@ -538,12 +538,14 @@ class ResultServiceTest(
 
         val counts = resultService.resultCountByGame(
             since = Instant.now().minusSeconds(10),
-            excludeUserId = fixtures.zach.id
+            excludeUserId = fixtures.zach.id,
         )
 
         assertThat(counts).containsExactly(
-            Game.TOP5, 1,
-            Game.FLAGLE, 1,
+            Game.TOP5,
+            1,
+            Game.FLAGLE,
+            1,
         )
     }
 }

@@ -9,9 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import sh.zachwal.dailygames.db.extension.DatabaseExtension
 
 @ExtendWith(DatabaseExtension::class)
-
 class UserDAOTest(
-    private val jdbi: Jdbi
+    private val jdbi: Jdbi,
 ) {
     private val userDAO: UserDAO = jdbi.onDemand()
 

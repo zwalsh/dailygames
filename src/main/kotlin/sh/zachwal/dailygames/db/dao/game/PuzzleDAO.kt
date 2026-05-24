@@ -13,7 +13,7 @@ interface PuzzleDAO {
         INSERT INTO puzzle (game, number, date) 
         VALUES (:game, :number, :date)
         RETURNING *
-        """
+        """,
     )
     fun insertPuzzle(@BindBean puzzle: Puzzle): Puzzle
 
@@ -22,7 +22,7 @@ interface PuzzleDAO {
             SELECT game, number, date
             FROM puzzle
             WHERE game = :game AND number = :number
-        """
+        """,
     )
     fun getPuzzle(game: Game, number: Int): Puzzle?
 
@@ -32,7 +32,7 @@ interface PuzzleDAO {
             FROM puzzle
             WHERE game = :game
             ORDER BY number DESC
-        """
+        """,
     )
     fun listPuzzlesForGameDescending(game: Game): Stream<Puzzle>
 
@@ -43,7 +43,7 @@ interface PuzzleDAO {
                 FROM puzzle
                 WHERE game = :game AND number = :number
             )
-        """
+        """,
     )
     fun puzzleExists(game: Game, number: Int): Boolean
 
@@ -54,7 +54,7 @@ interface PuzzleDAO {
             WHERE game = :game AND number < :number
             ORDER BY number DESC
             LIMIT 1
-        """
+        """,
     )
     fun previousPuzzle(game: Game, number: Int): Puzzle?
 
@@ -65,7 +65,7 @@ interface PuzzleDAO {
             WHERE game = :game AND number > :number
             ORDER BY number ASC
             LIMIT 1
-        """
+        """,
     )
     fun nextPuzzle(game: Game, number: Int): Puzzle?
 
@@ -74,7 +74,7 @@ interface PuzzleDAO {
             SELECT game, max(number) AS number, max(date) AS date
             FROM puzzle
             GROUP BY game
-        """
+        """,
     )
     fun latestPuzzlePerGame(): List<Puzzle>
 }

@@ -42,7 +42,7 @@ data class LeaderboardView(
                     scoringText = """
                         Overall performance across all games. 
                         See individual leaderboards for scoring information.
-                    """.trimIndent()
+                    """.trimIndent(),
                 ).renderIn(this)
                 SectionHeaderView("All Time").renderIn(this)
                 div(classes = "row") {

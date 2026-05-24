@@ -4,7 +4,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 
 abstract class GameAnswerService(
-    private val game: Game
+    private val game: Game,
 ) {
 
     fun answerForPuzzle(puzzle: Puzzle): String? {

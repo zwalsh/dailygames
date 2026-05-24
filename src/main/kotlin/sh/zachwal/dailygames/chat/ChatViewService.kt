@@ -75,7 +75,7 @@ class ChatViewService @Inject constructor(
         val navView = chatNav(
             username = currentUser.username,
             hasUserSubmittedResult = hasUserSubmittedResult,
-            puzzle = puzzle
+            puzzle = puzzle,
         )
 
         return ChatView(

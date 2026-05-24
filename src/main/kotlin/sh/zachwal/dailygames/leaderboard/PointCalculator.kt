@@ -18,11 +18,13 @@ class PointCalculator {
             Game.FLAGLE,
             Game.PINPOINT,
             Game.FRAMED,
-            Game.BANDLE -> maxPoints(result) + 1 - score
+            Game.BANDLE,
+            -> maxPoints(result) + 1 - score
 
             Game.TOP5,
             Game.GEOCIRCLES,
-            Game.GEOGRID -> score
+            Game.GEOGRID,
+            -> score
 
             Game.TRAVLE -> (result.info<TravleInfo>()).calculatePoints(score)
 
@@ -37,13 +39,15 @@ class PointCalculator {
             Game.TRADLE,
             Game.FLAGLE,
             Game.FRAMED,
-            Game.BANDLE -> 6
+            Game.BANDLE,
+            -> 6
 
             Game.PINPOINT -> 5
 
             Game.TOP5,
             Game.GEOCIRCLES,
-            Game.BRACKET_CITY -> 10
+            Game.BRACKET_CITY,
+            -> 10
 
             Game.TRAVLE -> (result.info<TravleInfo>()).maxPoints(score)
 

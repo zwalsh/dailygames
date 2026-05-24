@@ -86,7 +86,7 @@ class UserService @Inject constructor(
         user: User,
         currentPassword: String,
         newPassword: String,
-        repeatNewPassword: String
+        repeatNewPassword: String,
     ): ChangePasswordResult {
         if (newPassword != repeatNewPassword) {
             return ChangePasswordFailure("Passwords do not match")

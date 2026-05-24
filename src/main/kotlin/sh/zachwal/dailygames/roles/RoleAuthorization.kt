@@ -29,7 +29,7 @@ class RoleAuthorization internal constructor(config: Configuration) {
     class RoleBasedAuthorizer {
         internal lateinit var authorizationFunction: suspend ApplicationCall.(
             Set<Role>,
-            UserSessionPrincipal
+            UserSessionPrincipal,
         ) -> Role?
 
         fun validate(body: suspend ApplicationCall.(Set<Role>, UserSessionPrincipal) -> Role?) {
@@ -73,7 +73,7 @@ class RoleAuthorization internal constructor(config: Configuration) {
 
         override fun install(
             pipeline: ApplicationCallPipeline,
-            configure: RoleBasedAuthorizer.() -> Unit
+            configure: RoleBasedAuthorizer.() -> Unit,
         ): RoleAuthorization {
             val configuration = RoleBasedAuthorizer().apply(configure)
             return RoleAuthorization(configuration)

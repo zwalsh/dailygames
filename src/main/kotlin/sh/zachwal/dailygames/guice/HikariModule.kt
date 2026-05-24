@@ -27,7 +27,7 @@ class HikariModule : AbstractModule() {
         appConfig.dbUserOverride?.let { override ->
             logger.info(
                 "Overriding configured db user with value from ktor.deployment" +
-                    ".db_user=$override"
+                    ".db_user=$override",
             )
             hikariConfig.dataSourceProperties.setProperty("user", override)
         } ?: run {

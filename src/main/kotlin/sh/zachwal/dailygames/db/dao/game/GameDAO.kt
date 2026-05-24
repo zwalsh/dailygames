@@ -9,7 +9,7 @@ interface GameDAO {
     @SqlQuery(
         """
             SELECT name FROM game
-        """
+        """,
     )
     fun listGames(): List<Game>
 
@@ -17,7 +17,7 @@ interface GameDAO {
         """
             SELECT name FROM game
             WHERE instant_created > :instant
-        """
+        """,
     )
     fun listGamesCreatedAfter(instant: Instant): List<Game>
 }

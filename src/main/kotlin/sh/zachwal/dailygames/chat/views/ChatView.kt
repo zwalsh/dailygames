@@ -49,7 +49,7 @@ data class ChatView constructor(
                         text = "",
                         timestampText = "",
                         instantSubmitted = Instant.now(),
-                        hidden = true
+                        hidden = true,
                     ).renderIn(this)
 
                     chatFeedItems.forEach {
@@ -62,7 +62,7 @@ data class ChatView constructor(
                             ChatSubmitFormView(
                                 game = game,
                                 puzzleNumber = puzzleNumber,
-                                isCommentDisabled = isCommentDisabled
+                                isCommentDisabled = isCommentDisabled,
                             ).renderIn(this)
                         }
                     }

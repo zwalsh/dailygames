@@ -19,7 +19,7 @@ class PuzzleResultTest {
         score = 5,
         shareText = "",
         resultInfo = WorldleInfo(
-            percentage = 100
+            percentage = 100,
         ),
     )
 

@@ -38,7 +38,7 @@ class ShareTextParser {
     }
 
     val worldleRegex = Regex(
-        """\s*#Worldle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+\((?<percentage>\d+)%\)[\s\S]*"""
+        """\s*#Worldle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+\((?<percentage>\d+)%\)[\s\S]*""",
     )
 
     fun extractWorldleInfo(shareText: String): ParsedResult {
@@ -53,14 +53,14 @@ class ShareTextParser {
             date = LocalDate.of(year.toInt(), month.toInt(), day.toInt()),
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            resultInfo = worldleInfo
+            resultInfo = worldleInfo,
         )
     }
 
     val tradleRegex = Regex(
         """
             \s*#Tradle\s+#(?<puzzleNumber>\d+)\s+(?<score>\S)/6[\s\S]*
-        """.trimIndent()
+        """.trimIndent(),
     )
 
     fun extractTradleInfo(shareText: String): ParsedResult {
@@ -73,7 +73,7 @@ class ShareTextParser {
             date = null,
             score = score.toIntOrNull() ?: 7, // X / 6 scored as 7 points.
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            resultInfo = tradleInfo
+            resultInfo = tradleInfo,
         )
     }
 
@@ -112,14 +112,14 @@ class ShareTextParser {
             date = null,
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            resultInfo = travleInfo
+            resultInfo = travleInfo,
         )
     }
 
     val top5Regex = Regex(
         """
             \s*Top 5\s+#(?<puzzleNumber>\d+)[\s\S]*
-        """.trimIndent()
+        """.trimIndent(),
     )
     val perfectTop5Regex = Regex("\uD83D\uDFE5\uD83D\uDFE7\uD83D\uDFE8\uD83D\uDFE9\uD83D\uDFE6")
     val top5GuessRegex = Regex("[\uD83D\uDFE5\uD83D\uDFE7\uD83D\uDFE8\uD83D\uDFE9\uD83D\uDFE6⬜]")
@@ -137,7 +137,7 @@ class ShareTextParser {
         val top5Info = Top5Info(
             numGuesses = numGuesses,
             numCorrect = numCorrect,
-            isPerfect = isPerfect
+            isPerfect = isPerfect,
         )
         return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
@@ -145,14 +145,14 @@ class ShareTextParser {
             date = null,
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            resultInfo = top5Info
+            resultInfo = top5Info,
         )
     }
 
     val flagleRegex = Regex(
         """
             \s*#Flagle\s+#(?<puzzleNumber>\d+)\s+\((?<day>\d{2})\.(?<month>\d{2})\.(?<year>\d{4})\)\s+(?<score>\S)/6\s+[\s\S]*
-        """.trimIndent()
+        """.trimIndent(),
     )
 
     fun extractFlagleInfo(shareText: String): ParsedResult {
@@ -171,7 +171,7 @@ class ShareTextParser {
     val pinpointRegex = Regex(
         """
             \s*Pinpoint #(?<puzzleNumber>\d+)[\s\S]*\((?<score>\S)/5\)[\s\S]*
-        """.trimIndent()
+        """.trimIndent(),
     )
 
     fun extractPinpointInfo(shareText: String): ParsedResult {
@@ -191,7 +191,7 @@ class ShareTextParser {
     val geocirclesRegex = Regex(
         """
             \s*Geocircles #(?<puzzleNumber>\d+)[\s\S]*
-        """.trimIndent()
+        """.trimIndent(),
     )
     val greenCircleOrHeartRegex = Regex("(\uD83D\uDFE2|❤\uFE0F)")
     fun extractGeocirclesInfo(shareText: String): ParsedResult {
@@ -205,14 +205,14 @@ class ShareTextParser {
             date = null,
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            resultInfo = GeocirclesInfo
+            resultInfo = GeocirclesInfo,
         )
     }
 
     val framedRegex = Regex(
         """
             \s*Framed #(?<puzzleNumber>\d+)[\s\S]*
-        """.trimIndent()
+        """.trimIndent(),
     )
     val redSquareRegex = Regex("\uD83D\uDFE5")
     fun extractFramedInfo(shareText: String): ParsedResult {
@@ -226,7 +226,7 @@ class ShareTextParser {
             date = null,
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
-            resultInfo = FramedInfo
+            resultInfo = FramedInfo,
         )
     }
 
@@ -273,8 +273,8 @@ class ShareTextParser {
                 score = score,
                 rank = rank,
                 rankOutOf = rankOutOf,
-                numCorrect = numCorrect
-            )
+                numCorrect = numCorrect,
+            ),
         )
     }
 
@@ -306,7 +306,7 @@ class ShareTextParser {
                 numSkips = skipRegex.findAll(shareText).count(),
                 numCorrectBand = correctBandRegex.findAll(shareText).count(),
                 numIncorrect = incorrectRegex.findAll(shareText).count(),
-            )
+            ),
         )
     }
 
@@ -348,7 +348,7 @@ class ShareTextParser {
             peeks = peeks,
             answersRevealed = answersRevealed,
             totalScore = totalScore,
-            grid = grid
+            grid = grid,
         )
 
         return ParsedResult(

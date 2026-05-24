@@ -5,7 +5,7 @@ import kotlinx.html.div
 import sh.zachwal.dailygames.shared_html.HTMLView
 
 data class GameListView(
-    val games: List<GameLinkView>
+    val games: List<GameLinkView>,
 ) : HTMLView<DIV>() {
     override fun DIV.render() {
         div(classes = "row overflow-auto flex-nowrap py-3 my-1") {

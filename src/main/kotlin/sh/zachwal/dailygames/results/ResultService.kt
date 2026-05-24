@@ -44,7 +44,7 @@ class ResultService @Inject constructor(
 
     fun createResult(
         user: User,
-        shareText: String
+        shareText: String,
     ): PuzzleResult {
         // regex & parse share text
         val game = shareTextParser.identifyGame(shareText) ?: run {
@@ -66,7 +66,9 @@ class ResultService @Inject constructor(
             ).also {
                 logger.info(
                     "User {} submitted result for {} #{}",
-                    user.username, it.game.displayName(), it.puzzleNumber
+                    user.username,
+                    it.game.displayName(),
+                    it.puzzleNumber,
                 )
             }
         } catch (e: UnableToExecuteStatementException) {
@@ -76,7 +78,7 @@ class ResultService @Inject constructor(
             } else {
                 logger.error(
                     "Error inserting result for ${game.displayName()} #${parsedResult.puzzleNumber} for user ${user.username}",
-                    e
+                    e,
                 )
                 throw e
             }

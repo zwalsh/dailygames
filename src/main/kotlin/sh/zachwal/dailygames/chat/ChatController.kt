@@ -45,7 +45,7 @@ class ChatController @Inject constructor(
                 val chatView = chatViewService.chatView(
                     currentUser = currentUser,
                     game = game,
-                    puzzleNumber = puzzleNumber
+                    puzzleNumber = puzzleNumber,
                 )
 
                 call.respondHtml {

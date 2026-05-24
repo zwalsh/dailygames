@@ -23,7 +23,7 @@ interface UserDAO {
             UPDATE public.user
             SET hash = :newHash
             WHERE id = :userId
-        """
+        """,
     )
     fun updatePassword(userId: Long, newHash: String)
 }
