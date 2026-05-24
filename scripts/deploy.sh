@@ -65,7 +65,11 @@ trap 'on_error $LINENO' ERR
 
 # 5. Check out the target commit
 log "[$ENV] Checking out $SHA"
-git -C "$REPO" checkout -f "$SHA"
+if [[ "$ENV" == "dailygames" ]]; then
+    git -C "$REPO" checkout -f main
+else
+    git -C "$REPO" -c advice.detachedHead=false checkout -f "$SHA"
+fi
 
 # 6. Build
 log "[$ENV] Building"
@@ -77,9 +81,13 @@ log "[$ENV] Unpacking to $RELEASE_DIR"
 mkdir -p "$RELEASE_DIR"
 tar -xf "$REPO/build/distributions/dailygames.tar" -C "$RELEASE_DIR"
 
-# 8. Run database migrations
-log "[$ENV] Running database migrations"
-"$REPO/db/migrate.sh"
+# 8. Run database migrations (testdailygames only migrates for commits on main)
+if [[ "$ENV" == "dailygames" ]] || git -C "$REPO" merge-base --is-ancestor "$SHA" origin/main; then
+    log "[$ENV] Running database migrations"
+    "$REPO/db/migrate.sh"
+else
+    log "[$ENV] Skipping database migrations: $SHA is not on main"
+fi
 
 # 9. Atomically update the current symlink
 log "[$ENV] Updating current symlink to $RELEASE_DIR"
