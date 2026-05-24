@@ -5,9 +5,9 @@
 
 cd "$(dirname "$0")"
 
-username=$(find ~ -name "dailygames.env" -exec grep -m 1 "DB_USER" {} \; | cut -d '=' -f 2)
-password=$(find ~ -name "dailygames.env" -exec grep -m 1 "DB_PASSWORD" {} \; | cut -d '=' -f 2)
-db_name=$(find ~ -name "dailygames.env" -exec grep -m 1 "DB_NAME" {} \; | cut -d '=' -f 2)
+username=$DB_USER
+password=$DB_PASSWORD
+db_name=$DB_NAME
 
 liquibase updateSql --url=jdbc:postgresql://localhost:5432/"$db_name" --username="$username" --password="$password" || exit 1
 
