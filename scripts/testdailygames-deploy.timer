@@ -3,7 +3,7 @@ Description=Test Daily Games deployment timer
 
 [Timer]
 OnBootSec=1min
-OnUnitActiveSec=1min
+OnUnitInactiveSec=1min
 Unit=testdailygames-deploy.service
 
 [Install]
