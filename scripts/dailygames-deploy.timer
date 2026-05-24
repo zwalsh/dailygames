@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily Games deployment timer
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1min
+Unit=dailygames-deploy.service
+
+[Install]
+WantedBy=timers.target

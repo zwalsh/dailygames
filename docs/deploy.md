@@ -3,14 +3,47 @@
 Runs as a systemd unit (see [dailygames.service](../dailygames.service)).
 
 Requires its own user. The systemd service file specifies a binary within that user's home
-directory, which is assembled by `./gradlew build` with the `application` Gradle plugin.
+directory, which is assembled by `./gradlew assemble` with the `application` Gradle plugin.
+
+## CI/CD Architecture
+
+Jenkins runs CI (build, lint, test) and sets a GitHub commit status.
+Deployment is handled separately by `scripts/deploy.sh`, triggered by systemd timers on the
+production server.
+
+## Environments
+
+- **`dailygames`** (production): deploys the latest commit on `origin/main`.
+- **`testdailygames`** (test): deploys the tip of whichever remote branch was most recently updated.
+
+Both wait for the target commit's CI status to be `success` before deploying.
+
+## Credentials
+
+Two credentials are required on the server, owned by the service user:
+
+| Credential       | Type            | Purpose                            | Location                      |
+|------------------|-----------------|------------------------------------|-------------------------------|
+| Deploy Key       | SSH private key | `git fetch` from GitHub            | `~/.ssh/deploy_key`           |
+| Fine-grained PAT | HTTP token      | Read commit status from GitHub API | `~/.github_token` (chmod 600) |
+
+The fine-grained PAT is scoped to `zwalsh/dailygames` with **Commit statuses: Read-only** permission.
+The deploy key is read-only.
 
 ## Dependencies
 
-Depends on a Postgres database server. Its schema is controlled by liquibase. See [db](../db) and
+Depends on a Postgres database server. Its schema is controlled by Liquibase. See [db](../db) and
 [liquibase.properties](../db/liquibase.properties). The database connection information (that
 isn't configured via environment variables) is configured in
 [hikari.properties](../src/main/resources/hikari.properties).
+
+The following must be present for the service users on the production host:
+
+- **JDK 17**
+- **Gradle wrapper** (`./gradlew` in the repo checkout — downloads Gradle automatically)
+- **Liquibase** on `$PATH`
+- **`jq`** (for parsing the GitHub API JSON response)
+- **`git`** on `$PATH`
 
 ## Environment
 
@@ -21,11 +54,29 @@ Requires a `dailygames.env` environment file in the user's home directory (loade
 |-------------------|----------------------------------------------------------------------------------------------|
 | ENV               | The name of the current environment. Controls header configuration, HTTPS usage, etc.        |
 | PORT              | The port that the server should start on.                                                    |
-| HOST              | The hostname at which the server is reachable.                                               | 
+| HOST              | The hostname at which the server is reachable.                                               |
 | WS_PROTOCOL       | `ws` or `wss` -- which protocol to use to connect to this server for a WebSocket connection. |
+| DB_NAME           | The name of the Postgres database to connect to.                                             |
 | DB_USER           | The user with which to connect to Postgres.                                                  |
 | DB_PASSWORD       | The password with which to connect to Postgres.                                              |
-| SENTRY_KOTLIN_DSN | The Sentry DSN to send Kotlin exceptions to.                                                 | 
+| SENTRY_KOTLIN_DSN | The Sentry DSN to send Kotlin exceptions to.                                                 |
 | SENTRY_JS_DSN     | The Sentry DSN to send Javascript exceptions to.                                             |
 | UMAMI_URL         | The URL of the Umami host to send analytics to.                                              |
 | UMAMI_WEBSITE_ID  | The website id of this deploy of Daily Games configured in Umami.                            |
+
+## Installing the timers
+
+Run as root on the production server from a checkout of the repo:
+
+```bash
+sudo bash scripts/install-timers.sh
+```
+
+To inspect timer status:
+
+```bash
+systemctl status dailygames-deploy.timer
+systemctl status testdailygames-deploy.timer
+journalctl -u dailygames-deploy.service -n 50
+journalctl -u testdailygames-deploy.service -n 50
+```
