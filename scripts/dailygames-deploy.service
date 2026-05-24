@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Games deployment
+After=network.target
+
+[Service]
+Type=oneshot
+User=dailygames
+EnvironmentFile=/home/dailygames/dailygames.env
+ExecStart=/home/dailygames/dailygames/scripts/deploy.sh --env dailygames
+StandardOutput=journal
+StandardError=journal
