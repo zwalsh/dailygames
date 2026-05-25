@@ -6,6 +6,6 @@ After=network.target
 Type=oneshot
 User=testdailygames
 EnvironmentFile=/home/testdailygames/dailygames.env
-ExecStart=/home/testdailygames/dailygames/scripts/deploy.sh --env testdailygames
+ExecStart=/home/testdailygames/dailygames/scripts/test-deploy.sh
 StandardOutput=journal
 StandardError=journal

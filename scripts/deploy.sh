@@ -21,86 +21,85 @@ fi
 REPO=~/dailygames
 TOKEN=$(cat ~/.github_token)
 
-# 1. Fetch latest refs
-log "[$ENV] Fetching latest refs"
-git -C "$REPO" fetch origin
-
-# 2. Resolve target SHA
-if [[ "$ENV" == "dailygames" ]]; then
-    SHA=$(git -C "$REPO" rev-parse origin/main)
-else
-    SHA=$(git -C "$REPO" for-each-ref \
-        --sort=-committerdate \
-        --format='%(refname:short) %(objectname)' \
-        'refs/remotes/origin/*' | \
-        grep -v 'origin/HEAD' | \
-        awk 'NR==1{print $2}')
-fi
-log "[$ENV] Target SHA: $SHA"
-
-# 3. Exit if already deployed
-DEPLOYED_FILE=~/deployed_commit
-if [[ -f "$DEPLOYED_FILE" ]] && [[ "$(cat "$DEPLOYED_FILE")" == "$SHA" ]]; then
-    log "[$ENV] SHA $SHA already deployed, nothing to do"
-    exit 0
-fi
-
-# 4. Exit if CI status is not success
-STATUS=$(curl -s "https://api.github.com/repos/zwalsh/dailygames/commits/$SHA/status" \
-    -H "Authorization: token $TOKEN" | jq -r '.state // empty') || true
-log "[$ENV] CI status for $SHA: ${STATUS:-<empty>}"
-if [[ "$STATUS" != "success" ]]; then
-    log "[$ENV] CI not green (state=$STATUS), skipping deploy"
-    exit 0
-fi
-
-log "[$ENV] Starting deploy of $SHA"
-
 on_error() {
     local exit_code=$?
     local line=$1
-    log "[$ENV] DEPLOY FAILED at line $line (exit code $exit_code)"
+    log "[$ENV] *** DEPLOY FAILED *** at line $line (exit code $exit_code)"
+    log "[$ENV] Check the lines above for the error output from the failing command"
 }
 trap 'on_error $LINENO' ERR
 
-# 5. Check out the target commit
-log "[$ENV] Checking out $SHA"
 if [[ "$ENV" == "dailygames" ]]; then
-    git -C "$REPO" checkout -f main
-else
-    git -C "$REPO" -c advice.detachedHead=false checkout -f "$SHA"
-fi
+    # 1. Get latest release tag from GitHub
+    log "[dailygames] Fetching latest release"
+    TAG=$(GITHUB_TOKEN="$TOKEN" gh release list \
+        --repo zwalsh/dailygames \
+        --json tagName,isLatest \
+        --jq '.[] | select(.isLatest) | .tagName')
+    if [[ -z "$TAG" ]]; then
+        log "[dailygames] No release found"
+        exit 0
+    fi
+    SHA="${TAG#sha-}"
+    log "[dailygames] Latest release: $TAG (SHA: $SHA)"
 
-# 6. Build
-log "[$ENV] Building"
-"$REPO/gradlew" -p "$REPO" assemble
+    # 2. Exit if already deployed
+    DEPLOYED_FILE=~/deployed_commit
+    if [[ -f "$DEPLOYED_FILE" ]] && [[ "$(cat "$DEPLOYED_FILE")" == "$TAG" ]]; then
+        log "[dailygames] $TAG already deployed, nothing to do"
+        exit 0
+    fi
 
-# 7. Unpack into release directory
-RELEASE_DIR=~/releases/$SHA
-log "[$ENV] Unpacking to $RELEASE_DIR"
-mkdir -p "$RELEASE_DIR"
-tar -xf "$REPO/build/distributions/dailygames.tar" -C "$RELEASE_DIR"
+    # 3. Exit if CI status is not success
+    STATUS=$(curl -s "https://api.github.com/repos/zwalsh/dailygames/commits/$SHA/status" \
+        -H "Authorization: token $TOKEN" | jq -r '.state // empty') || true
+    log "[dailygames] CI status for $SHA: ${STATUS:-<empty>}"
+    if [[ "$STATUS" != "success" ]]; then
+        log "[dailygames] CI not green (state=$STATUS), skipping deploy"
+        exit 0
+    fi
 
-# 8. Run database migrations (testdailygames only migrates for commits on main)
-if [[ "$ENV" == "dailygames" ]] || git -C "$REPO" merge-base --is-ancestor "$SHA" origin/main; then
-    log "[$ENV] Running database migrations"
+    log "[dailygames] Starting deploy of $TAG"
+
+    # 4. Download release asset
+    log "[dailygames] Downloading release asset"
+    GITHUB_TOKEN="$TOKEN" gh release download "$TAG" \
+        --repo zwalsh/dailygames \
+        --pattern 'dailygames.tar' \
+        --dir /tmp/ \
+        --clobber
+
+    # 5. Unpack into release directory
+    RELEASE_DIR=~/releases/$TAG
+    log "[dailygames] Unpacking to $RELEASE_DIR"
+    mkdir -p "$RELEASE_DIR"
+    tar -xf /tmp/dailygames.tar -C "$RELEASE_DIR"
+
+    # 6. Update repo to release SHA so migration files are current
+    log "[dailygames] Checking out $SHA for migrations"
+    git -C "$REPO" fetch origin
+    git -C "$REPO" checkout -f "$SHA"
+
+    # 7. Run database migrations
+    log "[dailygames] Running database migrations"
     "$REPO/db/migrate.sh"
+
+    # 8. Atomically update the current symlink
+    log "[dailygames] Updating current symlink to $RELEASE_DIR"
+    ln -sfn "$RELEASE_DIR" ~/releases/current
+
+    # 9. Restart the service
+    log "[dailygames] Restarting dailygames service"
+    sudo systemctl restart dailygames
+
+    # 10. Record the deployed tag
+    echo "$TAG" > ~/deployed_commit
+    log "[dailygames] Deploy of $TAG complete"
+
+    # 11. Prune old releases, keeping the 3 most recent
+    log "[dailygames] Pruning old releases"
+    ls -t ~/releases/ | grep -v '^current$' | tail -n +4 | xargs -I{} rm -rf ~/releases/{}
+
 else
-    log "[$ENV] Skipping database migrations: $SHA is not on main"
+    log "[testdailygames] testdailygames deploys are not handled here; use test-deploy.sh"
 fi
-
-# 9. Atomically update the current symlink
-log "[$ENV] Updating current symlink to $RELEASE_DIR"
-ln -sfn "$RELEASE_DIR" ~/releases/current
-
-# 10. Restart the service
-log "[$ENV] Restarting $ENV service"
-sudo systemctl restart "$ENV"
-
-# 11. Record the deployed commit
-echo "$SHA" > "$DEPLOYED_FILE"
-log "[$ENV] Deploy of $SHA complete"
-
-# 12. Prune old releases, keeping the 3 most recent
-log "[$ENV] Pruning old releases"
-ls -t ~/releases/ | grep -v '^current$' | tail -n +4 | xargs -I{} rm -rf ~/releases/{}
