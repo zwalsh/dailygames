@@ -75,7 +75,7 @@ class LeaderboardServiceTest {
             numGuesses = 5,
             numCorrect = 0,
             isPerfect = false,
-        )
+        ),
     )
 
     @Test
@@ -85,7 +85,7 @@ class LeaderboardServiceTest {
         verify {
             navViewFactory.navView(
                 username = testUser.username,
-                currentActiveNavItem = NavItem.LEADERBOARD
+                currentActiveNavItem = NavItem.LEADERBOARD,
             )
         }
     }
@@ -101,7 +101,7 @@ class LeaderboardServiceTest {
     fun `gameLeaderboardData returns user's average all time`() {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(score = 5),
-            result.copy(score = 4)
+            result.copy(score = 4),
         )
 
         val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
@@ -114,7 +114,7 @@ class LeaderboardServiceTest {
     fun `gameLeaderboardData returns user's total points`() {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(score = 5),
-            result.copy(score = 4)
+            result.copy(score = 4),
         )
 
         val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
@@ -127,7 +127,7 @@ class LeaderboardServiceTest {
     fun `gameLeaderboardData returns user's total games played`() {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(score = 5),
-            result.copy(score = 4)
+            result.copy(score = 4),
         )
 
         val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
@@ -140,7 +140,7 @@ class LeaderboardServiceTest {
     fun `gameLeaderboardData filters to user's last thirty days`() {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(score = 5, instantSubmitted = Instant.now()),
-            result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS))
+            result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS)),
         )
 
         val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
@@ -154,7 +154,7 @@ class LeaderboardServiceTest {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(score = 5, instantSubmitted = Instant.now()),
             result.copy(score = 6, instantSubmitted = Instant.now()),
-            result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS))
+            result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS)),
         )
 
         val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
@@ -168,7 +168,7 @@ class LeaderboardServiceTest {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(score = 5, instantSubmitted = Instant.now()),
             result.copy(score = 6, instantSubmitted = Instant.now()),
-            result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS))
+            result.copy(score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS)),
         )
 
         val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
@@ -190,11 +190,11 @@ class LeaderboardServiceTest {
             shareText = "",
             resultInfo = WorldleInfo(
                 percentage = 100,
-            )
+            ),
         )
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.empty()
         every { resultDAO.allResultsForGameStream(Game.WORLDLE) } returns Stream.of(
-            worldleResult
+            worldleResult,
         )
 
         val leaderboardData = leaderboardService.gameLeaderboardData(Game.WORLDLE)
@@ -213,7 +213,7 @@ class LeaderboardServiceTest {
             result.copy(userId = derekUser.id, score = 9),
             result.copy(userId = jackieUser.id, score = 8),
             result.copy(userId = chatGPTUser.id, score = 7),
-            result.copy(userId = mikMapUser.id, score = 6)
+            result.copy(userId = mikMapUser.id, score = 6),
         )
 
         val leaderboardData = leaderboardService.gameLeaderboardData(Game.TOP5)
@@ -223,7 +223,7 @@ class LeaderboardServiceTest {
             derekUser.username,
             jackieUser.username,
             chatGPTUser.username,
-            mikMapUser.username
+            mikMapUser.username,
         )
         assertThat(leaderboardData.allTimeAverage.labels).doesNotContain(zachUser.username)
     }
@@ -239,18 +239,18 @@ class LeaderboardServiceTest {
         shareText = "",
         resultInfo = WorldleInfo(
             percentage = 100,
-        )
+        ),
     )
 
     @Test
     fun `overall leaderboardData averages user's points across all games`() {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(score = 5),
-            result.copy(score = 4)
+            result.copy(score = 4),
         )
         every { resultDAO.allResultsForGameStream(Game.WORLDLE) } returns Stream.of(
             worldleResult.copy(score = 2), // 5 points
-            worldleResult.copy(score = 1) // 6 points
+            worldleResult.copy(score = 1), // 6 points
         )
 
         val leaderboardData = leaderboardService.overallLeaderboardData()
@@ -263,11 +263,11 @@ class LeaderboardServiceTest {
     fun `overall leaderboardData sums user's points across all games`() {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(score = 5),
-            result.copy(score = 4)
+            result.copy(score = 4),
         )
         every { resultDAO.allResultsForGameStream(Game.WORLDLE) } returns Stream.of(
             worldleResult.copy(score = 2), // 5 points
-            worldleResult.copy(score = 1) // 6 points
+            worldleResult.copy(score = 1), // 6 points
         )
 
         val leaderboardData = leaderboardService.overallLeaderboardData()
@@ -280,11 +280,11 @@ class LeaderboardServiceTest {
     fun `overall leaderboardData sums user's games played`() {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(score = 5),
-            result.copy(score = 4)
+            result.copy(score = 4),
         )
         every { resultDAO.allResultsForGameStream(Game.WORLDLE) } returns Stream.of(
             worldleResult.copy(score = 2), // 5 points
-            worldleResult.copy(score = 1) // 6 points
+            worldleResult.copy(score = 1), // 6 points
         )
 
         val leaderboardData = leaderboardService.overallLeaderboardData()
@@ -297,18 +297,18 @@ class LeaderboardServiceTest {
     fun `overall leaderboardData includes multiple users`() {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(userId = derekUser.id, score = 5),
-            result.copy(userId = jackieUser.id, score = 4)
+            result.copy(userId = jackieUser.id, score = 4),
         )
         every { resultDAO.allResultsForGameStream(Game.WORLDLE) } returns Stream.of(
             worldleResult.copy(userId = derekUser.id, score = 2), // 5 points
-            worldleResult.copy(userId = jackieUser.id, score = 3) // 4 points
+            worldleResult.copy(userId = jackieUser.id, score = 3), // 4 points
         )
 
         val leaderboardData = leaderboardService.overallLeaderboardData()
 
         assertThat(leaderboardData.allTimeAverage.labels).containsExactly(
             derekUser.username,
-            jackieUser.username
+            jackieUser.username,
         )
         assertThat(leaderboardData.allTimeAverage.dataPoints).containsExactly(5.0, 4.0)
     }
@@ -318,18 +318,18 @@ class LeaderboardServiceTest {
         every { resultDAO.allResultsForGameStream(Game.TOP5) } returns Stream.of(
             result.copy(score = 5, instantSubmitted = Instant.now()),
             result.copy(
-                score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS)
-            )
+                score = 4, instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS),
+            ),
         )
         every { resultDAO.allResultsForGameStream(Game.WORLDLE) } returns Stream.of(
             worldleResult.copy(
                 score = 2, // 5 points
-                instantSubmitted = Instant.now()
+                instantSubmitted = Instant.now(),
             ),
             worldleResult.copy(
                 score = 3, // 4 points
-                instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS)
-            )
+                instantSubmitted = Instant.now().minus(31, ChronoUnit.DAYS),
+            ),
         )
 
         val leaderboardData = leaderboardService.overallLeaderboardData()
@@ -414,7 +414,7 @@ class LeaderboardServiceTest {
     fun `dailyLeaderboardData aggregates multiple results for one user`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
             result.copy(userId = testUser.id, score = 5),
-            result.copy(userId = testUser.id, score = 10)
+            result.copy(userId = testUser.id, score = 10),
         )
         every { userService.getUsernameCached(testUser.id) } returns testUser.username
 
@@ -432,7 +432,7 @@ class LeaderboardServiceTest {
             result.copy(userId = jackieUser.id, score = 8),
             result.copy(userId = chatGPTUser.id, score = 7),
             result.copy(userId = mikMapUser.id, score = 6),
-            result.copy(userId = zachUser.id, score = 5)
+            result.copy(userId = zachUser.id, score = 5),
         )
         every { userService.getUsernameCached(testUser.id) } returns testUser.username
         every { userService.getUsernameCached(derekUser.id) } returns derekUser.username
@@ -448,7 +448,7 @@ class LeaderboardServiceTest {
             derekUser.username,
             jackieUser.username,
             chatGPTUser.username,
-            mikMapUser.username
+            mikMapUser.username,
         )
         assertThat(chartInfo.dataPoints).containsExactly(10.0, 9.0, 8.0, 7.0, 6.0)
     }
@@ -461,7 +461,7 @@ class LeaderboardServiceTest {
             result.copy(userId = jackieUser.id, score = 8),
             result.copy(userId = chatGPTUser.id, score = 7),
             result.copy(userId = mikMapUser.id, score = 6),
-            result.copy(userId = zachUser.id, score = 5)
+            result.copy(userId = zachUser.id, score = 5),
         )
         every { userService.getUsernameCached(testUser.id) } returns testUser.username
         every { userService.getUsernameCached(derekUser.id) } returns derekUser.username
@@ -477,7 +477,7 @@ class LeaderboardServiceTest {
             derekUser.username,
             jackieUser.username,
             chatGPTUser.username,
-            mikMapUser.username
+            mikMapUser.username,
         )
         assertThat(chartInfo.dataPoints).containsExactly(10.0, 10.0, 8.0, 7.0, 6.0)
     }

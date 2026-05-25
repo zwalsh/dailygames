@@ -16,7 +16,7 @@ import java.time.Instant
 class ShareTextServiceTest {
     private val user = User(id = 1L, username = "zach", hashedPassword = "123abc==")
     private val shareLineMapper = ShareLineMapper(
-        pointCalculator = PointCalculator()
+        pointCalculator = PointCalculator(),
     )
     private val streakService = mockk<StreakService> {
         every { streakForUser(any()) } returns 3
@@ -49,7 +49,7 @@ class ShareTextServiceTest {
             numIncorrect = 2,
             numPerfect = 3,
             numHints = 1,
-        )
+        ),
     )
     private val resultService = mockk<ResultService> {
         every { resultsForUserToday(user) } returns listOf(worldleResult, travleResult)

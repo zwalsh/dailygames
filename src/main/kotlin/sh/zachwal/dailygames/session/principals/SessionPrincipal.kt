@@ -19,7 +19,7 @@ interface SessionPrincipal {
             this,
             expiration,
             curEpochMilli,
-            expiration > curEpochMilli
+            expiration > curEpochMilli,
         )
         return expiration > curEpochMilli
     }

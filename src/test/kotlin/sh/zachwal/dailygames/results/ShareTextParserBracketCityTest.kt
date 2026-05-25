@@ -195,7 +195,7 @@ class ShareTextParserBracketCityTest {
             
             Total Score: 100.0
             🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 }

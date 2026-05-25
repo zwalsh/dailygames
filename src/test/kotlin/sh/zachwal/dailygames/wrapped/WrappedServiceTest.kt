@@ -36,7 +36,7 @@ class WrappedServiceTest {
         shareText = "",
         resultInfo = WorldleInfo(
             percentage = 100,
-        )
+        ),
     )
     private val resultDAO = mockk<PuzzleResultDAO>()
     private val jdbi = mockk<Jdbi> {
@@ -62,7 +62,7 @@ class WrappedServiceTest {
         every {
             resultDAO.allResultsBetweenStream(
                 Instant.parse("2024-01-01T05:00:00Z"),
-                Instant.parse("2025-01-01T05:00:00Z")
+                Instant.parse("2025-01-01T05:00:00Z"),
             )
         } returns Stream.empty()
 
@@ -72,7 +72,7 @@ class WrappedServiceTest {
         verify {
             resultDAO.allResultsBetweenStream(
                 Instant.parse("2024-01-01T05:00:00Z"),
-                Instant.parse("2025-01-01T05:00:00Z")
+                Instant.parse("2025-01-01T05:00:00Z"),
             )
         }
     }
@@ -112,8 +112,10 @@ class WrappedServiceTest {
 
         val userOne = wrappedData.single { it.userId == 1L }
         assertThat(userOne.gamesPlayedByGame).containsExactly(
-            Game.WORLDLE, 3,
-            Game.GEOCIRCLES, 2,
+            Game.WORLDLE,
+            3,
+            Game.GEOCIRCLES,
+            2,
         )
     }
 
@@ -131,8 +133,10 @@ class WrappedServiceTest {
 
         val userOne = wrappedData.single { it.userId == 1L }
         assertThat(userOne.pointsByGame).containsExactly(
-            Game.WORLDLE, 14,
-            Game.GEOCIRCLES, 15,
+            Game.WORLDLE,
+            14,
+            Game.GEOCIRCLES,
+            15,
         )
     }
 
@@ -344,8 +348,10 @@ class WrappedServiceTest {
 
         val userOne = wrappedData.single { it.userId == 1L }
         assertThat(userOne.averagesByGame).containsAtLeast(
-            Game.WORLDLE, 4.7,
-            Game.GEOCIRCLES, 7.5,
+            Game.WORLDLE,
+            4.7,
+            Game.GEOCIRCLES,
+            7.5,
         )
     }
 
@@ -363,14 +369,18 @@ class WrappedServiceTest {
 
         val userOne = wrappedData.single { it.userId == 1L }
         assertThat(userOne.ranksPerGameTotal).containsAtLeast(
-            Game.WORLDLE, 1,
-            Game.GEOCIRCLES, 2
+            Game.WORLDLE,
+            1,
+            Game.GEOCIRCLES,
+            2,
         )
 
         val userTwo = wrappedData.single { it.userId == 2L }
         assertThat(userTwo.ranksPerGameTotal).containsAtLeast(
-            Game.WORLDLE, 2,
-            Game.GEOCIRCLES, 1
+            Game.WORLDLE,
+            2,
+            Game.GEOCIRCLES,
+            1,
         )
     }
 
@@ -394,18 +404,20 @@ class WrappedServiceTest {
 
         val userOne = wrappedData.single { it.userId == 1L }
         assertThat(userOne.ranksPerGameAverage).containsAtLeast(
-            Game.WORLDLE, 2
+            Game.WORLDLE,
+            2,
         )
         val userTwo = wrappedData.single { it.userId == 2L }
         assertThat(userTwo.ranksPerGameAverage).containsAtLeast(
-            Game.WORLDLE, 1
+            Game.WORLDLE,
+            1,
         )
     }
 
     @Test
     fun `user ranks do not include games where the user played less than 10 games`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
-            result
+            result,
         )
 
         val wrappedData = service.generateWrappedData(2024)
@@ -447,7 +459,7 @@ class WrappedServiceTest {
     @Test
     fun `best game is null if user does not qualify for any game`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
-            result
+            result,
         )
 
         val wrappedData = service.generateWrappedData(2024)
@@ -538,7 +550,7 @@ class WrappedServiceTest {
     @Test
     fun `caches wrapped data for one user`() {
         every { resultDAO.allResultsBetweenStream(any(), any()) } returns Stream.of(
-            result
+            result,
         )
 
         val currentUser = User(1, "name", "password")

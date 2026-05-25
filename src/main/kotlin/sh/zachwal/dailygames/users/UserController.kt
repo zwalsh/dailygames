@@ -71,7 +71,7 @@ class UserController @Inject constructor(
                     val p = call.principal<UserIdPrincipal>()
                         ?: return@post call.respond(
                             HttpStatusCode.InternalServerError,
-                            "No User principal found after post"
+                            "No User principal found after post",
                         )
                     sessionService.createUserSession(call, p.name)
                     call.respondRedirect("/")
@@ -86,7 +86,7 @@ class UserController @Inject constructor(
         "Hi",
         "Howdy",
         "Salutations",
-        "What's good"
+        "What's good",
     ).random()
 
     internal fun Routing.profileRoute() {
@@ -114,7 +114,7 @@ class UserController @Inject constructor(
                         timeZoneFormView = timeZoneFormView,
                         navView = navViewFactory.navView(
                             user.username,
-                            currentActiveNavItem = NavItem.PROFILE
+                            currentActiveNavItem = NavItem.PROFILE,
                         ),
                     )
 
@@ -150,7 +150,7 @@ class UserController @Inject constructor(
                     params["username"]
                         ?: throw IllegalArgumentException("Missing required parameter: username"),
                     params["password"]
-                        ?: throw IllegalArgumentException("Missing required parameter: password")
+                        ?: throw IllegalArgumentException("Missing required parameter: password"),
                 )
 
                 if (user != null) {

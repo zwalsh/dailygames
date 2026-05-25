@@ -64,7 +64,7 @@ class AdminController @Inject constructor(
                 }
 
                 u1.username.lowercase().compareTo(u2.username.lowercase())
-            }
+            },
         )
     }
 
@@ -90,7 +90,7 @@ class AdminController @Inject constructor(
                 val userRowViews = users.map {
                     UserRowView(
                         username = it.username,
-                        isAdmin = roles[it]?.contains(ADMIN) == true
+                        isAdmin = roles[it]?.contains(ADMIN) == true,
                     )
                 }
                 val currentUser = currentUser(call, userService)

@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ShareLineMapper @Inject constructor(
-    private val pointCalculator: PointCalculator
+    private val pointCalculator: PointCalculator,
 ) {
 
     fun mapToShareLine(result: PuzzleResult): String {
@@ -22,7 +22,8 @@ class ShareLineMapper @Inject constructor(
             Game.TRADLE,
             Game.FRAMED,
             Game.PINPOINT,
-            Game.BANDLE -> result.toStandardShareLine()
+            Game.BANDLE,
+            -> result.toStandardShareLine()
 
             Game.GEOCIRCLES -> result.toGeocirclesShareLine()
             Game.TOP5 -> result.toTop5ShareLine()

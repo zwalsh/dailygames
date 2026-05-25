@@ -94,7 +94,7 @@ class ChatServiceTest {
                 Game.TRADLE to 2,
                 Game.TOP5 to 7,
                 Game.TRAVLE to 9,
-            )
+            ),
         )
     }
 }

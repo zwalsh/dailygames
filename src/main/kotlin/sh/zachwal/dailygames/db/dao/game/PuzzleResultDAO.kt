@@ -21,7 +21,7 @@ interface PuzzleResultDAO {
             VALUES
             (:userId, :puzzle.game, :puzzle.date, :puzzle.number, now(), :score, :shareText, :resultInfo)
             RETURNING *
-        """
+        """,
     )
     fun insertResult(
         userId: Long,
@@ -40,7 +40,7 @@ interface PuzzleResultDAO {
             VALUES
             (:userId, :puzzle.game, :puzzle.number, :instantSubmitted, :score, :shareText, :resultInfo)
             RETURNING *
-        """
+        """,
     )
     fun insertResultWithInstantSubmitted(
         userId: Long,
@@ -59,7 +59,7 @@ interface PuzzleResultDAO {
             FROM result
             WHERE puzzle_number = :puzzle.number
             AND game = :puzzle.game
-        """
+        """,
     )
     fun resultsForPuzzle(puzzle: Puzzle): List<PuzzleResult>
 
@@ -68,7 +68,7 @@ interface PuzzleResultDAO {
             SELECT * 
             FROM result
             ORDER BY instant_submitted DESC
-        """
+        """,
     )
     fun allResultsStream(): Stream<PuzzleResult>
 
@@ -79,7 +79,7 @@ interface PuzzleResultDAO {
             WHERE instant_submitted >= :start 
             AND instant_submitted < :end
             ORDER BY instant_submitted
-        """
+        """,
     )
     fun allResultsBetweenStream(start: Instant, end: Instant): Stream<PuzzleResult>
 
@@ -89,7 +89,7 @@ interface PuzzleResultDAO {
             FROM result
             WHERE game = :game
             ORDER BY instant_submitted DESC
-        """
+        """,
     )
     fun allResultsForGameStream(game: Game): Stream<PuzzleResult>
 
@@ -100,7 +100,7 @@ interface PuzzleResultDAO {
             WHERE user_id = :userId
             AND instant_submitted >= :start 
             AND instant_submitted < :end
-        """
+        """,
     )
     fun resultsForUserInTimeRange(userId: Long, start: Instant, end: Instant): List<PuzzleResult>
 
@@ -111,7 +111,7 @@ interface PuzzleResultDAO {
             WHERE user_id = :userId
             AND game = :puzzle.game
             AND puzzle_number = :puzzle.number
-        """
+        """,
     )
     fun findResults(userId: Long, puzzle: Puzzle): List<PuzzleResult>
 
@@ -121,7 +121,7 @@ interface PuzzleResultDAO {
             FROM result
             WHERE user_id = :userId
             ORDER BY instant_submitted DESC
-        """
+        """,
     )
     fun resultsForUserSortedStream(userId: Long): Stream<PuzzleResult>
 
@@ -133,7 +133,7 @@ interface PuzzleResultDAO {
             AND instant_submitted >= :since
             GROUP BY game
             ORDER BY count DESC
-        """
+        """,
     )
     @KeyColumn("game")
     @ValueColumn("count")

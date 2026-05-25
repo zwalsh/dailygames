@@ -40,7 +40,7 @@ data class ChatNavItemView(
                     li {
                         a(
                             href = "/game/${game.name.lowercase()}/puzzle",
-                            classes = "dropdown-item d-flex justify-content-between align-items-center"
+                            classes = "dropdown-item d-flex justify-content-between align-items-center",
                         ) {
                             +"${game.emoji()} ${game.displayName()}"
                             if (gameChatTotal > 0) {

@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit
 
 @ExtendWith(DatabaseExtension::class)
 class GameDAOTest(
-    private val jdbi: Jdbi
+    private val jdbi: Jdbi,
 ) {
 
     private val dao = jdbi.onDemand<GameDAO>()
@@ -27,7 +27,7 @@ class GameDAOTest(
     @Test
     fun `listGamesCreatedAfter returns empty for date in the future`() {
         val games = dao.listGamesCreatedAfter(
-            Instant.now().plusSeconds(10)
+            Instant.now().plusSeconds(10),
         )
 
         assertThat(games).isEmpty()
@@ -37,7 +37,7 @@ class GameDAOTest(
     fun `listGamesCreatedAfter returns games created 4 days ago`() {
         // migration in test creates games with instant_created of 3 days ago
         val games = dao.listGamesCreatedAfter(
-            Instant.now().minus(4, ChronoUnit.DAYS)
+            Instant.now().minus(4, ChronoUnit.DAYS),
         )
 
         assertThat(games).containsExactlyElementsIn(Game.values())
@@ -52,7 +52,7 @@ class GameDAOTest(
                     UPDATE game 
                     SET instant_created = now() 
                     WHERE name = 'WORLDLE';
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
 

@@ -48,7 +48,8 @@ class LeaderboardService @Inject constructor(
             Game.TRADLE,
             Game.FLAGLE,
             Game.FRAMED,
-            Game.BANDLE -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
+            Game.BANDLE,
+            -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/6 = 5 points.")
 
             Game.PINPOINT -> BasicScoreHintView("Scoring: 1 point for the correct answer, 1 point per guess left. e.g. 2/5 = 4 points.")
             Game.GEOGRID -> BasicScoreHintView("Scoring: 1 point per correct guess. e.g. 8/9 = 8 points.")
@@ -88,7 +89,7 @@ class LeaderboardService @Inject constructor(
     }
 
     private fun leaderboardData(
-        pointsData: PointsData
+        pointsData: PointsData,
     ) = LeaderboardData(
         allTimePoints = chartInfo(pointsData.allTimePerUser) { it.totalPoints.toDouble() },
         allTimeGames = chartInfo(pointsData.allTimePerUser) { it.games.toDouble() },
@@ -191,7 +192,7 @@ data class PointsData constructor(
             allTimePerUser
                 .getOrDefault(userId, TotalPoints(0, 0))
                 .addPerformance(
-                    other.allTimePerUser.getOrDefault(userId, TotalPoints(0, 0))
+                    other.allTimePerUser.getOrDefault(userId, TotalPoints(0, 0)),
                 )
         }
         val newThirtyDays = (thirtyDaysPerUser.keys + other.thirtyDaysPerUser.keys).associateWith { userId ->

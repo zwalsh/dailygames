@@ -11,7 +11,7 @@ import sh.zachwal.dailygames.shared_html.HTMLView
 sealed class ScoreHintView : HTMLView<DIV>()
 
 data class BasicScoreHintView(
-    val scoringText: String
+    val scoringText: String,
 ) : ScoreHintView() {
     override fun DIV.render() {
         div(classes = "row") {

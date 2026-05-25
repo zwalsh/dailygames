@@ -27,7 +27,7 @@ import java.time.LocalDate
 class ShareLineMapperTest {
 
     private val mapper = ShareLineMapper(
-        pointCalculator = PointCalculator()
+        pointCalculator = PointCalculator(),
     )
     private val parser = ShareTextParser()
 
@@ -116,7 +116,7 @@ class ShareLineMapperTest {
     private val flagleResult = worldleResult.copy(
         game = Game.FLAGLE,
         score = 1,
-        resultInfo = FlagleInfo
+        resultInfo = FlagleInfo,
     )
 
     @Test
@@ -155,7 +155,7 @@ class ShareLineMapperTest {
     fun `maps travle plus zero non-perfect`() {
         val result = travleResult.copy(
             score = 0,
-            resultInfo = (travleResult.info<TravleInfo>()).copy(numPerfect = 5)
+            resultInfo = (travleResult.info<TravleInfo>()).copy(numPerfect = 5),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -171,7 +171,7 @@ class ShareLineMapperTest {
                 numGuesses = 7,
                 numPerfect = 6,
                 numIncorrect = 1,
-            )
+            ),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -188,7 +188,7 @@ class ShareLineMapperTest {
                 numPerfect = 6,
                 numIncorrect = 1,
                 numHints = 2,
-            )
+            ),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -204,7 +204,7 @@ class ShareLineMapperTest {
                 numGuesses = 10,
                 numPerfect = 6,
                 numIncorrect = 4,
-            )
+            ),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -221,7 +221,7 @@ class ShareLineMapperTest {
                 numPerfect = 6,
                 numIncorrect = 4,
                 numHints = 1,
-            )
+            ),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -236,7 +236,7 @@ class ShareLineMapperTest {
             numGuesses = 5,
             numCorrect = 5,
             isPerfect = true,
-        )
+        ),
     )
 
     @Test
@@ -250,8 +250,8 @@ class ShareLineMapperTest {
     fun `maps top5 five correct, no misses, but not perfect`() {
         val result = top5Result.copy(
             resultInfo = (top5Result.info<Top5Info>()).copy(
-                isPerfect = false
-            )
+                isPerfect = false,
+            ),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -266,7 +266,7 @@ class ShareLineMapperTest {
                 numCorrect = 5,
                 numGuesses = 6,
                 isPerfect = false,
-            )
+            ),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -281,7 +281,7 @@ class ShareLineMapperTest {
                 numCorrect = 4,
                 numGuesses = 10,
                 isPerfect = false,
-            )
+            ),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -413,7 +413,7 @@ class ShareLineMapperTest {
             resultInfo = geoGridResult.info<GeoGridInfo>().copy(
                 numCorrect = 0,
                 score = 900.0,
-            )
+            ),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -427,7 +427,7 @@ class ShareLineMapperTest {
             resultInfo = geoGridResult.info<GeoGridInfo>().copy(
                 numCorrect = 8,
                 score = 200.5,
-            )
+            ),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -439,7 +439,7 @@ class ShareLineMapperTest {
         val result = geoGridResult.copy(
             resultInfo = geoGridResult.info<GeoGridInfo>().copy(
                 score = 200.55,
-            )
+            ),
         )
 
         val shareLine = mapper.mapToShareLine(result)
@@ -482,7 +482,7 @@ class ShareLineMapperTest {
         val result = bracketCityResult.copy(
             score = 98,
             shareText = BRACKET_CITY_POWER_BROKER,
-            resultInfo = parser.extractBracketCityInfo(BRACKET_CITY_POWER_BROKER).info()
+            resultInfo = parser.extractBracketCityInfo(BRACKET_CITY_POWER_BROKER).info(),
         )
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("🏙️ Bracket City 4/20 98.0 \uD83D\uDCBC")
@@ -493,7 +493,7 @@ class ShareLineMapperTest {
         val result = bracketCityResult.copy(
             score = 69,
             shareText = BRACKET_CITY_CHIEF_OF_POLICE,
-            resultInfo = parser.extractBracketCityInfo(BRACKET_CITY_CHIEF_OF_POLICE).info()
+            resultInfo = parser.extractBracketCityInfo(BRACKET_CITY_CHIEF_OF_POLICE).info(),
         )
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("🏙️ Bracket City 4/20 69.0 \uD83D\uDC6E")
@@ -504,7 +504,7 @@ class ShareLineMapperTest {
         val result = bracketCityResult.copy(
             score = 100,
             shareText = BRACKET_CITY_KINGMAKER,
-            resultInfo = parser.extractBracketCityInfo(BRACKET_CITY_KINGMAKER).info()
+            resultInfo = parser.extractBracketCityInfo(BRACKET_CITY_KINGMAKER).info(),
         )
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("🏙️ Bracket City 4/20 100.0 \uD83D\uDC51")
@@ -515,7 +515,7 @@ class ShareLineMapperTest {
         val result = bracketCityResult.copy(
             score = 0,
             shareText = BRACKET_CITY_TOURIST,
-            resultInfo = parser.extractBracketCityInfo(BRACKET_CITY_TOURIST).info()
+            resultInfo = parser.extractBracketCityInfo(BRACKET_CITY_TOURIST).info(),
         )
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("🏙️ Bracket City 4/20 0.0 \uD83D\uDCF8")
@@ -526,7 +526,7 @@ class ShareLineMapperTest {
         val result = bracketCityResult.copy(
             score = 100,
             shareText = BRACKET_CITY_PUPPETMASTER,
-            resultInfo = parser.extractBracketCityInfo(BRACKET_CITY_PUPPETMASTER).info()
+            resultInfo = parser.extractBracketCityInfo(BRACKET_CITY_PUPPETMASTER).info(),
         )
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("🏙️ Bracket City 4/20 100.0 \uD83D\uDD2E")

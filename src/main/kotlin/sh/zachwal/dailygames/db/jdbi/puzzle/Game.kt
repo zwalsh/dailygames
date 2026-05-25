@@ -13,7 +13,8 @@ enum class Game {
     FRAMED,
     GEOGRID,
     BANDLE,
-    BRACKET_CITY;
+    BRACKET_CITY,
+    ;
 
     fun displayName(): String {
         return when (this) {

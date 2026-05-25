@@ -16,7 +16,7 @@ import java.time.Instant
 data class Session(
     val id: String,
     val data: ByteArray,
-    val expiration: Instant
+    val expiration: Instant,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

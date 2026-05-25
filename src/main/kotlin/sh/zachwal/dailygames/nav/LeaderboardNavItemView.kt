@@ -9,7 +9,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.shared_html.HTMLView
 
 data class LeaderboardNavItemView(
-    val isActive: Boolean
+    val isActive: Boolean,
 ) : HTMLView<UL>() {
 
     private val textStyling = if (isActive) {

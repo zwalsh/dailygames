@@ -51,7 +51,7 @@ class TravlePointCalculatorTest {
         12 to 7,
         13 to 8,
         14 to 8,
-        15 to 8
+        15 to 8,
     )
 
     @Test
@@ -113,8 +113,8 @@ class TravlePointCalculatorTest {
             val result = travleResult.copy(
                 score = 0,
                 resultInfo = (travleResult.info<TravleInfo>()).copy(
-                    numGuesses = shortestSolution
-                )
+                    numGuesses = shortestSolution,
+                ),
             )
             assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
         }
@@ -126,8 +126,8 @@ class TravlePointCalculatorTest {
             val result = travleResult.copy(
                 score = -allowedIncorrect,
                 resultInfo = (travleResult.info<TravleInfo>()).copy(
-                    numGuesses = shortestSolution + allowedIncorrect
-                )
+                    numGuesses = shortestSolution + allowedIncorrect,
+                ),
             )
             assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
         }
@@ -139,8 +139,8 @@ class TravlePointCalculatorTest {
             val result = travleResult.copy(
                 score = -10,
                 resultInfo = (travleResult.info<TravleInfo>()).copy(
-                    numGuesses = shortestSolution + allowedIncorrect
-                )
+                    numGuesses = shortestSolution + allowedIncorrect,
+                ),
             )
             assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
         }
@@ -158,7 +158,7 @@ class TravlePointCalculatorTest {
                 numGuesses = 10,
                 numIncorrect = 7,
                 numPerfect = 0,
-            )
+            ),
         )
 
         /**
@@ -171,7 +171,7 @@ class TravlePointCalculatorTest {
                 numGuesses = 5,
                 numIncorrect = 0,
                 numPerfect = 4,
-            )
+            ),
         )
 
         assertThat(calculator.maxPoints(resultTwoAway))
@@ -184,8 +184,8 @@ class TravlePointCalculatorTest {
             val result = travleResult.copy(
                 score = 1,
                 resultInfo = (travleResult.info<TravleInfo>()).copy(
-                    numGuesses = shortestSolution + 1
-                )
+                    numGuesses = shortestSolution + 1,
+                ),
             )
             assertThat(calculator.maxPoints(result)).isEqualTo(allowedIncorrect + 1)
         }

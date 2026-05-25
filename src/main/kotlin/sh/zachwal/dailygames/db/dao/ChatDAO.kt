@@ -14,13 +14,13 @@ interface ChatDAO {
             VALUES
             (:userId, :puzzle.game, :puzzle.number, now(), :text)
             RETURNING *
-        """
+        """,
     )
     fun insertChat(
         userId: Long,
         @BindBean("puzzle")
         puzzle: Puzzle,
-        text: String
+        text: String,
     ): Chat
 
     @SqlQuery(
@@ -30,11 +30,11 @@ interface ChatDAO {
             WHERE game = :puzzle.game 
             AND puzzle_number = :puzzle.number
             ORDER BY instant_submitted DESC
-        """
+        """,
     )
     fun chatsForPuzzleDescending(
         @BindBean("puzzle")
-        puzzle: Puzzle
+        puzzle: Puzzle,
     ): List<Chat>
 
     @SqlQuery(
@@ -43,7 +43,7 @@ interface ChatDAO {
             FROM chat
             WHERE instant_submitted > :instant
             ORDER BY instant_submitted
-        """
+        """,
     )
     fun allChatsSinceInstantAscending(instant: Instant): List<Chat>
 
@@ -53,10 +53,10 @@ interface ChatDAO {
             FROM chat
             WHERE game = :puzzle.game
             AND puzzle_number = :puzzle.number
-        """
+        """,
     )
     fun chatCountForPuzzle(
         @BindBean("puzzle")
-        puzzle: Puzzle
+        puzzle: Puzzle,
     ): Int
 }

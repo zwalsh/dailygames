@@ -24,7 +24,7 @@ import kotlin.streams.toList
 @ExtendWith(DatabaseExtension::class)
 class PuzzleResultDAOTest(
     jdbi: Jdbi,
-    private val fixtures: Fixtures
+    private val fixtures: Fixtures,
 ) {
 
     private val resultDAO: PuzzleResultDAO = jdbi.onDemand()
@@ -40,7 +40,7 @@ class PuzzleResultDAOTest(
             puzzle = fixtures.worldle123Puzzle,
             score = 3,
             shareText = "Worldle #123 2.11.2024 3/6",
-            resultInfo = expectedWorldleInfo
+            resultInfo = expectedWorldleInfo,
         )
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)

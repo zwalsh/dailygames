@@ -62,7 +62,7 @@ class ShareTextParserBandleTest {
             """
                 Bandle #941 1/6
                 🟩⬜⬜⬜⬜⬜
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         assertThat(parsed.resultInfo).isInstanceOf(BandleInfo::class.java)
@@ -82,7 +82,7 @@ class ShareTextParserBandleTest {
             """
                 Bandle #941 x/6
                 🟥🟥🟥🟥🟥🟥
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         assertThat(parsed.resultInfo).isInstanceOf(BandleInfo::class.java)
@@ -102,7 +102,7 @@ class ShareTextParserBandleTest {
             """
                 Bandle #941 4/6
                 🟨🟥🟨🟩⬜⬜
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         assertThat(parsed.resultInfo).isInstanceOf(BandleInfo::class.java)
@@ -122,7 +122,7 @@ class ShareTextParserBandleTest {
             """
                 Bandle #941 x/6
                 ⬛⬛⬛⬛⬛⬛
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         assertThat(parsed.resultInfo).isInstanceOf(BandleInfo::class.java)

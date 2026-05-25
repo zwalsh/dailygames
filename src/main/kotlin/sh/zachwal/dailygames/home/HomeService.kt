@@ -26,7 +26,7 @@ import javax.inject.Singleton
 // Hide these games from the list
 val hiddenGames = setOf(
     // Pinpoint is not currently working & no one plays it anyway
-    Game.PINPOINT
+    Game.PINPOINT,
 )
 
 @Singleton
@@ -51,7 +51,7 @@ class HomeService @Inject constructor(
                         excludeUserId = 1, // Exclude my user in prod since I play the most
                     )
                 }
-            }
+            },
         )
 
     fun homeView(user: User): HomeView {

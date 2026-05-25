@@ -26,7 +26,7 @@ data class HomeView(
 ) : HTMLView<HTML>() {
 
     private val gameSubmitFormView = GameSubmitFormView(
-        includeShareButton = shareTextModalView != null
+        includeShareButton = shareTextModalView != null,
     )
 
     override fun HTML.render() {

@@ -10,7 +10,7 @@ data class NavItemView(
     val href: String,
     val icon: String,
     val text: String,
-    val isActive: Boolean
+    val isActive: Boolean,
 ) : HTMLView<UL>() {
 
     private val textStyling = if (isActive) {

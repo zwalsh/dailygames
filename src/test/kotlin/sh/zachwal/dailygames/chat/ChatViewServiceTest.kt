@@ -103,7 +103,7 @@ class ChatViewServiceTest {
         every { puzzleDAO.listPuzzlesForGameDescending(Game.WORLDLE) } returns Stream.of(
             Puzzle(Game.WORLDLE, 3, null),
             Puzzle(Game.WORLDLE, 2, null),
-            Puzzle(Game.WORLDLE, 1, null)
+            Puzzle(Game.WORLDLE, 1, null),
         )
         every { resultService.allResultsForPuzzle(any()) } returns emptyList()
 
@@ -124,7 +124,7 @@ class ChatViewServiceTest {
         shareText = "",
         resultInfo = WorldleInfo(
             percentage = 100,
-        )
+        ),
     )
 
     @Test
@@ -321,7 +321,7 @@ class ChatViewServiceTest {
         val answer = "answer"
         every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns answer
         every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(
-            worldleResult.copy(userId = zach.id)
+            worldleResult.copy(userId = zach.id),
         )
 
         val chatView = chatService.chatView(zach, Game.WORLDLE, 123)
@@ -335,7 +335,7 @@ class ChatViewServiceTest {
         val answer = "answer"
         every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns answer
         every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(
-            worldleResult.copy(userId = testUser.id)
+            worldleResult.copy(userId = testUser.id),
         )
 
         val chatView = chatService.chatView(testUser, Game.WORLDLE, 123)
@@ -360,7 +360,7 @@ class ChatViewServiceTest {
     fun `hides AnswerView when no answer is returned`() {
         every { answerService.answerForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns null
         every { resultService.allResultsForPuzzle(Puzzle(Game.WORLDLE, 123, null)) } returns listOf(
-            worldleResult.copy(userId = zach.id)
+            worldleResult.copy(userId = zach.id),
         )
 
         val chatView = chatService.chatView(zach, Game.WORLDLE, 123)

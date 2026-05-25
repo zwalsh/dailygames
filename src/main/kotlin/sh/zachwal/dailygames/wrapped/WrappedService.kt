@@ -89,7 +89,7 @@ class WrappedService @Inject constructor(
                 SummaryTableSection(wrappedInfo, wrappedIndex++),
                 buildRanksTableTotals(wrappedInfo, wrappedIndex++),
                 buildRanksTableAverages(wrappedInfo, wrappedIndex),
-            )
+            ),
         )
     }
 
@@ -108,32 +108,32 @@ class WrappedService @Inject constructor(
                 WelcomeSection(
                     year,
                     userName,
-                    wrappedIndex++
+                    wrappedIndex++,
                 ),
                 StatSection(
                     topText = "You played...",
                     stat = wrappedInfo.totalGamesPlayed,
                     bottomText = "...games this year.",
-                    wrappedIndex++
+                    wrappedIndex++,
                 ),
                 StatSection(
                     topText = "That ranks...",
                     stat = wrappedInfo.totalGamesRank,
                     bottomText = "...across all players!",
-                    wrappedIndex++
+                    wrappedIndex++,
                 ),
                 // points scored
                 StatSection(
                     topText = "You scored...",
                     stat = wrappedInfo.totalPoints,
                     bottomText = "...points this year.",
-                    wrappedIndex++
+                    wrappedIndex++,
                 ),
                 StatSection(
                     topText = "That ranks...",
                     stat = wrappedInfo.totalPointsRank,
                     bottomText = "...overall!",
-                    wrappedIndex++
+                    wrappedIndex++,
                 ),
                 wrappedInfo.favoriteGame.let {
                     val favoriteGameText = "${it.emoji()}${it.displayName()}${it.emoji()}"
@@ -142,7 +142,7 @@ class WrappedService @Inject constructor(
                         topText = "Your favorite game was...",
                         middleText = favoriteGameText,
                         bottomText = "...you played it $favoriteGamePlayCount times!",
-                        wrappedIndex = wrappedIndex++
+                        wrappedIndex = wrappedIndex++,
                     )
                 },
                 wrappedInfo.bestDay?.let {
@@ -150,20 +150,20 @@ class WrappedService @Inject constructor(
                         topText = "Your best day was...",
                         middleText = it.format(bestDayFormatter),
                         bottomText = "...when you scored ${wrappedInfo.bestDayPoints} points!",
-                        wrappedIndex = wrappedIndex++
+                        wrappedIndex = wrappedIndex++,
                     )
                 },
                 StatSection(
                     topText = "You played Daily Games for...",
                     stat = wrappedInfo.totalMinutes,
                     bottomText = "...minutes this year.",
-                    wrappedIndex = wrappedIndex++
+                    wrappedIndex = wrappedIndex++,
                 ),
                 StatSection(
                     topText = "That's number...",
                     stat = wrappedInfo.totalMinutesRank,
                     bottomText = "... of all players!",
-                    wrappedIndex = wrappedIndex++
+                    wrappedIndex = wrappedIndex++,
                 ),
                 wrappedInfo.bestGame?.let {
                     val bestGameText = "${it.emoji()}${it.displayName()}${it.emoji()}"
@@ -171,7 +171,7 @@ class WrappedService @Inject constructor(
                         topText = "Your best game was...",
                         middleText = bestGameText,
                         bottomText = "",
-                        wrappedIndex = wrappedIndex++
+                        wrappedIndex = wrappedIndex++,
                     )
                 },
                 wrappedInfo.bestGame?.let {
@@ -182,7 +182,7 @@ class WrappedService @Inject constructor(
                         middleText = bestGameAverage.toString(),
                         bottomText = "...which ranks #$bestGameRank!",
                         fontSizeOverride = "35vw;",
-                        wrappedIndex = wrappedIndex++
+                        wrappedIndex = wrappedIndex++,
                     )
                 },
                 wrappedInfo.longestStreakGame?.let {
@@ -190,7 +190,7 @@ class WrappedService @Inject constructor(
                         topText = "Your longest streak was...",
                         stat = wrappedInfo.longestStreak,
                         bottomText = "...you played ${it.displayName()} ${wrappedInfo.longestStreak} days in a row!",
-                        wrappedIndex = wrappedIndex++
+                        wrappedIndex = wrappedIndex++,
                     )
                 },
                 SummaryTableSection(
@@ -203,7 +203,7 @@ class WrappedService @Inject constructor(
             wrappedShareView = WrappedShareView(
                 year = year,
                 username = userName,
-            )
+            ),
         )
     }
 
@@ -261,7 +261,7 @@ class WrappedService @Inject constructor(
             .toInstant()
         val allResults = resultDAO.allResultsBetweenStream(
             start = yearStartInstant,
-            end = yearEndInstant
+            end = yearEndInstant,
         )
 
         val userIds = mutableSetOf<Long>()
@@ -298,7 +298,7 @@ class WrappedService @Inject constructor(
                 .merge(
                     it.instantSubmitted.atZone(timeZone).toLocalDate(),
                     calculator.calculatePoints(it),
-                    Int::plus
+                    Int::plus,
                 )
         }.peek {
             val timeZone = userPreferencesService.getTimeZoneCached(it.userId)

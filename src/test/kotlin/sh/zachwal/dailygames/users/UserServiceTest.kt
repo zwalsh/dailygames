@@ -35,7 +35,7 @@ class UserServiceTest(
             user = fixtures.zach,
             currentPassword = "hashedPassword",
             newPassword = "newPassword",
-            repeatNewPassword = "differentNewPassword"
+            repeatNewPassword = "differentNewPassword",
         )
 
         assertThat(result).isInstanceOf(ChangePasswordFailure::class.java)
@@ -49,7 +49,7 @@ class UserServiceTest(
             user = fixtures.zach,
             currentPassword = "wrongPassword",
             newPassword = "newPassword",
-            repeatNewPassword = "newPassword"
+            repeatNewPassword = "newPassword",
         )
 
         assertThat(result).isInstanceOf(ChangePasswordFailure::class.java)
@@ -63,7 +63,7 @@ class UserServiceTest(
             user = fixtures.zach,
             currentPassword = fixtures.zachPassword,
             newPassword = "newPassword",
-            repeatNewPassword = "newPassword"
+            repeatNewPassword = "newPassword",
         )
 
         assertThat(result).isEqualTo(ChangePasswordSuccess)

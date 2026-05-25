@@ -4,5 +4,5 @@ import sh.zachwal.dailygames.roles.Role
 
 data class UserRole(
     val userId: Long,
-    val role: Role
+    val role: Role,
 )

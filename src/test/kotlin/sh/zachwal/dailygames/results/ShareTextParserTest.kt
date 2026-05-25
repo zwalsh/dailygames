@@ -228,7 +228,7 @@ class ShareTextParserTest {
             🟩🟩🟩🟩🟨⬅️
             🟩🟩🟩🟩🟨↗️
             🟩🟩🟩🟩🟩🎉
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(result.game).isEqualTo(Game.WORLDLE)
 
@@ -272,7 +272,7 @@ class ShareTextParserTest {
             🟩🟩🟩🟩🟨⬅️
             🟩🟩🟩🟩🟨↗️
             🟩🟩🟩🟩🟩🎉
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -302,7 +302,7 @@ class ShareTextParserTest {
             🟩🟩🟩🟩🟨
             🟩🟩🟩🟩🟨
             🟩🟩🟩🟩🟨
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(tradleInfo.game).isEqualTo(Game.TRADLE)
     }
@@ -317,7 +317,7 @@ class ShareTextParserTest {
             """
                 #travle #607 +0 (Perfect)
                 ✅✅✅✅✅✅✅
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(result.game).isEqualTo(Game.TRAVLE)
         assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
@@ -340,7 +340,7 @@ class ShareTextParserTest {
             """
                 #travle #607 +0
                 ✅✅✅🟩✅✅✅
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
@@ -362,7 +362,7 @@ class ShareTextParserTest {
             """
                 #travle #606 +2 (1 hint)
                 ✅✅🟩🟧🟧✅
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
@@ -384,7 +384,7 @@ class ShareTextParserTest {
             """
                 #travle #614 (3 away)
                 🟧🟥🟥🟥🟧🟥🟥🟥✅
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(result.resultInfo).isInstanceOf(TravleInfo::class.java)
 
@@ -405,7 +405,7 @@ class ShareTextParserTest {
             """
                 Top 5 #171
                 ⬜🟧🟨⬜⬜🟩⬜⬜
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(result.score).isEqualTo(3)
         assertThat(result.game).isEqualTo(Game.TOP5)
@@ -426,7 +426,7 @@ class ShareTextParserTest {
             """
                 Top 5 #170
                 🟥⬜🟩🟨🟦⬜⬜⬜🟧
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(result.score).isEqualTo(6)
 
@@ -447,7 +447,7 @@ class ShareTextParserTest {
             """
                 Top 5 #169
                 🟥🟩🟧🟦🟨
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(result.score).isEqualTo(10)
 
@@ -468,7 +468,7 @@ class ShareTextParserTest {
             """
                 Top 5 #169
                 🟥🟧🟨🟩🟦
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(result.score).isEqualTo(10)
 
@@ -493,7 +493,7 @@ class ShareTextParserTest {
                 #Flagle #905 (14.08.2024) X/6
                 🟥🟥🟥
                 🟥🟥🟥
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(flagleInfo.resultInfo).isInstanceOf(FlagleInfo::class.java)
     }
@@ -510,7 +510,7 @@ class ShareTextParserTest {
                 #Flagle #905 (14.08.2024) 2/6
                 🟥🟩🟩
                 🟩🟩🟩
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -525,7 +525,7 @@ class ShareTextParserTest {
             """
                 Pinpoint #126
                 🤔 🤔 📌 ⬜ ⬜ (3/5)
-            """.trimIndent()
+            """.trimIndent(),
         )
         assertThat(pinpointInfo.resultInfo).isInstanceOf(PinpointInfo::class.java)
     }
@@ -541,7 +541,7 @@ class ShareTextParserTest {
             """
                 Pinpoint #123
                 🤔 🤔 🤔 🤔 🤔 (X/5)
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -555,7 +555,7 @@ class ShareTextParserTest {
             """
                 Pinpoint #126
                 🤔 🤔 📌 ⬜ ⬜ (3/5)
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 }

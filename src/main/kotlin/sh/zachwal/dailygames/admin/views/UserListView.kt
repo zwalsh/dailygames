@@ -61,7 +61,7 @@ data class UserListView(
 
 data class UserRowView(
     private val username: String,
-    private val isAdmin: Boolean
+    private val isAdmin: Boolean,
 ) : HTMLView<TBODY>() {
     override fun TBODY.render() {
         tr {

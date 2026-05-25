@@ -16,7 +16,7 @@ import sh.zachwal.dailygames.shared_html.darkMode
 import sh.zachwal.dailygames.shared_html.headSetup
 
 data class AdminPageView constructor(
-    private val navView: NavView
+    private val navView: NavView,
 ) : HTMLView<HTML>() {
     override fun HTML.render() {
         head {
