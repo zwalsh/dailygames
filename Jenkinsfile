@@ -27,6 +27,21 @@ pipeline {
                 sh './gradlew build'
             }
         }
+        stage('release') {
+            when {
+                expression { env.GIT_BRANCH == 'origin/main' }
+            }
+            steps {
+                sh '''
+                    gh release create "sha-${GIT_COMMIT}" \
+                      build/distributions/dailygames.tar \
+                      --title "sha-${GIT_COMMIT}" \
+                      --notes "" \
+                      --latest \
+                      --repo zwalsh/dailygames
+                '''
+            }
+        }
     }
     post {
         success {
