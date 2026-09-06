@@ -254,10 +254,10 @@ class WrappedService @Inject constructor(
     fun generateWrappedData(year: Int): List<WrappedInfo> = jdbi.open().use { handle ->
         val resultDAO = handle.attach<PuzzleResultDAO>()
         val yearStartInstant = LocalDate.ofYearDay(year, 1)
-            .atStartOfDay(ZoneId.systemDefault())
+            .atStartOfDay(ZoneId.of("America/New_York"))
             .toInstant()
         val yearEndInstant = LocalDate.ofYearDay(year + 1, 1)
-            .atStartOfDay(ZoneId.systemDefault())
+            .atStartOfDay(ZoneId.of("America/New_York"))
             .toInstant()
         val allResults = resultDAO.allResultsBetweenStream(
             start = yearStartInstant,
