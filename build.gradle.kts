@@ -69,6 +69,7 @@ dependencies {
 
     // DI (6.0.0 supports both javax & jakarta, has Java 17 support)
     implementation("com.google.inject:guice:6.0.0")
+    implementation("com.google.inject.extensions:guice-multibindings:4.2.3")
 
     // Jackson
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")

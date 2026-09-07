@@ -8,15 +8,19 @@ Line numbers are from the commit that added Bracket City and drift as files grow
 
 ```
 POST /                                     home/HomeController.kt:46   reads the shareText form param
-  └─ ResultService.createResult            results/ResultService.kt:45
-       ├─ ShareTextParser.identifyGame     results/ShareTextParser.kt:23   which game is this?
-       ├─ ResultService.parseResult        results/ResultService.kt:88     → extract<Game>Info → ParsedResult
+  └─ ResultService.createResult            results/ResultService.kt:44
+       ├─ ShareTextParser.parse            results/ShareTextParser.kt:14   finds the matching GameMapper, extracts
        ├─ PuzzleDAO.getOrCreate                                            row in `puzzle` (game, number, date)
        └─ PuzzleResultDAO.insertResult                                     row in `result`, result_info as jsonb
 ```
 
 Everything downstream — the home feed, leaderboards, streaks, wrapped, nav — reads
 `PuzzleResult` and `Game` generically.
+
+Per-game text detection, extraction, and share-line rendering all live in one
+`GameMapper` implementation per game, in `results/gamemapper/`. `ShareTextParser` and
+`home/ShareLineMapper` are thin facades that pick the right mapper out of an injected
+`Set<GameMapper>` — see `results/gamemapper/GameMapper.kt`.
 
 ## Checklist
 
@@ -29,16 +33,14 @@ Everything downstream — the home feed, leaderboards, streaks, wrapped, nav —
 | `db/jdbi/puzzle/Game.kt:60` `href()` | Link to the game | Yes |
 | `db/NN_add_<game>.json` (new) | Liquibase changeset inserting one row into `game` | **No** |
 | `db/changelog.json` | `include` entry for that file | **No** |
-| `results/ShareTextParser.kt:23` `identifyGame` | Detection branch | **No** — a guard chain, not `when (game)` |
-| `results/ShareTextParser.kt` | `extract<Game>Info(shareText): ParsedResult` + its regexes | **No** |
+| `results/gamemapper/<Game>Mapper.kt` (new) | `class <Game>Mapper : GameMapper` — `matches()`, `extract()`, `shareLine()` | **No** |
 | `results/resultinfo/<Game>Info.kt` (new) | `data class ... : ResultInfo()`, or an `object` with `equals` if stateless | **No** |
 | `results/resultinfo/ResultInfo.kt:11` | `JsonSubTypes.Type(value = <Game>Info::class, name = "<game>")` | **No** — throws at (de)serialization |
-| `results/ResultService.kt:88` `parseResult` | `Game.X -> shareTextParser.extractXInfo(shareText)` | Yes |
+| `guice/ApplicationModule.kt` | One `mapperBinder.addBinding().to(<Game>Mapper::class.java)` line | **No** — silently unrecognized without it |
 | `leaderboard/PointCalculator.kt:14` `calculatePoints` | Join a group, or a new branch | Yes |
 | `leaderboard/PointCalculator.kt:36` `maxPoints` | Join a group, or a new branch | Yes |
 | `leaderboard/LeaderboardService.kt:45` | `BasicScoreHintView("Scoring: ...")` | Yes |
 | `leaderboard/views/ScoreHintView.kt:11` | A subclass, only if the hint needs markup | — rarely needed |
-| `home/ShareLineMapper.kt:19` `mapToShareLine` | Join `toStandardShareLine()`, or a new `to<Game>ShareLine()` | Yes |
 | `home/HomeService.kt:27` `hiddenGames` | Only if the game should be hidden | **No** — visible by default |
 | `answers/AnswerService.kt:16` | Branch + a `GameAnswerService`, only if you want answer reveals | **No** — `else -> null` at line 20 |
 
@@ -52,15 +54,18 @@ all of it is server-rendered Kotlin HTML DSL.
 
 | File | What to add |
 |---|---|
-| `results/ShareTextParser<Game>Test.kt` (new) | The sample share texts as top-level `const val`, plus `identifyGame` and extraction assertions for each. Newer games get their own file; older ones live in the shared `ShareTextParserTest.kt`. Follow the newer convention. |
+| `results/gamemapper/<Game>Fixtures.kt` (new) | The sample share texts as top-level `const val`s collected into `ALL` — the single source of truth other test files import from |
+| `results/gamemapper/<Game>MapperTest.kt` (new) | Extends `GameMapperContractTest`; add specific `extract()`/`shareLine()` value assertions per sample |
+| `results/gamemapper/TestGameMappers.kt` | Add the new mapper to `allGameMappers()` |
+| `results/gamemapper/GameMapperMatchingTest.kt` | Add `<Game>Fixtures.ALL` to `allFixtures` |
 | `results/ResultServiceTest.kt` | One end-to-end `can create a <Game> result` case |
 | `leaderboard/PointCalculatorTest.kt` | A fixture plus assertions at the score boundaries |
-| `home/ShareLineMapperTest.kt` | One assertion per sample, checking the exact rendered string |
 | `results/resultinfo/SerializePuzzleResultInfoTest.kt` | Add the new info type to `resultInfoList()` |
 | `results/resultinfo/DeserializeStoredPuzzleResultInfoTest.kt` | Add a literal stored-JSON case to `arguments()` |
 
-Declare the sample share texts once, as top-level `const val` in the parser test, and
-import them by name into the other test files. That's how the existing games do it.
+Declare the sample share texts once, as top-level `const val`s in `<Game>Fixtures.kt`,
+and import `<Game>Fixtures.ALL` by name into the other test files. That's how the
+existing games do it.
 
 ## Templates
 
@@ -156,8 +161,12 @@ Bracket City's "Peeks" and "Answers Revealed" lines are absent on some ranks.
 
 ### The standard share line
 
+`results/gamemapper/StandardShareLine.kt` has a shared `PuzzleResult.toStandardShareLine(pointCalculator)`
+extension used by `WorldleMapper`, `TradleMapper`, `FlagleMapper`, `PinpointMapper`,
+`FramedMapper` and `BandleMapper`'s `shareLine()` implementations:
+
 ```kotlin
-private fun PuzzleResult.toStandardShareLine(): String {
+fun PuzzleResult.toStandardShareLine(pointCalculator: PointCalculator): String {
     val gameAndPuzzle = "${game.emoji()} ${game.displayName()} #$puzzleNumber"
     val maxPoints = pointCalculator.maxPoints(this)
     if (score == maxPoints + 1) {
@@ -168,8 +177,8 @@ private fun PuzzleResult.toStandardShareLine(): String {
 }
 ```
 
-If you write a custom one instead, remember the perfect emoji. GeoGrid shipped without
-it and needed a follow-up commit.
+If your mapper's `shareLine()` doesn't join this group, remember the perfect emoji
+yourself — GeoGrid shipped without it and needed a follow-up commit.
 
 ## Worked examples in history
 

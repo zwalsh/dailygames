@@ -18,6 +18,18 @@ import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.results.gamemapper.BandleFixtures
+import sh.zachwal.dailygames.results.gamemapper.BracketCityFixtures
+import sh.zachwal.dailygames.results.gamemapper.CardleFixtures
+import sh.zachwal.dailygames.results.gamemapper.FlagleFixtures
+import sh.zachwal.dailygames.results.gamemapper.FramedFixtures
+import sh.zachwal.dailygames.results.gamemapper.GeoGridFixtures
+import sh.zachwal.dailygames.results.gamemapper.GeocirclesFixtures
+import sh.zachwal.dailygames.results.gamemapper.PinpointFixtures
+import sh.zachwal.dailygames.results.gamemapper.SizeItUpFixtures
+import sh.zachwal.dailygames.results.gamemapper.Top5Fixtures
+import sh.zachwal.dailygames.results.gamemapper.TravleFixtures
+import sh.zachwal.dailygames.results.gamemapper.allGameMappers
 import sh.zachwal.dailygames.results.resultinfo.CardleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
@@ -77,7 +89,9 @@ class ResultServiceTest(
         jdbi = jdbi,
         puzzleDAO = puzzleDAO,
         resultDAO = resultDAO,
-        shareTextParser = ShareTextParser(),
+        shareTextParser = ShareTextParser(
+            allGameMappers(clock = clock, userPreferencesService = userPreferencesService),
+        ),
         userService = userService,
         displayTimeService = displayTimeService,
         userPreferencesService = userPreferencesService,
@@ -139,7 +153,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create Travle result`() {
-        val result = resultService.createResult(fixtures.zach, TRAVLE_WITH_HINT)
+        val result = resultService.createResult(fixtures.zach, TravleFixtures.WITH_HINT)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.TRAVLE)
@@ -163,7 +177,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create Top5 result`() {
-        val result = resultService.createResult(fixtures.zach, TOP5)
+        val result = resultService.createResult(fixtures.zach, Top5Fixtures.WITH_MISSES)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.TOP5)
@@ -186,7 +200,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create Flagle result`() {
-        val result = resultService.createResult(fixtures.zach, FLAGLE)
+        val result = resultService.createResult(fixtures.zach, FlagleFixtures.FAILED)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.FLAGLE)
@@ -203,7 +217,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create Pinpoint result`() {
-        val result = resultService.createResult(fixtures.zach, PINPOINT_THREE)
+        val result = resultService.createResult(fixtures.zach, PinpointFixtures.THREE)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.PINPOINT)
@@ -219,7 +233,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create Geocircles result`() {
-        val result = resultService.createResult(fixtures.zach, GEOCIRCLES_PERFECT)
+        val result = resultService.createResult(fixtures.zach, GeocirclesFixtures.PERFECT)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.GEOCIRCLES)
@@ -236,7 +250,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create Framed result`() {
-        val result = resultService.createResult(fixtures.zach, FRAMED_FOUR)
+        val result = resultService.createResult(fixtures.zach, FramedFixtures.FOUR)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.FRAMED)
@@ -253,7 +267,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create a GeoGrid result`() {
-        val result = resultService.createResult(fixtures.zach, GEOGRID_PERFECT)
+        val result = resultService.createResult(fixtures.zach, GeoGridFixtures.PERFECT)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.GEOGRID)
@@ -272,7 +286,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create a Bandle result`() {
-        val result = resultService.createResult(fixtures.zach, BANDLE_PERFECT)
+        val result = resultService.createResult(fixtures.zach, BandleFixtures.PERFECT)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.BANDLE)
@@ -288,7 +302,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create a Bracket City result`() {
-        val result = resultService.createResult(fixtures.zach, BRACKET_CITY_KINGMAKER)
+        val result = resultService.createResult(fixtures.zach, BracketCityFixtures.KINGMAKER)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.BRACKET_CITY)
@@ -307,7 +321,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create a Size It Up result`() {
-        val result = resultService.createResult(fixtures.zach, SIZE_IT_UP_300)
+        val result = resultService.createResult(fixtures.zach, SizeItUpFixtures.THREE_HUNDRED)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.SIZE_IT_UP)
@@ -330,7 +344,7 @@ class ResultServiceTest(
     fun `can create a Size It Up result uses the user's time zone`() {
         every { userPreferencesService.getTimeZone(fixtures.zach.id) } returns ZoneId.of("America/Los_Angeles")
 
-        val result = resultService.createResult(fixtures.zach, SIZE_IT_UP_300)
+        val result = resultService.createResult(fixtures.zach, SizeItUpFixtures.THREE_HUNDRED)
 
         // Instant is 1am ET / 10pm PT on 9/10, so the puzzle number should still be 9/10 in PT
         assertThat(result.puzzleNumber).isEqualTo(20240910)
@@ -338,7 +352,7 @@ class ResultServiceTest(
 
     @Test
     fun `can create a Cardle result`() {
-        val result = resultService.createResult(fixtures.zach, CARDLE_PERFECT)
+        val result = resultService.createResult(fixtures.zach, CardleFixtures.PERFECT)
 
         assertThat(result.userId).isEqualTo(fixtures.zach.id)
         assertThat(result.game).isEqualTo(Game.CARDLE)
@@ -361,7 +375,7 @@ class ResultServiceTest(
 
     @Test
     fun `result feed result title for Cardle is Game name followed by short date`() {
-        resultService.createResult(fixtures.zach, CARDLE_PERFECT)
+        resultService.createResult(fixtures.zach, CardleFixtures.PERFECT)
         val item = resultService.resultFeed(1L).single()
 
         assertThat(item.resultTitle).isEqualTo("Cardle 9/11")
@@ -400,7 +414,7 @@ class ResultServiceTest(
 
     @Test
     fun `result feed result title for Size It Up is Game name followed by short date`() {
-        resultService.createResult(fixtures.zach, SIZE_IT_UP_300)
+        resultService.createResult(fixtures.zach, SizeItUpFixtures.THREE_HUNDRED)
         val item = resultService.resultFeed(1L).single()
 
         assertThat(item.resultTitle).isEqualTo("Size It Up 9/11")
@@ -457,11 +471,11 @@ class ResultServiceTest(
     fun `result feed includes all types of results, ordered by submission time`() {
         resultService.createResult(fixtures.zach, worldle934)
         resultService.createResult(fixtures.jackie, tradle890)
-        resultService.createResult(fixtures.zach, TRAVLE_PLUS_0)
-        resultService.createResult(fixtures.zach, TOP5)
-        resultService.createResult(fixtures.zach, FLAGLE)
-        resultService.createResult(fixtures.zach, PINPOINT_THREE)
-        resultService.createResult(fixtures.zach, GEOCIRCLES_PERFECT)
+        resultService.createResult(fixtures.zach, TravleFixtures.PLUS_0)
+        resultService.createResult(fixtures.zach, Top5Fixtures.WITH_MISSES)
+        resultService.createResult(fixtures.zach, FlagleFixtures.FAILED)
+        resultService.createResult(fixtures.zach, PinpointFixtures.THREE)
+        resultService.createResult(fixtures.zach, GeocirclesFixtures.PERFECT)
 
         val feedTitles = resultService.resultFeed(1L).map { it.resultTitle }
 
@@ -582,7 +596,7 @@ class ResultServiceTest(
 
     @Test
     fun `inserts results in the new result table`() {
-        resultService.createResult(fixtures.zach, TOP5)
+        resultService.createResult(fixtures.zach, Top5Fixtures.WITH_MISSES)
 
         val result = resultDAO.allResultsStream().toList().single()
 
@@ -593,7 +607,7 @@ class ResultServiceTest(
         assertThat(result.instantSubmitted).isIn(Range.closed(now.minusSeconds(10), now))
         assertThat(result.puzzleDate).isNull()
         assertThat(result.score).isEqualTo(3)
-        assertThat(result.shareText).isEqualTo(TOP5.trimIndent())
+        assertThat(result.shareText).isEqualTo(Top5Fixtures.WITH_MISSES.trimIndent())
         assertThat(result.resultInfo).isInstanceOf(Top5Info::class.java)
         val top5Info = result.info<Top5Info>()
         assertThat(top5Info.numGuesses).isEqualTo(8)
@@ -603,9 +617,9 @@ class ResultServiceTest(
 
     @Test
     fun `returns recent game counts excluding user id 1`() {
-        resultService.createResult(fixtures.zach, TOP5)
-        resultService.createResult(fixtures.jackie, TOP5)
-        resultService.createResult(fixtures.jackie, FLAGLE)
+        resultService.createResult(fixtures.zach, Top5Fixtures.WITH_MISSES)
+        resultService.createResult(fixtures.jackie, Top5Fixtures.WITH_MISSES)
+        resultService.createResult(fixtures.jackie, FlagleFixtures.FAILED)
 
         val counts = resultService.resultCountByGame(
             since = Instant.now().minusSeconds(10),

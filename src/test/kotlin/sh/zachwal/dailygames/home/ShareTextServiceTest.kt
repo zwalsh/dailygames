@@ -9,14 +9,17 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.leaderboard.PointCalculator
 import sh.zachwal.dailygames.results.ResultService
+import sh.zachwal.dailygames.results.gamemapper.allGameMappers
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
+import sh.zachwal.dailygames.users.UserPreferencesService
+import java.time.Clock
 import java.time.Instant
 
 class ShareTextServiceTest {
     private val user = User(id = 1L, username = "zach", hashedPassword = "123abc==")
     private val shareLineMapper = ShareLineMapper(
-        pointCalculator = PointCalculator(),
+        allGameMappers(clock = Clock.systemUTC(), userPreferencesService = mockk<UserPreferencesService>()),
     )
     private val streakService = mockk<StreakService> {
         every { streakForUser(any()) } returns 3

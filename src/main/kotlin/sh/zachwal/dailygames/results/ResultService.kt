@@ -13,14 +13,12 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.home.views.ResultFeedItemView
-import sh.zachwal.dailygames.results.resultinfo.ParsedResult
 import sh.zachwal.dailygames.users.UserPreferencesService
 import sh.zachwal.dailygames.users.UserService
 import sh.zachwal.dailygames.utils.DisplayTimeService
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
-import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,13 +45,13 @@ class ResultService @Inject constructor(
         user: User,
         shareText: String,
     ): PuzzleResult {
-        // regex & parse share text
-        val game = shareTextParser.identifyGame(shareText) ?: run {
+        val parsedResult = try {
+            shareTextParser.parse(shareText, user)
+        } catch (e: UnrecognizedShareTextException) {
             logger.error("Could not recognize $shareText as a valid game")
-            throw IllegalArgumentException("Share text could not be recognized as a valid game")
+            throw e
         }
-
-        val parsedResult = parseResult(shareText, game, user)
+        val game = parsedResult.game
         val puzzle = getOrCreatePuzzle(Puzzle(game, parsedResult.puzzleNumber, parsedResult.date))
 
         return try {
@@ -83,30 +81,6 @@ class ResultService @Inject constructor(
                 )
                 throw e
             }
-        }
-    }
-
-    private fun parseResult(shareText: String, game: Game, user: User): ParsedResult {
-        return when (game) {
-            Game.WORLDLE -> shareTextParser.extractWorldleInfo(shareText)
-            Game.TRADLE -> shareTextParser.extractTradleInfo(shareText)
-            Game.TRAVLE -> shareTextParser.extractTravleInfo(shareText)
-            Game.TOP5 -> shareTextParser.extractTop5Info(shareText)
-            Game.FLAGLE -> shareTextParser.extractFlagleInfo(shareText)
-            Game.PINPOINT -> shareTextParser.extractPinpointInfo(shareText)
-            Game.GEOCIRCLES -> shareTextParser.extractGeocirclesInfo(shareText)
-            Game.FRAMED -> shareTextParser.extractFramedInfo(shareText)
-            Game.GEOGRID -> shareTextParser.extractGeoGridInfo(shareText)
-            Game.BANDLE -> shareTextParser.extractBandleInfo(shareText)
-            Game.BRACKET_CITY -> shareTextParser.extractBracketCityInfo(shareText)
-            Game.SIZE_IT_UP -> shareTextParser.extractSizeItUpInfo(
-                shareText,
-                date = LocalDate.now(clock.withZone(userPreferencesService.getTimeZone(user.id))),
-            )
-            Game.CARDLE -> shareTextParser.extractCardleInfo(
-                shareText,
-                date = LocalDate.now(clock.withZone(userPreferencesService.getTimeZone(user.id))),
-            )
         }
     }
 
