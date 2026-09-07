@@ -64,16 +64,23 @@ Each step compiles and each step is one commit.
 3. **`TODO()` branches.** Add the enum constant to every exhaustive `when` the compiler
    complains about, with `TODO()` as the body. This is the trick that makes the next six
    steps safe: the compiler enumerates the work for you. Commit once it builds.
-4. **Identify.** Add the detection branch to `ShareTextParser.identifyGame`.
-5. **Extract, and test the perfect case.** Write `extract<Game>Info`, the `<Game>Info`
-   class, and the `@JsonSubTypes` registration. Test against the perfect sample.
-6. **Test the other samples.** One test per sample share text the user gave you.
-7. **Insert results.** Replace the `TODO()` in `ResultService.parseResult`, and add an
-   end-to-end `ResultServiceTest` case.
+4. **Mapper skeleton.** Create `results/gamemapper/<Game>Mapper.kt` implementing
+   `GameMapper`, with `matches()` written and `extract()`/`shareLine()` left as `TODO()`.
+   Register it with `mapperBinder.addBinding().to(<Game>Mapper::class.java)` in
+   `ApplicationModule`.
+5. **Extract, and test the perfect case.** Write `extract()`, the `<Game>Info` class, and
+   the `@JsonSubTypes` registration. Add `<Game>Fixtures.kt` and `<Game>MapperTest.kt`
+   (extending `GameMapperContractTest`) and test against the perfect sample.
+6. **Test the other samples.** One test per sample share text the user gave you, plus add
+   `<Game>Fixtures.ALL` to `TestGameMappers.allGameMappers()` and
+   `GameMapperMatchingTest.allFixtures`.
+7. **Insert results.** Add an end-to-end `can create a <Game> result` case to
+   `ResultServiceTest` — `ResultService` itself needs no changes, it dispatches
+   generically through `ShareTextParser.parse`.
 8. **Points.** Replace the `TODO()`s in `PointCalculator` and `LeaderboardService`, with
    tests covering the score boundaries.
-9. **Share line.** Replace the `TODO()` in `ShareLineMapper`, with `ShareLineMapperTest`
-   cases for at least the perfect and failure results.
+9. **Share line.** Replace the `TODO()` in `<Game>Mapper.shareLine()`, with
+   `<Game>MapperTest` cases for at least the perfect and failure results.
 
 Run `./gradlew ktlintFormat && ./gradlew build` before each commit. Do not leave a
 `TODO()` in a commit you consider finished — `TODO()` compiles fine and throws
@@ -88,8 +95,8 @@ Send Sonnet sub-agents for the reading; do the writing yourself. Useful splits:
   vary, and what a regex would have to tolerate. Ask for the union of every emoji that
   appears in any grid position — that is exactly the check Bracket City missed.
 - **Precedent hunt.** Ask an agent which existing game is closest in structure to this
-  one, and to report that game's parser, `PointCalculator` branch, `ScoreHintView` and
-  `ShareLineMapper` function verbatim. Reuse beats invention here (see §4).
+  one, and to report that game's `<Game>Mapper` verbatim, along with its
+  `PointCalculator` branch and `ScoreHintView`. Reuse beats invention here (see §4).
 - **Post-implementation sweep.** After step 9, send an agent to `rg -i` your new game's
   name across the repo and compare the hits against `reference/touchpoints.md`, reporting
   anything on the list with no corresponding hit.
@@ -98,17 +105,18 @@ Give each agent the sample share texts inline — they cannot see your conversat
 
 ## 4. Prefer joining a group over writing a new function
 
-Most games do not need any new code outside the parser. Bandle added a game with zero
-new functions in `PointCalculator`, `LeaderboardService` or `ShareLineMapper` — it just
+Most games do not need any new code outside their mapper. Bandle added a game with zero
+new functions in `PointCalculator` or `LeaderboardService`, and its `shareLine()` is a
+one-line call into the shared `toStandardShareLine()` helper — it just
 joined the existing `WORLDLE, TRADLE, FLAGLE, FRAMED ->` arms in each. Check whether
-yours can do the same before writing a bespoke branch:
+yours can do the same before writing bespoke logic:
 
 - **Points.** If the game is "N guesses, fewer is better, X means failed", join the
   `maxPoints(result) + 1 - score` group. If it's "one point per correct answer", join the
   `-> score` group.
-- **Share line.** If the line should read `<emoji> <Name> #123 4/6`, join
-  `toStandardShareLine()`. It already handles the `X/6` failure form and appends the
-  perfect emoji at `score == 1`.
+- **Share line.** If the line should read `<emoji> <Name> #123 4/6`, have `shareLine()`
+  call `toStandardShareLine()` from `results/gamemapper/StandardShareLine.kt`. It already
+  handles the `X/6` failure form and appends the perfect emoji at `score == 1`.
 - **Scoring hint.** Use `BasicScoreHintView("...")`. Only subclass `ScoreHintView` if the
   text needs a hyperlink, which is the sole reason `TravleScoreHintView` exists.
 
@@ -151,10 +159,12 @@ and needs `substringAfter(...)`, which was a shipped bug.
 filename have drifted apart historically. Match the filename to the next file number and
 give the changeset an unused id; don't assume they agree.
 
-**Identification order.** `identifyGame` is a first-match-wins guard chain with no
-ambiguity detection. Prefer an anchored `Regex(...).matches(shareText)` over a loose
-`contains`, and check that your pattern doesn't swallow an existing game's share text —
-add an assertion to the existing parser tests if there's any doubt.
+**Identification order.** `ShareTextParser.parse` picks the first mapper whose
+`matches()` returns true, out of an unordered `Set<GameMapper>` — so no two mappers may
+ever match the same text. `GameMapperMatchingTest` asserts exactly one mapper matches
+each fixture across every game; it will fail loudly if your pattern overlaps an existing
+game's, so prefer an anchored `Regex(...).matches(shareText)` over a loose `contains`
+where you can.
 
 ## 6. Before you open the PR
 
