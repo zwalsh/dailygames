@@ -472,6 +472,14 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `result feed result title for MapTap is Game name followed by short date`() {
+        resultService.createResult(fixtures.zach, MapTapFixtures.EXAMPLE)
+        val item = resultService.resultFeed(1L).single()
+
+        assertThat(item.resultTitle).isEqualTo("MapTap 9/07")
+    }
+
+    @Test
     fun `result feed username matches user's name`() {
         resultService.createResult(fixtures.zach, worldle934)
         val item = resultService.resultFeed(1L).single()
