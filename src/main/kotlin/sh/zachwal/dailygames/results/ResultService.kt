@@ -103,7 +103,10 @@ class ResultService @Inject constructor(
                 shareText,
                 date = LocalDate.now(clock.withZone(userPreferencesService.getTimeZone(user.id))),
             )
-            Game.CARDLE -> TODO()
+            Game.CARDLE -> shareTextParser.extractCardleInfo(
+                shareText,
+                date = LocalDate.now(clock.withZone(userPreferencesService.getTimeZone(user.id))),
+            )
         }
     }
 
@@ -127,7 +130,7 @@ class ResultService @Inject constructor(
 
     private fun resultTitle(result: PuzzleResult): String {
         val puzzleDate = result.puzzleDate
-        return if (result.game == Game.SIZE_IT_UP && puzzleDate != null) {
+        return if ((result.game == Game.SIZE_IT_UP || result.game == Game.CARDLE) && puzzleDate != null) {
             "${result.game.displayName()} ${puzzleDate.monthValue}/${"%02d".format(puzzleDate.dayOfMonth)}"
         } else {
             "${result.game.displayName()} #${result.puzzleNumber}"
