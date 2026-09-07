@@ -367,6 +367,14 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `result feed result title for Size It Up is Game name followed by short date`() {
+        resultService.createResult(fixtures.zach, SIZE_IT_UP_300)
+        val item = resultService.resultFeed(1L).single()
+
+        assertThat(item.resultTitle).isEqualTo("Size It Up 9/11")
+    }
+
+    @Test
     fun `result feed username matches user's name`() {
         resultService.createResult(fixtures.zach, worldle934)
         val item = resultService.resultFeed(1L).single()

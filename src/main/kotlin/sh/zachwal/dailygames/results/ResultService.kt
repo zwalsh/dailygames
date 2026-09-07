@@ -116,11 +116,20 @@ class ResultService @Inject constructor(
             val username = userService.getUsernameCached(result.userId)
             ResultFeedItemView(
                 username = username ?: "Unknown",
-                resultTitle = "${result.game.displayName()} #${result.puzzleNumber}",
+                resultTitle = resultTitle(result),
                 chatHref = chatLink(result.game, result.puzzleNumber),
                 shareText = result.shareText,
                 timestampText = displayTimeService.displayTime(result.instantSubmitted, userId = userId),
             )
+        }
+    }
+
+    private fun resultTitle(result: PuzzleResult): String {
+        val puzzleDate = result.puzzleDate
+        return if (result.game == Game.SIZE_IT_UP && puzzleDate != null) {
+            "${result.game.displayName()} ${puzzleDate.monthValue}/${"%02d".format(puzzleDate.dayOfMonth)}"
+        } else {
+            "${result.game.displayName()} #${result.puzzleNumber}"
         }
     }
 
