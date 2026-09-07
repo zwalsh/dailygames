@@ -82,6 +82,13 @@ class DeserializeStoredPuzzleResultInfoTest {
                     krillionCount = 0,
                 ),
             ),
+            Arguments.of(
+                "{\"type\":\"maptap\",\"finalScore\":797,\"roundScores\":[100,93,95,66,72]}",
+                MapTapInfo(
+                    finalScore = 797,
+                    roundScores = listOf(100, 93, 95, 66, 72),
+                ),
+            ),
         )
     }
 }
