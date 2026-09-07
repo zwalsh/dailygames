@@ -77,4 +77,31 @@ class ShareTextParserCardleTest {
         )
         assertThat(parsed.resultInfo).isEqualTo(CardleInfo(numGuesses = 1, streak = 1))
     }
+
+    @Test
+    fun `extracts Cardle mid-range score`() {
+        val parsed = parser.extractCardleInfo(CARDLE_MID, date)
+
+        assertThat(parsed.score).isEqualTo(6)
+        assertThat(parsed.puzzleNumber).isEqualTo(20260907)
+        assertThat(parsed.resultInfo).isEqualTo(CardleInfo(numGuesses = 4, streak = 1))
+    }
+
+    @Test
+    fun `extracts Cardle low score with no streak line`() {
+        val parsed = parser.extractCardleInfo(CARDLE_LOW_SCORE_NO_STREAK, date)
+
+        assertThat(parsed.score).isEqualTo(1)
+        assertThat(parsed.puzzleNumber).isEqualTo(20260907)
+        assertThat(parsed.resultInfo).isEqualTo(CardleInfo(numGuesses = 5, streak = 0))
+    }
+
+    @Test
+    fun `extracts Cardle failure with no streak or total score line`() {
+        val parsed = parser.extractCardleInfo(CARDLE_FAILURE, date)
+
+        assertThat(parsed.score).isEqualTo(0)
+        assertThat(parsed.puzzleNumber).isEqualTo(20260907)
+        assertThat(parsed.resultInfo).isEqualTo(CardleInfo(numGuesses = 5, streak = 0))
+    }
 }
