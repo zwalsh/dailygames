@@ -31,7 +31,8 @@ class GameMapperMatchingTest {
             BracketCityFixtures.ALL +
             SizeItUpFixtures.ALL +
             CardleFixtures.ALL +
-            KrillionFixtures.ALL
+            KrillionFixtures.ALL +
+            MapTapFixtures.ALL
 
     @Test
     fun `every fixture matches exactly one mapper`() {

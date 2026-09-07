@@ -23,4 +23,5 @@ fun allGameMappers(
     SizeItUpMapper(clock, userPreferencesService),
     CardleMapper(clock, userPreferencesService),
     KrillionMapper(),
+    MapTapMapper(clock, userPreferencesService),
 )
