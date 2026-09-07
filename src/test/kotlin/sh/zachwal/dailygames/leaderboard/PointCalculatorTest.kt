@@ -12,6 +12,7 @@ import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.KrillionInfo
+import sh.zachwal.dailygames.results.resultinfo.MapTapInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
 import sh.zachwal.dailygames.results.resultinfo.SizeItUpInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
@@ -244,6 +245,26 @@ class PointCalculatorTest {
         assertThat(calculator.calculatePoints(result0)).isEqualTo(0)
     }
 
+    private val mapTapResult = worldleResult.copy(
+        game = Game.MAPTAP,
+        resultInfo = MapTapInfo(
+            finalScore = 797,
+            roundScores = listOf(100, 93, 95, 66, 72),
+        ),
+    )
+
+    @Test
+    fun `calculates points for maptap as the final score divided by 100 rounded down`() {
+        val result994 = mapTapResult.copy(score = 994)
+        assertThat(calculator.calculatePoints(result994)).isEqualTo(9)
+
+        val result797 = mapTapResult.copy(score = 797)
+        assertThat(calculator.calculatePoints(result797)).isEqualTo(7)
+
+        val result0 = mapTapResult.copy(score = 0)
+        assertThat(calculator.calculatePoints(result0)).isEqualTo(0)
+    }
+
     @Test
     fun `returns max score for simple games`() {
         assertThat(calculator.maxPoints(worldleResult)).isEqualTo(6)
@@ -257,5 +278,6 @@ class PointCalculatorTest {
         assertThat(calculator.maxPoints(bandleResult)).isEqualTo(6)
         assertThat(calculator.maxPoints(cardleResult)).isEqualTo(15)
         assertThat(calculator.maxPoints(krillionResult)).isEqualTo(10)
+        assertThat(calculator.maxPoints(mapTapResult)).isEqualTo(10)
     }
 }
