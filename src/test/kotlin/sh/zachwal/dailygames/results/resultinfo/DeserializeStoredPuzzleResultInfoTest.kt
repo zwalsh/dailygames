@@ -62,6 +62,10 @@ class DeserializeStoredPuzzleResultInfoTest {
                     isPerfect = true,
                 ),
             ),
+            Arguments.of(
+                "{\"type\":\"size_it_up\"}",
+                SizeItUpInfo,
+            ),
         )
     }
 }
