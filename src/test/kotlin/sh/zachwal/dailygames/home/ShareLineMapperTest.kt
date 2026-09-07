@@ -17,6 +17,7 @@ import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
+import sh.zachwal.dailygames.results.resultinfo.SizeItUpInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TradleInfo
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
@@ -530,5 +531,32 @@ class ShareLineMapperTest {
         )
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("🏙️ Bracket City 4/20 100.0 \uD83D\uDD2E")
+    }
+
+    private val sizeItUpResult = worldleResult.copy(
+        game = Game.SIZE_IT_UP,
+        puzzleNumber = 20260907,
+        resultInfo = SizeItUpInfo,
+    )
+
+    @Test
+    fun `maps Size It Up line`() {
+        val result = sizeItUpResult.copy(score = 300)
+        val shareLine = mapper.mapToShareLine(result)
+        assertThat(shareLine).isEqualTo("${Game.SIZE_IT_UP.emoji()} Size It Up #20260907 300/500")
+    }
+
+    @Test
+    fun `maps Size It Up perfect line`() {
+        val result = sizeItUpResult.copy(score = 500)
+        val shareLine = mapper.mapToShareLine(result)
+        assertThat(shareLine).isEqualTo("${Game.SIZE_IT_UP.emoji()} Size It Up #20260907 500/500 ${Game.SIZE_IT_UP.perfectEmoji()}")
+    }
+
+    @Test
+    fun `maps Size It Up zero line`() {
+        val result = sizeItUpResult.copy(score = 0)
+        val shareLine = mapper.mapToShareLine(result)
+        assertThat(shareLine).isEqualTo("${Game.SIZE_IT_UP.emoji()} Size It Up #20260907 0/500")
     }
 }
