@@ -33,6 +33,8 @@ class PointCalculator {
 
             // Size It Up is out of 500. Divide by 50 and round down.
             Game.SIZE_IT_UP -> score / 50
+
+            Game.CARDLE -> TODO()
         }
     }
 
@@ -56,6 +58,8 @@ class PointCalculator {
             Game.TRAVLE -> (result.info<TravleInfo>()).maxPoints(score)
 
             Game.GEOGRID -> 9
+
+            Game.CARDLE -> TODO()
         }
     }
 

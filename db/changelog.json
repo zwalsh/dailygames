@@ -129,6 +129,11 @@
       "include": {
         "file": "26_add_size_it_up.json"
       }
+    },
+    {
+      "include": {
+        "file": "27_add_cardle.json"
+      }
     }
   ]
 }

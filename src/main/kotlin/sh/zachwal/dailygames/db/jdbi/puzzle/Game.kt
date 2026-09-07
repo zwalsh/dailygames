@@ -15,6 +15,7 @@ enum class Game {
     BANDLE,
     BRACKET_CITY,
     SIZE_IT_UP,
+    CARDLE,
     ;
 
     fun displayName(): String {
@@ -41,6 +42,7 @@ enum class Game {
             BANDLE -> "\uD83C\uDFB8"
             BRACKET_CITY -> "\uD83C\uDFD9\uFE0F"
             SIZE_IT_UP -> "\uD83D\uDCD0"
+            CARDLE -> "\uD83D\uDE97"
         }
     }
 
@@ -58,6 +60,7 @@ enum class Game {
             BANDLE -> "\uD83C\uDFB5"
             BRACKET_CITY -> "\uD83D\uDC51"
             SIZE_IT_UP -> "\uD83D\uDCAF"
+            CARDLE -> "\uD83C\uDFC6"
         }
     }
 
@@ -75,6 +78,7 @@ enum class Game {
             BANDLE -> "https://bandle.app/"
             BRACKET_CITY -> "https://www.theatlantic.com/games/bracket-city/"
             SIZE_IT_UP -> "https://magnitudle.com/size-it-up"
+            CARDLE -> "https://www.playcardle.com/"
         }
     }
 }

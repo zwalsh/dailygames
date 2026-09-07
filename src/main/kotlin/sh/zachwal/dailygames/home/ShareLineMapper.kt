@@ -32,6 +32,7 @@ class ShareLineMapper @Inject constructor(
             Game.GEOGRID -> result.toGeoGridShareLine()
             Game.BRACKET_CITY -> result.toBracketCityShareLine()
             Game.SIZE_IT_UP -> result.toSizeItUpShareLine()
+            Game.CARDLE -> TODO()
         }
     }
 

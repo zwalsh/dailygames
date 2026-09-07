@@ -103,6 +103,7 @@ class ResultService @Inject constructor(
                 shareText,
                 date = LocalDate.now(clock.withZone(userPreferencesService.getTimeZone(user.id))),
             )
+            Game.CARDLE -> TODO()
         }
     }
 
