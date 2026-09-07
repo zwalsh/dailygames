@@ -139,6 +139,11 @@
       "include": {
         "file": "28_add_krillion.json"
       }
+    },
+    {
+      "include": {
+        "file": "29_add_maptap.json"
+      }
     }
   ]
 }
