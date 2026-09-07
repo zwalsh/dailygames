@@ -61,7 +61,7 @@ class LeaderboardService @Inject constructor(
 
             Game.BRACKET_CITY -> BasicScoreHintView("Scoring: Bracket City score divided by 10 and rounded down. e.g. 99.0 = 9 points.")
             Game.SIZE_IT_UP -> BasicScoreHintView("Scoring: Overall score (out of 500) divided by 50 and rounded down. e.g. 351 = 7 points.")
-            Game.CARDLE -> TODO()
+            Game.CARDLE -> BasicScoreHintView("Scoring: Raw Cardle score, out of 15 points. e.g. Total Score 12 = 12 points.")
         }
         val navView = navViewFactory.navView(
             username = currentUser.username,

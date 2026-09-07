@@ -24,6 +24,7 @@ class PointCalculator {
             Game.TOP5,
             Game.GEOCIRCLES,
             Game.GEOGRID,
+            Game.CARDLE,
             -> score
 
             Game.TRAVLE -> (result.info<TravleInfo>()).calculatePoints(score)
@@ -33,8 +34,6 @@ class PointCalculator {
 
             // Size It Up is out of 500. Divide by 50 and round down.
             Game.SIZE_IT_UP -> score / 50
-
-            Game.CARDLE -> TODO()
         }
     }
 
@@ -59,7 +58,7 @@ class PointCalculator {
 
             Game.GEOGRID -> 9
 
-            Game.CARDLE -> TODO()
+            Game.CARDLE -> 15
         }
     }
 
