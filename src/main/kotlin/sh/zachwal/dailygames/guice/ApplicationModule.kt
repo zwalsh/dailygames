@@ -19,6 +19,7 @@ import sh.zachwal.dailygames.results.gamemapper.GameMapper
 import sh.zachwal.dailygames.results.gamemapper.GeoGridMapper
 import sh.zachwal.dailygames.results.gamemapper.GeocirclesMapper
 import sh.zachwal.dailygames.results.gamemapper.KrillionMapper
+import sh.zachwal.dailygames.results.gamemapper.MapTapMapper
 import sh.zachwal.dailygames.results.gamemapper.PinpointMapper
 import sh.zachwal.dailygames.results.gamemapper.SizeItUpMapper
 import sh.zachwal.dailygames.results.gamemapper.Top5Mapper
@@ -49,6 +50,7 @@ class ApplicationModule : AbstractModule() {
         mapperBinder.addBinding().to(SizeItUpMapper::class.java)
         mapperBinder.addBinding().to(CardleMapper::class.java)
         mapperBinder.addBinding().to(KrillionMapper::class.java)
+        mapperBinder.addBinding().to(MapTapMapper::class.java)
     }
 
     @Provides
