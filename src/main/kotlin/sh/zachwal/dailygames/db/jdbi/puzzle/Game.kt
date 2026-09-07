@@ -16,6 +16,7 @@ enum class Game {
     BRACKET_CITY,
     SIZE_IT_UP,
     CARDLE,
+    KRILLION,
     ;
 
     fun displayName(): String {
@@ -43,6 +44,7 @@ enum class Game {
             BRACKET_CITY -> "\uD83C\uDFD9\uFE0F"
             SIZE_IT_UP -> "\uD83D\uDCD0"
             CARDLE -> "\uD83D\uDE97"
+            KRILLION -> "\uD83E\uDD90"
         }
     }
 
@@ -61,6 +63,7 @@ enum class Game {
             BRACKET_CITY -> "\uD83D\uDC51"
             SIZE_IT_UP -> "\uD83D\uDCAF"
             CARDLE -> "\uD83C\uDFC6"
+            KRILLION -> "\uD83C\uDF1F"
         }
     }
 
@@ -79,6 +82,7 @@ enum class Game {
             BRACKET_CITY -> "https://www.theatlantic.com/games/bracket-city/"
             SIZE_IT_UP -> "https://magnitudle.com/size-it-up"
             CARDLE -> "https://www.playcardle.com/"
+            KRILLION -> "https://krillion.io"
         }
     }
 }

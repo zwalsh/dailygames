@@ -25,6 +25,7 @@ import sh.zachwal.dailygames.results.gamemapper.FlagleFixtures
 import sh.zachwal.dailygames.results.gamemapper.FramedFixtures
 import sh.zachwal.dailygames.results.gamemapper.GeoGridFixtures
 import sh.zachwal.dailygames.results.gamemapper.GeocirclesFixtures
+import sh.zachwal.dailygames.results.gamemapper.KrillionFixtures
 import sh.zachwal.dailygames.results.gamemapper.PinpointFixtures
 import sh.zachwal.dailygames.results.gamemapper.SizeItUpFixtures
 import sh.zachwal.dailygames.results.gamemapper.Top5Fixtures
@@ -32,6 +33,7 @@ import sh.zachwal.dailygames.results.gamemapper.TravleFixtures
 import sh.zachwal.dailygames.results.gamemapper.allGameMappers
 import sh.zachwal.dailygames.results.resultinfo.CardleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
+import sh.zachwal.dailygames.results.resultinfo.KrillionInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
@@ -371,6 +373,31 @@ class ResultServiceTest(
 
         assertThat(info.numGuesses).isEqualTo(1)
         assertThat(info.streak).isEqualTo(1)
+    }
+
+    @Test
+    fun `can create a Krillion result`() {
+        val result = resultService.createResult(fixtures.zach, KrillionFixtures.MID)
+
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.KRILLION)
+        assertThat(result.puzzleNumber).isEqualTo(54)
+        assertThat(result.score).isEqualTo(5)
+        assertThat(result.shareText).isEqualTo(
+            """
+            Krillion #54 🦐
+            385
+
+            🐟🐟🦑🏮🦑🦑🦑
+            """.trimIndent(),
+        )
+        assertThat(result.resultInfo).isInstanceOf(KrillionInfo::class.java)
+        val info = result.info<KrillionInfo>()
+
+        assertThat(info.rawScore).isEqualTo(385)
+        assertThat(info.schoolerCount).isEqualTo(2)
+        assertThat(info.rareCount).isEqualTo(4)
+        assertThat(info.deepCutCount).isEqualTo(1)
     }
 
     @Test

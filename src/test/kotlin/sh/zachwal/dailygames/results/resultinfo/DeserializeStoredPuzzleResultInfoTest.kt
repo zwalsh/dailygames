@@ -70,6 +70,18 @@ class DeserializeStoredPuzzleResultInfoTest {
                 "{\"type\":\"cardle\",\"numGuesses\":1,\"streak\":1}",
                 CardleInfo(numGuesses = 1, streak = 1),
             ),
+            Arguments.of(
+                "{\"type\":\"krillion\",\"rawScore\":385,\"missCount\":0,\"planktonCount\":0,\"schoolerCount\":2,\"rareCount\":4,\"deepCutCount\":1,\"krillionCount\":0}",
+                KrillionInfo(
+                    rawScore = 385,
+                    missCount = 0,
+                    planktonCount = 0,
+                    schoolerCount = 2,
+                    rareCount = 4,
+                    deepCutCount = 1,
+                    krillionCount = 0,
+                ),
+            ),
         )
     }
 }

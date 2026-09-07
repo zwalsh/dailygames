@@ -58,6 +58,15 @@ class SerializePuzzleResultInfoTest {
             ),
             SizeItUpInfo(roundScores = listOf(4, 10, 7, 5, 4)),
             CardleInfo(numGuesses = 1, streak = 1),
+            KrillionInfo(
+                rawScore = 385,
+                missCount = 0,
+                planktonCount = 0,
+                schoolerCount = 2,
+                rareCount = 4,
+                deepCutCount = 1,
+                krillionCount = 0,
+            ),
         )
     }
 }

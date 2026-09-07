@@ -134,6 +134,11 @@
       "include": {
         "file": "27_add_cardle.json"
       }
+    },
+    {
+      "include": {
+        "file": "28_add_krillion.json"
+      }
     }
   ]
 }
