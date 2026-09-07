@@ -35,6 +35,8 @@ class PointCalculator {
 
             // Size It Up is out of 500. Divide by 50 and round down.
             Game.SIZE_IT_UP -> score / 50
+
+            Game.MAPTAP -> TODO()
         }
     }
 
@@ -63,6 +65,8 @@ class PointCalculator {
 
             // Krillion's raw score is out of 700. Normalized by KrillionMapper to a 0-10 scale.
             Game.KRILLION -> 10
+
+            Game.MAPTAP -> TODO()
         }
     }
 
