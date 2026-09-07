@@ -57,6 +57,7 @@ class SerializePuzzleResultInfoTest {
                 isPerfect = true,
             ),
             SizeItUpInfo(roundScores = listOf(4, 10, 7, 5, 4)),
+            CardleInfo(numGuesses = 1, streak = 1),
         )
     }
 }
