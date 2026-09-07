@@ -11,6 +11,7 @@ import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
+import sh.zachwal.dailygames.results.resultinfo.SizeItUpInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TradleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
@@ -173,6 +174,29 @@ class PointCalculatorTest {
         assertThat(calculator.calculatePoints(result89)).isEqualTo(8)
 
         val result0 = bracketCityResult.copy(score = 0)
+        assertThat(calculator.calculatePoints(result0)).isEqualTo(0)
+    }
+
+    private val sizeItUpResult = worldleResult.copy(
+        game = Game.SIZE_IT_UP,
+        resultInfo = SizeItUpInfo(roundScores = listOf(4, 10, 7, 5, 4)),
+    )
+
+    @Test
+    fun `calculates points for size it up by dividing score by 50 and rounding down`() {
+        val result500 = sizeItUpResult.copy(score = 500)
+        assertThat(calculator.calculatePoints(result500)).isEqualTo(10)
+
+        val result351 = sizeItUpResult.copy(score = 351)
+        assertThat(calculator.calculatePoints(result351)).isEqualTo(7)
+
+        val result300 = sizeItUpResult.copy(score = 300)
+        assertThat(calculator.calculatePoints(result300)).isEqualTo(6)
+
+        val result49 = sizeItUpResult.copy(score = 49)
+        assertThat(calculator.calculatePoints(result49)).isEqualTo(0)
+
+        val result0 = sizeItUpResult.copy(score = 0)
         assertThat(calculator.calculatePoints(result0)).isEqualTo(0)
     }
 

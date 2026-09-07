@@ -305,6 +305,37 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `can create a Size It Up result`() {
+        val result = resultService.createResult(fixtures.zach, SIZE_IT_UP_300)
+
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.SIZE_IT_UP)
+        assertThat(result.puzzleNumber).isEqualTo(20240911)
+        assertThat(result.score).isEqualTo(300)
+        assertThat(result.shareText).isEqualTo(
+            """
+            Size It Up
+            Overall Score 300
+            🟥🟥🟥🟥⬜⬜⬜⬜⬜⬜
+            🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
+            🟥🟥🟥🟥🟥🟥🟥⬜⬜⬜
+            🟥🟥🟥🟥🟥⬜⬜⬜⬜⬜
+            🟥🟥🟥🟥⬜⬜⬜⬜⬜⬜
+            """.trimIndent(),
+        )
+    }
+
+    @Test
+    fun `can create a Size It Up result uses the user's time zone`() {
+        every { userPreferencesService.getTimeZone(fixtures.zach.id) } returns ZoneId.of("America/Los_Angeles")
+
+        val result = resultService.createResult(fixtures.zach, SIZE_IT_UP_300)
+
+        // Instant is 1am ET / 10pm PT on 9/10, so the puzzle number should still be 9/10 in PT
+        assertThat(result.puzzleNumber).isEqualTo(20240910)
+    }
+
+    @Test
     fun `submitting a result twice throws a helpful error`() {
         resultService.createResult(fixtures.zach, worldle934)
 
@@ -333,6 +364,14 @@ class ResultServiceTest(
         val item = resultService.resultFeed(1L).single()
 
         assertThat(item.resultTitle).isEqualTo("Worldle #934")
+    }
+
+    @Test
+    fun `result feed result title for Size It Up is Game name followed by short date`() {
+        resultService.createResult(fixtures.zach, SIZE_IT_UP_300)
+        val item = resultService.resultFeed(1L).single()
+
+        assertThat(item.resultTitle).isEqualTo("Size It Up 9/11")
     }
 
     @Test

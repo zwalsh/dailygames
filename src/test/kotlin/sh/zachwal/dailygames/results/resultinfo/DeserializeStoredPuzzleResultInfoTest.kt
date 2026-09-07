@@ -62,6 +62,10 @@ class DeserializeStoredPuzzleResultInfoTest {
                     isPerfect = true,
                 ),
             ),
+            Arguments.of(
+                "{\"type\":\"size_it_up\",\"roundScores\":[4,10,7,5,4]}",
+                SizeItUpInfo(roundScores = listOf(4, 10, 7, 5, 4)),
+            ),
         )
     }
 }

@@ -9,6 +9,7 @@ import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
 import sh.zachwal.dailygames.results.resultinfo.GeocirclesInfo
 import sh.zachwal.dailygames.results.resultinfo.ParsedResult
 import sh.zachwal.dailygames.results.resultinfo.PinpointInfo
+import sh.zachwal.dailygames.results.resultinfo.SizeItUpInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TradleInfo
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
@@ -33,6 +34,7 @@ class ShareTextParser {
             shareText.contains("geogridgame") -> Game.GEOGRID
             shareText.trim().startsWith("Bandle") -> Game.BANDLE
             shareText.trim().startsWith("[Bracket City]") -> Game.BRACKET_CITY
+            shareText.trim().startsWith("Size It Up") -> Game.SIZE_IT_UP
             else -> null
         }
     }
@@ -358,6 +360,35 @@ class ShareTextParser {
             score = totalScore.toInt(), // Use total score as the score
             shareTextNoLink = shareText.substringAfter("https://www.theatlantic.com/games/bracket-city/").trim(),
             resultInfo = bracketCityInfo,
+        )
+    }
+
+    private val sizeItUpRowRegex = Regex("^(?:🟥|⬜)+$")
+    private val sizeItUpFilledSquareRegex = Regex("🟥")
+    fun extractSizeItUpInfo(shareText: String, date: LocalDate): ParsedResult {
+        if (!shareText.trim().startsWith("Size It Up")) {
+            throw IllegalArgumentException("Share text is not a Size It Up share")
+        }
+
+        val score = shareText
+            .substringAfter("Overall Score ")
+            .substringBefore("\n")
+            .trim()
+            .toInt()
+        val puzzleNumber = date.year * 10000 + date.monthValue * 100 + date.dayOfMonth
+        val roundScores = shareText
+            .lines()
+            .map { it.trim() }
+            .filter { sizeItUpRowRegex.matches(it) }
+            .map { row -> sizeItUpFilledSquareRegex.findAll(row).count() }
+
+        return ParsedResult(
+            puzzleNumber = puzzleNumber, // Size It Up does not include a puzzle number or date, calculate as YYYYMMDD
+            game = Game.SIZE_IT_UP,
+            date = date,
+            score = score,
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            resultInfo = SizeItUpInfo(roundScores = roundScores),
         )
     }
 }

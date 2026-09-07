@@ -31,6 +31,7 @@ class ShareLineMapper @Inject constructor(
             Game.TRAVLE -> result.toTravleShareLine()
             Game.GEOGRID -> result.toGeoGridShareLine()
             Game.BRACKET_CITY -> result.toBracketCityShareLine()
+            Game.SIZE_IT_UP -> result.toSizeItUpShareLine()
         }
     }
 
@@ -120,5 +121,15 @@ class ShareLineMapper @Inject constructor(
     private fun PuzzleResult.toBracketCityShareLine(): String = with(info<BracketCityInfo>()) {
         val gameDate = puzzleDate?.let { " ${it.monthValue}/${it.dayOfMonth}" } ?: ""
         return "${game.emoji()} ${game.displayName()}$gameDate $score.0 $rankEmoji"
+    }
+
+    private fun PuzzleResult.toSizeItUpShareLine(): String {
+        val gameDate = puzzleDate?.let { " ${it.monthValue}/${"%02d".format(it.dayOfMonth)}" } ?: ""
+        val start = "${game.emoji()} ${game.displayName()}$gameDate $score/500"
+        return if (score == 500) {
+            "$start ${game.perfectEmoji()}"
+        } else {
+            start
+        }
     }
 }
