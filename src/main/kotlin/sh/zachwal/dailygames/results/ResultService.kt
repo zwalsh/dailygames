@@ -20,6 +20,7 @@ import sh.zachwal.dailygames.utils.DisplayTimeService
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -52,7 +53,7 @@ class ResultService @Inject constructor(
             throw IllegalArgumentException("Share text could not be recognized as a valid game")
         }
 
-        val parsedResult = parseResult(shareText, game)
+        val parsedResult = parseResult(shareText, game, user)
         val puzzle = getOrCreatePuzzle(Puzzle(game, parsedResult.puzzleNumber, parsedResult.date))
 
         return try {
@@ -85,7 +86,7 @@ class ResultService @Inject constructor(
         }
     }
 
-    private fun parseResult(shareText: String, game: Game): ParsedResult {
+    private fun parseResult(shareText: String, game: Game, user: User): ParsedResult {
         return when (game) {
             Game.WORLDLE -> shareTextParser.extractWorldleInfo(shareText)
             Game.TRADLE -> shareTextParser.extractTradleInfo(shareText)
@@ -98,7 +99,10 @@ class ResultService @Inject constructor(
             Game.GEOGRID -> shareTextParser.extractGeoGridInfo(shareText)
             Game.BANDLE -> shareTextParser.extractBandleInfo(shareText)
             Game.BRACKET_CITY -> shareTextParser.extractBracketCityInfo(shareText)
-            Game.SIZE_IT_UP -> TODO()
+            Game.SIZE_IT_UP -> shareTextParser.extractSizeItUpInfo(
+                shareText,
+                date = LocalDate.now(clock.withZone(userPreferencesService.getTimeZone(user.id))),
+            )
         }
     }
 
