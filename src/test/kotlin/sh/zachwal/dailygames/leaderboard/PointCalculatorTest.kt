@@ -179,7 +179,7 @@ class PointCalculatorTest {
 
     private val sizeItUpResult = worldleResult.copy(
         game = Game.SIZE_IT_UP,
-        resultInfo = SizeItUpInfo,
+        resultInfo = SizeItUpInfo(roundScores = listOf(4, 10, 7, 5, 4)),
     )
 
     @Test

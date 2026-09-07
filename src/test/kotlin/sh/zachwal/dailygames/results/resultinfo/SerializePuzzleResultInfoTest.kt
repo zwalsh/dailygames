@@ -56,7 +56,7 @@ class SerializePuzzleResultInfoTest {
                 numCorrect = 5,
                 isPerfect = true,
             ),
-            SizeItUpInfo,
+            SizeItUpInfo(roundScores = listOf(4, 10, 7, 5, 4)),
         )
     }
 }

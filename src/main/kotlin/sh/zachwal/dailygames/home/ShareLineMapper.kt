@@ -124,7 +124,8 @@ class ShareLineMapper @Inject constructor(
     }
 
     private fun PuzzleResult.toSizeItUpShareLine(): String {
-        val start = "${game.emoji()} ${game.displayName()} #$puzzleNumber $score/500"
+        val gameDate = puzzleDate?.let { " ${it.monthValue}/${"%02d".format(it.dayOfMonth)}" } ?: ""
+        val start = "${game.emoji()} ${game.displayName()}$gameDate $score/500"
         return if (score == 500) {
             "$start ${game.perfectEmoji()}"
         } else {

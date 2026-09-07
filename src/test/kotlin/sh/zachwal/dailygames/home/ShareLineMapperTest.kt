@@ -536,27 +536,28 @@ class ShareLineMapperTest {
     private val sizeItUpResult = worldleResult.copy(
         game = Game.SIZE_IT_UP,
         puzzleNumber = 20260907,
-        resultInfo = SizeItUpInfo,
+        puzzleDate = LocalDate.of(2026, 9, 7),
+        resultInfo = SizeItUpInfo(roundScores = listOf(4, 10, 7, 5, 4)),
     )
 
     @Test
     fun `maps Size It Up line`() {
         val result = sizeItUpResult.copy(score = 300)
         val shareLine = mapper.mapToShareLine(result)
-        assertThat(shareLine).isEqualTo("${Game.SIZE_IT_UP.emoji()} Size It Up #20260907 300/500")
+        assertThat(shareLine).isEqualTo("${Game.SIZE_IT_UP.emoji()} Size It Up 9/07 300/500")
     }
 
     @Test
     fun `maps Size It Up perfect line`() {
         val result = sizeItUpResult.copy(score = 500)
         val shareLine = mapper.mapToShareLine(result)
-        assertThat(shareLine).isEqualTo("${Game.SIZE_IT_UP.emoji()} Size It Up #20260907 500/500 ${Game.SIZE_IT_UP.perfectEmoji()}")
+        assertThat(shareLine).isEqualTo("${Game.SIZE_IT_UP.emoji()} Size It Up 9/07 500/500 ${Game.SIZE_IT_UP.perfectEmoji()}")
     }
 
     @Test
     fun `maps Size It Up zero line`() {
         val result = sizeItUpResult.copy(score = 0)
         val shareLine = mapper.mapToShareLine(result)
-        assertThat(shareLine).isEqualTo("${Game.SIZE_IT_UP.emoji()} Size It Up #20260907 0/500")
+        assertThat(shareLine).isEqualTo("${Game.SIZE_IT_UP.emoji()} Size It Up 9/07 0/500")
     }
 }
