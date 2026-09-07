@@ -27,6 +27,8 @@ import javax.inject.Singleton
 val hiddenGames = setOf(
     // Pinpoint is not currently working & no one plays it anyway
     Game.PINPOINT,
+    // Geocircles got shut down because they couldn't afford the Google Maps API costs :(
+    Game.GEOCIRCLES,
 )
 
 @Singleton
