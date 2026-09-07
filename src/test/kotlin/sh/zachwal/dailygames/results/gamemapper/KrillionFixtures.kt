@@ -31,5 +31,12 @@ Krillion #54 🦐
 https://krillion.io
 """
 
-    val ALL = listOf(PERFECT, MID, ZERO, WITH_LINK)
+    const val PARTIAL_WITH_KRILLION = """
+Krillion #54 🦐
+485
+
+🐟🐟🦑🏮🦑🌟🌟
+"""
+
+    val ALL = listOf(PERFECT, MID, ZERO, WITH_LINK, PARTIAL_WITH_KRILLION)
 }

@@ -107,6 +107,25 @@ class KrillionMapperTest : GameMapperContractTest() {
         assertThat(mapper.shareLine(result)).isEqualTo("${Game.KRILLION.emoji()} Krillion #54 385/700")
     }
 
+    @Test
+    fun `maps Krillion partial share line with perfect emoji when krillionCount is at least 1`() {
+        val parsed = mapper.extract(KrillionFixtures.PARTIAL_WITH_KRILLION, testUser)
+        val result = puzzleResult(parsed)
+
+        assertThat(parsed.resultInfo).isEqualTo(
+            KrillionInfo(
+                rawScore = 485,
+                missCount = 0,
+                planktonCount = 0,
+                schoolerCount = 2,
+                rareCount = 2,
+                deepCutCount = 1,
+                krillionCount = 2,
+            ),
+        )
+        assertThat(mapper.shareLine(result)).isEqualTo("${Game.KRILLION.emoji()} Krillion #54 485/700 ${Game.KRILLION.perfectEmoji()}")
+    }
+
     private fun puzzleResult(parsed: ParsedResult) = PuzzleResult(
         id = 1,
         userId = 1,

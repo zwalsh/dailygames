@@ -52,8 +52,9 @@ class KrillionMapper @Inject constructor() : GameMapper {
     }
 
     override fun shareLine(result: PuzzleResult): String = with(result) {
-        val rawScore = info<KrillionInfo>().rawScore
+        val krillionInfo = info<KrillionInfo>()
+        val rawScore = krillionInfo.rawScore
         val start = "${game.emoji()} ${game.displayName()} #$puzzleNumber $rawScore/700"
-        if (rawScore == 700) "$start ${game.perfectEmoji()}" else start
+        if (krillionInfo.krillionCount >= 1) "$start ${game.perfectEmoji()}" else start
     }
 }
