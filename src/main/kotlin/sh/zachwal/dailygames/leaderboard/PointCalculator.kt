@@ -25,6 +25,7 @@ class PointCalculator {
             Game.GEOCIRCLES,
             Game.GEOGRID,
             Game.CARDLE,
+            Game.KRILLION,
             -> score
 
             Game.TRAVLE -> (result.info<TravleInfo>()).calculatePoints(score)
@@ -34,8 +35,6 @@ class PointCalculator {
 
             // Size It Up is out of 500. Divide by 50 and round down.
             Game.SIZE_IT_UP -> score / 50
-
-            Game.KRILLION -> TODO()
         }
     }
 
@@ -62,7 +61,8 @@ class PointCalculator {
 
             Game.CARDLE -> 15
 
-            Game.KRILLION -> TODO()
+            // Krillion's raw score is out of 700. Normalized by KrillionMapper to a 0-10 scale.
+            Game.KRILLION -> 10
         }
     }
 
