@@ -104,7 +104,7 @@ class ResultService @Inject constructor(
 
     private fun resultTitle(result: PuzzleResult): String {
         val puzzleDate = result.puzzleDate
-        return if ((result.game == Game.SIZE_IT_UP || result.game == Game.CARDLE) && puzzleDate != null) {
+        return if ((result.game == Game.SIZE_IT_UP || result.game == Game.CARDLE || result.game == Game.MAPTAP) && puzzleDate != null) {
             "${result.game.displayName()} ${puzzleDate.monthValue}/${"%02d".format(puzzleDate.dayOfMonth)}"
         } else {
             "${result.game.displayName()} #${result.puzzleNumber}"

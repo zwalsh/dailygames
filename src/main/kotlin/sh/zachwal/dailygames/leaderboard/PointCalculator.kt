@@ -35,6 +35,9 @@ class PointCalculator {
 
             // Size It Up is out of 500. Divide by 50 and round down.
             Game.SIZE_IT_UP -> score / 50
+
+            // MapTap's final score is out of 1000. Divide by 100 and round down.
+            Game.MAPTAP -> score / 100
         }
     }
 
@@ -63,6 +66,9 @@ class PointCalculator {
 
             // Krillion's raw score is out of 700. Normalized by KrillionMapper to a 0-10 scale.
             Game.KRILLION -> 10
+
+            // MapTap's final score is out of 1000. Normalized in PointCalculator to a 0-10 scale.
+            Game.MAPTAP -> 10
         }
     }
 

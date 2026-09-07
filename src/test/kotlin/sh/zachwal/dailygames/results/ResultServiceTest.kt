@@ -26,6 +26,7 @@ import sh.zachwal.dailygames.results.gamemapper.FramedFixtures
 import sh.zachwal.dailygames.results.gamemapper.GeoGridFixtures
 import sh.zachwal.dailygames.results.gamemapper.GeocirclesFixtures
 import sh.zachwal.dailygames.results.gamemapper.KrillionFixtures
+import sh.zachwal.dailygames.results.gamemapper.MapTapFixtures
 import sh.zachwal.dailygames.results.gamemapper.PinpointFixtures
 import sh.zachwal.dailygames.results.gamemapper.SizeItUpFixtures
 import sh.zachwal.dailygames.results.gamemapper.Top5Fixtures
@@ -34,6 +35,7 @@ import sh.zachwal.dailygames.results.gamemapper.allGameMappers
 import sh.zachwal.dailygames.results.resultinfo.CardleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.KrillionInfo
+import sh.zachwal.dailygames.results.resultinfo.MapTapInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
 import sh.zachwal.dailygames.results.resultinfo.WorldleInfo
@@ -401,6 +403,28 @@ class ResultServiceTest(
     }
 
     @Test
+    fun `can create a MapTap result`() {
+        val result = resultService.createResult(fixtures.zach, MapTapFixtures.EXAMPLE)
+
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.MAPTAP)
+        assertThat(result.puzzleNumber).isEqualTo(20240907)
+        assertThat(result.score).isEqualTo(797)
+        assertThat(result.shareText).isEqualTo(
+            """
+            www.maptap.gg September 7
+            100🎯 93🏆 95🏅 66🤫 72🙃
+            Final score: 797
+            """.trimIndent(),
+        )
+        assertThat(result.resultInfo).isInstanceOf(MapTapInfo::class.java)
+        val info = result.info<MapTapInfo>()
+
+        assertThat(info.finalScore).isEqualTo(797)
+        assertThat(info.roundScores).isEqualTo(listOf(100, 93, 95, 66, 72))
+    }
+
+    @Test
     fun `result feed result title for Cardle is Game name followed by short date`() {
         resultService.createResult(fixtures.zach, CardleFixtures.PERFECT)
         val item = resultService.resultFeed(1L).single()
@@ -445,6 +469,14 @@ class ResultServiceTest(
         val item = resultService.resultFeed(1L).single()
 
         assertThat(item.resultTitle).isEqualTo("Size It Up 9/11")
+    }
+
+    @Test
+    fun `result feed result title for MapTap is Game name followed by short date`() {
+        resultService.createResult(fixtures.zach, MapTapFixtures.EXAMPLE)
+        val item = resultService.resultFeed(1L).single()
+
+        assertThat(item.resultTitle).isEqualTo("MapTap 9/07")
     }
 
     @Test

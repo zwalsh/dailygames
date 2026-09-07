@@ -67,6 +67,10 @@ class SerializePuzzleResultInfoTest {
                 deepCutCount = 1,
                 krillionCount = 0,
             ),
+            MapTapInfo(
+                finalScore = 797,
+                roundScores = listOf(100, 93, 95, 66, 72),
+            ),
         )
     }
 }

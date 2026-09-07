@@ -23,5 +23,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     JsonSubTypes.Type(value = SizeItUpInfo::class, name = "size_it_up"),
     JsonSubTypes.Type(value = CardleInfo::class, name = "cardle"),
     JsonSubTypes.Type(value = KrillionInfo::class, name = "krillion"),
+    JsonSubTypes.Type(value = MapTapInfo::class, name = "maptap"),
 )
 sealed class ResultInfo
