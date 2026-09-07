@@ -98,6 +98,7 @@ class ResultService @Inject constructor(
             Game.GEOGRID -> shareTextParser.extractGeoGridInfo(shareText)
             Game.BANDLE -> shareTextParser.extractBandleInfo(shareText)
             Game.BRACKET_CITY -> shareTextParser.extractBracketCityInfo(shareText)
+            Game.SIZE_IT_UP -> TODO()
         }
     }
 

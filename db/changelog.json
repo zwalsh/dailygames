@@ -124,6 +124,11 @@
       "include": {
         "file": "25_add_bracket_city.json"
       }
+    },
+    {
+      "include": {
+        "file": "26_add_size_it_up.json"
+      }
     }
   ]
 }

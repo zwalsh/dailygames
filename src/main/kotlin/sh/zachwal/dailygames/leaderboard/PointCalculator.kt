@@ -30,6 +30,8 @@ class PointCalculator {
 
             // Bracket City is out of 100. Divide by 10 and round down.
             Game.BRACKET_CITY -> score / 10
+
+            Game.SIZE_IT_UP -> TODO()
         }
     }
 
@@ -52,6 +54,8 @@ class PointCalculator {
             Game.TRAVLE -> (result.info<TravleInfo>()).maxPoints(score)
 
             Game.GEOGRID -> 9
+
+            Game.SIZE_IT_UP -> TODO()
         }
     }
 

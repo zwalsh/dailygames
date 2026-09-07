@@ -31,6 +31,7 @@ class ShareLineMapper @Inject constructor(
             Game.TRAVLE -> result.toTravleShareLine()
             Game.GEOGRID -> result.toGeoGridShareLine()
             Game.BRACKET_CITY -> result.toBracketCityShareLine()
+            Game.SIZE_IT_UP -> TODO()
         }
     }
 

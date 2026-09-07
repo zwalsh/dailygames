@@ -14,6 +14,7 @@ enum class Game {
     GEOGRID,
     BANDLE,
     BRACKET_CITY,
+    SIZE_IT_UP,
     ;
 
     fun displayName(): String {
@@ -21,6 +22,7 @@ enum class Game {
             TOP5 -> "Top 5"
             GEOGRID -> "GeoGrid"
             BRACKET_CITY -> "Bracket City"
+            SIZE_IT_UP -> "Size It Up"
             else -> this.name.toSentenceCase()
         }
     }
@@ -38,6 +40,7 @@ enum class Game {
             GEOGRID -> "\uD83C\uDF10"
             BANDLE -> "\uD83C\uDFB8"
             BRACKET_CITY -> "\uD83C\uDFD9\uFE0F"
+            SIZE_IT_UP -> "\uD83D\uDCD0"
         }
     }
 
@@ -54,6 +57,7 @@ enum class Game {
             GEOGRID -> "✅"
             BANDLE -> "\uD83C\uDFB5"
             BRACKET_CITY -> "\uD83D\uDC51"
+            SIZE_IT_UP -> "\uD83D\uDCAF"
         }
     }
 
@@ -70,6 +74,7 @@ enum class Game {
             GEOGRID -> "https://www.geogridgame.com/"
             BANDLE -> "https://bandle.app/"
             BRACKET_CITY -> "https://www.theatlantic.com/games/bracket-city/"
+            SIZE_IT_UP -> "https://magnitudle.com/size-it-up"
         }
     }
 }
