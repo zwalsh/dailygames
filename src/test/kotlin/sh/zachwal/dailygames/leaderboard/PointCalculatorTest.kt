@@ -6,6 +6,7 @@ import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.PuzzleResult
 import sh.zachwal.dailygames.results.resultinfo.BandleInfo
 import sh.zachwal.dailygames.results.resultinfo.BracketCityInfo
+import sh.zachwal.dailygames.results.resultinfo.CardleInfo
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
@@ -200,6 +201,23 @@ class PointCalculatorTest {
         assertThat(calculator.calculatePoints(result0)).isEqualTo(0)
     }
 
+    private val cardleResult = worldleResult.copy(
+        game = Game.CARDLE,
+        resultInfo = CardleInfo(numGuesses = 1, streak = 1),
+    )
+
+    @Test
+    fun `calculates points for cardle as the raw score`() {
+        val result15 = cardleResult.copy(score = 15)
+        assertThat(calculator.calculatePoints(result15)).isEqualTo(15)
+
+        val result6 = cardleResult.copy(score = 6)
+        assertThat(calculator.calculatePoints(result6)).isEqualTo(6)
+
+        val result0 = cardleResult.copy(score = 0)
+        assertThat(calculator.calculatePoints(result0)).isEqualTo(0)
+    }
+
     @Test
     fun `returns max score for simple games`() {
         assertThat(calculator.maxPoints(worldleResult)).isEqualTo(6)
@@ -211,5 +229,6 @@ class PointCalculatorTest {
         assertThat(calculator.maxPoints(framedResult)).isEqualTo(6)
         assertThat(calculator.maxPoints(geoGridResult)).isEqualTo(9)
         assertThat(calculator.maxPoints(bandleResult)).isEqualTo(6)
+        assertThat(calculator.maxPoints(cardleResult)).isEqualTo(15)
     }
 }

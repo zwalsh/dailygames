@@ -12,6 +12,7 @@ import sh.zachwal.dailygames.results.BRACKET_CITY_PUPPETMASTER
 import sh.zachwal.dailygames.results.BRACKET_CITY_TOURIST
 import sh.zachwal.dailygames.results.ShareTextParser
 import sh.zachwal.dailygames.results.resultinfo.BandleInfo
+import sh.zachwal.dailygames.results.resultinfo.CardleInfo
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
@@ -559,5 +560,33 @@ class ShareLineMapperTest {
         val result = sizeItUpResult.copy(score = 0)
         val shareLine = mapper.mapToShareLine(result)
         assertThat(shareLine).isEqualTo("${Game.SIZE_IT_UP.emoji()} Size It Up 9/07 0/500")
+    }
+
+    private val cardleResult = worldleResult.copy(
+        game = Game.CARDLE,
+        puzzleNumber = 20260907,
+        puzzleDate = LocalDate.of(2026, 9, 7),
+        resultInfo = CardleInfo(numGuesses = 1, streak = 1),
+    )
+
+    @Test
+    fun `maps Cardle perfect line`() {
+        val result = cardleResult.copy(score = 15)
+        val shareLine = mapper.mapToShareLine(result)
+        assertThat(shareLine).isEqualTo("${Game.CARDLE.emoji()} Cardle 9/07 15/15 ${Game.CARDLE.perfectEmoji()}")
+    }
+
+    @Test
+    fun `maps Cardle mid-range line`() {
+        val result = cardleResult.copy(score = 6)
+        val shareLine = mapper.mapToShareLine(result)
+        assertThat(shareLine).isEqualTo("${Game.CARDLE.emoji()} Cardle 9/07 6/15")
+    }
+
+    @Test
+    fun `maps Cardle failure line`() {
+        val result = cardleResult.copy(score = 0)
+        val shareLine = mapper.mapToShareLine(result)
+        assertThat(shareLine).isEqualTo("${Game.CARDLE.emoji()} Cardle 9/07 0/15")
     }
 }

@@ -18,6 +18,7 @@ import sh.zachwal.dailygames.db.extension.DatabaseExtension
 import sh.zachwal.dailygames.db.extension.Fixtures
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.db.jdbi.puzzle.Puzzle
+import sh.zachwal.dailygames.results.resultinfo.CardleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.Top5Info
 import sh.zachwal.dailygames.results.resultinfo.TravleInfo
@@ -333,6 +334,37 @@ class ResultServiceTest(
 
         // Instant is 1am ET / 10pm PT on 9/10, so the puzzle number should still be 9/10 in PT
         assertThat(result.puzzleNumber).isEqualTo(20240910)
+    }
+
+    @Test
+    fun `can create a Cardle result`() {
+        val result = resultService.createResult(fixtures.zach, CARDLE_PERFECT)
+
+        assertThat(result.userId).isEqualTo(fixtures.zach.id)
+        assertThat(result.game).isEqualTo(Game.CARDLE)
+        assertThat(result.puzzleNumber).isEqualTo(20240911)
+        assertThat(result.score).isEqualTo(15)
+        assertThat(result.shareText).isEqualTo(
+            """
+            Cardle 1/5
+            Streak 1🔥
+            Total Score 15
+            🟢 🟢 🟢
+            """.trimIndent(),
+        )
+        assertThat(result.resultInfo).isInstanceOf(CardleInfo::class.java)
+        val info = result.info<CardleInfo>()
+
+        assertThat(info.numGuesses).isEqualTo(1)
+        assertThat(info.streak).isEqualTo(1)
+    }
+
+    @Test
+    fun `result feed result title for Cardle is Game name followed by short date`() {
+        resultService.createResult(fixtures.zach, CARDLE_PERFECT)
+        val item = resultService.resultFeed(1L).single()
+
+        assertThat(item.resultTitle).isEqualTo("Cardle 9/11")
     }
 
     @Test

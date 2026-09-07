@@ -3,6 +3,7 @@ package sh.zachwal.dailygames.results
 import sh.zachwal.dailygames.db.jdbi.puzzle.Game
 import sh.zachwal.dailygames.results.resultinfo.BandleInfo
 import sh.zachwal.dailygames.results.resultinfo.BracketCityInfo
+import sh.zachwal.dailygames.results.resultinfo.CardleInfo
 import sh.zachwal.dailygames.results.resultinfo.FlagleInfo
 import sh.zachwal.dailygames.results.resultinfo.FramedInfo
 import sh.zachwal.dailygames.results.resultinfo.GeoGridInfo
@@ -35,6 +36,7 @@ class ShareTextParser {
             shareText.trim().startsWith("Bandle") -> Game.BANDLE
             shareText.trim().startsWith("[Bracket City]") -> Game.BRACKET_CITY
             shareText.trim().startsWith("Size It Up") -> Game.SIZE_IT_UP
+            shareText.trim().startsWith("Cardle") -> Game.CARDLE
             else -> null
         }
     }
@@ -389,6 +391,31 @@ class ShareTextParser {
             score = score,
             shareTextNoLink = shareText.substringBefore("https://").trim(),
             resultInfo = SizeItUpInfo(roundScores = roundScores),
+        )
+    }
+
+    private val cardleHeaderRegex = Regex("""Cardle\s+(?<guesses>\d)/5""")
+    private val cardleStreakRegex = Regex("""Streak\s+(?<streak>\d+)""")
+    private val cardleScoreRegex = Regex("""Total Score\s+(?<score>\d+)""")
+    fun extractCardleInfo(shareText: String, date: LocalDate): ParsedResult {
+        if (!shareText.trim().startsWith("Cardle")) {
+            throw IllegalArgumentException("Share text is not a Cardle share")
+        }
+
+        val numGuesses = cardleHeaderRegex.find(shareText)?.groups?.get("guesses")?.value?.toInt()
+            ?: throw IllegalArgumentException("Number of guesses not found")
+        // Streak and Total Score lines are absent when the streak/score is 0
+        val streak = cardleStreakRegex.find(shareText)?.groups?.get("streak")?.value?.toInt() ?: 0
+        val score = cardleScoreRegex.find(shareText)?.groups?.get("score")?.value?.toInt() ?: 0
+        val puzzleNumber = date.year * 10000 + date.monthValue * 100 + date.dayOfMonth
+
+        return ParsedResult(
+            puzzleNumber = puzzleNumber, // Cardle does not include a puzzle number or date, calculate as YYYYMMDD
+            game = Game.CARDLE,
+            date = date,
+            score = score,
+            shareTextNoLink = shareText.substringBefore("https://").trim(),
+            resultInfo = CardleInfo(numGuesses = numGuesses, streak = streak),
         )
     }
 }

@@ -66,6 +66,10 @@ class DeserializeStoredPuzzleResultInfoTest {
                 "{\"type\":\"size_it_up\",\"roundScores\":[4,10,7,5,4]}",
                 SizeItUpInfo(roundScores = listOf(4, 10, 7, 5, 4)),
             ),
+            Arguments.of(
+                "{\"type\":\"cardle\",\"numGuesses\":1,\"streak\":1}",
+                CardleInfo(numGuesses = 1, streak = 1),
+            ),
         )
     }
 }
