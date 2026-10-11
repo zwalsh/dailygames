@@ -37,6 +37,7 @@ class Top5MapperTest : GameMapperContractTest() {
         assertThat(top5Info.numGuesses).isEqualTo(8)
         assertThat(top5Info.numCorrect).isEqualTo(3)
         assertThat(top5Info.isPerfect).isFalse()
+        assertThat(top5Info.title).isNull()
     }
 
     @Test
@@ -73,6 +74,64 @@ class Top5MapperTest : GameMapperContractTest() {
         assertThat(top5Info.numGuesses).isEqualTo(5)
         assertThat(top5Info.numCorrect).isEqualTo(5)
         assertThat(top5Info.isPerfect).isTrue()
+    }
+
+    @Test
+    fun `extracts Top5 info from titled share with preview link`() {
+        val result = mapper.extract(Top5Fixtures.TITLED_PREVIEW, testUser)
+
+        assertThat(result.puzzleNumber).isEqualTo(960)
+        assertThat(result.score).isEqualTo(2)
+        assertThat(result.shareTextNoLink).isEqualTo(
+            "Top 5 Email domains that receive the most emails (#960)\n⬜🟩⬜🟦⬜⬜⬜",
+        )
+        val top5Info = result.info<Top5Info>()
+        assertThat(top5Info.numGuesses).isEqualTo(7)
+        assertThat(top5Info.numCorrect).isEqualTo(2)
+        assertThat(top5Info.isPerfect).isFalse()
+        assertThat(top5Info.title).isEqualTo("Email domains that receive the most emails")
+    }
+
+    @Test
+    fun `extracts Top5 info from titled share`() {
+        val result = mapper.extract(Top5Fixtures.TITLED, testUser)
+
+        assertThat(result.puzzleNumber).isEqualTo(960)
+        assertThat(result.score).isEqualTo(6)
+        assertThat(result.shareTextNoLink).isEqualTo(
+            "Top 5 Email domains that receive the most emails (#960)\n🟥🟩🟦🟨⬜⬜⬜⬜🟧",
+        )
+        val top5Info = result.info<Top5Info>()
+        assertThat(top5Info.numGuesses).isEqualTo(9)
+        assertThat(top5Info.numCorrect).isEqualTo(5)
+        assertThat(top5Info.isPerfect).isFalse()
+        assertThat(top5Info.title).isEqualTo("Email domains that receive the most emails")
+    }
+
+    @Test
+    fun `extracts Top5 info from titled share without link`() {
+        val result = mapper.extract(Top5Fixtures.TITLED_NO_LINK, testUser)
+
+        assertThat(result.puzzleNumber).isEqualTo(960)
+        assertThat(result.score).isEqualTo(6)
+        val top5Info = result.info<Top5Info>()
+        assertThat(top5Info.numGuesses).isEqualTo(9)
+        assertThat(top5Info.numCorrect).isEqualTo(5)
+        assertThat(top5Info.isPerfect).isFalse()
+        assertThat(top5Info.title).isEqualTo("Email domains that receive the most emails")
+    }
+
+    @Test
+    fun `extracts Top5 info from titled perfect share with numbers in title`() {
+        val result = mapper.extract(Top5Fixtures.TITLED_PERFECT, testUser)
+
+        assertThat(result.puzzleNumber).isEqualTo(961)
+        assertThat(result.score).isEqualTo(10)
+        val top5Info = result.info<Top5Info>()
+        assertThat(top5Info.numGuesses).isEqualTo(5)
+        assertThat(top5Info.numCorrect).isEqualTo(5)
+        assertThat(top5Info.isPerfect).isTrue()
+        assertThat(top5Info.title).isEqualTo("Best selling albums of 1999")
     }
 
     @Test

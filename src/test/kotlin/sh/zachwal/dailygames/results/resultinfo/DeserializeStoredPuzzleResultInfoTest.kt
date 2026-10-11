@@ -63,6 +63,15 @@ class DeserializeStoredPuzzleResultInfoTest {
                 ),
             ),
             Arguments.of(
+                "{\"type\":\"top5\",\"numGuesses\":9,\"numCorrect\":5,\"isPerfect\":false,\"title\":\"Email domains that receive the most emails\"}",
+                Top5Info(
+                    numGuesses = 9,
+                    numCorrect = 5,
+                    isPerfect = false,
+                    title = "Email domains that receive the most emails",
+                ),
+            ),
+            Arguments.of(
                 "{\"type\":\"size_it_up\",\"roundScores\":[4,10,7,5,4]}",
                 SizeItUpInfo(roundScores = listOf(4, 10, 7, 5, 4)),
             ),
