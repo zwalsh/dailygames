@@ -56,6 +56,12 @@ class SerializePuzzleResultInfoTest {
                 numCorrect = 5,
                 isPerfect = true,
             ),
+            Top5Info(
+                numGuesses = 9,
+                numCorrect = 5,
+                isPerfect = false,
+                title = "Email domains that receive the most emails",
+            ),
             SizeItUpInfo(roundScores = listOf(4, 10, 7, 5, 4)),
             CardleInfo(numGuesses = 1, streak = 1),
             KrillionInfo(

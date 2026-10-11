@@ -14,7 +14,7 @@ class Top5Mapper @Inject constructor() : GameMapper {
 
     private val top5Regex = Regex(
         """
-            \s*Top 5\s+#(?<puzzleNumber>\d+)[\s\S]*
+            \s*Top 5(?:\s+(?<title>[^\n]*\S)\s*\(#(?<titledPuzzleNumber>\d+)\)|\s+#(?<puzzleNumber>\d+))[\s\S]*
         """.trimIndent(),
     )
     private val perfectTop5Regex = Regex("🟥🟧🟨🟩🟦")
@@ -26,7 +26,8 @@ class Top5Mapper @Inject constructor() : GameMapper {
     override fun extract(shareText: String, user: User): ParsedResult {
         val match = top5Regex.find(shareText) ?: throw IllegalArgumentException("Share text is not a Top 5 share")
 
-        val (puzzleNumber) = match.destructured
+        val puzzleNumber = (match.groups["titledPuzzleNumber"] ?: match.groups["puzzleNumber"])!!.value
+        val title = match.groups["title"]?.value
 
         val isPerfect = perfectTop5Regex.find(shareText) != null
         val numGuesses = top5GuessRegex.findAll(shareText).count()
@@ -37,6 +38,7 @@ class Top5Mapper @Inject constructor() : GameMapper {
             numGuesses = numGuesses,
             numCorrect = numCorrect,
             isPerfect = isPerfect,
+            title = title,
         )
         return ParsedResult(
             puzzleNumber = puzzleNumber.toInt(),
